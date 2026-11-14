@@ -353,6 +353,11 @@ def main() -> int:
     with tempfile.TemporaryDirectory() as td:
         home0, wd0 = _o2.environ.get("HOME"), _o2.environ.pop("BENJI_WORKDIR", None)
         _o2.environ["HOME"] = td
+        import benji.home as _home
+        real_others = _home.other_processes
+        # The move refuses while it can't prove no other Benji runs (`ps -E`); Linux's ps has no -E and CI
+        # runners can hide environments, so this check of the move itself doesn't depend on the host's ps.
+        _home.other_processes = lambda h=None: []
         try:
             (Path(td) / "pal" / "output").mkdir(parents=True)
             (Path(td) / "pal" / "usage.jsonl").write_text("{}\n")
@@ -364,6 +369,7 @@ def main() -> int:
             check("both exist: ~/.benji wins, ~/pal untouched",
                   C.workdir_path() == Path(td) / ".benji" and (Path(td) / "pal").is_dir())
         finally:
+            _home.other_processes = real_others
             _o2.environ["HOME"] = home0 or ""
             if wd0 is not None:
                 _o2.environ["BENJI_WORKDIR"] = wd0
