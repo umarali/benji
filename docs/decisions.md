@@ -7,7 +7,7 @@ decision gets a new entry that supersedes it.
 
 Status values: **Active**, **Superseded by D-xx**, **Open** (needs a decision).
 
-> **Public trim.** This is the maintainer's decision log with 57 of 203 entries left out because they refer to private working material. Ids are kept, not renumbered, so gaps are expected. References to files that are not part of this repository read "(not in this export)".
+> **Public trim.** This is the maintainer's decision log with 57 of 204 entries left out because they refer to private working material. Ids are kept, not renumbered, so gaps are expected. References to files that are not part of this repository read "(not in this export)".
 
 ---
 ## Building pal: backend and CLI
