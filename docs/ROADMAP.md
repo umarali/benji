@@ -10,7 +10,7 @@ and tested.
 1. **Live verification of what is already built.** The honest label of most recent features is
    "experimental" or "not live-tested". Closing that comes before adding to them: quit mid-job and a long
    wait for jobs; the browser in a real Chrome profile; a real run of each open-model provider with the
-   owner's own key (`tools/model_smoke.py`); the first CI run on GitHub. The README's status table only
+   owner's own key (`tools/model_smoke.py`). The README's status table only
    changes when one of these has been done and written down.
 2. **Browser reach, step 2: acting, with per-action classing.** Built and unit-tested, not tried in a real
    browser: click, scroll, type, keys and uploads in a tab of the Benji group, classed in code from the page's
@@ -33,7 +33,7 @@ and tested.
 ## Not planned
 
 - **Windows or Linux apps.** The notch app is macOS-only (AppKit, SwiftUI, Apple's on-device speech). The
-  engine is plain Python and its tests run on Linux, but a port of the app is not planned.
+  engine is plain Python, but it is tested on macOS only and a port of the app is not planned.
 - **A hosted service, accounts or telemetry.** Benji talks to the model provider you choose and nothing
   else of its own.
 - **Acting without asking where it matters.** No "approve everything" mode beyond the existing `--yes`

@@ -1,5 +1,8 @@
 # Benji
 
+[![ci](https://github.com/umarali/benji/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/umarali/benji/actions/workflows/ci.yml)
+[Project page](https://umarali.github.io/benji/)
+
 **Benji** is a voice-first assistant for the Mac that lives in the notch. Hold a key and say what
 you want, or type it. Benji runs an LLM tool-use loop that can run commands, read and write files,
 search the web, script your apps and, when you ask, look at your screen and point at what you should
@@ -223,7 +226,7 @@ There is no notarised download yet (see [docs/RELEASING.md](docs/RELEASING.md) f
 you build Benji.app yourself.
 
 ```bash
-git clone <this repository> benji && cd benji
+git clone https://github.com/umarali/benji.git && cd benji
 
 # 1. Give Benji a key (never commit this file).
 cp .benji.env.example ~/.benji.env && chmod 600 ~/.benji.env    # then edit it
@@ -406,8 +409,9 @@ python3 -I companion/ServeCheck/run.py                     # the real app backen
 ```
 
 None calls a live model. The page-text test starts Chrome **headless** with a throwaway profile if
-Chrome is installed and is skipped otherwise. `BenjiCore` (the app's pure logic) is
-Foundation-only, so its tests also build on Linux; the app target needs AppKit.
+Chrome is installed and is skipped otherwise. To keep the tests away from your own Benji data and
+keys, run them through `tools/isolated_run.py` as [CONTRIBUTING.md](CONTRIBUTING.md) shows. All of this
+is checked on macOS only.
 
 ## Layout
 
@@ -421,6 +425,7 @@ Foundation-only, so its tests also build on Linux; the app target needs AppKit.
 ├── companion/         # Benji.app (SwiftPM): BenjiCore (pure logic, tested) + BenjiApp (AppKit/SwiftUI)
 ├── browser-extension/ # the Chrome extension for browser reach, and its tests
 ├── demo/              # how to record a real demo safely, in a separate macOS account
+├── site/              # the project page, published to GitHub Pages
 └── docs/              # design system, decision log, serve protocol, providers, releasing, roadmap
 ```
 
