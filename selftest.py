@@ -4827,7 +4827,7 @@ def browser_checks() -> None:
         r = subprocess.run([node, "--test", *(str(HERE / "browser-extension" / "test" / f) for f in (
                                 "core.test.mjs", "page-text.test.mjs", "act.test.mjs", "page-actions.test.mjs"))],
                            capture_output=True, text=True, timeout=240)
-        counts = {k: int(v) for k, v in (re.findall(r"ℹ (pass|fail|skipped) (\d+)", r.stdout))}
+        counts = {k: int(v) for k, v in (re.findall(r"^(?:ℹ|#) (pass|fail|skipped) (\d+)$", r.stdout, re.M))}
         check(f"the extension's node tests: {counts.get('pass', 0)} passed, {counts.get('skipped', 0)} skipped (headless Chrome), none failed",
               r.returncode == 0 and counts.get("fail", 1) == 0 and counts.get("pass", 0) >= 46)
         if r.returncode:
