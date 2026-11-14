@@ -1,0 +1,37 @@
+<!-- @dsCard height=288 -->
+<style>
+  html, body { margin: 0; }
+  body { background: var(--window-bg); width: 960px; height: 288px; position: relative; overflow: hidden; }
+  svg { position: absolute; left: 0; top: 0; }
+  .black { fill: var(--notch-black); }
+  .mint { fill: var(--benji-mint); }
+  .orange { fill: var(--state-listening); }
+  .purple { fill: var(--state-looking); }
+  .slab { rx: var(--radius-notch-open); ry: var(--radius-notch-open); }
+  .pebble { rx: var(--radius-notch-open); ry: var(--radius-notch-open); }
+  .bar { rx: var(--space-1); ry: var(--space-1); }
+  .text { position: absolute; left: 40px; bottom: 36px; width: 440px; }
+  .name { font-family: var(--font-rounded); font-size: 120px; line-height: 0.95; font-weight: 700; color: var(--label); letter-spacing: -1px; }
+  .tag { font-family: var(--font-sans); font-size: 14px; line-height: 18px; color: var(--label); margin-top: 8px; }
+</style>
+<svg width="960" height="288" viewBox="0 0 960 288" aria-hidden="true">
+  <!--
+    blocks: notch-black slab 360 x 120 (radius-notch-open), benji-mint pebble 220 x 104 (radius-notch-open), state-listening disc r 30, state-looking disc r 14
+    arrangement: the notch slab hangs from the top edge like the hardware notch, the mint pebble sits below it, the two privacy discs as satellites on the right
+    pattern: a literal motif, the notch with Benji's level-meter pills inside it, because the system is "invisible until called" and its one live mark is the meter
+    scales: pills 8 wide with radius space-1, pitch space-4, heights from space-3 to space-6 multiples; corners radius-notch-open
+  -->
+  <rect class="black slab" x="560" y="-40" width="360" height="160"/>
+  <rect class="mint bar" x="696" y="46" width="8" height="28"/>
+  <rect class="mint bar" x="712" y="36" width="8" height="48"/>
+  <rect class="mint bar" x="728" y="42" width="8" height="36"/>
+  <rect class="mint bar" x="744" y="50" width="8" height="20"/>
+  <rect class="mint bar" x="760" y="44" width="8" height="32"/>
+  <rect class="mint pebble" x="600" y="160" width="220" height="104"/>
+  <circle class="orange" cx="872" cy="196" r="30"/>
+  <circle class="purple" cx="900" cy="252" r="14"/>
+</svg>
+<div class="text">
+  <div class="name">Benji</div>
+  <div class="tag">The calm assistant in your notch. Native to macOS, invisible until called.</div>
+</div>

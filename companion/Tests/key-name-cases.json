@@ -1,0 +1,19 @@
+{
+  "ANTHROPIC_API_KEY": true,
+  "OPENAI_API_KEY": true,
+  "openai_api_key": true,
+  "DEEPSEEK_API_KEY": true,
+  "BRAVE_API_KEY": true,
+  "DEEPGRAM_API_KEY": true,
+  "BENJI_API_KEY": true,
+  "SERPAPI_KEY": true,
+  "  ANTHROPIC_API_KEY ": true,
+  "BENJI_MODEL": false,
+  "BENJI_PROVIDER": false,
+  "BENJI_KEY_SOURCE": false,
+  "BENJI_BASE_URL": false,
+  "API_KEY_FILE": false,
+  "MY_API_KEYS": false,
+  "PATH": false,
+  "": false
+}

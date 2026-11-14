@@ -1,0 +1,1106 @@
+{
+ "floor": [
+  {
+   "name": "a link on the same site is quiet",
+   "action": "click",
+   "desc": {
+    "kind": "link",
+    "tag": "a",
+    "name": "Pricing",
+    "text": "Pricing",
+    "href": "https://example.com/pricing"
+   },
+   "tab": "https://example.com",
+   "cls": "quiet",
+   "code": "browser_act_quiet",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a link on the same site with a query is quiet",
+   "action": "click",
+   "desc": {
+    "kind": "link",
+    "tag": "a",
+    "name": "Page 2",
+    "text": "Page 2",
+    "href": "https://example.com/list?page=2"
+   },
+   "tab": "https://example.com",
+   "cls": "quiet",
+   "code": "browser_act_quiet",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a link to another origin is asked and names where it leaves for",
+   "action": "click",
+   "desc": {
+    "kind": "link",
+    "tag": "a",
+    "name": "Docs",
+    "text": "Docs",
+    "href": "https://other.org/docs"
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_leaves",
+   "leaves": "https://other.org",
+   "download": false
+  },
+  {
+   "name": "a link to a subdomain is another origin",
+   "action": "click",
+   "desc": {
+    "kind": "link",
+    "tag": "a",
+    "name": "Help",
+    "text": "Help",
+    "href": "https://help.example.com/"
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_leaves",
+   "leaves": "https://help.example.com",
+   "download": false
+  },
+  {
+   "name": "a link to the same host on another port is another origin",
+   "action": "click",
+   "desc": {
+    "kind": "link",
+    "tag": "a",
+    "name": "Alt",
+    "text": "Alt",
+    "href": "https://example.com:8443/"
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_leaves",
+   "leaves": "https://example.com:8443",
+   "download": false
+  },
+  {
+   "name": "a link named like a commitment is asked even on the same site",
+   "action": "click",
+   "desc": {
+    "kind": "link",
+    "tag": "a",
+    "name": "Delete account",
+    "text": "Delete account",
+    "href": "https://example.com/account/delete"
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_asked",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a link named Pay now is asked",
+   "action": "click",
+   "desc": {
+    "kind": "link",
+    "tag": "a",
+    "name": "Pay now",
+    "text": "Pay now",
+    "href": "https://example.com/checkout"
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_asked",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a link named Sign out is asked",
+   "action": "click",
+   "desc": {
+    "kind": "link",
+    "tag": "a",
+    "name": "Sign out",
+    "text": "Sign out",
+    "href": "https://example.com/logout"
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_asked",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a javascript: link is refused",
+   "action": "click",
+   "desc": {
+    "kind": "link",
+    "tag": "a",
+    "name": "Open",
+    "text": "Open",
+    "href": "javascript:alert(1)"
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a data: link is refused",
+   "action": "click",
+   "desc": {
+    "kind": "link",
+    "tag": "a",
+    "name": "Open",
+    "text": "Open",
+    "href": "data:text/html,hi"
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a mailto: link is asked",
+   "action": "click",
+   "desc": {
+    "kind": "link",
+    "tag": "a",
+    "name": "Email us",
+    "text": "Email us",
+    "href": "mailto:contact"
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_asked",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a link with a download attribute is asked and allows the download",
+   "action": "click",
+   "desc": {
+    "kind": "link",
+    "tag": "a",
+    "name": "Report",
+    "text": "Report",
+    "href": "https://example.com/r",
+    "download": true
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_asked",
+   "leaves": "",
+   "download": true
+  },
+  {
+   "name": "a link to a zip file is asked as a download",
+   "action": "click",
+   "desc": {
+    "kind": "link",
+    "tag": "a",
+    "name": "Get it",
+    "text": "Get it",
+    "href": "https://example.com/files/tool.zip"
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_asked",
+   "leaves": "",
+   "download": true
+  },
+  {
+   "name": "a link to a pdf with a query is asked as a download",
+   "action": "click",
+   "desc": {
+    "kind": "link",
+    "tag": "a",
+    "name": "Statement",
+    "text": "Statement",
+    "href": "https://example.com/s/2026.pdf?x=1"
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_asked",
+   "leaves": "",
+   "download": true
+  },
+  {
+   "name": "a link that opens a new tab is asked",
+   "action": "click",
+   "desc": {
+    "kind": "link",
+    "tag": "a",
+    "name": "Terms",
+    "text": "Terms",
+    "href": "https://example.com/terms",
+    "blank": true
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_asked",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a link to an http address is asked (not an address Benji uses)",
+   "action": "click",
+   "desc": {
+    "kind": "link",
+    "tag": "a",
+    "name": "Old site",
+    "text": "Old site",
+    "href": "http://example.com/old"
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_asked",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a link with no name is refused",
+   "action": "click",
+   "desc": {
+    "kind": "link",
+    "tag": "a",
+    "name": "",
+    "text": "",
+    "href": "https://example.com/x"
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a tab is quiet",
+   "action": "click",
+   "desc": {
+    "kind": "tab",
+    "tag": "button",
+    "name": "Reviews",
+    "text": "Reviews"
+   },
+   "tab": "https://example.com",
+   "cls": "quiet",
+   "code": "browser_act_quiet",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a disclosure is quiet",
+   "action": "click",
+   "desc": {
+    "kind": "disclosure",
+    "tag": "summary",
+    "name": "More details",
+    "text": "More details"
+   },
+   "tab": "https://example.com",
+   "cls": "quiet",
+   "code": "browser_act_quiet",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a checkbox is quiet",
+   "action": "click",
+   "desc": {
+    "kind": "checkbox",
+    "tag": "input",
+    "inputType": "checkbox",
+    "name": "Show archived"
+   },
+   "tab": "https://example.com",
+   "cls": "quiet",
+   "code": "browser_act_quiet",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a checkbox named I agree is asked",
+   "action": "click",
+   "desc": {
+    "kind": "checkbox",
+    "tag": "input",
+    "inputType": "checkbox",
+    "name": "I agree to the terms"
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_asked",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a radio option is quiet",
+   "action": "click",
+   "desc": {
+    "kind": "radio",
+    "tag": "input",
+    "inputType": "radio",
+    "name": "Weekly"
+   },
+   "tab": "https://example.com",
+   "cls": "quiet",
+   "code": "browser_act_quiet",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a menu (select) is quiet",
+   "action": "click",
+   "desc": {
+    "kind": "select",
+    "tag": "select",
+    "name": "Sort by"
+   },
+   "tab": "https://example.com",
+   "cls": "quiet",
+   "code": "browser_act_quiet",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "clicking into a text field is quiet",
+   "action": "click",
+   "desc": {
+    "kind": "text",
+    "tag": "input",
+    "inputType": "text",
+    "name": "Search",
+    "fieldName": "q"
+   },
+   "tab": "https://example.com",
+   "cls": "quiet",
+   "code": "browser_act_quiet",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "clicking into a password field is refused",
+   "action": "click",
+   "desc": {
+    "kind": "text",
+    "tag": "input",
+    "inputType": "password",
+    "name": "Password",
+    "fieldName": "pw"
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a submit button is asked (a form post)",
+   "action": "click",
+   "desc": {
+    "kind": "submit",
+    "tag": "button",
+    "name": "Continue",
+    "text": "Continue",
+    "form": "post"
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_asked",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a submit button named Send is asked",
+   "action": "click",
+   "desc": {
+    "kind": "submit",
+    "tag": "button",
+    "name": "Send",
+    "text": "Send",
+    "form": "get"
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_asked",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a submit input with a value of Buy is asked",
+   "action": "click",
+   "desc": {
+    "kind": "submit",
+    "tag": "input",
+    "inputType": "submit",
+    "name": "Buy",
+    "value": "Buy",
+    "form": "post"
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_asked",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a plain button named Confirm is asked",
+   "action": "click",
+   "desc": {
+    "kind": "button",
+    "tag": "button",
+    "name": "Confirm",
+    "text": "Confirm"
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_asked",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a plain button named Next is asked (Benji can't tell what it does)",
+   "action": "click",
+   "desc": {
+    "kind": "button",
+    "tag": "button",
+    "name": "Next",
+    "text": "Next"
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_asked",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a button named Place order is asked",
+   "action": "click",
+   "desc": {
+    "kind": "button",
+    "tag": "button",
+    "name": "Place order",
+    "text": "Place order"
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_asked",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a button with no name is refused",
+   "action": "click",
+   "desc": {
+    "kind": "button",
+    "tag": "button",
+    "name": "",
+    "text": ""
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a disabled button is refused",
+   "action": "click",
+   "desc": {
+    "kind": "button",
+    "tag": "button",
+    "name": "Save",
+    "text": "Save",
+    "disabled": true
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "a file chooser is refused for a click",
+   "action": "click",
+   "desc": {
+    "kind": "file",
+    "tag": "input",
+    "inputType": "file",
+    "name": "Attach a file"
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "an unclassifiable element is asked",
+   "action": "click",
+   "desc": {
+    "kind": "other",
+    "tag": "div",
+    "name": "Card"
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_asked",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "typing into a text field is quiet at the floor",
+   "action": "type",
+   "desc": {
+    "kind": "text",
+    "tag": "input",
+    "inputType": "text",
+    "name": "Search",
+    "fieldName": "q"
+   },
+   "tab": "https://example.com",
+   "cls": "quiet",
+   "code": "browser_act_quiet",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "typing into a password field is refused",
+   "action": "type",
+   "desc": {
+    "kind": "text",
+    "tag": "input",
+    "inputType": "password",
+    "name": "Password",
+    "fieldName": "q"
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "typing into a field marked cc-number is refused",
+   "action": "type",
+   "desc": {
+    "kind": "text",
+    "tag": "input",
+    "inputType": "text",
+    "name": "Number",
+    "fieldName": "q",
+    "autocomplete": "cc-number"
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "typing into a one-time-code field is refused",
+   "action": "type",
+   "desc": {
+    "kind": "text",
+    "tag": "input",
+    "inputType": "text",
+    "name": "Code",
+    "fieldName": "q",
+    "autocomplete": "one-time-code"
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "typing into a field called card number is refused",
+   "action": "type",
+   "desc": {
+    "kind": "text",
+    "tag": "input",
+    "inputType": "text",
+    "name": "Card number",
+    "fieldName": "cardnum"
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "typing into a field called verification code is refused",
+   "action": "type",
+   "desc": {
+    "kind": "text",
+    "tag": "input",
+    "inputType": "text",
+    "name": "Verification code",
+    "fieldName": "v"
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "typing into a field whose name attribute is otp is refused",
+   "action": "type",
+   "desc": {
+    "kind": "text",
+    "tag": "input",
+    "inputType": "text",
+    "name": "Enter it",
+    "fieldName": "otp"
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "typing into a field the page flagged sensitive is refused",
+   "action": "type",
+   "desc": {
+    "kind": "text",
+    "tag": "input",
+    "inputType": "text",
+    "name": "Anything",
+    "fieldName": "q",
+    "sensitive": true
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "typing into a button is refused",
+   "action": "type",
+   "desc": {
+    "kind": "button",
+    "tag": "button",
+    "name": "Go",
+    "text": "Go"
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "typing into a link is refused",
+   "action": "type",
+   "desc": {
+    "kind": "link",
+    "tag": "a",
+    "name": "Go",
+    "text": "Go",
+    "href": "https://example.com/go"
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "typing into a postcode field is allowed",
+   "action": "type",
+   "desc": {
+    "kind": "text",
+    "tag": "input",
+    "inputType": "text",
+    "name": "Postcode",
+    "fieldName": "postcode"
+   },
+   "tab": "https://example.com",
+   "cls": "quiet",
+   "code": "browser_act_quiet",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "PageUp is free",
+   "action": "key",
+   "desc": {
+    "key": "PageUp",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "free",
+   "code": "browser_act_free",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "PageDown is free",
+   "action": "key",
+   "desc": {
+    "key": "PageDown",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "free",
+   "code": "browser_act_free",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "Home is free",
+   "action": "key",
+   "desc": {
+    "key": "Home",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "free",
+   "code": "browser_act_free",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "End is free",
+   "action": "key",
+   "desc": {
+    "key": "End",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "free",
+   "code": "browser_act_free",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "ArrowUp is quiet",
+   "action": "key",
+   "desc": {
+    "key": "ArrowUp",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "quiet",
+   "code": "browser_act_quiet",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "ArrowDown is quiet",
+   "action": "key",
+   "desc": {
+    "key": "ArrowDown",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "quiet",
+   "code": "browser_act_quiet",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "ArrowLeft is quiet",
+   "action": "key",
+   "desc": {
+    "key": "ArrowLeft",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "quiet",
+   "code": "browser_act_quiet",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "ArrowRight is quiet",
+   "action": "key",
+   "desc": {
+    "key": "ArrowRight",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "quiet",
+   "code": "browser_act_quiet",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "Tab is quiet",
+   "action": "key",
+   "desc": {
+    "key": "Tab",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "quiet",
+   "code": "browser_act_quiet",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "Escape is quiet",
+   "action": "key",
+   "desc": {
+    "key": "Escape",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "quiet",
+   "code": "browser_act_quiet",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "Enter on the page is asked",
+   "action": "key",
+   "desc": {
+    "key": "Enter",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_asked",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "Enter in a field is asked",
+   "action": "key",
+   "desc": {
+    "key": "Enter",
+    "focus": {
+     "kind": "text",
+     "tag": "input",
+     "inputType": "text",
+     "name": "Search",
+     "fieldName": "q"
+    }
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_asked",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "Backspace is asked",
+   "action": "key",
+   "desc": {
+    "key": "Backspace",
+    "focus": {
+     "kind": "text",
+     "tag": "input",
+     "inputType": "text",
+     "name": "Search",
+     "fieldName": "q"
+    }
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_asked",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "Delete is asked",
+   "action": "key",
+   "desc": {
+    "key": "Delete",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "asked",
+   "code": "browser_act_asked",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "any key in a password field is refused",
+   "action": "key",
+   "desc": {
+    "key": "ArrowLeft",
+    "focus": {
+     "kind": "text",
+     "tag": "input",
+     "inputType": "password",
+     "name": "Password",
+     "fieldName": "q"
+    }
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "Enter in a card number field is refused",
+   "action": "key",
+   "desc": {
+    "key": "Enter",
+    "focus": {
+     "kind": "text",
+     "tag": "input",
+     "inputType": "text",
+     "name": "Card number",
+     "fieldName": "cc"
+    }
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "the key 'a' is refused (no letters, no shortcuts)",
+   "action": "key",
+   "desc": {
+    "key": "a",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "the key 'Space' is refused (no letters, no shortcuts)",
+   "action": "key",
+   "desc": {
+    "key": "Space",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "the key 'Control+a' is refused (no letters, no shortcuts)",
+   "action": "key",
+   "desc": {
+    "key": "Control+a",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "the key 'Meta+w' is refused (no letters, no shortcuts)",
+   "action": "key",
+   "desc": {
+    "key": "Meta+w",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "the key 'F5' is refused (no letters, no shortcuts)",
+   "action": "key",
+   "desc": {
+    "key": "F5",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "the key 'Shift' is refused (no letters, no shortcuts)",
+   "action": "key",
+   "desc": {
+    "key": "Shift",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "the key 'Cmd' is refused (no letters, no shortcuts)",
+   "action": "key",
+   "desc": {
+    "key": "Cmd",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "the key 'Alt' is refused (no letters, no shortcuts)",
+   "action": "key",
+   "desc": {
+    "key": "Alt",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "the key '' is refused (no letters, no shortcuts)",
+   "action": "key",
+   "desc": {
+    "key": "",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "the key 'Enter ' is refused (no letters, no shortcuts)",
+   "action": "key",
+   "desc": {
+    "key": "Enter ",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  },
+  {
+   "name": "the key 'enter' is refused (no letters, no shortcuts)",
+   "action": "key",
+   "desc": {
+    "key": "enter",
+    "focus": null
+   },
+   "tab": "https://example.com",
+   "cls": "refused",
+   "code": "browser_act_refused",
+   "leaves": "",
+   "download": false
+  }
+ ]
+}

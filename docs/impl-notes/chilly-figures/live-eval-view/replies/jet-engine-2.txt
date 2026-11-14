@@ -1,0 +1,36 @@
+I'll show you the main components inside a jet engine with a 3D cutaway view.
+
+A jet engine works by compressing air, mixing it with fuel and igniting it, then using the expanding gases to drive turbines and produce thrust. The main components from front to back are:
+
+The **fan** at the front draws in air. Behind it, **compressor blades** squeeze the air to high pressure. In the **combustion chamber**, fuel is sprayed and ignited, creating extremely hot gases. These gases spin the **turbine blades**, which power the compressor and fan via a central shaft. Finally, the hot exhaust exits through the **nozzle** at the back, producing thrust.
+
+```figure
+{
+  "title": "Jet Engine (Turbofan) Cutaway",
+  "parts": [
+    {"name": "outer casing", "kind": "cyl", "r": 1.8, "h": 9, "at": [0, 0, 0], "axis": "z", "mat": "aluminium"},
+    {"name": "inner casing", "kind": "cyl", "r": 0.9, "h": 6.5, "at": [0, 0, 1.5], "axis": "z", "mat": "steel"},
+    {"name": "fan hub", "kind": "cone", "r": 0.5, "r2": 0.6, "h": 1.2, "at": [0, 0, -0.6], "axis": "z", "mat": "iron"},
+    {"name": "fan blades", "kind": "box", "size": [0.15, 1.2, 0.8], "at": [0, 1.25, 0], "mat": "steel", "around": {"count": 12, "axis": "z"}},
+    {"name": "compressor", "kind": "cone", "r": 0.75, "r2": 0.55, "h": 3, "at": [0, 0, 1], "axis": "z", "mat": "steel"},
+    {"name": "compressor blades", "kind": "box", "size": [0.08, 0.4, 0.3], "at": [0, 0.6, 2.5], "mat": "chrome", "around": {"count": 16, "axis": "z"}},
+    {"name": "combustion chamber", "kind": "cyl", "r": 0.7, "h": 2, "at": [0, 0, 4], "axis": "z", "mat": "brass"},
+    {"name": "flame", "kind": "sphere", "r": 0.5, "at": [0, 0, 5], "mat": "glow:orange"},
+    {"name": "turbine blades", "kind": "box", "size": [0.1, 0.5, 0.25], "at": [0, 0.65, 6.5], "mat": "ceramic", "around": {"count": 14, "axis": "z"}},
+    {"name": "turbine disc", "kind": "cyl", "r": 0.55, "h": 0.3, "at": [0, 0, 6.5], "axis": "z", "mat": "ceramic"},
+    {"name": "central shaft", "kind": "cyl", "r": 0.15, "h": 8, "at": [0, 0, 0.5], "axis": "z", "mat": "chrome"},
+    {"name": "exhaust nozzle", "kind": "cone", "r": 0.85, "r2": 0.7, "h": 1.5, "at": [0, 0, 7.5], "axis": "z", "mat": "steel"},
+    {"name": "intake cone", "kind": "cone", "r": 0.3, "r2": 0.5, "h": 1, "at": [0, 0, -1], "axis": "z", "mat": "paint:yellow"}
+  ],
+  "labels": [
+    {"part": "fan blades", "text": "Fan"},
+    {"part": "compressor", "text": "Compressor"},
+    {"part": "combustion chamber", "text": "Combustion"},
+    {"part": "turbine blades", "text": "Turbine"},
+    {"part": "central shaft", "text": "Shaft"},
+    {"part": "exhaust nozzle", "text": "Nozzle"}
+  ],
+  "cut": {"parts": ["outer casing", "inner casing"]},
+  "view": {"turn": 60, "tilt": 15}
+}
+```

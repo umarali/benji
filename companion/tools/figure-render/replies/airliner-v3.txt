@@ -1,0 +1,31 @@
+Wings are shaped so air moves faster over the top, which pulls the plane up, and the engines push it forward.
+```figure
+{"title":"An airliner","parts":[
+{"name":"fuselage","kind":"lathe","axis":"-z","mat":"paint:white","profile":[[0,-4.62],[0.2,-4.56],[0.4,-4.35],[0.54,-3.95],[0.62,-3.4],[0.64,-2.6],[0.64,1.9],[0.58,2.9],[0.44,3.7],[0.26,4.3],[0.1,4.58],[0,4.62]]},
+{"name":"windshield","kind":"box","size":[0.26,0.12,0.3],"at":[0.15,0.43,3.93],"rot":[28,-10,0],"mirror":"x","mat":"glass"},
+{"name":"cabin windows","kind":"sphere","r":0.06,"at":[0.62,0.24,2.6],"copies":{"count":18,"step":[0,0,-0.3]},"mirror":"x","mat":"black"},
+{"name":"front door","kind":"box","size":[0.04,0.6,0.32],"at":[0.63,0,3.1],"mirror":"x","mat":"paint:grey"},
+{"name":"rear door","kind":"box","size":[0.04,0.6,0.32],"at":[0.63,0,-2.9],"mirror":"x","mat":"paint:grey"},
+{"name":"belly fairing","kind":"sphere","r":0.5,"scale":[1,0.5,2.4],"at":[0,-0.5,0.3],"mat":"paint:white"},
+{"name":"wing","kind":"extrude","path":"M0.5 0.9 L4.6 -1 L4.6 -1.6 L0.5 -1 Z","depth":0.12,"at":[0,-0.3,0],"rot":[90,0,0],"mirror":"x","mat":"aluminium"},
+{"name":"flap","kind":"extrude","path":"M0.9 -1.06 L3 -1.4 L3 -1.2 L0.9 -0.86 Z","depth":0.14,"at":[0,-0.3,0],"rot":[90,0,0],"mirror":"x","mat":"paint:grey"},
+{"name":"aileron","kind":"extrude","path":"M3.2 -1.43 L4.55 -1.6 L4.55 -1.4 L3.2 -1.23 Z","depth":0.14,"at":[0,-0.3,0],"rot":[90,0,0],"mirror":"x","mat":"paint:grey"},
+{"name":"winglet","kind":"extrude","path":"M0 0 L0.55 0 L0.75 0.7 L0.4 0.7 Z","depth":0.08,"at":[4.6,-0.3,-1],"rot":[0,90,0],"mirror":"x","mat":"paint:blue"},
+{"name":"engine","kind":"lathe","axis":"-z","at":[2.2,-0.72,0.9],"mirror":"x","mat":"steel","profile":[[0.3,-0.6],[0.35,-0.52],[0.35,-0.1],[0.31,0.5],[0.18,0.92],[0,0.95]]},
+{"name":"intake lip","kind":"torus","r":0.32,"tube":0.04,"axis":"z","at":[2.2,-0.72,1.5],"mirror":"x","mat":"chrome"},
+{"name":"fan","kind":"cyl","r":0.28,"h":0.03,"axis":"z","at":[2.2,-0.72,1.47],"mirror":"x","mat":"black"},
+{"name":"exhaust cone","kind":"cone","r":0.17,"r2":0,"axis":"-z","h":0.4,"at":[2.2,-0.72,-0.1],"mirror":"x","mat":"iron"},
+{"name":"pylon","kind":"box","size":[0.1,0.2,1.2],"at":[2.2,-0.34,0.4],"mirror":"x","mat":"aluminium"},
+{"name":"tail fin","kind":"extrude","path":"M0 0 L1.5 0 L2.1 1.6 L1.45 1.6 Z","depth":0.12,"at":[0,0.45,-2.5],"rot":[0,90,0],"mat":"paint:blue"},
+{"name":"rudder","kind":"extrude","path":"M1.1 0 L1.5 0 L2.1 1.6 L1.82 1.6 Z","depth":0.14,"at":[0,0.45,-2.5],"rot":[0,90,0],"mat":"paint:white"},
+{"name":"tailplane","kind":"extrude","path":"M0.3 0.5 L2.2 -0.5 L2.2 -0.95 L0.3 -0.3 Z","depth":0.1,"at":[0,0.2,-3.8],"rot":[90,0,0],"mirror":"x","mat":"aluminium"},
+{"name":"elevator","kind":"extrude","path":"M0.4 -0.38 L2.2 -0.7 L2.2 -0.95 L0.4 -0.33 Z","depth":0.12,"at":[0,0.2,-3.8],"rot":[90,0,0],"mirror":"x","mat":"paint:grey"},
+{"name":"nose gear","kind":"cyl","r":0.04,"from":[0,-0.45,3],"to":[0,-1.15,3],"mat":"steel"},
+{"name":"nose wheels","kind":"cyl","r":0.15,"h":0.2,"axis":"x","at":[0,-1.15,3],"mat":"rubber"},
+{"name":"main gear","kind":"cyl","r":0.06,"from":[0.9,-0.45,-0.5],"to":[0.9,-1.12,-0.5],"mirror":"x","mat":"steel"},
+{"name":"main wheels","kind":"cyl","r":0.22,"h":0.22,"axis":"x","at":[0.9,-1.12,-0.3],"copies":{"count":2,"step":[0,0,-0.45]},"mirror":"x","mat":"rubber"},
+{"name":"antenna","kind":"cyl","r":0.015,"from":[0,0.64,1.3],"to":[0,0.9,1.15],"mat":"black"},
+{"name":"beacon","kind":"sphere","r":0.07,"at":[0,0.66,-0.4],"mat":"glow:red"}],
+"labels":[{"part":"windshield","text":"Cockpit"},{"part":"wing","text":"Wing"},{"part":"aileron","text":"Aileron"},{"part":"engine","text":"Engine"},{"part":"tail fin","text":"Tail fin"},{"part":"main wheels","text":"Landing gear"}],
+"view":{"turn":40,"tilt":16}}
+```

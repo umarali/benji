@@ -1,0 +1,37 @@
+I'll show you the internal structure of a jet engine with its key components.
+
+A jet engine works by compressing air, mixing it with fuel and igniting it, then expelling the hot exhaust to create thrust. The main sections are:
+
+The **fan** at the front pulls in massive amounts of air. Behind it, the **compressor** stages squeeze the air to high pressure. In the **combustion chamber**, fuel is sprayed and ignited, creating extremely hot expanding gases. These gases spin the **turbine**, which powers the compressor and fan through a central shaft. Finally, the hot exhaust blasts out the **nozzle** at the rear, producing thrust.
+
+```figure
+{
+  "title": "Jet Engine Cutaway",
+  "parts": [
+    {"name": "intake ring", "kind": "torus", "r": 2.2, "tube": 0.15, "at": [-5, 0, 0], "mat": "aluminium"},
+    {"name": "fan blades", "kind": "lathe", "profile": [[0, -0.3], [1.8, -0.15], [1.9, 0], [1.8, 0.15], [0, 0.3]], "at": [-4.5, 0, 0], "copies": {"count": 16, "step": [0, 0, 0]}, "around": {"count": 16, "axis": "x"}, "mat": "steel"},
+    {"name": "fan hub", "kind": "cone", "r": 0.5, "r2": 0.6, "from": [-5, 0, 0], "to": [-3.5, 0, 0], "mat": "chrome"},
+    {"name": "outer casing", "kind": "cyl", "r": 2.3, "h": 11, "at": [0.5, 0, 0], "axis": "x", "mat": "steel"},
+    {"name": "compressor front", "kind": "cone", "r": 0.6, "r2": 1.2, "from": [-3.5, 0, 0], "to": [-1, 0, 0], "mat": "aluminium"},
+    {"name": "compressor rear", "kind": "cone", "r": 1.2, "r2": 1.0, "from": [-1, 0, 0], "to": [1, 0, 0], "mat": "aluminium"},
+    {"name": "combustion chamber", "kind": "cyl", "r": 1.3, "h": 3, "at": [2.5, 0, 0], "axis": "x", "mat": "iron"},
+    {"name": "fuel nozzles", "kind": "torus", "r": 1.1, "tube": 0.08, "at": [1, 0, 0], "rot": [0, 0, 90], "mat": "brass"},
+    {"name": "flame", "kind": "cone", "r": 0.9, "r2": 0.7, "from": [1.5, 0, 0], "to": [3.5, 0, 0], "mat": "glow:orange"},
+    {"name": "turbine", "kind": "lathe", "profile": [[0.5, -0.8], [1.1, -0.6], [1.2, 0], [1.1, 0.6], [0.5, 0.8]], "at": [4, 0, 0], "copies": {"count": 12, "step": [0, 0, 0]}, "around": {"count": 12, "axis": "x"}, "mat": "steel"},
+    {"name": "turbine disk", "kind": "cyl", "r": 0.5, "h": 1.6, "at": [4, 0, 0], "axis": "x", "mat": "iron"},
+    {"name": "shaft", "kind": "cyl", "r": 0.35, "from": [-4, 0, 0], "to": [5, 0, 0], "mat": "steel"},
+    {"name": "exhaust cone", "kind": "cone", "r": 1.5, "r2": 1.8, "from": [5, 0, 0], "to": [6, 0, 0], "mat": "ceramic"},
+    {"name": "nozzle", "kind": "cyl", "r": 1.85, "h": 1.5, "at": [6.75, 0, 0], "axis": "x", "mat": "steel"}
+  ],
+  "cut": {"parts": ["outer casing"]},
+  "labels": [
+    {"part": "fan blades", "text": "Fan"},
+    {"part": "compressor front", "text": "Compressor"},
+    {"part": "combustion chamber", "text": "Combustion"},
+    {"part": "turbine", "text": "Turbine"},
+    {"part": "shaft", "text": "Shaft"},
+    {"part": "nozzle", "text": "Exhaust"}
+  ],
+  "view": {"turn": 60, "tilt": 10}
+}
+```

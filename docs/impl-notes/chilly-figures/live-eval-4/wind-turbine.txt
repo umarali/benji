@@ -1,0 +1,22 @@
+A wind turbine is a tall structure with a tower supporting a nacelle (housing) at the top, with three long blades attached to a rotor hub. The blades are angled and sweep through the air to capture wind energy. Here's one to explore:
+
+```figure
+{
+  "title": "A wind turbine",
+  "parts": [
+    {"name": "base", "kind": "cyl", "r": 1.2, "h": 0.3, "at": [0, 0.15, 0], "mat": "iron"},
+    {"name": "tower", "kind": "cyl", "r": 0.4, "r2": 0.3, "h": 10, "at": [0, 5, 0], "mat": "steel"},
+    {"name": "nacelle", "kind": "box", "size": [2, 1.2, 1], "at": [0, 10.6, 0], "mat": "paint:white"},
+    {"name": "hub", "kind": "cyl", "r": 0.5, "h": 0.6, "at": [1.3, 10.6, 0], "axis": "x", "mat": "steel"},
+    {"name": "blade 1", "kind": "extrude", "path": "M0 0 L0.3 4.5 L0 5 L-0.3 4.5 Z", "depth": 0.15, "at": [1.6, 10.6, 0], "rot": [0, 0, 0], "mat": "paint:white"},
+    {"name": "blade 2", "kind": "extrude", "path": "M0 0 L0.3 4.5 L0 5 L-0.3 4.5 Z", "depth": 0.15, "at": [1.6, 10.6, 0], "rot": [0, 0, 120], "mat": "paint:white"},
+    {"name": "blade 3", "kind": "extrude", "path": "M0 0 L0.3 4.5 L0 5 L-0.3 4.5 Z", "depth": 0.15, "at": [1.6, 10.6, 0], "rot": [0, 0, 240], "mat": "paint:white"}
+  ],
+  "labels": [
+    {"part": "tower", "text": "Tower"},
+    {"part": "nacelle", "text": "Nacelle"},
+    {"part": "blade 1", "text": "Blade"}
+  ],
+  "view": {"turn": 35, "tilt": 20}
+}
+```

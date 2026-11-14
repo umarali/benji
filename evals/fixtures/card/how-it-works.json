@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "id": "card/how-it-works",
+  "kind": "card",
+  "case": "how it works",
+  "request": {
+    "text": "How does a heat pump work?",
+    "screen": "desktop",
+    "spoken": true
+  },
+  "expect": {
+    "card": true,
+    "layout": "flow"
+  },
+  "reply": {
+    "model": "claude-haiku-5-5",
+    "effort": "low",
+    "recorded": "2026-11-01",
+    "source": "D-125 card eval, reply how-it-works",
+    "raw": "A heat pump moves heat from one place to another instead of making it, using a refrigerant that cycles between evaporating and condensing. That's why it can deliver several times more heat than the electricity it uses.\n\n```card\n{\"title\":\"How a heat pump works\",\"heading\":\"Moving heat, not making it\",\"layout\":\"flow\",\n\"items\":[{\"label\":\"Evaporator\",\"note\":\"outside, absorbs heat\",\"icon\":\"thermometer.snowflake\"},\n{\"label\":\"Compressor\",\"note\":\"squeezes gas, so it heats up\",\"icon\":\"gauge.with.dots.needle.67percent\"},\n{\"label\":\"Condenser\",\"note\":\"indoors, gives up heat\",\"icon\":\"flame\"},\n{\"label\":\"Expansion valve\",\"note\":\"drops pressure, cools again\",\"icon\":\"arrow.triangle.2.circlepath\"}],\n\"takeaway\":\"Run the cycle in reverse and it cools the house instead.\",\n\"chips\":[\"Why does it work in cold weather?\",\"What is refrigerant?\",\"Heat pump vs gas boiler?\"]}\n```",
+    "events": null,
+    "usage": null
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

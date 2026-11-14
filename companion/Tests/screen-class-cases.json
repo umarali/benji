@@ -1,0 +1,2140 @@
+{
+ "_doc": "Shared screen-step classes (D-126): benji/screen_class.py and BenjiCore/ScreenStepClass.swift run every case. `plan` is the engine's class (step, confidence, ask_every_step, asked_for_text); `final` is the app's at the point (element: what Accessibility found, null when nothing; same_app). `unasked_so_far` is how many free or quiet steps the turn has already taken (the sixth is asked). An element may say `in_web_area`; without it the element may be in a web page. Missing facts: ask_every_step false, asked_for_text false, element null, same_app true. unasked_so_far 0.",
+ "commit_words": [
+  "accept",
+  "agree",
+  "allow",
+  "buy",
+  "check out",
+  "checkout",
+  "close",
+  "confirm",
+  "delete",
+  "discard",
+  "erase",
+  "install",
+  "log out",
+  "order now",
+  "pay",
+  "place order",
+  "post",
+  "publish",
+  "purchase",
+  "quit",
+  "remove",
+  "send",
+  "sign out",
+  "submit",
+  "transfer",
+  "trash",
+  "unsubscribe",
+  "update",
+  "upgrade"
+ ],
+ "cases": [
+  {
+   "name": "scroll, high confidence: free",
+   "step": {
+    "kind": "scroll",
+    "x": 600,
+    "y": 500,
+    "direction": "down",
+    "amount": 5,
+    "label": "the page",
+    "intent": "to read the rest",
+    "confidence": "high"
+   },
+   "plan": "free",
+   "final": "free"
+  },
+  {
+   "name": "scroll with no element under the point is still free",
+   "step": {
+    "kind": "scroll",
+    "x": 600,
+    "y": 500,
+    "direction": "down",
+    "amount": 5,
+    "label": "the page",
+    "intent": "to read the rest",
+    "confidence": "high"
+   },
+   "element": null,
+   "plan": "free",
+   "final": "free"
+  },
+  {
+   "name": "plain down: free",
+   "step": {
+    "kind": "press_key",
+    "key": "down",
+    "modifiers": [],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "free",
+   "final": "free"
+  },
+  {
+   "name": "plain up: free",
+   "step": {
+    "kind": "press_key",
+    "key": "up",
+    "modifiers": [],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "free",
+   "final": "free"
+  },
+  {
+   "name": "plain page_down: free",
+   "step": {
+    "kind": "press_key",
+    "key": "page_down",
+    "modifiers": [],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "free",
+   "final": "free"
+  },
+  {
+   "name": "plain page_up: free",
+   "step": {
+    "kind": "press_key",
+    "key": "page_up",
+    "modifiers": [],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "free",
+   "final": "free"
+  },
+  {
+   "name": "plain home: free",
+   "step": {
+    "kind": "press_key",
+    "key": "home",
+    "modifiers": [],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "free",
+   "final": "free"
+  },
+  {
+   "name": "plain end: free",
+   "step": {
+    "kind": "press_key",
+    "key": "end",
+    "modifiers": [],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "free",
+   "final": "free"
+  },
+  {
+   "name": "plain tab: free",
+   "step": {
+    "kind": "press_key",
+    "key": "tab",
+    "modifiers": [],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "free",
+   "final": "free"
+  },
+  {
+   "name": "plain left: free",
+   "step": {
+    "kind": "press_key",
+    "key": "left",
+    "modifiers": [],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "free",
+   "final": "free"
+  },
+  {
+   "name": "plain right: free",
+   "step": {
+    "kind": "press_key",
+    "key": "right",
+    "modifiers": [],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "free",
+   "final": "free"
+  },
+  {
+   "name": "scroll, medium confidence: asked",
+   "step": {
+    "kind": "scroll",
+    "x": 600,
+    "y": 500,
+    "direction": "down",
+    "amount": 5,
+    "label": "the page",
+    "intent": "to read the rest",
+    "confidence": "medium"
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "scroll, low confidence: asked",
+   "step": {
+    "kind": "scroll",
+    "x": 600,
+    "y": 500,
+    "direction": "down",
+    "amount": 5,
+    "label": "the page",
+    "intent": "to read the rest",
+    "confidence": "low"
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "scroll, no confidence stated: asked",
+   "step": {
+    "kind": "scroll",
+    "x": 600,
+    "y": 500,
+    "direction": "down",
+    "amount": 5,
+    "label": "the page",
+    "intent": "to read the rest"
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "click on a matching tab, medium confidence: asked",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Settings tab",
+    "intent": "what the user asked",
+    "confidence": "medium"
+   },
+   "element": {
+    "role": "AXRadioButton",
+    "title": "Settings",
+    "description": "",
+    "in_sheet": false,
+    "subrole": "AXTabButton"
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "click, low confidence: asked",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Settings",
+    "intent": "what the user asked",
+    "confidence": "low"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Settings",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "ask every step: a scroll is asked",
+   "step": {
+    "kind": "scroll",
+    "x": 600,
+    "y": 500,
+    "direction": "down",
+    "amount": 5,
+    "label": "the page",
+    "intent": "to read the rest",
+    "confidence": "high"
+   },
+   "ask_every_step": true,
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "ask every step: a plain arrow is asked",
+   "step": {
+    "kind": "press_key",
+    "key": "down",
+    "modifiers": [],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "ask_every_step": true,
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "ask every step: a matching link is asked",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Pricing link",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "ask_every_step": true,
+   "element": {
+    "role": "AXLink",
+    "title": "Pricing",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "click a tab whose title matches: quiet",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Settings tab",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXRadioButton",
+    "title": "Settings",
+    "description": "",
+    "in_sheet": false,
+    "subrole": "AXTabButton"
+   },
+   "plan": "quiet",
+   "final": "quiet"
+  },
+  {
+   "name": "click a web tab: quiet",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Reviews tab",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXTab",
+    "title": "Reviews",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "quiet",
+   "final": "quiet"
+  },
+  {
+   "name": "click a link, case folded: quiet",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "pricing link",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXLink",
+    "title": "",
+    "description": "Pricing",
+    "in_sheet": false
+   },
+   "plan": "quiet",
+   "final": "quiet"
+  },
+  {
+   "name": "click a disclosure triangle: quiet",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Advanced disclosure",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXDisclosureTriangle",
+    "title": "Advanced",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "quiet",
+   "final": "quiet"
+  },
+  {
+   "name": "click a menu item: quiet",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "View menu item",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXMenuBarItem",
+    "title": "View",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "quiet",
+   "final": "quiet"
+  },
+  {
+   "name": "click a checkbox: quiet",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Show hidden files checkbox",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXCheckBox",
+    "title": "Show hidden files",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "quiet",
+   "final": "quiet"
+  },
+  {
+   "name": "click a radio button: quiet",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Dark appearance",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXRadioButton",
+    "title": "Dark",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "quiet",
+   "final": "quiet"
+  },
+  {
+   "name": "click a pop-up: quiet",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Sort by pop-up",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXPopUpButton",
+    "title": "",
+    "description": "Sort by",
+    "in_sheet": false
+   },
+   "plan": "quiet",
+   "final": "quiet"
+  },
+  {
+   "name": "click a plain button outside a web page: asked (buttons always ask)",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Settings button",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Settings",
+    "description": "",
+    "in_sheet": false,
+    "in_web_area": false
+   },
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "click Next page: quiet",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Next page",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXLink",
+    "title": "Next",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "quiet",
+   "final": "quiet"
+  },
+  {
+   "name": "click with nothing under the point: asked",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Settings",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": null,
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "click where the title doesn't match the label: asked",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Settings button",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Profile",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "click on an ordinal label only: asked",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "second link",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXLink",
+    "title": "Pricing",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "click inside a sheet: asked",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Options button",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Options",
+    "description": "",
+    "in_sheet": true
+   },
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "click OK in a dialog: asked",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "OK button",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "OK",
+    "description": "",
+    "in_sheet": true
+   },
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "click Continue in a dialog: asked",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Continue",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Continue",
+    "description": "",
+    "in_sheet": true
+   },
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "click a text field whose name matches (to type next): quiet",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Search field",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXTextField",
+    "title": "",
+    "description": "Search",
+    "in_sheet": false
+   },
+   "plan": "quiet",
+   "final": "quiet"
+  },
+  {
+   "name": "click a static text: asked (not a control)",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Welcome heading",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXStaticText",
+    "title": "Welcome",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "click a window's zoom button: asked",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "window button Zoom",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Zoom",
+    "description": "",
+    "in_sheet": false,
+    "subrole": "AXZoomButton"
+   },
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "click in another app than the screenshot's: asked",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Settings",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Settings",
+    "description": "",
+    "in_sheet": false
+   },
+   "same_app": false,
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "scroll in another app than the screenshot's: asked",
+   "step": {
+    "kind": "scroll",
+    "x": 600,
+    "y": 500,
+    "direction": "down",
+    "amount": 5,
+    "label": "the page",
+    "intent": "to read the rest",
+    "confidence": "high"
+   },
+   "same_app": false,
+   "plan": "free",
+   "final": "asked"
+  },
+  {
+   "name": "arrow key in another app: asked",
+   "step": {
+    "kind": "press_key",
+    "key": "down",
+    "modifiers": [],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "same_app": false,
+   "plan": "free",
+   "final": "asked"
+  },
+  {
+   "name": "the element's title commits though the label doesn't: asked",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "the arrow icon",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "",
+    "description": "Send",
+    "in_sheet": false
+   },
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "the element's title says Delete: asked",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Delete draft",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Delete",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "right-click on a matching button: asked (buttons always ask)",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "right",
+    "count": 1,
+    "label": "Settings button",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Settings",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: send",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Send button",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Send button",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: submit",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Submit",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Submit",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: post",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Post reply",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Post reply",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: publish",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Publish",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Publish",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: buy",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Buy now",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Buy now",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: purchase",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Purchase",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Purchase",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: pay",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Pay with card",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Pay with card",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: checkout",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Checkout",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Checkout",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: check out",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Check out",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Check out",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: place order",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Place order",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Place order",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: order now",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Order now",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Order now",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: confirm",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Confirm",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Confirm",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: delete",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Delete",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Delete",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: remove",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Remove from list",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Remove from list",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: trash",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Move to Trash",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Move to Trash",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: discard",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Discard draft",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Discard draft",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: erase",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Erase disk",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Erase disk",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: sign out",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Sign out",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Sign out",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: log out",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Log out",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Log out",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: close",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Close tab",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Close tab",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: quit",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Quit",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Quit",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: accept",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Accept all cookies",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Accept all cookies",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: agree",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "I agree",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "I agree",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: allow",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Allow",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Allow",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: install",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Install update",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Install update",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: update",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Update now",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Update now",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: upgrade",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Upgrade plan",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Upgrade plan",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: unsubscribe",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Unsubscribe",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Unsubscribe",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "commit word on the label: transfer",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Transfer money",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Transfer money",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "a commit word's ending counts: Sending",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Sending options",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "a word that only starts like one doesn't: Closet",
+   "step": {
+    "kind": "click",
+    "x": 412,
+    "y": 300,
+    "button": "left",
+    "count": 1,
+    "label": "Closet tab",
+    "intent": "what the user asked",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXTab",
+    "title": "Closet",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "quiet",
+   "final": "quiet"
+  },
+  {
+   "name": "Return: asked",
+   "step": {
+    "kind": "press_key",
+    "key": "return",
+    "modifiers": [],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "Enter: asked",
+   "step": {
+    "kind": "press_key",
+    "key": "enter",
+    "modifiers": [],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "Escape is never free: asked",
+   "step": {
+    "kind": "press_key",
+    "key": "escape",
+    "modifiers": [],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "Delete: asked",
+   "step": {
+    "kind": "press_key",
+    "key": "delete",
+    "modifiers": [],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "cmd-W: asked",
+   "step": {
+    "kind": "press_key",
+    "key": "w",
+    "modifiers": [
+     "cmd"
+    ],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "cmd-Q: asked",
+   "step": {
+    "kind": "press_key",
+    "key": "q",
+    "modifiers": [
+     "cmd"
+    ],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "cmd-V: asked",
+   "step": {
+    "kind": "press_key",
+    "key": "v",
+    "modifiers": [
+     "cmd"
+    ],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "control-C: asked",
+   "step": {
+    "kind": "press_key",
+    "key": "c",
+    "modifiers": [
+     "control"
+    ],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "cmd-L: quiet",
+   "step": {
+    "kind": "press_key",
+    "key": "l",
+    "modifiers": [
+     "cmd"
+    ],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "quiet",
+   "final": "quiet"
+  },
+  {
+   "name": "cmd-F: quiet",
+   "step": {
+    "kind": "press_key",
+    "key": "f",
+    "modifiers": [
+     "cmd"
+    ],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "quiet",
+   "final": "quiet"
+  },
+  {
+   "name": "a letter: quiet",
+   "step": {
+    "kind": "press_key",
+    "key": "j",
+    "modifiers": [],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "quiet",
+   "final": "quiet"
+  },
+  {
+   "name": "a digit: quiet",
+   "step": {
+    "kind": "press_key",
+    "key": "3",
+    "modifiers": [],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "quiet",
+   "final": "quiet"
+  },
+  {
+   "name": "shift-Tab: quiet, not free",
+   "step": {
+    "kind": "press_key",
+    "key": "tab",
+    "modifiers": [
+     "shift"
+    ],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "quiet",
+   "final": "quiet"
+  },
+  {
+   "name": "space: asked (it presses the focused button)",
+   "step": {
+    "kind": "press_key",
+    "key": "space",
+    "modifiers": [],
+    "intent": "to move on",
+    "confidence": "high"
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "typing the user asked for into a text field: quiet",
+   "step": {
+    "kind": "type_text",
+    "text": "flights to Lahore",
+    "intent": "to fill in the search",
+    "confidence": "high"
+   },
+   "asked_for_text": true,
+   "element": {
+    "role": "AXTextField",
+    "title": "",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "quiet",
+   "final": "quiet"
+  },
+  {
+   "name": "typing into a search field: quiet",
+   "step": {
+    "kind": "type_text",
+    "text": "weather",
+    "intent": "to fill in the search",
+    "confidence": "high"
+   },
+   "asked_for_text": true,
+   "element": {
+    "role": "AXTextField",
+    "title": "",
+    "description": "",
+    "in_sheet": false,
+    "subrole": "AXSearchField"
+   },
+   "plan": "quiet",
+   "final": "quiet"
+  },
+  {
+   "name": "typing the user didn't ask for: asked",
+   "step": {
+    "kind": "type_text",
+    "text": "hello",
+    "intent": "to fill in the search",
+    "confidence": "high"
+   },
+   "asked_for_text": false,
+   "element": {
+    "role": "AXTextField",
+    "title": "",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "typing with no text field focused: asked",
+   "step": {
+    "kind": "type_text",
+    "text": "weather",
+    "intent": "to fill in the search",
+    "confidence": "high"
+   },
+   "asked_for_text": true,
+   "element": {
+    "role": "AXButton",
+    "title": "Go",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "typing with nothing focused: asked",
+   "step": {
+    "kind": "type_text",
+    "text": "weather",
+    "intent": "to fill in the search",
+    "confidence": "high"
+   },
+   "asked_for_text": true,
+   "element": null,
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "typing, medium confidence: asked",
+   "step": {
+    "kind": "type_text",
+    "text": "weather",
+    "intent": "to fill in the search",
+    "confidence": "medium"
+   },
+   "asked_for_text": true,
+   "element": {
+    "role": "AXTextField",
+    "title": "",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "typing in another app: asked",
+   "step": {
+    "kind": "type_text",
+    "text": "weather",
+    "intent": "to fill in the search",
+    "confidence": "high"
+   },
+   "asked_for_text": true,
+   "element": {
+    "role": "AXTextField",
+    "title": "",
+    "description": "",
+    "in_sheet": false
+   },
+   "same_app": false,
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "a button in a web page named like a link: asked",
+   "step": {
+    "kind": "click",
+    "x": 300,
+    "y": 200,
+    "button": "left",
+    "count": 1,
+    "label": "Read more link",
+    "intent": "x",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Read more",
+    "description": "",
+    "in_sheet": false,
+    "in_web_area": true
+   },
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "a button with no in_web_area (an older app) may be in a page: asked",
+   "step": {
+    "kind": "click",
+    "x": 300,
+    "y": 200,
+    "button": "left",
+    "count": 1,
+    "label": "Read more",
+    "intent": "x",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Read more",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "a link in a web page whose title matches: quiet",
+   "step": {
+    "kind": "click",
+    "x": 300,
+    "y": 200,
+    "button": "left",
+    "count": 1,
+    "label": "Pricing link",
+    "intent": "x",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXLink",
+    "title": "Pricing",
+    "description": "",
+    "in_sheet": false,
+    "in_web_area": true
+   },
+   "plan": "quiet",
+   "final": "quiet"
+  },
+  {
+   "name": "a switch: asked",
+   "step": {
+    "kind": "click",
+    "x": 300,
+    "y": 200,
+    "button": "left",
+    "count": 1,
+    "label": "Wi-Fi switch",
+    "intent": "x",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXSwitch",
+    "title": "Wi-Fi",
+    "description": "",
+    "in_sheet": false,
+    "in_web_area": false
+   },
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "a menu button: asked",
+   "step": {
+    "kind": "click",
+    "x": 300,
+    "y": 200,
+    "button": "left",
+    "count": 1,
+    "label": "Share menu",
+    "intent": "x",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXMenuButton",
+    "title": "Share",
+    "description": "",
+    "in_sheet": false,
+    "in_web_area": false
+   },
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "a letter while a dialog is up: asked",
+   "step": {
+    "kind": "press_key",
+    "key": "j",
+    "modifiers": [],
+    "intent": "x",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXTextField",
+    "title": "",
+    "description": "",
+    "in_sheet": true
+   },
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "plain tab while a dialog is up: asked",
+   "step": {
+    "kind": "press_key",
+    "key": "tab",
+    "modifiers": [],
+    "intent": "x",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXTextField",
+    "title": "",
+    "description": "",
+    "in_sheet": true
+   },
+   "plan": "free",
+   "final": "asked"
+  },
+  {
+   "name": "cmd-D in a save sheet: asked",
+   "step": {
+    "kind": "press_key",
+    "key": "d",
+    "modifiers": [
+     "cmd"
+    ],
+    "intent": "x",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Don't Save",
+    "description": "",
+    "in_sheet": true
+   },
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "a letter while a button has the keyboard: asked",
+   "step": {
+    "kind": "press_key",
+    "key": "j",
+    "modifiers": [],
+    "intent": "x",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Archive",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "quiet",
+   "final": "asked"
+  },
+  {
+   "name": "space on a Send button: asked",
+   "step": {
+    "kind": "press_key",
+    "key": "space",
+    "modifiers": [],
+    "intent": "x",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXButton",
+    "title": "Send",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "shift-space: asked",
+   "step": {
+    "kind": "press_key",
+    "key": "space",
+    "modifiers": [
+     "shift"
+    ],
+    "intent": "x",
+    "confidence": "high"
+   },
+   "element": null,
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "a letter in a text field, no dialog: quiet",
+   "step": {
+    "kind": "press_key",
+    "key": "j",
+    "modifiers": [],
+    "intent": "x",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXTextField",
+    "title": "",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "quiet",
+   "final": "quiet"
+  },
+  {
+   "name": "plain tab while a link has the keyboard: free",
+   "step": {
+    "kind": "press_key",
+    "key": "tab",
+    "modifiers": [],
+    "intent": "x",
+    "confidence": "high"
+   },
+   "element": {
+    "role": "AXLink",
+    "title": "Pricing",
+    "description": "",
+    "in_sheet": false
+   },
+   "plan": "free",
+   "final": "free"
+  },
+  {
+   "name": "the fifth unasked step of a turn is still free",
+   "step": {
+    "kind": "scroll",
+    "x": 600,
+    "y": 500,
+    "direction": "down",
+    "amount": 3,
+    "label": "the page",
+    "intent": "x",
+    "confidence": "high"
+   },
+   "unasked_so_far": 4,
+   "plan": "free",
+   "final": "free"
+  },
+  {
+   "name": "the sixth unasked step of a turn is asked",
+   "step": {
+    "kind": "scroll",
+    "x": 600,
+    "y": 500,
+    "direction": "down",
+    "amount": 3,
+    "label": "the page",
+    "intent": "x",
+    "confidence": "high"
+   },
+   "unasked_so_far": 5,
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "a drag is asked, however sure the model is",
+   "step": {
+    "kind": "drag",
+    "x": 100,
+    "y": 200,
+    "to_x": 900,
+    "to_y": 700,
+    "label": "report.pdf to the Trash",
+    "intent": "x",
+    "confidence": "high"
+   },
+   "plan": "asked",
+   "final": "asked"
+  },
+  {
+   "name": "a drag whose label sounds harmless is still asked",
+   "step": {
+    "kind": "drag",
+    "x": 100,
+    "y": 200,
+    "to_x": 900,
+    "to_y": 700,
+    "label": "the volume slider to half",
+    "intent": "x",
+    "confidence": "high"
+   },
+   "plan": "asked",
+   "final": "asked"
+  }
+ ],
+ "text_requests": [
+  {
+   "user": "search for flights to Lahore",
+   "typed": "flights to Lahore",
+   "asks": true
+  },
+  {
+   "user": "type hello there",
+   "typed": "hello there",
+   "asks": true
+  },
+  {
+   "user": "put my email in that box",
+   "typed": "me@example.com",
+   "asks": true
+  },
+  {
+   "user": "look up “weather Karachi”",
+   "typed": "weather Karachi",
+   "asks": true
+  },
+  {
+   "user": "fill in the form",
+   "typed": "Umar",
+   "asks": true
+  },
+  {
+   "user": "reply to Sara",
+   "typed": "Sounds good!",
+   "asks": false
+  },
+  {
+   "user": "what does this page say?",
+   "typed": "hello",
+   "asks": false
+  },
+  {
+   "user": "open settings",
+   "typed": "settings",
+   "asks": true
+  },
+  {
+   "user": "scroll down",
+   "typed": "down",
+   "asks": true
+  },
+  {
+   "user": "go to the next one",
+   "typed": "next two",
+   "asks": false
+  }
+ ]
+}

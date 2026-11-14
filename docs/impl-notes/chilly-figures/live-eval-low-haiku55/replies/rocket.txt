@@ -1,0 +1,14 @@
+A rocket stands on its launch pad, with a service tower and umbilical arm beside it.
+
+```figure
+{"title":"A rocket on its launch pad","parts":[
+{"name":"pad","kind":"box","size":[5,0.8,5],"at":[0,0.4,0],"mat":"matte"},
+{"name":"nozzle","kind":"cone","r":0.4,"r2":0.25,"from":[0,1.5,0],"to":[0,0.8,0],"mat":"iron"},
+{"name":"body","kind":"cyl","r":0.5,"from":[0,1.5,0],"to":[0,5.5,0],"mat":"paint:white"},
+{"name":"nose","kind":"cone","r":0.5,"r2":0.05,"from":[0,5.5,0],"to":[0,7,0],"mat":"paint:red"},
+{"name":"fin","kind":"box","size":[0.9,1.6,0.1],"at":[0.95,2.3,0],"mat":"paint:red","around":{"count":4,"axis":"y"}},
+{"name":"tower","kind":"box","size":[0.6,4,0.6],"at":[-1.8,2.8,0],"mat":"steel"},
+{"name":"umbilical arm","kind":"box","size":[1.0,0.12,0.12],"at":[-1.0,3.5,0],"mat":"steel"}],
+"labels":[{"part":"nose","text":"Nose cone"},{"part":"body","text":"Body"},{"part":"fin","text":"Fins"},{"part":"nozzle","text":"Engine nozzle"},{"part":"pad","text":"Launch pad"},{"part":"tower","text":"Service tower"}],
+"view":{"turn":25,"tilt":15}}
+```

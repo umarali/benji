@@ -1,0 +1,328 @@
+{
+  "v": 3,
+  "assetGroups": {
+    "Logos": {
+      "files": {
+        "benji-app-icon.svg": {
+          "blob": "c31eb6b1e1bd0892cb7239e4b0aa2cf3",
+          "name": "benji-app-icon.svg",
+          "size": 7968,
+          "type": "image/svg+xml"
+        },
+        "benji-menubar-glyph.svg": {
+          "blob": "0d5952408f1342045ce49f6c0dcfa9a6",
+          "name": "benji-menubar-glyph.svg",
+          "size": 439,
+          "type": "image/svg+xml"
+        },
+        "benji-wordmark.svg": {
+          "blob": "6d46ca856be4492dcd6c1d8dfa3ceaae",
+          "name": "benji-wordmark.svg",
+          "size": 2658,
+          "type": "image/svg+xml"
+        },
+        "benji-app-icon-dark.svg": {
+          "blob": "9c92e73896807e216cce590121f0acf4",
+          "name": "benji-app-icon-dark.svg",
+          "size": 7990,
+          "type": "image/svg+xml"
+        },
+        "benji-app-icon-tinted.svg": {
+          "blob": "60c830c560c6745b0c3c98e7dc39da01",
+          "name": "benji-app-icon-tinted.svg",
+          "size": 8001,
+          "type": "image/svg+xml"
+        },
+        "benji-app-icon-clear.svg": {
+          "blob": "d4539a370544471b25390c4ad9c9859b",
+          "name": "benji-app-icon-clear.svg",
+          "size": 7769,
+          "type": "image/svg+xml"
+        },
+        "benji-wordmark-dark.svg": {
+          "blob": "5bfc1e5057aa6fc4fc2b046b714b6d37",
+          "name": "benji-wordmark-dark.svg",
+          "size": 2696,
+          "type": "image/svg+xml"
+        },
+        "benji-wordmark-mint.svg": {
+          "blob": "0e4c657729bd84737f5e62201bfdb2d3",
+          "name": "benji-wordmark-mint.svg",
+          "size": 2688,
+          "type": "image/svg+xml"
+        },
+        "hey-benji-lockup.svg": {
+          "blob": "f681abfba3f33e4f01e894349b577fc6",
+          "name": "hey-benji-lockup.svg",
+          "size": 4326,
+          "type": "image/svg+xml"
+        },
+        "hey-benji-lockup-dark.svg": {
+          "blob": "ef4feab5d6c11a3824c29be43a79e63c",
+          "name": "hey-benji-lockup-dark.svg",
+          "size": 4289,
+          "type": "image/svg+xml"
+        },
+        "benji-menubar-glyph-working.svg": {
+          "name": "benji-menubar-glyph-working.svg",
+          "size": 284,
+          "type": "image/svg+xml"
+        }
+      },
+      "name": "Logos",
+      "order": [
+        "benji-app-icon.svg",
+        "benji-app-icon-dark.svg",
+        "benji-app-icon-tinted.svg",
+        "benji-app-icon-clear.svg",
+        "benji-wordmark.svg",
+        "benji-wordmark-dark.svg",
+        "benji-wordmark-mint.svg",
+        "hey-benji-lockup.svg",
+        "hey-benji-lockup-dark.svg",
+        "benji-menubar-glyph.svg",
+        "benji-menubar-glyph-working.svg"
+      ],
+      "tile": "l"
+    },
+    "Icon options": {
+      "name": "Icon options",
+      "tile": "m",
+      "order": [
+        "exchange-icon.svg",
+        "exchange-icon-tinted.svg",
+        "exchange-icon-clear.svg",
+        "exchange-menubar.svg",
+        "exchange-menubar-working.svg",
+        "ripple-icon.svg",
+        "ripple-icon-dark.svg",
+        "ripple-menubar.svg",
+        "notch-icon.svg",
+        "notch-icon-dark.svg",
+        "notch-menubar.svg",
+        "lettermark-icon.svg",
+        "lettermark-icon-dark.svg",
+        "lettermark-menubar.svg",
+        "pause-icon.svg",
+        "pause-icon-dark.svg",
+        "pause-menubar.svg",
+        "breeze-icon.svg",
+        "breeze-icon-dark.svg",
+        "breeze-menubar.svg",
+        "notch-pebble-icon.svg",
+        "notch-pebble-icon-dark.svg",
+        "notch-pebble-menubar.svg",
+        "pebble-v2-icon.svg",
+        "pebble-v2-icon-dark.svg",
+        "pebble-v2-menubar.svg",
+        "pebble-icon.svg",
+        "pebble-icon-dark.svg",
+        "pebble-menubar.svg"
+      ],
+      "files": {
+        "breeze-icon-dark.svg": {
+          "name": "breeze-icon-dark.svg",
+          "blob": "4ce55c3311b3e3163df6b0023297e1df",
+          "size": 466,
+          "type": "image/svg+xml"
+        },
+        "breeze-icon.svg": {
+          "name": "breeze-icon.svg",
+          "blob": "911d38397eefeac1034679c5fe9fc486",
+          "size": 467,
+          "type": "image/svg+xml"
+        },
+        "breeze-menubar.svg": {
+          "name": "breeze-menubar.svg",
+          "blob": "f1e7184128c1b172c6e5958a12638b0c",
+          "size": 371,
+          "type": "image/svg+xml"
+        },
+        "exchange-icon-clear.svg": {
+          "name": "exchange-icon-clear.svg",
+          "size": 7769,
+          "type": "image/svg+xml"
+        },
+        "exchange-icon-tinted.svg": {
+          "name": "exchange-icon-tinted.svg",
+          "size": 8001,
+          "type": "image/svg+xml"
+        },
+        "exchange-icon.svg": {
+          "name": "exchange-icon.svg",
+          "size": 7968,
+          "type": "image/svg+xml"
+        },
+        "exchange-menubar-working.svg": {
+          "name": "exchange-menubar-working.svg",
+          "size": 284,
+          "type": "image/svg+xml"
+        },
+        "exchange-menubar.svg": {
+          "name": "exchange-menubar.svg",
+          "size": 439,
+          "type": "image/svg+xml"
+        },
+        "lettermark-icon-dark.svg": {
+          "name": "lettermark-icon-dark.svg",
+          "blob": "96a14805558c282f3e81918092c99e7d",
+          "size": 397,
+          "type": "image/svg+xml"
+        },
+        "lettermark-icon.svg": {
+          "name": "lettermark-icon.svg",
+          "blob": "e6d02b18369db579278af8d997bbca3a",
+          "size": 605,
+          "type": "image/svg+xml"
+        },
+        "lettermark-menubar.svg": {
+          "name": "lettermark-menubar.svg",
+          "blob": "65862e54a8289ff9f458a2bbd62faf9b",
+          "size": 291,
+          "type": "image/svg+xml"
+        },
+        "notch-icon-dark.svg": {
+          "name": "notch-icon-dark.svg",
+          "blob": "234a2b8b59edf3ceb315a13f32abf637",
+          "size": 1214,
+          "type": "image/svg+xml"
+        },
+        "notch-icon.svg": {
+          "name": "notch-icon.svg",
+          "blob": "d46ab1e199bdc645a130f2a10b132cad",
+          "size": 1217,
+          "type": "image/svg+xml"
+        },
+        "notch-menubar.svg": {
+          "name": "notch-menubar.svg",
+          "blob": "0a645a7a9cca7d098f9b9c37a3c68d4d",
+          "size": 428,
+          "type": "image/svg+xml"
+        },
+        "notch-pebble-icon-dark.svg": {
+          "name": "notch-pebble-icon-dark.svg",
+          "blob": "755ca29aeb541fa0bbe0ca0d5467067c",
+          "size": 728,
+          "type": "image/svg+xml",
+          "retired": "D-137"
+        },
+        "notch-pebble-icon.svg": {
+          "name": "notch-pebble-icon.svg",
+          "blob": "ac55001d2722114ab3e87f9ffe435013",
+          "size": 728,
+          "type": "image/svg+xml",
+          "retired": "D-137"
+        },
+        "notch-pebble-menubar.svg": {
+          "name": "notch-pebble-menubar.svg",
+          "blob": "9c97912594b2a083af722cfac72584d5",
+          "size": 343,
+          "type": "image/svg+xml",
+          "retired": "D-137"
+        },
+        "pause-icon-dark.svg": {
+          "name": "pause-icon-dark.svg",
+          "blob": "dc056b24a5f8bfd10b6cbadb4bd254c8",
+          "size": 757,
+          "type": "image/svg+xml"
+        },
+        "pause-icon.svg": {
+          "name": "pause-icon.svg",
+          "blob": "8b7154937fafe4d7108c5a7fa9269761",
+          "size": 758,
+          "type": "image/svg+xml"
+        },
+        "pause-menubar.svg": {
+          "name": "pause-menubar.svg",
+          "blob": "4f3f46aa693950c14f776d7af9a1a0b8",
+          "size": 294,
+          "type": "image/svg+xml"
+        },
+        "pebble-icon-dark.svg": {
+          "name": "pebble-icon-dark.svg",
+          "blob": "ec525e1696bfd019e7d6daea4dd8e859",
+          "size": 578,
+          "type": "image/svg+xml",
+          "retired": "D-137"
+        },
+        "pebble-icon.svg": {
+          "name": "pebble-icon.svg",
+          "blob": "e8fe9708f8925d5a0664e35b05b55985",
+          "size": 599,
+          "type": "image/svg+xml",
+          "retired": "D-137"
+        },
+        "pebble-menubar.svg": {
+          "name": "pebble-menubar.svg",
+          "blob": "5c7e9d511900bd073a2b06c356c2aa6d",
+          "size": 591,
+          "type": "image/svg+xml",
+          "retired": "D-137"
+        },
+        "pebble-v2-icon-dark.svg": {
+          "name": "pebble-v2-icon-dark.svg",
+          "blob": "6fa7903006a89b7d41ba5936bb469121",
+          "size": 479,
+          "type": "image/svg+xml",
+          "retired": "D-137"
+        },
+        "pebble-v2-icon.svg": {
+          "name": "pebble-v2-icon.svg",
+          "blob": "f1cbe020ffe253be2c5f4f8abc6b120c",
+          "size": 479,
+          "type": "image/svg+xml",
+          "retired": "D-137"
+        },
+        "pebble-v2-menubar.svg": {
+          "name": "pebble-v2-menubar.svg",
+          "blob": "09e0ae317922771d55e5f3da94a2a3ba",
+          "size": 242,
+          "type": "image/svg+xml",
+          "retired": "D-137"
+        },
+        "ripple-icon-dark.svg": {
+          "name": "ripple-icon-dark.svg",
+          "blob": "5b968a7cf892d3f72e2ceae549ae190f",
+          "size": 761,
+          "type": "image/svg+xml"
+        },
+        "ripple-icon.svg": {
+          "name": "ripple-icon.svg",
+          "blob": "2529736bf7ad3e068ab61ca4bfa87460",
+          "size": 761,
+          "type": "image/svg+xml"
+        },
+        "ripple-menubar.svg": {
+          "name": "ripple-menubar.svg",
+          "blob": "36cccea701054fec83dc5d51ca5c32fd",
+          "size": 481,
+          "type": "image/svg+xml"
+        }
+      }
+    }
+  },
+  "blobs": {},
+  "createdOnFiles": {
+    "at": "2026-10-30T15:11:13Z",
+    "v": 1
+  },
+  "docs": {
+    "readme": "project/README.md",
+    "sections": []
+  },
+  "groups": [
+    "Logos",
+    "Icon options"
+  ],
+  "lastChange": {
+    "by": "Umar Ali",
+    "at": "2026-10-30T18:56:15Z",
+    "via": "Claude Code (cloud)",
+    "note": "Motion, Sound and Overlay sections; animated NotchObject, PeekStatus, MotionTokens, SoundCues, PointerHighlight; final Pebble v2 icon set and wordmark; peek 60 pt"
+  },
+  "layout": "files",
+  "libraries": [],
+  "namespace": "Benji",
+  "sections": {},
+  "title": "Benji"
+}

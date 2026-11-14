@@ -1,0 +1,35 @@
+I'll show you a plane in flight with the key aerodynamic forces labeled.
+
+```figure
+{
+  "title": "How a plane flies",
+  "parts": [
+    {"name": "fuselage", "kind": "capsule", "r": 0.6, "h": 8, "axis": "z", "at": [0, 0, 0], "mat": "aluminium"},
+    {"name": "cockpit", "kind": "sphere", "r": 0.62, "at": [0, 0, 4.2], "mat": "glass"},
+    {"name": "main wing", "kind": "extrude", "path": "M-6 0 L-0.3 0 L-0.2 -0.5 L-5.5 -0.3 Z", "depth": 0.4, "at": [0, -0.3, 0], "rot": [0, 0, 0], "mat": "aluminium"},
+    {"name": "right wing", "kind": "box", "size": [6, 0.3, 1.8], "at": [6, -0.15, 0], "mat": "aluminium"},
+    {"name": "tail fin", "kind": "extrude", "path": "M0 0 L0 2.5 L-0.8 2.2 L-0.3 0 Z", "depth": 0.3, "at": [0, 0.15, -3.8], "mat": "aluminium"},
+    {"name": "left stabilizer", "kind": "box", "size": [2, 0.2, 0.8], "at": [-2, 0.9, -3.5], "mat": "aluminium"},
+    {"name": "right stabilizer", "kind": "box", "size": [2, 0.2, 0.8], "at": [2, 0.9, -3.5], "mat": "aluminium"},
+    {"name": "left engine", "kind": "capsule", "r": 0.5, "h": 2, "axis": "z", "at": [-3.5, -0.8, 1], "mat": "steel"},
+    {"name": "right engine", "kind": "capsule", "r": 0.5, "h": 2, "axis": "z", "at": [3.5, -0.8, 1], "mat": "steel"},
+    {"name": "left intake", "kind": "cyl", "r": 0.52, "h": 0.3, "axis": "z", "at": [-3.5, -0.8, 2.15], "mat": "iron"},
+    {"name": "right intake", "kind": "cyl", "r": 0.52, "h": 0.3, "axis": "z", "at": [3.5, -0.8, 2.15], "mat": "iron"},
+    {"name": "lift arrow", "kind": "box", "size": [0.15, 2.5, 0.15], "at": [0, 2, 0], "mat": "glow:green"},
+    {"name": "lift head", "kind": "cone", "r": 0.4, "r2": 0, "h": 0.6, "at": [0, 4.2, 0], "mat": "glow:green"},
+    {"name": "thrust arrow", "kind": "box", "size": [0.15, 0.15, 2], "at": [3.5, -0.8, 3.5], "mat": "glow:yellow"},
+    {"name": "thrust head", "kind": "cone", "r": 0.35, "r2": 0, "h": 0.5, "axis": "z", "at": [3.5, -0.8, 5.05], "mat": "glow:yellow"},
+    {"name": "drag arrow", "kind": "box", "size": [0.15, 0.15, 1.5], "at": [0, 0.3, -6], "mat": "glow:orange"},
+    {"name": "drag head", "kind": "cone", "r": 0.3, "r2": 0, "h": 0.4, "axis": "z", "rot": [0, 180, 0], "at": [0, 0.3, -6.95], "mat": "glow:orange"},
+    {"name": "weight arrow", "kind": "box", "size": [0.15, 1.8, 0.15], "at": [0, -1.9, 0], "mat": "glow:red"},
+    {"name": "weight head", "kind": "cone", "r": 0.35, "r2": 0, "h": 0.5, "rot": [0, 0, 180], "at": [0, -2.9, 0], "mat": "glow:red"}
+  ],
+  "labels": [
+    {"part": "lift arrow", "text": "Lift (wings)"},
+    {"part": "thrust arrow", "text": "Thrust (engines)"},
+    {"part": "drag arrow", "text": "Drag (air resistance)"},
+    {"part": "weight arrow", "text": "Weight (gravity)"}
+  ],
+  "view": {"turn": 25, "tilt": 10}
+}
+```

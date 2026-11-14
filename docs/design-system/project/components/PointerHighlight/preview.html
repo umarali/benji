@@ -1,0 +1,492 @@
+<!-- @dsCard group="Screen" height=640 subtitle="Point ring and region, paced to speech, on light, dark and busy apps" -->
+<style>
+  body { margin: 0; background: var(--window-bg, #ececec); color: var(--label, rgba(0,0,0,.85)); font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, system-ui, sans-serif); }
+  .ph { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .ph-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font-size: 12px; line-height: 16px; }
+  .ph-btn { font: inherit; font-size: 12px; padding: 3px 12px; border-radius: var(--radius-control, 6px); border: 1px solid var(--separator, rgba(0,0,0,.1)); background: var(--surface, #fff); color: var(--label, rgba(0,0,0,.85)); cursor: pointer; }
+  .ph-btn:focus-visible { outline: 2px solid var(--accent, #007aff); outline-offset: 1px; }
+  .ph-tog { display: inline-flex; align-items: center; gap: 5px; color: var(--label, rgba(0,0,0,.85)); cursor: pointer; user-select: none; }
+  .ph-tog input { margin: 0; accent-color: var(--accent, #007aff); }
+  .ph-sep { width: 1px; height: 16px; background: var(--separator, rgba(0,0,0,.1)); }
+  .ph-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px 16px; }
+  .ph-scene { margin: 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .ph-screen { position: relative; height: 200px; border-radius: 10px; overflow: hidden; border: 1px solid var(--separator, rgba(0,0,0,.1)); }
+  .ph-speech { font-family: var(--font-rounded, ui-rounded, system-ui, sans-serif); font-size: 12px; line-height: 15px; font-weight: 500; color: var(--label, rgba(0,0,0,.85)); min-height: 15px; }
+  .ph-speech .ph-w { opacity: .28; transition: none; }
+  .ph-speech .ph-w.on { opacity: 1; }
+  .ph-speech .ph-spk { color: var(--label-secondary, rgba(0,0,0,.5)); font-weight: 400; margin-right: 4px; }
+  .ph-cap { font-size: 11px; line-height: 14px; color: var(--label-secondary, rgba(0,0,0,.5)); }
+
+  /* ---------- overlay layer (what the component draws) ---------- */
+  .ph-layer { position: absolute; inset: 0; pointer-events: none; }
+  .ph-layer svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .ph-mat { position: absolute; -webkit-backdrop-filter: blur(6px) saturate(.7); backdrop-filter: blur(6px) saturate(.7); opacity: 0; }
+  .ph-label { position: absolute; left: 0; top: 0; white-space: nowrap; max-width: 240px; overflow: hidden; text-overflow: ellipsis;
+    font-family: var(--font-sans, -apple-system, system-ui, sans-serif); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: .1px;
+    padding: 4px 10px; border-radius: var(--radius-pill, 999px); color: #ffffff;
+    background: rgba(28,28,30,.72); -webkit-backdrop-filter: blur(20px) saturate(1.8); backdrop-filter: blur(20px) saturate(1.8);
+    box-shadow: inset 0 0 0 .5px var(--notch-hairline, rgba(255,255,255,.12)); opacity: 0; }
+  .ph.rt .ph-label { background: var(--notch-raised, #1c1c1e); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .ph.ic .ph-label { background: var(--notch-raised, #1c1c1e); box-shadow: inset 0 0 0 1px var(--notch-label-secondary, rgba(255,255,255,.55)); }
+  .ph-guides { display: none; }
+  .ph.guides .ph-guides { display: block; }
+
+  /* ---------- mock apps (not part of the component) ---------- */
+  .ph-app { position: absolute; inset: 0; font-family: var(--font-sans, system-ui, sans-serif); }
+  .m-light { background: #ffffff; }
+  .m-light .tb { position: absolute; left: 0; right: 0; top: 0; height: 40px; background: #f6f6f6; border-bottom: 1px solid #e2e2e2; }
+  .m-dots { position: absolute; left: 12px; top: 14px; display: flex; gap: 6px; }
+  .m-dots i { width: 11px; height: 11px; border-radius: 50%; background: #d5d5d5; display: block; }
+  .m-light .ttl { position: absolute; left: 76px; top: 12px; font-size: 13px; font-weight: 600; color: #333; }
+  .m-light .srch { position: absolute; right: 10px; top: 9px; width: 78px; height: 22px; border-radius: 6px; background: #e8e8e8; }
+  .m-iconbtn { position: absolute; width: 28px; height: 24px; border-radius: 6px; display: grid; place-items: center; }
+  .m-light .share { right: 96px; top: 8px; }
+  .m-light .side { right: 128px; top: 8px; }
+  .m-light .body { position: absolute; left: 22px; right: 22px; top: 58px; display: flex; flex-direction: column; gap: 9px; }
+  .m-light .body b { display: block; height: 9px; border-radius: 3px; background: #e6e6e6; }
+  .m-light .body b.h { height: 12px; width: 46%; background: #cfcfcf; margin-bottom: 4px; }
+  .m-dark { background: #1d1d1f; }
+  .m-dark .sb { position: absolute; left: 0; top: 0; bottom: 24px; width: 48px; background: #262628; display: flex; flex-direction: column; align-items: center; gap: 12px; padding-top: 14px; }
+  .m-dark .sb i { width: 18px; height: 18px; border-radius: 4px; background: #3a3a3e; display: block; }
+  .m-dark .code { position: absolute; left: 64px; right: 16px; top: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .m-dark .code b { display: block; height: 7px; border-radius: 2px; }
+  .m-dark .status { position: absolute; left: 0; right: 0; bottom: 0; height: 24px; background: #2b2b2e; border-top: 1px solid #3a3a3d; color: #9a9aa0; font-size: 10.5px; line-height: 24px; padding-left: 12px; }
+  .m-dark .bell { right: 4px; bottom: 0; }
+  .m-busy { background: linear-gradient(135deg, #2c3e50, #6b4c7a 50%, #c96b4b); padding: 8px; box-sizing: border-box; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); gap: 4px; }
+  .m-busy i { display: block; border-radius: 3px; position: relative; overflow: hidden; }
+  .m-busy i::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(115deg, rgba(255,255,255,.10) 0 2px, rgba(0,0,0,.08) 2px 5px); }
+  .m-set { background: #f5f5f7; }
+  .m-set .hd { position: absolute; left: 20px; top: 14px; font-size: 13px; font-weight: 700; color: #222; }
+  .m-set .grp { position: absolute; left: 16px; right: 16px; top: 40px; background: #fff; border-radius: 10px; border: 1px solid #e3e3e6; }
+  .m-set .row { height: 36px; display: flex; align-items: center; gap: 9px; padding: 0 12px; border-top: 1px solid #ececef; font-size: 12.5px; color: #222; }
+  .m-set .row:first-child { border-top: 0; }
+  .m-set .cb { width: 14px; height: 14px; border-radius: 4px; border: 1px solid #b9b9be; background: #fff; box-sizing: border-box; flex: none; }
+  .m-set .ind { padding-left: 34px; }
+</style>
+
+<div class="ph" id="ph-root">
+  <div class="ph-bar">
+    <button class="ph-btn" id="ph-replay" type="button">Replay</button>
+    <button class="ph-btn" id="ph-dismiss" type="button" title="Escape">Dismiss (Esc)</button>
+    <span class="ph-sep"></span>
+    <label class="ph-tog"><input type="checkbox" id="ph-rm">Reduce Motion</label>
+    <label class="ph-tog"><input type="checkbox" id="ph-ic">Increase Contrast</label>
+    <label class="ph-tog"><input type="checkbox" id="ph-rt">Reduce Transparency</label>
+    <label class="ph-tog"><input type="checkbox" id="ph-gd">Guides</label>
+  </div>
+  <div class="ph-grid">
+    <figure class="ph-scene" data-scene="light">
+      <div class="ph-screen"><div class="ph-app m-light">
+        <div class="tb"><span class="m-dots"><i></i><i></i><i></i></span><span class="ttl">Quarterly notes</span>
+          <span class="m-iconbtn side"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#666" stroke-width="1.3"><rect x="1.5" y="2.5" width="13" height="11" rx="2"/><path d="M6 2.5v11"/></svg></span>
+          <span class="m-iconbtn share" data-target="ring" data-label="Share button"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#555" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7H4v7h8V7h-1"/><path d="M8 1.5v8M5.5 4L8 1.5 10.5 4"/></svg></span>
+          <span class="srch"></span></div>
+        <div class="body"><b class="h"></b><b style="width:92%"></b><b style="width:86%"></b><b style="width:95%"></b><b style="width:60%"></b><b style="width:88%"></b><b style="width:74%"></b></div>
+      </div></div>
+      <div class="ph-speech" data-say="It's|1 the|1 Share|1 button,|2 top|1 right.|1" data-anchor="2"></div>
+      <div class="ph-cap">Light app. Point ring, label below.</div>
+    </figure>
+
+    <figure class="ph-scene" data-scene="dark">
+      <div class="ph-screen"><div class="ph-app m-dark">
+        <div class="sb"><i></i><i></i><i></i><i></i></div>
+        <div class="code">
+          <b style="width:38%;background:#7f8fa6"></b><b style="width:62%;background:#5f6f86;margin-left:16px"></b><b style="width:54%;background:#a08a6a;margin-left:16px"></b>
+          <b style="width:70%;background:#5f6f86;margin-left:32px"></b><b style="width:44%;background:#6f9a7c;margin-left:32px"></b><b style="width:30%;background:#5f6f86;margin-left:16px"></b>
+          <b style="width:20%;background:#7f8fa6"></b><b style="width:66%;background:#4f5a6a"></b><b style="width:48%;background:#a08a6a;margin-left:16px"></b>
+        </div>
+        <div class="status">Ln 12, Col 4 &nbsp;·&nbsp; Spaces: 2 &nbsp;·&nbsp; UTF-8</div>
+        <span class="m-iconbtn bell" data-target="ring" data-label="Bell icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#b5b5bb" stroke-width="1.4" stroke-linejoin="round"><path d="M4 11V7a4 4 0 0 1 8 0v4l1.5 1.5h-11z"/><path d="M6.5 14a1.6 1.6 0 0 0 3 0"/></svg></span>
+      </div></div>
+      <div class="ph-speech" data-say="Check|1 the|1 bell|1 icon,|2 bottom|2 right.|1" data-anchor="2"></div>
+      <div class="ph-cap">Dark app at the display's bottom-right edge. The label flips above and slides left.</div>
+    </figure>
+
+    <figure class="ph-scene" data-scene="busy">
+      <div class="ph-screen"><div class="ph-app m-busy">
+        <i style="background:linear-gradient(160deg,#dfeaff,#ffffff)"></i>
+        <i style="background:linear-gradient(160deg,#5fd0c8,#b9f0ea)"></i>
+        <i style="background:linear-gradient(160deg,#ff9a4a,#ff5e62)"></i>
+        <i style="background:linear-gradient(160deg,#141a33,#33264a)"></i>
+        <i style="background:linear-gradient(160deg,#66d4cf,#e9fbfa)"></i>
+        <i data-target="region" data-label="Beach photo" style="background:linear-gradient(180deg,#7cc6f0 0 38%,#3a8fc4 38% 58%,#f1d9a0 58%)"></i>
+        <i style="background:linear-gradient(160deg,#ffffff,#f2f2f2)"></i>
+        <i style="background:linear-gradient(160deg,#3f7d3a,#9cc96b)"></i>
+        <i style="background:linear-gradient(160deg,#c66bd6,#6a3fb5)"></i>
+        <i style="background:linear-gradient(160deg,#ffd60a,#ff9f0a)"></i>
+        <i style="background:linear-gradient(160deg,#808080,#5a5a5a)"></i>
+        <i style="background:linear-gradient(160deg,#f7c6d0,#e86a8a)"></i>
+      </div></div>
+      <div class="ph-speech" data-say="That's|1 the|1 beach|1 photo,|2 second|2 row.|1" data-anchor="2"></div>
+      <div class="ph-cap">Busy content, next to mint and white tiles. Region highlight.</div>
+    </figure>
+
+    <figure class="ph-scene" data-scene="steps">
+      <div class="ph-screen"><div class="ph-app m-set">
+        <div class="hd">Backups</div>
+        <div class="grp">
+          <div class="row"><span class="cb" data-target="ring" data-label="Sync files"></span>Sync files</div>
+          <div class="row ind">Only on Wi-Fi</div>
+          <div class="row"><span class="cb" data-target="ring" data-label="Include photos"></span>Include photos</div>
+          <div class="row"><span class="cb"></span>Keep originals</div>
+        </div>
+      </div></div>
+      <div class="ph-speech" data-say="Tick|1 Sync|1 files,|1 then|1 Include|2 photos.|2" data-anchor="1,4"></div>
+      <div class="ph-cap">Two steps, 72 pt apart. The ring glides (motion-follow); one pulse per target.</div>
+    </figure>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var root = document.getElementById("ph-root");
+  if (!root) return;
+  var NS = "http://www.w3.org/2000/svg";
+
+  // ---- Motion tokens (see Motion.md). Mass 1, k = (2π/d)², c = 4π(1−b)/d.
+  function spring(d, b) { b = b || 0; return { d: d, k: Math.pow(2 * Math.PI / d, 2), c: 4 * Math.PI * (1 - b) / d }; }
+  var T = {
+    content: spring(0.24),   // k 685.4, c 52.36
+    peek: spring(0.30),      // k 438.6, c 41.89
+    open: spring(0.50),      // k 157.9, c 25.13
+    follow: spring(0.35)     // k 322.3, c 35.90
+  };
+  var FADE_IN = { ms: 150, p: [0, 0, 0.58, 1] }, FADE_OUT = { ms: 150, p: [0.42, 0, 1, 1] }, REDUCE = { ms: 200, p: [0.42, 0, 0.58, 1] };
+  var LEAD_MS = 40;                 // visuals may lead speech by up to 40 ms, never lag
+  var SYLL_PER_S = 4.5;             // estimated speech pacing fallback
+  var GLIDE_MAX = 220;              // motion-follow glides only short hops
+  var PULSE_GROW = 10;              // the one pulse: halo ghost grows 10 pt and fades
+  var EDGE = 12, GAP = 8;           // space-3 from the display edge, space-2 from the mark
+  var MINT = "var(--benji-mint, #66d4cf)";
+
+  function Spring(tok, x) { this.k = tok.k; this.c = tok.c; this.x = x || 0; this.v = 0; this.to = this.x; this.range = 1; }
+  Spring.prototype.set = function (to) { this.range = Math.max(Math.abs(to - this.x), 1e-6); this.to = to; };   // keeps velocity
+  Spring.prototype.jump = function (x) { this.x = this.to = x; this.v = 0; };
+  Spring.prototype.step = function (dt) {
+    var n = Math.max(1, Math.ceil(dt / 0.001)), h = dt / n;
+    for (var i = 0; i < n; i++) { var a = -this.k * (this.x - this.to) - this.c * this.v; this.v += a * h; this.x += this.v * h; }
+  };
+  Spring.prototype.settled = function () {
+    var r = this.range;
+    if (Math.abs(this.x - this.to) < 0.005 * r && Math.abs(this.v) < 0.5 * r) { this.x = this.to; this.v = 0; return true; }
+    return false;
+  };
+
+  function bez(p1x, p1y, p2x, p2y) {
+    function cx(t) { return 3 * p1x * t * (1 - t) * (1 - t) + 3 * p2x * t * t * (1 - t) + t * t * t; }
+    function cy(t) { return 3 * p1y * t * (1 - t) * (1 - t) + 3 * p2y * t * t * (1 - t) + t * t * t; }
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      var lo = 0, hi = 1, t = x;
+      for (var i = 0; i < 30; i++) { t = (lo + hi) / 2; if (cx(t) < x) lo = t; else hi = t; }
+      return cy(t);
+    };
+  }
+  function Fade(v) { this.from = v; this.to = v; this.t0 = 0; this.ms = 1; this.f = null; }
+  Fade.prototype.start = function (now, to, curve) { this.from = this.val(now); this.to = to; this.t0 = now; this.ms = curve.ms; this.f = bez.apply(null, curve.p); };
+  Fade.prototype.set = function (v) { this.from = this.to = v; this.f = null; };
+  Fade.prototype.val = function (now) {
+    if (!this.f) return this.to;
+    var u = (now - this.t0) / this.ms; if (u >= 1) { this.f = null; this.from = this.to; return this.to; }
+    if (u < 0) return this.from;
+    return this.from + (this.to - this.from) * this.f(u);
+  };
+  Fade.prototype.busy = function () { return !!this.f; };
+
+  // ---- Settings
+  var S = { rm: false, ic: false, rt: false, guides: false };
+  function mq(q) { try { return window.matchMedia && window.matchMedia(q).matches; } catch (e) { return false; } }
+  S.rm = mq("(prefers-reduced-motion: reduce)");
+  S.ic = mq("(prefers-contrast: more)");
+  S.rt = mq("(prefers-reduced-transparency: reduce)");
+
+  // Stroke geometry. Ring: radii from the point. Region: outsets from the target box (corner radius = outset + 4,
+  // so the mint edge at outset 6 has radius-field 10 and every layer stays concentric).
+  function geo() {
+    var key = S.rt ? 2 : (S.ic ? 1.5 : 1);
+    var keyCol = (S.rt && !S.ic) ? "var(--notch-raised, #1c1c1e)" : (S.ic ? "#000000" : "rgba(0,0,0,.6)");
+    var ring = { mintW: S.ic ? 4 : 3, outer: 13 }, reg = { mintW: S.ic ? 3 : 2, outer: 6 };
+    [ring, reg].forEach(function (g) {
+      g.key = key; g.keyCol = keyCol;
+      g.mintC = g.outer - g.mintW / 2;
+      g.inC = g.outer - g.mintW - key / 2;
+      g.outC = g.outer + key / 2;
+      g.haloIn = g.outer + key; g.haloC = g.haloIn + 3; g.haloOut = g.haloIn + 6;
+      g.keep = S.rt ? g.outer + key : g.haloOut;      // label keep-out
+    });
+    return { ring: ring, region: reg };
+  }
+
+  function circlePath(cx, cy, r) {   // starts at 12 o'clock, clockwise
+    return "M" + cx + " " + (cy - r) + "A" + r + " " + r + " 0 1 1 " + cx + " " + (cy + r) + "A" + r + " " + r + " 0 1 1 " + cx + " " + (cy - r) + "Z";
+  }
+  function rrectPath(b, o) {         // box outset by o, radius o + 4, starts at top centre, clockwise
+    var x = b.x - o, y = b.y - o, w = b.w + 2 * o, h = b.h + 2 * o, r = Math.max(0, Math.min(o + 4, w / 2, h / 2));
+    return "M" + (x + w / 2) + " " + y + "H" + (x + w - r) + "A" + r + " " + r + " 0 0 1 " + (x + w) + " " + (y + r) +
+      "V" + (y + h - r) + "A" + r + " " + r + " 0 0 1 " + (x + w - r) + " " + (y + h) + "H" + (x + r) +
+      "A" + r + " " + r + " 0 0 1 " + x + " " + (y + h - r) + "V" + (y + r) + "A" + r + " " + r + " 0 0 1 " + (x + r) + " " + y + "Z";
+  }
+  function el(tag, attrs, parent) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+
+  // ---- Scenes
+  var scenes = [].slice.call(root.querySelectorAll(".ph-scene")).map(function (fig) {
+    var screen = fig.querySelector(".ph-screen");
+    var layer = document.createElement("div"); layer.className = "ph-layer"; screen.appendChild(layer);
+    var guides = el("svg", { "class": "ph-guides" }, null); layer.appendChild(guides);
+    var svg = el("svg", {}, null); layer.appendChild(svg);
+    var speech = fig.querySelector(".ph-speech");
+    var words = speech.getAttribute("data-say").split(" ").map(function (s) { var p = s.split("|"); return { w: p[0], syl: +p[1] }; });
+    var tSyl = 0;
+    speech.innerHTML = '<span class="ph-spk">Speaking:</span>';
+    words.forEach(function (o) {
+      o.t = tSyl / SYLL_PER_S * 1000;                       // word onset (ms) from the estimated pacing
+      tSyl += o.syl + (/[.?!]$/.test(o.w) ? 2 : /,$/.test(o.w) ? 1 : 0);
+      o.span = document.createElement("span"); o.span.className = "ph-w"; o.span.textContent = o.w + " ";
+      speech.appendChild(o.span);
+    });
+    var anchors = speech.getAttribute("data-anchor").split(",").map(Number);
+    var targets = [].slice.call(screen.querySelectorAll("[data-target]"));
+    return { fig: fig, screen: screen, layer: layer, svg: svg, guides: guides, words: words, anchors: anchors, targets: targets, marks: [] };
+  });
+
+  function rel(scene, node) {
+    var a = scene.screen.getBoundingClientRect(), b = node.getBoundingClientRect();
+    return { x: b.left - a.left, y: b.top - a.top, w: b.width, h: b.height };
+  }
+
+  // ---- Label placement: below, above, right, left; first that fits wins. No fit: no label.
+  function intersects(a, b) { return a.l < b.r && b.l < a.r && a.t < b.b && b.t < a.b; }
+  function inside(a, s) { return a.l >= s.l - 0.01 && a.t >= s.t - 0.01 && a.r <= s.r + 0.01 && a.b <= s.b + 0.01; }
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+  function place(W, H, keep, cx, cy, lw, lh, obstacles) {
+    var safe = { l: EDGE, t: EDGE, r: W - EDGE, b: H - EDGE }, tried = [];
+    var order = ["below", "above", "right", "left"];
+    for (var i = 0; i < order.length; i++) {
+      var side = order[i], x, y;
+      if (side === "below" || side === "above") {
+        y = side === "below" ? keep.b + GAP : keep.t - GAP - lh;
+        x = clamp(cx - lw / 2, safe.l, safe.r - lw);
+        if (cx < x || cx > x + lw) { tried.push({ side: side, ok: false }); continue; }   // would detach from the target
+      } else {
+        x = side === "right" ? keep.r + GAP : keep.l - GAP - lw;
+        y = clamp(cy - lh / 2, safe.t, safe.b - lh);
+        if (cy < y || cy > y + lh) { tried.push({ side: side, ok: false }); continue; }
+      }
+      var r = { l: x, t: y, r: x + lw, b: y + lh };
+      var ok = inside(r, safe) && !intersects(r, keep) && obstacles.every(function (o) { return !intersects(r, o); });
+      tried.push({ side: side, ok: ok, rect: r });
+      if (ok) return { rect: r, side: side, tried: tried, safe: safe };
+    }
+    return { rect: null, side: null, tried: tried, safe: safe };
+  }
+
+  // ---- Marks
+  function Mark(scene, node) {
+    this.scene = scene; this.node = node;
+    this.kind = node.getAttribute("data-target"); this.text = node.getAttribute("data-label");
+    var g = el("g", {}, scene.svg); this.g = g;
+    this.halo = el("path", { fill: "none", stroke: MINT, "stroke-opacity": ".28" }, g);
+    this.ghost = el("path", { fill: "none", stroke: MINT }, g);
+    this.kOut = el("path", { fill: "none", pathLength: "1", "stroke-dasharray": "1 1" }, g);
+    this.kIn = el("path", { fill: "none", pathLength: "1", "stroke-dasharray": "1 1" }, g);
+    this.mint = el("path", { fill: "none", stroke: MINT, pathLength: "1", "stroke-dasharray": "1 1" }, g);
+    this.mat = document.createElement("div"); this.mat.className = "ph-mat"; scene.layer.insertBefore(this.mat, scene.layer.firstChild);
+    this.label = document.createElement("div"); this.label.className = "ph-label"; scene.layer.appendChild(this.label);
+    var tok = this.kind === "ring" ? T.content : T.open;
+    this.tok = tok;
+    this.draw = new Spring(tok, 0); this.pulse = new Spring(T.open, 0);
+    this.px = new Spring(T.follow, 0); this.py = new Spring(T.follow, 0);
+    this.op = new Fade(1); this.haloOp = new Fade(0); this.labelOp = new Fade(0);
+    this.pulseState = "none"; this.labelPending = false; this.gliding = false; this.dead = false;
+    this.setTarget(node, true);
+  }
+  Mark.prototype.setTarget = function (node, jump) {
+    this.node = node; this.text = node.getAttribute("data-label");
+    var b = rel(this.scene, node); this.box = b;
+    var cx = b.x + b.w / 2, cy = b.y + b.h / 2;
+    if (jump) { this.px.jump(cx); this.py.jump(cy); } else { this.px.set(cx); this.py.set(cy); }
+    this.goal = { x: cx, y: cy };
+  };
+  Mark.prototype.keepRect = function (cx, cy) {
+    var g = geo();
+    if (this.kind === "ring") { var R = g.ring.keep; return { l: cx - R, t: cy - R, r: cx + R, b: cy + R }; }
+    var o = g.region.keep, b = this.box; return { l: b.x - o, t: b.y - o, r: b.x + b.w + o, b: b.y + b.h + o };
+  };
+  Mark.prototype.placeLabel = function () {
+    this.label.textContent = this.text;
+    var W = this.scene.screen.clientWidth, H = this.scene.screen.clientHeight;
+    var cx = this.goal.x, cy = this.goal.y;
+    var res = place(W, H, this.keepRect(cx, cy), cx, cy, this.label.offsetWidth, this.label.offsetHeight, []);
+    this.placed = res;
+    if (res.rect) { this.label.style.transform = "translate(" + res.rect.l + "px," + res.rect.t + "px)"; this.label.style.visibility = "visible"; }
+    else this.label.style.visibility = "hidden";
+    drawGuides(this.scene);
+  };
+  Mark.prototype.reveal = function (now) {
+    this.placeLabel();
+    if (S.rm) {                                     // Reduce Motion: the whole mark fades in, nothing draws or grows
+      this.draw.jump(1); this.haloOp.set(1); this.labelOp.set(1); this.pulseState = "done";
+      this.op.set(0); this.op.start(now, 1, REDUCE);
+      return;
+    }
+    this.op.set(1); this.draw.jump(0); this.draw.set(1);
+    this.haloOp.start(now, 1, FADE_IN);
+    this.labelAt = now + 0.353 * this.tok.d * 1000;    // content fades in at 65% of the spring
+    this.labelPending = true; this.pulseState = "wait";
+  };
+  Mark.prototype.moveTo = function (node, now) {   // a later step: glide if short, otherwise fade and reveal fresh
+    var b = rel(this.scene, node), nx = b.x + b.w / 2, ny = b.y + b.h / 2;
+    var hop = Math.hypot(nx - this.goal.x, ny - this.goal.y);
+    if (S.rm || hop > GLIDE_MAX || this.kind !== "ring") return false;
+    this.labelOp.start(now, 0, FADE_OUT);
+    this.setTarget(node, false);
+    this.gliding = true; this.hop = hop; this.labelPending = false; this.pulseState = "wait";
+    return true;
+  };
+  Mark.prototype.erase = function (now, curve) { this.op.start(now, 0, curve || FADE_OUT); this.dying = true; };
+  Mark.prototype.remove = function () { this.g.remove(); this.mat.remove(); this.label.remove(); this.dead = true; };
+  Mark.prototype.tick = function (now, dt) {
+    var busy = false;
+    if (!this.draw.settled()) { this.draw.step(dt); busy = true; }
+    if (!this.px.settled() | !this.py.settled()) { this.px.step(dt); this.py.step(dt); busy = true; }
+    if (this.gliding) {
+      var left = Math.hypot(this.goal.x - this.px.x, this.goal.y - this.py.x);
+      if (!this.labelPending && left <= 0.35 * this.hop) { this.placeLabel(); this.labelAt = now; this.labelPending = true; }
+      if (!busy) this.gliding = false;
+    }
+    if (this.labelPending && now >= this.labelAt) { this.labelPending = false; this.labelOp.start(now, 1, FADE_IN); }
+    if (this.pulseState === "wait" && !busy && this.draw.x >= 1) { this.pulseState = "run"; this.pulse.jump(0); this.pulse.set(1); }
+    if (this.pulseState === "run") { this.pulse.step(dt); if (this.pulse.settled()) this.pulseState = "done"; else busy = true; }
+    if (this.labelPending || this.op.busy() || this.haloOp.busy() || this.labelOp.busy()) busy = true;
+    if (this.dying && !this.op.busy()) { this.remove(); return false; }
+    this.render(now);
+    return busy;
+  };
+  Mark.prototype.render = function (now) {
+    var G = geo(), g = this.kind === "ring" ? G.ring : G.region;
+    var cx = this.px.x, cy = this.py.x, b = this.box, ring = this.kind === "ring";
+    var shape = ring ? function (r) { return circlePath(cx, cy, r); } : function (o) { return rrectPath(b, o); };
+    var p = Math.max(0, Math.min(1, this.draw.x)), off = String(1 - p);
+    var dash = p >= 0.999 ? "none" : "1 1";          // a finished stroke has no dash, so no seam at the start point
+    this.g.setAttribute("opacity", this.op.val(now).toFixed(3));
+    this.mint.setAttribute("d", shape(g.mintC)); this.mint.setAttribute("stroke-width", g.mintW); this.mint.setAttribute("stroke-dashoffset", off); this.mint.setAttribute("stroke-dasharray", dash);
+    [[this.kIn, g.inC], [this.kOut, g.outC]].forEach(function (k) {
+      k[0].setAttribute("d", shape(k[1])); k[0].setAttribute("stroke-width", g.key); k[0].setAttribute("stroke", g.keyCol); k[0].setAttribute("stroke-dashoffset", off); k[0].setAttribute("stroke-dasharray", dash);
+    });
+    var ho = S.rt ? 0 : this.haloOp.val(now);
+    this.halo.setAttribute("d", shape(g.haloC)); this.halo.setAttribute("stroke-width", 6); this.halo.setAttribute("opacity", ho.toFixed(3));
+    if (this.pulseState === "run") {
+      var q = Math.max(0, Math.min(1, this.pulse.x));
+      this.ghost.setAttribute("d", shape(g.haloC + PULSE_GROW * q)); this.ghost.setAttribute("stroke-width", 6);
+      this.ghost.setAttribute("stroke-opacity", (0.28 * (1 - q)).toFixed(3)); this.ghost.style.display = "";
+    } else this.ghost.style.display = "none";
+    // material band under the halo (blurs busy content right around the mark; never inside it)
+    var m = this.mat;
+    if (S.rt) m.style.display = "none";
+    else {
+      m.style.display = "";
+      m.style.opacity = (ho * this.op.val(now)).toFixed(3);
+      var mask;
+      if (ring) {
+        var R = g.haloOut; m.style.left = (cx - R) + "px"; m.style.top = (cy - R) + "px"; m.style.width = m.style.height = 2 * R + "px"; m.style.borderRadius = "50%";
+        mask = "radial-gradient(circle closest-side, transparent " + (g.haloIn - 0.5) + "px, #000 " + g.haloIn + "px)";
+      } else {
+        var o = g.haloOut, w = b.w + 2 * o, h = b.h + 2 * o, rb = { x: o, y: o, w: b.w, h: b.h };
+        m.style.left = (b.x - o) + "px"; m.style.top = (b.y - o) + "px"; m.style.width = w + "px"; m.style.height = h + "px"; m.style.borderRadius = (o + 4) + "px";
+        var svgm = "<svg xmlns='" + NS + "' width='" + w + "' height='" + h + "'><path fill-rule='evenodd' d='" + rrectPath(rb, o) + rrectPath(rb, g.haloIn) + "'/></svg>";
+        mask = "url(\"data:image/svg+xml," + encodeURIComponent(svgm) + "\")";
+      }
+      m.style.webkitMaskImage = m.style.maskImage = mask;
+    }
+    this.label.style.opacity = (this.labelOp.val(now) * this.op.val(now)).toFixed(3);
+  };
+
+  function drawGuides(scene) {
+    var gs = scene.guides; while (gs.firstChild) gs.removeChild(gs.firstChild);
+    var live = scene.marks.filter(function (m) { return !m.dying && m.placed; });
+    if (!live.length) return;
+    var m = live[live.length - 1], pl = m.placed, s = pl.safe;
+    var dash = { fill: "none", "stroke-width": "1", "stroke-dasharray": "3 3" };
+    function rect(r, stroke) { var a = Object.assign({ x: r.l, y: r.t, width: r.r - r.l, height: r.b - r.t, stroke: stroke }, dash); el("rect", a, gs); }
+    var GC = "var(--accent, #007aff)";
+    rect(s, GC);
+    rect(m.keepRect(m.goal.x, m.goal.y), "rgba(120,120,128,.95)");
+    pl.tried.forEach(function (t) { if (t.rect && !t.ok) rect(t.rect, "rgba(120,120,128,.7)"); });
+    if (pl.rect) rect(pl.rect, MINT);
+    var txt = "safe area, 12 pt in · label " + (pl.side || "omitted");
+    var bg = el("rect", { x: s.l + 2, y: s.t + 2, height: 13, rx: 3, fill: GC }, gs);
+    var tx = el("text", { x: s.l + 6, y: s.t + 12, "font-size": "9", fill: "#ffffff", "font-family": "system-ui, sans-serif" }, gs);
+    tx.textContent = txt; bg.setAttribute("width", tx.getComputedTextLength() + 8);
+  }
+
+  // ---- Clock, events and the loop (runs only while something changes)
+  var events = [], running = false, last = 0;
+  function now() { return performance.now(); }
+  function frame(ts) {
+    var t = now(), dt = Math.min(0.05, Math.max(0, (t - last) / 1000)); last = t;
+    events.sort(function (a, b) { return a.t - b.t; });
+    while (events.length && events[0].t <= t) events.shift().fn(t);
+    var busy = events.length > 0;
+    scenes.forEach(function (sc) {
+      sc.marks = sc.marks.filter(function (m) { if (m.dead) return false; if (m.tick(t, dt)) busy = true; return !m.dead; });
+    });
+    if (busy) requestAnimationFrame(frame); else running = false;
+  }
+  function kick() { if (!running) { running = true; last = now(); requestAnimationFrame(frame); } }
+
+  function clearAll() {
+    events = [];
+    scenes.forEach(function (sc) {
+      sc.marks.forEach(function (m) { m.remove(); }); sc.marks = [];
+      sc.words.forEach(function (w) { w.span.classList.remove("on"); });
+      while (sc.guides.firstChild) sc.guides.removeChild(sc.guides.firstChild);
+    });
+  }
+  function replay() {
+    clearAll();
+    var t0 = now() + 400;            // a beat of stillness, then the spoken answer starts
+    scenes.forEach(function (sc) {
+      sc.words.forEach(function (w) { events.push({ t: t0 + w.t, fn: function () { w.span.classList.add("on"); } }); });
+      sc.anchors.forEach(function (wi, step) {
+        var node = sc.targets[step];
+        events.push({ mark: true, t: t0 + sc.words[wi].t - LEAD_MS, fn: function (t) {
+          var cur = sc.marks.filter(function (m) { return !m.dying; })[0];
+          if (cur && cur.moveTo(node, t)) return;
+          if (cur) cur.erase(t, S.rm ? REDUCE : FADE_OUT);   // under Reduce Motion: a crossfade, no travel
+          var mk = new Mark(sc, node); sc.marks.push(mk); mk.reveal(t);
+        } });
+      });
+    });
+    kick();
+  }
+  function dismiss() {              // Escape: every mark fades out (motion-fade) and pending marks are cancelled
+    var t = now();
+    scenes.forEach(function (sc) { sc.marks.forEach(function (m) { if (!m.dying) m.erase(t); }); });
+    events = events.filter(function (e) { return !e.mark; });
+    kick();
+  }
+  function restyle() {
+    root.classList.toggle("ic", S.ic); root.classList.toggle("rt", S.rt); root.classList.toggle("guides", S.guides);
+    var t = now();
+    scenes.forEach(function (sc) { sc.marks.forEach(function (m) { if (!m.dying) { m.placeLabel(); m.render(t); } }); });
+  }
+
+  function bind(id, key, replayOnChange) {
+    var box = document.getElementById(id); box.checked = S[key];
+    box.addEventListener("change", function () { S[key] = box.checked; restyle(); if (replayOnChange) replay(); });
+  }
+  bind("ph-rm", "rm", true); bind("ph-ic", "ic", false); bind("ph-rt", "rt", false); bind("ph-gd", "guides", false);
+  document.getElementById("ph-replay").addEventListener("click", replay);
+  document.getElementById("ph-dismiss").addEventListener("click", dismiss);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") dismiss(); });
+  window.addEventListener("resize", function () { restyle(); });
+  restyle();
+  replay();
+})();
+</script>

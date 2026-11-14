@@ -1,0 +1,496 @@
+{
+ "edits": [
+  {
+   "tag": "EDIT:p3:move 10,-20",
+   "edit": {
+    "part": "p3",
+    "op": "move",
+    "args": [
+     10.0,
+     -20.0
+    ],
+    "text": ""
+   }
+  },
+  {
+   "tag": "EDIT:P12:Move -5, 7",
+   "edit": {
+    "part": "p12",
+    "op": "move",
+    "args": [
+     -5.0,
+     7.0
+    ],
+    "text": ""
+   }
+  },
+  {
+   "tag": "EDIT:p3:move 0,0",
+   "edit": null
+  },
+  {
+   "tag": "EDIT:p3:move 5000,1",
+   "edit": null
+  },
+  {
+   "tag": "EDIT:p3:move 1",
+   "edit": null
+  },
+  {
+   "tag": "EDIT:p1:scale 1.5",
+   "edit": {
+    "part": "p1",
+    "op": "scale",
+    "args": [
+     1.5
+    ],
+    "text": ""
+   }
+  },
+  {
+   "tag": "EDIT:p1:scale 0.2",
+   "edit": {
+    "part": "p1",
+    "op": "scale",
+    "args": [
+     0.2
+    ],
+    "text": ""
+   }
+  },
+  {
+   "tag": "EDIT:p1:scale 0.1",
+   "edit": null
+  },
+  {
+   "tag": "EDIT:p1:scale 1",
+   "edit": null
+  },
+  {
+   "tag": "EDIT:p1:scale 6",
+   "edit": null
+  },
+  {
+   "tag": "EDIT:p1:scale x",
+   "edit": null
+  },
+  {
+   "tag": "EDIT:p2:relabel a² + b² = c²",
+   "edit": {
+    "part": "p2",
+    "op": "relabel",
+    "args": [],
+    "text": "a² + b² = c²"
+   }
+  },
+  {
+   "tag": "EDIT:p2:relabel",
+   "edit": null
+  },
+  {
+   "tag": "EDIT:p2:relabel xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "edit": null
+  },
+  {
+   "tag": "EDIT:p4:erase",
+   "edit": {
+    "part": "p4",
+    "op": "erase",
+    "args": [],
+    "text": ""
+   }
+  },
+  {
+   "tag": "EDIT:p4:erase now",
+   "edit": null
+  },
+  {
+   "tag": "EDIT:p5:recolor Red",
+   "edit": {
+    "part": "p5",
+    "op": "recolor",
+    "args": [],
+    "text": "red"
+   }
+  },
+  {
+   "tag": "EDIT:p5:recolor teal",
+   "edit": null
+  },
+  {
+   "tag": "EDIT:all:erase",
+   "edit": {
+    "part": "all",
+    "op": "erase",
+    "args": [],
+    "text": ""
+   }
+  },
+  {
+   "tag": "EDIT:all:keep",
+   "edit": {
+    "part": "all",
+    "op": "keep",
+    "args": [],
+    "text": ""
+   }
+  },
+  {
+   "tag": "EDIT:all:move 1,1",
+   "edit": null
+  },
+  {
+   "tag": "EDIT:p0:erase",
+   "edit": null
+  },
+  {
+   "tag": "EDIT:q1:erase",
+   "edit": null
+  },
+  {
+   "tag": "EDIT:p1000:erase",
+   "edit": null
+  },
+  {
+   "tag": "EDIT:p1:spin",
+   "edit": null
+  },
+  {
+   "tag": "EDIT:p1",
+   "edit": null
+  },
+  {
+   "tag": "POINT:1,2:x",
+   "edit": null
+  }
+ ],
+ "splits": [
+  {
+   "text": "Hello there. [POINT:10,20:x]",
+   "shown": "Hello there.",
+   "targets": [
+    {
+     "kind": "point",
+     "coords": [
+      10,
+      20
+     ],
+     "label": "x",
+     "at": 12
+    }
+   ],
+   "edits": []
+  },
+  {
+   "text": "Here it is.\n[BOX:10,20,110,60:Field]\n[POINT:300,400:Save]",
+   "shown": "Here it is.",
+   "targets": [
+    {
+     "kind": "box",
+     "coords": [
+      10,
+      20,
+      110,
+      60
+     ],
+     "label": "Field",
+     "at": 11
+    },
+    {
+     "kind": "point",
+     "coords": [
+      300,
+      400
+     ],
+     "label": "Save",
+     "at": 11
+    }
+   ],
+   "edits": []
+  },
+  {
+   "text": "The legs meet at a right angle.\n[LINE:10,10,10,100:leg a] [LINE:10,100,200,100:leg b]\nThe long side is the hypotenuse.\n[LINE:10,10,200,100:hypotenuse]\n[TEXT:120,40:large:c]\nThat is it.",
+   "shown": "The legs meet at a right angle.\nThe long side is the hypotenuse.\nThat is it.",
+   "targets": [
+    {
+     "kind": "line",
+     "coords": [
+      10,
+      10,
+      10,
+      100
+     ],
+     "label": "leg a",
+     "at": 32
+    },
+    {
+     "kind": "line",
+     "coords": [
+      10,
+      100,
+      200,
+      100
+     ],
+     "label": "leg b",
+     "at": 32
+    },
+    {
+     "kind": "line",
+     "coords": [
+      10,
+      10,
+      200,
+      100
+     ],
+     "label": "hypotenuse",
+     "at": 65
+    },
+    {
+     "kind": "text",
+     "coords": [
+      120,
+      40
+     ],
+     "label": "large:c",
+     "at": 65
+    }
+   ],
+   "edits": []
+  },
+  {
+   "text": "A [POINT:1,2:x] B. [nope] [EDIT:p3:move 10,-20]",
+   "shown": "A B. [nope]",
+   "targets": [
+    {
+     "kind": "point",
+     "coords": [
+      1,
+      2
+     ],
+     "label": "x",
+     "at": 1
+    }
+   ],
+   "edits": [
+    {
+     "part": "p3",
+     "op": "move",
+     "args": [
+      10.0,
+      -20.0
+     ],
+     "text": "",
+     "at": 11
+    }
+   ]
+  },
+  {
+   "text": "[EDIT:p2:erase]\nGone.",
+   "shown": "Gone.",
+   "targets": [],
+   "edits": [
+    {
+     "part": "p2",
+     "op": "erase",
+     "args": [],
+     "text": "",
+     "at": 0
+    }
+   ]
+  },
+  {
+   "text": "One. [POINT:1,1:a]\nTwo.",
+   "shown": "One.\nTwo.",
+   "targets": [
+    {
+     "kind": "point",
+     "coords": [
+      1,
+      1
+     ],
+     "label": "a",
+     "at": 4
+    }
+   ],
+   "edits": []
+  },
+  {
+   "text": "No tags [x:1] here.",
+   "shown": "No tags [x:1] here.",
+   "targets": [],
+   "edits": []
+  },
+  {
+   "text": "Write it. [TEXT:520,300:large:a² + b² = c²]\nAnd the sides. [TEXT:600,420:small:c]",
+   "shown": "Write it.\nAnd the sides.",
+   "targets": [
+    {
+     "kind": "text",
+     "coords": [
+      520,
+      300
+     ],
+     "label": "large:a² + b² = c²",
+     "at": 9
+    },
+    {
+     "kind": "text",
+     "coords": [
+      600,
+      420
+     ],
+     "label": "small:c",
+     "at": 24
+    }
+   ],
+   "edits": []
+  },
+  {
+   "text": "Squared [POINT:1,2:x]",
+   "shown": "Squared",
+   "targets": [
+    {
+     "kind": "point",
+     "coords": [
+      1,
+      2
+     ],
+     "label": "x",
+     "at": 7
+    }
+   ],
+   "edits": []
+  },
+  {
+   "text": "[POINT:5,5:first] Then words.",
+   "shown": "Then words.",
+   "targets": [
+    {
+     "kind": "point",
+     "coords": [
+      5,
+      5
+     ],
+     "label": "first",
+     "at": 0
+    }
+   ],
+   "edits": []
+  }
+ ],
+ "cardlines": [
+  {
+   "line": "That is the rule. Takeaway: a squared plus b squared.",
+   "spoken": "That is the rule.",
+   "kinds": [
+    "takeaway"
+   ],
+   "values": [
+    "a squared plus b squared."
+   ]
+  },
+  {
+   "line": "**Takeaway:** Bold one.",
+   "spoken": "",
+   "kinds": [
+    "takeaway"
+   ],
+   "values": [
+    "Bold one."
+   ]
+  },
+  {
+   "line": "TAKEAWAY: shouting.",
+   "spoken": "",
+   "kinds": [
+    "takeaway"
+   ],
+   "values": [
+    "shouting."
+   ]
+  },
+  {
+   "line": "More. **Chips:** [\"Why?\",\"How?\"]",
+   "spoken": "More.",
+   "kinds": [
+    "chips"
+   ],
+   "values": [
+    [
+     "Why?",
+     "How?"
+    ]
+   ]
+  },
+  {
+   "line": "Chips: salt and vinegar.",
+   "spoken": "Chips: salt and vinegar.",
+   "kinds": [],
+   "values": []
+  },
+  {
+   "line": "Take the bus. Takeaways: none.",
+   "spoken": "Take the bus. Takeaways: none.",
+   "kinds": [],
+   "values": []
+  },
+  {
+   "line": "It works. takeaway: lower case.",
+   "spoken": "It works.",
+   "kinds": [
+    "takeaway"
+   ],
+   "values": [
+    "lower case."
+   ]
+  },
+  {
+   "line": "No stop takeaway: here.",
+   "spoken": "No stop takeaway: here.",
+   "kinds": [],
+   "values": []
+  },
+  {
+   "line": "item: {\"label\":\"A\"}",
+   "spoken": "",
+   "kinds": [
+    "item"
+   ],
+   "values": [
+    {
+     "label": "A"
+    }
+   ]
+  },
+  {
+   "line": "Item: one more thing.",
+   "spoken": "Item: one more thing.",
+   "kinds": [],
+   "values": []
+  },
+  {
+   "line": "Done! Chips: [\"Next?\"]",
+   "spoken": "Done!",
+   "kinds": [
+    "chips"
+   ],
+   "values": [
+    [
+     "Next?"
+    ]
+   ]
+  },
+  {
+   "line": "card: {\"title\":\"T\"}",
+   "spoken": "",
+   "kinds": [
+    "card"
+   ],
+   "values": [
+    {
+     "title": "T"
+    }
+   ]
+  }
+ ]
+}

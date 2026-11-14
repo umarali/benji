@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18">
+  <title>Chilly menu-bar glyph, Pebble (template)</title>
+  <!-- the pebble's outline, 1.5 pt -->
+  <path d="M16.25 9.2 C16.38 12.92 11.95 13.44 9.14 13.49 C6.47 13.54 1.88 13.28 1.75 9.71 C1.62 5.99 5.81 4.69 8.83 4.52 C12 4.34 16.11 5.36 16.25 9.2 Z" fill="none" stroke="#000000" stroke-width="1.5"/>
+  <!-- its settled side, the same shade as the app icon -->
+  <path d="M15.72 6.09 C16.47 6.86 16.95 7.89 17 9.22 C17.14 13.32 12.26 13.9 9.16 13.96 C6.26 14.01 1.32 13.74 1.01 9.99 C2.73 11.46 5.87 11.6 7.96 11.56 C11.06 11.5 15.94 10.92 15.8 6.82 C15.79 6.57 15.76 6.32 15.72 6.09 Z" fill="#000000"/>
+</svg>

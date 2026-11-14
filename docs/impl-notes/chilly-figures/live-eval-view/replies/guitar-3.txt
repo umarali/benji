@@ -1,0 +1,38 @@
+I'll show you an acoustic guitar with its key parts.
+
+```figure
+{
+  "title": "Acoustic Guitar",
+  "parts": [
+    {"name": "body", "kind": "extrude", "path": "M-2.5 0 C-2.5 -1.2 -1.8 -2.2 0 -2.2 C1.8 -2.2 2.5 -1.2 2.5 0 C2.5 1.8 1.5 3.5 0 3.5 C-1.5 3.5 -2.5 1.8 -2.5 0 Z", "depth": 1.2, "at": [0, 1.5, 0], "mat": "wood"},
+    {"name": "sound hole", "kind": "cyl", "r": 0.55, "h": 0.15, "at": [0, 2.2, 0.6], "axis": "z", "mat": "black"},
+    {"name": "sound hole ring", "kind": "torus", "r": 0.6, "tube": 0.02, "at": [0, 2.2, 0.68], "rot": [90, 0, 0], "mat": "paint:cream"},
+    {"name": "bridge", "kind": "box", "size": [1.2, 0.15, 0.5], "at": [0, 0.8, 0.65], "mat": "wood"},
+    {"name": "saddle", "kind": "box", "size": [1.15, 0.2, 0.08], "at": [0, 0.95, 0.65], "mat": "ceramic"},
+    {"name": "neck", "kind": "box", "size": [0.5, 7, 0.7], "at": [0, 8, 0], "mat": "wood"},
+    {"name": "fretboard", "kind": "box", "size": [0.52, 5.5, 0.12], "at": [0, 7.25, 0.41], "mat": "paint:black"},
+    {"name": "fret 1", "kind": "box", "size": [0.53, 0.04, 0.04], "at": [0, 5.2, 0.47], "mat": "steel"},
+    {"name": "fret 2", "kind": "box", "size": [0.53, 0.04, 0.04], "at": [0, 5.9, 0.47], "mat": "steel"},
+    {"name": "fret 3", "kind": "box", "size": [0.53, 0.04, 0.04], "at": [0, 6.5, 0.47], "mat": "steel"},
+    {"name": "fret 4", "kind": "box", "size": [0.53, 0.04, 0.04], "at": [0, 7.1, 0.47], "mat": "steel"},
+    {"name": "fret 5", "kind": "box", "size": [0.53, 0.04, 0.04], "at": [0, 7.7, 0.47], "mat": "steel"},
+    {"name": "headstock", "kind": "extrude", "path": "M-0.4 0 L-0.4 1.2 L-0.8 1.4 L-0.8 2.2 L0.8 2.2 L0.8 1.4 L0.4 1.2 L0.4 0 Z", "depth": 0.3, "at": [0, 11, 0.15], "mat": "wood"},
+    {"name": "tuning peg 1", "kind": "cyl", "r": 0.08, "from": [-0.65, 11.8, 0.45], "to": [-0.65, 11.8, 0], "mat": "chrome"},
+    {"name": "tuning peg 2", "kind": "cyl", "r": 0.08, "from": [-0.65, 12.2, 0.45], "to": [-0.65, 12.2, 0], "mat": "chrome"},
+    {"name": "tuning peg 3", "kind": "cyl", "r": 0.08, "from": [-0.65, 12.6, 0.45], "to": [-0.65, 12.6, 0], "mat": "chrome"},
+    {"name": "tuning peg 4", "kind": "cyl", "r": 0.08, "from": [0.65, 11.8, 0.45], "to": [0.65, 11.8, 0], "mat": "chrome"},
+    {"name": "tuning peg 5", "kind": "cyl", "r": 0.08, "from": [0.65, 12.2, 0.45], "to": [0.65, 12.2, 0], "mat": "chrome"},
+    {"name": "tuning peg 6", "kind": "cyl", "r": 0.08, "from": [0.65, 12.6, 0.45], "to": [0.65, 12.6, 0], "mat": "chrome"},
+    {"name": "nut", "kind": "box", "size": [0.52, 0.08, 0.08], "at": [0, 10.5, 0.41], "mat": "ceramic"}
+  ],
+  "labels": [
+    {"part": "body", "text": "Body"},
+    {"part": "sound hole", "text": "Sound hole"},
+    {"part": "neck", "text": "Neck"},
+    {"part": "headstock", "text": "Headstock"},
+    {"part": "bridge", "text": "Bridge"},
+    {"part": "fretboard", "text": "Fretboard"}
+  ],
+  "view": {"turn": 30, "tilt": 10}
+}
+```

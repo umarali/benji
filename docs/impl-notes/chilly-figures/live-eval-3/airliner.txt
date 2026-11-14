@@ -1,0 +1,30 @@
+I'll show you an airplane with its key parts and how they work together for flight.
+
+An airplane flies by using its wings to generate lift as air flows over them. The engines provide thrust to move forward, while the tail controls pitch (nose up/down) and yaw (left/right), and the ailerons on the wings control roll (banking). The faster the plane moves, the more lift the wings create, allowing it to overcome gravity and stay airborne.
+
+```figure
+{
+  "title": "How an airplane flies",
+  "parts": [
+    {"name": "fuselage", "kind": "cyl", "r": 1.8, "h": 24, "axis": "x", "at": [0, 0, 0], "mat": "aluminium"},
+    {"name": "nose", "kind": "cone", "r": 1.8, "r2": 0.3, "h": 4, "axis": "x", "at": [14, 0, 0], "mat": "aluminium"},
+    {"name": "cockpit windows", "kind": "box", "size": [2, 0.8, 1.5], "at": [11, 1.2, 0], "mat": "glass"},
+    {"name": "left wing", "kind": "box", "size": [4, 0.4, 12], "at": [0, -0.5, -13], "mat": "aluminium"},
+    {"name": "right wing", "kind": "box", "size": [4, 0.4, 12], "at": [0, -0.5, 13], "mat": "aluminium"},
+    {"name": "left engine", "kind": "cyl", "r": 1.2, "h": 4, "axis": "x", "at": [2, -1, -8], "mat": "steel"},
+    {"name": "right engine", "kind": "cyl", "r": 1.2, "h": 4, "axis": "x", "at": [2, -1, 8], "mat": "steel"},
+    {"name": "vertical stabilizer", "kind": "box", "size": [0.3, 4, 3.5], "at": [-10, 1.5, 0], "mat": "aluminium"},
+    {"name": "left horizontal stabilizer", "kind": "box", "size": [2.5, 0.3, 5], "at": [-10, 0, -4.5], "mat": "aluminium"},
+    {"name": "right horizontal stabilizer", "kind": "box", "size": [2.5, 0.3, 5], "at": [-10, 0, 4.5], "mat": "aluminium"},
+    {"name": "left aileron", "kind": "box", "size": [1.2, 0.15, 3], "at": [-1, -0.45, -16], "mat": "paint:red"},
+    {"name": "right aileron", "kind": "box", "size": [1.2, 0.15, 3], "at": [-1, -0.45, 16], "mat": "paint:red"}
+  ],
+  "labels": [
+    {"part": "left wing", "text": "Wings (lift)"},
+    {"part": "left engine", "text": "Engines (thrust)"},
+    {"part": "vertical stabilizer", "text": "Tail (control)"},
+    {"part": "left aileron", "text": "Ailerons (roll)"}
+  ],
+  "view": {"turn": -25, "tilt": 15}
+}
+```

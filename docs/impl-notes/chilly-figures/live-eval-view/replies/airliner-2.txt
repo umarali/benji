@@ -1,0 +1,29 @@
+I'll show you an airplane with its key parts that enable flight.
+
+An airplane flies by using its wings to create lift (air flows faster over the curved top than the flat bottom, creating lower pressure above), its engines for thrust to move forward, its tail for stability and control, and its control surfaces (ailerons, elevators, rudder) to maneuver. As the plane moves forward, air flowing over the wings generates upward lift that overcomes gravity.
+
+```figure
+{"title":"How an airplane flies","parts":[
+{"name":"fuselage","kind":"lathe","profile":[[0,0],[0.4,0.5],[0.55,2],[0.6,4],[0.6,6],[0.55,8],[0.45,9.5],[0.3,10.5],[0.1,11],[0,11.2]],"at":[0,0,0],"axis":"z","mat":"paint:white"},
+{"name":"left wing","kind":"box","size":[5,0.3,2],"at":[-2.5,0.3,-1],"rot":[0,0,3],"mat":"paint:white"},
+{"name":"right wing","kind":"box","size":[5,0.3,2],"at":[2.5,0.3,-1],"rot":[0,0,-3],"mat":"paint:white"},
+{"name":"left engine","kind":"cyl","r":0.45,"h":1.8,"at":[-3,0,0],"axis":"z","mat":"aluminium"},
+{"name":"right engine","kind":"cyl","r":0.45,"h":1.8,"at":[3,0,0],"axis":"z","mat":"aluminium"},
+{"name":"vertical stabilizer","kind":"box","size":[0.25,2,1.8],"at":[0,1.5,9.5],"mat":"paint:white"},
+{"name":"left horizontal stabilizer","kind":"box","size":[1.8,0.2,1],"at":[-0.9,0.5,9.8],"mat":"paint:white"},
+{"name":"right horizontal stabilizer","kind":"box","size":[1.8,0.2,1],"at":[0.9,0.5,9.8],"mat":"paint:white"},
+{"name":"cockpit windows","kind":"sphere","r":0.7,"at":[0,0.6,0.5],"mat":"glass"},
+{"name":"nose cone","kind":"cone","r":0.4,"r2":0.05,"from":[0,0,-1],"to":[0,0,-1.8],"mat":"paint:grey"},
+{"name":"left aileron","kind":"box","size":[1.2,0.15,0.4],"at":[-4.5,0.15,-0.5],"mat":"paint:red"},
+{"name":"right aileron","kind":"box","size":[1.2,0.15,0.4],"at":[4.5,0.15,-0.5],"mat":"paint:red"},
+{"name":"elevator","kind":"box","size":[3,0.15,0.35],"at":[0,0.4,10.2],"mat":"paint:red"},
+{"name":"rudder","kind":"box","size":[0.2,0.8,0.4],"at":[0,2.4,10.2],"mat":"paint:red"}],
+"labels":[
+{"part":"left wing","text":"Wing (creates lift)"},
+{"part":"left engine","text":"Engine (thrust)"},
+{"part":"left aileron","text":"Aileron (roll control)"},
+{"part":"elevator","text":"Elevator (pitch)"},
+{"part":"rudder","text":"Rudder (yaw)"},
+{"part":"vertical stabilizer","text":"Tail (stability)"}],
+"view":{"turn":45,"tilt":20}}
+```

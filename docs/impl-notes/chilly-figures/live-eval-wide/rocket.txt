@@ -1,0 +1,32 @@
+I'll draw a rocket on its launch pad as a 3D figure for you.
+
+```figure
+{
+  "title": "Rocket on Launch Pad",
+  "parts": [
+    {"name": "launch pad base", "kind": "box", "size": [8, 0.4, 8], "at": [0, 0.2, 0], "mat": "iron"},
+    {"name": "flame trench", "kind": "box", "size": [6, 0.6, 2], "at": [0, -0.3, 0], "mat": "paint:grey"},
+    {"name": "support tower", "kind": "box", "size": [0.8, 12, 0.8], "at": [4, 6, 0], "mat": "steel"},
+    {"name": "access arm", "kind": "box", "size": [3.5, 0.3, 0.6], "at": [2.2, 8, 0], "mat": "aluminium"},
+    {"name": "first stage", "kind": "cyl", "r": 0.9, "h": 6, "at": [0, 3.5, 0], "mat": "white"},
+    {"name": "second stage", "kind": "cyl", "r": 0.75, "h": 3.5, "at": [0, 8.25, 0], "mat": "white"},
+    {"name": "payload fairing", "kind": "cone", "r": 0.75, "r2": 0.1, "h": 2.5, "at": [0, 11.25, 0], "mat": "white"},
+    {"name": "engine nozzle 1", "kind": "cone", "r": 0.4, "r2": 0.5, "h": 0.8, "at": [-0.35, 0.4, 0], "mat": "chrome"},
+    {"name": "engine nozzle 2", "kind": "cone", "r": 0.4, "r2": 0.5, "h": 0.8, "at": [0.35, 0.4, 0], "mat": "chrome"},
+    {"name": "fuel tank band", "kind": "cyl", "r": 0.92, "h": 0.4, "at": [0, 5, 0], "mat": "paint:orange"},
+    {"name": "country marking", "kind": "box", "size": [1.5, 0.6, 0.02], "at": [0, 7, 0.9], "mat": "paint:blue"},
+    {"name": "stabilizer fin 1", "kind": "box", "size": [0.1, 1.2, 0.8], "at": [0.9, 1.5, 0], "mat": "aluminium"},
+    {"name": "stabilizer fin 2", "kind": "box", "size": [0.8, 1.2, 0.1], "at": [0, 1.5, 0.9], "mat": "aluminium"},
+    {"name": "stabilizer fin 3", "kind": "box", "size": [0.8, 1.2, 0.1], "at": [0, 1.5, -0.9], "mat": "aluminium"}
+  ],
+  "labels": [
+    {"part": "payload fairing", "text": "Payload"},
+    {"part": "second stage", "text": "Second Stage"},
+    {"part": "first stage", "text": "First Stage"},
+    {"part": "engine nozzle 1", "text": "Engines"},
+    {"part": "support tower", "text": "Tower"},
+    {"part": "access arm", "text": "Access Arm"}
+  ],
+  "view": {"turn": 35, "tilt": 20}
+}
+```

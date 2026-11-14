@@ -1,0 +1,35 @@
+I'll show you a compound microscope with all its key parts labeled.
+
+```figure
+{
+  "title": "Compound Microscope",
+  "parts": [
+    {"name": "base", "kind": "box", "size": [3, 0.4, 2.5], "at": [0, 0.2, 0], "mat": "iron"},
+    {"name": "arm", "kind": "box", "size": [0.4, 5, 0.5], "at": [0, 2.7, -0.8], "mat": "paint:grey"},
+    {"name": "stage", "kind": "box", "size": [3, 0.3, 2.2], "at": [0, 2.2, 0.3], "mat": "iron"},
+    {"name": "stage opening", "kind": "cyl", "r": 0.5, "h": 0.32, "at": [0, 2.2, 0.3], "mat": "black"},
+    {"name": "stage clips", "kind": "box", "size": [0.15, 0.08, 0.6], "at": [0.8, 2.45, 0.3], "copies": {"count": 2, "step": [-1.6, 0, 0]}, "mat": "steel"},
+    {"name": "illuminator", "kind": "cyl", "r": 0.6, "h": 0.3, "at": [0, 0.55, 0.3], "mat": "black"},
+    {"name": "light", "kind": "cyl", "r": 0.45, "h": 0.05, "at": [0, 0.7, 0.3], "mat": "glow:yellow"},
+    {"name": "condenser", "kind": "cyl", "r": 0.4, "h": 0.6, "at": [0, 1.5, 0.3], "mat": "aluminium"},
+    {"name": "diaphragm", "kind": "cyl", "r": 0.35, "h": 0.15, "at": [0, 1.15, 0.3], "mat": "brass"},
+    {"name": "coarse focus", "kind": "cyl", "r": 0.25, "h": 0.5, "at": [1.5, 2.7, -0.8], "axis": "x", "mat": "black"},
+    {"name": "fine focus", "kind": "cyl", "r": 0.18, "h": 0.5, "at": [1.5, 3.2, -0.8], "axis": "x", "mat": "black"},
+    {"name": "nosepiece", "kind": "cyl", "r": 0.5, "h": 0.4, "at": [0, 3.1, 0.3], "mat": "chrome"},
+    {"name": "objective lens low", "kind": "cyl", "r": 0.25, "h": 0.6, "at": [-0.35, 2.5, 0.3], "mat": "brass"},
+    {"name": "objective lens medium", "kind": "cyl", "r": 0.25, "h": 0.8, "at": [0, 2.4, 0.3], "mat": "brass"},
+    {"name": "objective lens high", "kind": "cyl", "r": 0.25, "h": 1, "at": [0.35, 2.3, 0.3], "mat": "brass"},
+    {"name": "body tube", "kind": "cyl", "r": 0.4, "h": 1.8, "at": [0, 4, 0], "mat": "paint:grey"},
+    {"name": "eyepiece", "kind": "cyl", "r": 0.35, "h": 0.7, "at": [0, 5.55, 0], "mat": "black"}
+  ],
+  "labels": [
+    {"part": "eyepiece", "text": "Eyepiece"},
+    {"part": "body tube", "text": "Body tube"},
+    {"part": "arm", "text": "Arm"},
+    {"part": "nosepiece", "text": "Nosepiece"},
+    {"part": "objective lens high", "text": "Objective lenses"},
+    {"part": "stage", "text": "Stage"}
+  ],
+  "view": {"turn": 25, "tilt": 15}
+}
+```

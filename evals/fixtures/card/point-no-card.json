@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "id": "card/point-no-card",
+  "kind": "card",
+  "case": "point, no card",
+  "request": {
+    "text": "Underline the second line.",
+    "screen": "document",
+    "spoken": false
+  },
+  "expect": {
+    "card": false,
+    "marks": "point"
+  },
+  "reply": {
+    "model": "claude-haiku-5-5",
+    "effort": "low",
+    "recorded": "2026-11-01",
+    "source": "D-125 card eval, reply point-no-card",
+    "raw": "The second line, \"Fishermen carried their nets down to the water…\", is underlined.\n[UNDERLINE:160,185,768,185:Second line]",
+    "events": null,
+    "usage": null
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

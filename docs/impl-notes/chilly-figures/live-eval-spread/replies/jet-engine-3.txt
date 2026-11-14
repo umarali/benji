@@ -1,0 +1,31 @@
+I'll show you the inside of a jet engine with its main components.
+
+A jet engine contains several key sections that work together to produce thrust. Air enters the front and gets compressed, mixed with fuel and ignited, then expelled out the back at high speed. The main components from front to back are: the fan that pulls in air, compressor stages that squeeze it, the combustion chamber where fuel burns, turbine stages that extract energy to power the compressor and fan, and the exhaust nozzle that directs the hot gases out.
+
+```figure
+{
+  "title": "Inside a Jet Engine",
+  "cut": {"parts": ["casing"]},
+  "parts": [
+    {"name": "casing", "kind": "cyl", "r": 1.5, "h": 10, "at": [0, 0, 0], "axis": "z", "mat": "steel"},
+    {"name": "inlet cone", "kind": "cone", "r": 0.3, "r2": 0.6, "from": [0, 0, -4.5], "to": [0, 0, -3.5], "mat": "aluminium"},
+    {"name": "fan", "kind": "cyl", "r": 1.3, "h": 0.4, "at": [0, 0, -3.3], "axis": "z", "mat": "steel"},
+    {"name": "low pressure compressor", "kind": "cone", "r": 1.2, "r2": 0.9, "from": [0, 0, -2.5], "to": [0, 0, -0.5], "mat": "steel"},
+    {"name": "high pressure compressor", "kind": "cone", "r": 0.9, "r2": 0.6, "from": [0, 0, -0.5], "to": [0, 0, 1.5], "mat": "steel"},
+    {"name": "combustion chamber", "kind": "cyl", "r": 0.9, "h": 2, "at": [0, 0, 2.5], "axis": "z", "mat": "iron"},
+    {"name": "fuel injector", "kind": "torus", "r": 0.5, "tube": 0.08, "at": [0, 0, 1.8], "mat": "brass"},
+    {"name": "high pressure turbine", "kind": "cone", "r": 0.7, "r2": 0.95, "from": [0, 0, 3.5], "to": [0, 0, 4.5], "mat": "iron"},
+    {"name": "low pressure turbine", "kind": "cone", "r": 0.95, "r2": 1.2, "from": [0, 0, 4.5], "to": [0, 0, 6.5], "mat": "iron"},
+    {"name": "central shaft", "kind": "cyl", "r": 0.15, "h": 10, "at": [0, 0, 0], "axis": "z", "mat": "steel"},
+    {"name": "exhaust nozzle", "kind": "cone", "r": 1.2, "r2": 1.0, "from": [0, 0, 6.5], "to": [0, 0, 8], "mat": "steel"}
+  ],
+  "labels": [
+    {"part": "fan", "text": "Fan"},
+    {"part": "high pressure compressor", "text": "Compressor"},
+    {"part": "combustion chamber", "text": "Combustion"},
+    {"part": "high pressure turbine", "text": "Turbine"},
+    {"part": "exhaust nozzle", "text": "Exhaust"}
+  ],
+  "view": {"turn": 20, "tilt": 10}
+}
+```

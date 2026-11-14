@@ -1,0 +1,648 @@
+{
+ "about": "The one-time move into ~/.benji from ~/.chilly, ~/chilly or ~/pal, as cases both sides must agree on: benji/home.py (selftest_home.py) and BenjiCore/HomeMigration.swift (HomeMigrationTests.swift). Each case builds a throwaway home folder from `before` (`dirs`, `files` as path: text, `links` as path: target relative to the home), optionally sets BENJI_WORKDIR (`workdir_env`), runs the move once (or `runs` times), and checks `kind` of the FIRST run, whether a notice was given, the paths that must `exist` or be `absent` afterwards, the marker's kind, and that ~/.benji is mode 700 when the move made it. `python_only` cases are for the engine alone (the app does not know the folder from before the rename, ~/pal).",
+ "cases": [
+  {
+   "name": "only ~/.chilly: one rename, the marker says renamed",
+   "before": {
+    "dirs": [
+     ".chilly/jobs/a",
+     ".chilly/output"
+    ],
+    "files": {
+     ".chilly/answers.jsonl": "A",
+     ".chilly/jobs/a/report.md": "R",
+     ".chilly/.hidden": "H"
+    }
+   },
+   "kind": "renamed",
+   "notice": true,
+   "exist": [
+    ".benji/answers.jsonl",
+    ".benji/jobs/a/report.md",
+    ".benji/.hidden",
+    ".benji/output",
+    ".benji/benji_migrated_from"
+   ],
+   "absent": [
+    ".chilly"
+   ],
+   "marker": "renamed",
+   "mode700": true,
+   "content": {
+    ".benji/answers.jsonl": "A",
+    ".benji/jobs/a/report.md": "R"
+   }
+  },
+  {
+   "name": "nothing there: nothing is made or moved",
+   "before": {
+    "dirs": [
+     "Documents"
+    ]
+   },
+   "kind": "none",
+   "notice": false,
+   "exist": [
+    "Documents"
+   ],
+   "absent": [
+    ".benji",
+    ".chilly",
+    "chilly",
+    "pal"
+   ]
+  },
+  {
+   "name": "only ~/.benji: nothing to do",
+   "before": {
+    "files": {
+     ".benji/answers.jsonl": "NEW"
+    }
+   },
+   "kind": "none",
+   "notice": false,
+   "exist": [
+    ".benji/answers.jsonl"
+   ],
+   "absent": [
+    ".chilly",
+    ".benji/benji_migrated_from"
+   ],
+   "content": {
+    ".benji/answers.jsonl": "NEW"
+   }
+  },
+  {
+   "name": "both exist: ~/.benji is used, nothing is moved or merged, one notice",
+   "before": {
+    "files": {
+     ".chilly/answers.jsonl": "OLD",
+     ".chilly/policy.json": "OLDP",
+     ".benji/answers.jsonl": "NEW"
+    }
+   },
+   "kind": "left_old",
+   "notice": true,
+   "exist": [
+    ".chilly/answers.jsonl",
+    ".chilly/policy.json",
+    ".benji/answers.jsonl",
+    ".benji/benji_migrated_from"
+   ],
+   "absent": [
+    ".benji/policy.json"
+   ],
+   "marker": "left_old",
+   "content": {
+    ".chilly/answers.jsonl": "OLD",
+    ".benji/answers.jsonl": "NEW"
+   }
+  },
+  {
+   "name": "both exist, run twice: the notice comes once",
+   "before": {
+    "files": {
+     ".chilly/answers.jsonl": "OLD",
+     ".benji/answers.jsonl": "NEW"
+    }
+   },
+   "runs": 2,
+   "kind": "left_old",
+   "secondKind": "none",
+   "notice": true,
+   "secondNotice": false,
+   "exist": [
+    ".chilly/answers.jsonl",
+    ".benji/answers.jsonl"
+   ],
+   "absent": [
+    ".benji/jobs"
+   ]
+  },
+  {
+   "name": "moved once, then run again: nothing more happens",
+   "before": {
+    "files": {
+     ".chilly/answers.jsonl": "A"
+    }
+   },
+   "runs": 2,
+   "kind": "renamed",
+   "secondKind": "none",
+   "notice": true,
+   "secondNotice": false,
+   "exist": [
+    ".benji/answers.jsonl",
+    ".benji/benji_migrated_from"
+   ],
+   "absent": [
+    ".chilly"
+   ],
+   "marker": "renamed"
+  },
+  {
+   "name": "moved, then an old build makes ~/.chilly again: ~/.benji is used, one notice, nothing merged",
+   "before": {
+    "files": {
+     ".chilly/answers.jsonl": "A"
+    }
+   },
+   "afterFirstRun": {
+    "files": {
+     ".chilly/answers.jsonl": "AGAIN"
+    }
+   },
+   "runs": 3,
+   "kind": "renamed",
+   "secondKind": "left_old",
+   "thirdKind": "none",
+   "notice": true,
+   "secondNotice": true,
+   "exist": [
+    ".benji/answers.jsonl",
+    ".chilly/answers.jsonl"
+   ],
+   "marker": "renamed",
+   "content": {
+    ".benji/answers.jsonl": "A",
+    ".chilly/answers.jsonl": "AGAIN"
+   }
+  },
+  {
+   "name": "another Benji or Chilly is running: nothing moves, nothing is made, one plain line, and the old folder keeps being used",
+   "before": {
+    "files": {
+     ".chilly/answers.jsonl": "A"
+    }
+   },
+   "others": [
+    4242
+   ],
+   "kind": "busy",
+   "notice": true,
+   "exist": [
+    ".chilly/answers.jsonl"
+   ],
+   "absent": [
+    ".benji"
+   ],
+   "content": {
+    ".chilly/answers.jsonl": "A"
+   }
+  },
+  {
+   "name": "BENJI_WORKDIR set: nothing is moved, nothing is made",
+   "before": {
+    "files": {
+     ".chilly/answers.jsonl": "A"
+    }
+   },
+   "workdir_env": "scratch",
+   "kind": "none",
+   "notice": false,
+   "exist": [
+    ".chilly/answers.jsonl"
+   ],
+   "absent": [
+    ".benji"
+   ]
+  },
+  {
+   "name": "~/.chilly is a link to a folder elsewhere: the link is renamed, its target is untouched",
+   "before": {
+    "files": {
+     "elsewhere/real/answers.jsonl": "A"
+    },
+    "links": {
+     ".chilly": "elsewhere/real"
+    }
+   },
+   "kind": "renamed",
+   "notice": true,
+   "exist": [
+    "elsewhere/real/answers.jsonl",
+    ".benji/answers.jsonl",
+    ".benji/benji_migrated_from"
+   ],
+   "absent": [
+    ".chilly"
+   ],
+   "marker": "renamed",
+   "content": {
+    "elsewhere/real/answers.jsonl": "A"
+   }
+  },
+  {
+   "name": "~/.chilly is a plain file: left alone",
+   "before": {
+    "files": {
+     ".chilly": "I am a file"
+    }
+   },
+   "kind": "none",
+   "notice": false,
+   "exist": [
+    ".chilly"
+   ],
+   "absent": [
+    ".benji"
+   ],
+   "content": {
+    ".chilly": "I am a file"
+   }
+  },
+  {
+   "name": "other folders with look-alike names are never touched",
+   "before": {
+    "files": {
+     ".chilly/answers.jsonl": "A",
+     "chilly-notes/a.txt": "N",
+     "Chilly2/b.txt": "B",
+     ".chilly-old/c.txt": "C",
+     ".chilly.env": "KEY=1",
+     ".benji-old/e.txt": "E",
+     "Documents/d.txt": "D"
+    }
+   },
+   "kind": "renamed",
+   "notice": true,
+   "exist": [
+    "chilly-notes/a.txt",
+    "Chilly2/b.txt",
+    ".chilly-old/c.txt",
+    ".chilly.env",
+    ".benji-old/e.txt",
+    "Documents/d.txt",
+    ".benji/answers.jsonl"
+   ],
+   "absent": [
+    ".chilly"
+   ],
+   "content": {
+    "chilly-notes/a.txt": "N",
+    "Chilly2/b.txt": "B",
+    ".chilly-old/c.txt": "C",
+    ".chilly.env": "KEY=1",
+    ".benji-old/e.txt": "E",
+    ".benji/answers.jsonl": "A"
+   }
+  },
+  {
+   "name": "the oldest name, ~/pal, moves the same way when nothing newer holds anything",
+   "before": {
+    "files": {
+     "pal/usage.jsonl": "U"
+    }
+   },
+   "kind": "renamed",
+   "notice": true,
+   "exist": [
+    ".benji/usage.jsonl",
+    ".benji/benji_migrated_from"
+   ],
+   "absent": [
+    "pal"
+   ],
+   "marker": "renamed"
+  },
+  {
+   "name": "only ~/.benji: nothing to do",
+   "before": {
+    "files": {
+     ".benji/answers.jsonl": "NEW"
+    }
+   },
+   "kind": "none",
+   "notice": false,
+   "exist": [
+    ".benji/answers.jsonl"
+   ],
+   "absent": [
+    ".chilly",
+    "chilly",
+    ".benji/benji_migrated_from"
+   ],
+   "content": {
+    ".benji/answers.jsonl": "NEW"
+   }
+  },
+  {
+   "name": "~/chilly, from before the hidden folder, moves straight to ~/.benji",
+   "before": {
+    "files": {
+     "chilly/answers.jsonl": "A"
+    }
+   },
+   "kind": "renamed",
+   "notice": true,
+   "exist": [
+    ".benji/answers.jsonl",
+    ".benji/benji_migrated_from"
+   ],
+   "absent": [
+    "chilly",
+    ".chilly"
+   ],
+   "marker": "renamed",
+   "markerFrom": "chilly",
+   "content": {
+    ".benji/answers.jsonl": "A"
+   }
+  },
+  {
+   "name": "~/.chilly wins over the older ~/chilly, which is left for a later notice",
+   "before": {
+    "files": {
+     ".chilly/answers.jsonl": "NEWER",
+     "chilly/answers.jsonl": "OLDER"
+    }
+   },
+   "runs": 2,
+   "kind": "renamed",
+   "secondKind": "left_old",
+   "notice": true,
+   "secondNotice": true,
+   "exist": [
+    ".benji/answers.jsonl",
+    "chilly/answers.jsonl"
+   ],
+   "absent": [
+    ".chilly"
+   ],
+   "marker": "renamed",
+   "markerFrom": ".chilly",
+   "content": {
+    ".benji/answers.jsonl": "NEWER",
+    "chilly/answers.jsonl": "OLDER"
+   }
+  },
+  {
+   "name": "an empty ~/.chilly, as an old build makes again, gives way to a real ~/chilly",
+   "before": {
+    "dirs": [
+     ".chilly"
+    ],
+    "files": {
+     "chilly/answers.jsonl": "A"
+    }
+   },
+   "kind": "renamed",
+   "notice": true,
+   "exist": [
+    ".benji/answers.jsonl",
+    ".chilly"
+   ],
+   "absent": [
+    "chilly"
+   ],
+   "markerFrom": "chilly",
+   "content": {
+    ".benji/answers.jsonl": "A"
+   }
+  },
+  {
+   "name": "after the move an old build makes an empty ~/.chilly: no conflict, no notice, the store is untouched",
+   "before": {
+    "files": {
+     ".chilly/answers.jsonl": "A"
+    }
+   },
+   "afterFirstRun": {
+    "dirs": [
+     ".chilly"
+    ]
+   },
+   "runs": 2,
+   "kind": "renamed",
+   "secondKind": "none",
+   "notice": true,
+   "secondNotice": false,
+   "exist": [
+    ".benji/answers.jsonl",
+    ".chilly"
+   ],
+   "marker": "renamed",
+   "content": {
+    ".benji/answers.jsonl": "A"
+   }
+  },
+  {
+   "name": "only an empty old folder: nothing moves, no notice",
+   "before": {
+    "dirs": [
+     ".chilly"
+    ]
+   },
+   "kind": "none",
+   "notice": false,
+   "exist": [
+    ".chilly"
+   ],
+   "absent": [
+    ".benji"
+   ]
+  },
+  {
+   "name": "a folder holding only Finder's note counts as empty",
+   "before": {
+    "files": {
+     ".chilly/.DS_Store": "X"
+    }
+   },
+   "kind": "none",
+   "notice": false,
+   "exist": [
+    ".chilly/.DS_Store"
+   ],
+   "absent": [
+    ".benji"
+   ]
+  },
+  {
+   "name": "an empty ~/.benji is no profile: the real store moves in",
+   "before": {
+    "dirs": [
+     ".benji"
+    ],
+    "files": {
+     ".chilly/memory.jsonl": "M"
+    }
+   },
+   "kind": "renamed",
+   "notice": true,
+   "exist": [
+    ".benji/memory.jsonl"
+   ],
+   "absent": [
+    ".chilly"
+   ],
+   "marker": "renamed",
+   "content": {
+    ".benji/memory.jsonl": "M"
+   }
+  },
+  {
+   "name": "~/.benji is a plain file: nothing is replaced, the old store keeps being used",
+   "before": {
+    "files": {
+     ".benji": "x",
+     ".chilly/a": "A"
+    }
+   },
+   "kind": "failed",
+   "notice": true,
+   "exist": [
+    ".chilly/a"
+   ],
+   "content": {
+    ".benji": "x",
+    ".chilly/a": "A"
+   }
+  },
+  {
+   "name": "the older name of the override counts: CHILLY_WORKDIR set, nothing is moved",
+   "before": {
+    "files": {
+     ".chilly/a": "A"
+    }
+   },
+   "workdir_env": "scratch",
+   "workdir_name": "CHILLY_WORKDIR",
+   "kind": "none",
+   "notice": false,
+   "exist": [
+    ".chilly/a"
+   ],
+   "absent": [
+    ".benji"
+   ]
+  },
+  {
+   "name": "the oldest name of the override counts: PAL_WORKDIR set, nothing is moved",
+   "before": {
+    "files": {
+     ".chilly/a": "A"
+    }
+   },
+   "workdir_env": "scratch",
+   "workdir_name": "PAL_WORKDIR",
+   "kind": "none",
+   "notice": false,
+   "exist": [
+    ".chilly/a"
+   ],
+   "absent": [
+    ".benji"
+   ]
+  },
+  {
+   "name": "a folder merely called ~/chilly, with nothing of Benji's in it, is left alone",
+   "before": {
+    "files": {
+     "chilly/notes.txt": "mine"
+    }
+   },
+   "kind": "none",
+   "notice": false,
+   "exist": [
+    "chilly/notes.txt"
+   ],
+   "absent": [
+    ".benji"
+   ]
+  },
+  {
+   "name": "a code clone at ~/chilly is never the store, even with a sign in it",
+   "before": {
+    "files": {
+     "chilly/.git/HEAD": "x",
+     "chilly/jobs/keep": "y"
+    }
+   },
+   "kind": "none",
+   "notice": false,
+   "exist": [
+    "chilly/.git/HEAD"
+   ],
+   "absent": [
+    ".benji"
+   ]
+  },
+  {
+   "name": "a package clone at ~/pal is never the store",
+   "before": {
+    "files": {
+     "pal/chilly/__main__.py": "x",
+     "pal/output/a": "y"
+    }
+   },
+   "kind": "none",
+   "notice": false,
+   "exist": [
+    "pal/chilly/__main__.py"
+   ],
+   "absent": [
+    ".benji"
+   ]
+  },
+  {
+   "name": "each older store beside ~/.benji is mentioned once, the oldest too",
+   "before": {
+    "files": {
+     ".benji/a": "N",
+     ".chilly/answers.jsonl": "C",
+     "pal/usage.jsonl": "P"
+    }
+   },
+   "runs": 3,
+   "kind": "left_old",
+   "secondKind": "left_old",
+   "thirdKind": "none",
+   "notice": true,
+   "secondNotice": true,
+   "exist": [
+    ".chilly/answers.jsonl",
+    "pal/usage.jsonl"
+   ],
+   "content": {
+    ".benji/a": "N"
+   }
+  },
+  {
+   "name": "busy leaves an empty ~/.benji where it is",
+   "before": {
+    "dirs": [
+     ".benji"
+    ],
+    "files": {
+     ".chilly/a": "A"
+    }
+   },
+   "others": [
+    4242
+   ],
+   "kind": "busy",
+   "notice": true,
+   "exist": [
+    ".benji",
+    ".chilly/a"
+   ]
+  },
+  {
+   "name": "~/pal with only a generic output folder is left alone",
+   "before": {
+    "files": {
+     "pal/output/a": "y"
+    }
+   },
+   "kind": "none",
+   "notice": false,
+   "exist": [
+    "pal/output/a"
+   ],
+   "absent": [
+    ".benji"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,32 @@
+I'll show you an office chair with its key components.
+
+```figure
+{
+  "title": "An office chair",
+  "parts": [
+    {"name": "seat", "kind": "box", "size": [1.8, 0.3, 1.6], "at": [0, 2, 0], "mat": "paint:black"},
+    {"name": "backrest", "kind": "box", "size": [1.6, 1.8, 0.3], "at": [0, 3.1, -0.65], "mat": "paint:black"},
+    {"name": "lumbar support", "kind": "box", "size": [1.4, 0.4, 0.2], "at": [0, 2.4, -0.55], "mat": "paint:grey"},
+    {"name": "seat post", "kind": "cyl", "r": 0.15, "h": 0.8, "at": [0, 1.2, 0], "mat": "chrome"},
+    {"name": "gas cylinder", "kind": "cyl", "r": 0.12, "h": 1.2, "at": [0, 0, 0], "mat": "steel"},
+    {"name": "base star", "kind": "cyl", "r": 1.2, "h": 0.15, "at": [0, 0.075, 0], "mat": "plastic"},
+    {"name": "wheel 1", "kind": "sphere", "r": 0.18, "at": [1.1, 0.08, 0], "mat": "rubber"},
+    {"name": "wheel 2", "kind": "sphere", "r": 0.18, "at": [-0.55, 0.08, 0.95], "mat": "rubber"},
+    {"name": "wheel 3", "kind": "sphere", "r": 0.18, "at": [-0.55, 0.08, -0.95], "mat": "rubber"},
+    {"name": "wheel 4", "kind": "sphere", "r": 0.18, "at": [0.35, 0.08, 1], "mat": "rubber"},
+    {"name": "wheel 5", "kind": "sphere", "r": 0.18, "at": [0.35, 0.08, -1], "mat": "rubber"},
+    {"name": "left armrest", "kind": "box", "size": [0.2, 0.15, 1], "at": [0.9, 2.3, 0], "mat": "plastic"},
+    {"name": "right armrest", "kind": "box", "size": [0.2, 0.15, 1], "at": [-0.9, 2.3, 0], "mat": "plastic"},
+    {"name": "left armrest support", "kind": "cyl", "r": 0.08, "from": [0.9, 2.1, 0.3], "to": [0.9, 1.9, 0.3], "mat": "steel"},
+    {"name": "right armrest support", "kind": "cyl", "r": 0.08, "from": [-0.9, 2.1, 0.3], "to": [-0.9, 1.9, 0.3], "mat": "steel"}
+  ],
+  "labels": [
+    {"part": "backrest", "text": "Backrest"},
+    {"part": "seat", "text": "Seat"},
+    {"part": "left armrest", "text": "Armrest"},
+    {"part": "gas cylinder", "text": "Height adjustment"},
+    {"part": "base star", "text": "Base"}
+  ],
+  "view": {"turn": 35, "tilt": 18}
+}
+```

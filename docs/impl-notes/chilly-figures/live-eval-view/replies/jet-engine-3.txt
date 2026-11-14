@@ -1,0 +1,25 @@
+I'll show you the internal structure of a jet engine with its key components.
+
+A jet engine works by compressing air, mixing it with fuel and igniting it, then using the expanding gases to drive turbines and create thrust. The main components from front to back are: the fan that draws in air, compressor stages that squeeze the air, the combustion chamber where fuel burns, turbines that extract energy to power the compressor and fan, and the exhaust nozzle where hot gases exit at high speed.
+
+```figure
+{"title":"Inside a Jet Engine","parts":[
+{"name":"fan blades","kind":"lathe","profile":[[0,0],[0.15,0],[0.12,0.8],[0,1]],"at":[0,0,3.2],"copies":{"count":16,"around":{"count":16,"axis":"z"}},"mat":"steel"},
+{"name":"fan hub","kind":"cone","r":0.5,"r2":0.6,"h":1,"at":[0,0,3.2],"axis":"z","mat":"aluminium"},
+{"name":"compressor front","kind":"cone","r":0.6,"r2":0.5,"h":2,"at":[0,0,1.7],"axis":"z","mat":"steel"},
+{"name":"compressor blades","kind":"box","size":[0.08,0.3,0.05],"at":[0.52,0,1.2],"copies":{"count":12,"around":{"count":12,"axis":"z"}},"mat":"steel"},
+{"name":"combustion chamber","kind":"cyl","r":0.7,"h":1.5,"at":[0,0,0],"axis":"z","mat":"ceramic"},
+{"name":"fuel injector","kind":"cyl","r":0.08,"h":0.4,"at":[0,0.5,0.5],"axis":"y","mat":"brass"},
+{"name":"flame","kind":"sphere","r":0.35,"at":[0,0,0.2],"mat":"glow:orange"},
+{"name":"turbine disk 1","kind":"cyl","r":0.65,"h":0.15,"at":[0,0,-0.9],"axis":"z","mat":"iron"},
+{"name":"turbine blades 1","kind":"box","size":[0.1,0.4,0.08],"at":[0.6,0,-0.9],"copies":{"count":14,"around":{"count":14,"axis":"z"}},"mat":"ceramic"},
+{"name":"turbine disk 2","kind":"cyl","r":0.6,"h":0.15,"at":[0,0,-1.5],"axis":"z","mat":"iron"},
+{"name":"turbine blades 2","kind":"box","size":[0.1,0.35,0.08],"at":[0.55,0,-1.5],"copies":{"count":14,"around":{"count":14,"axis":"z"}},"mat":"ceramic"},
+{"name":"central shaft","kind":"cyl","r":0.15,"h":8,"at":[0,0,0],"axis":"z","mat":"steel"},
+{"name":"exhaust cone","kind":"cone","r":0.5,"r2":0.4,"h":1.2,"at":[0,0,-2.5],"axis":"z","mat":"steel"},
+{"name":"outer casing top","kind":"cyl","r":1.05,"h":3.8,"at":[0,0,1.1],"axis":"z","mat":"aluminium"},
+{"name":"outer casing rear","kind":"cone","r":1.05,"r2":0.75,"h":2.6,"at":[0,0,-1.4],"axis":"z","mat":"steel"}],
+"labels":[{"part":"fan blades","text":"Fan"},{"part":"compressor blades","text":"Compressor"},{"part":"combustion chamber","text":"Combustion"},{"part":"turbine blades 1","text":"Turbine"},{"part":"exhaust cone","text":"Exhaust"},{"part":"central shaft","text":"Shaft"}],
+"cut":{"parts":["outer casing top","outer casing rear"]},
+"view":{"turn":30,"tilt":10}}
+```

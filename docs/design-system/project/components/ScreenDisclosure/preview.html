@@ -1,0 +1,18 @@
+<!-- @dsCard group="Panel" height=130 subtitle="Before anything is captured" -->
+<style>
+  body { margin: 0; background: var(--window-bg); color: var(--label); font-family: var(--font-sans); }
+  .stage { padding: 20px; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+  .cap { font-family: var(--font-sans); font-size: 11px; line-height: 14px; color: var(--label-secondary); }
+  .notch { background: var(--notch-black); color: var(--notch-label); }
+  .sym { font-family: var(--font-sans); font-weight: 600; }
+</style>
+<style>
+  .wrap { width: 440px; background: var(--notch-black); border-radius: var(--radius-card); padding: var(--space-3); }
+  .strip { display: grid; grid-template-columns: 18px 1fr 16px; gap: var(--space-2); background: var(--notch-raised); border: 1px solid var(--notch-hairline); border-radius: var(--radius-field); padding: 8px 10px; font-size: 12px; line-height: 15px; color: var(--notch-label-secondary); }
+  .eye { color: var(--state-looking); font-weight: 700; }
+</style>
+<div class="stage"><div class="wrap"><div class="strip">
+  <span class="eye">⌖</span>
+  <span>Screen context is on for this message only. When you send, Benji captures this display once (its own panel is left out) and sends the image to Anthropic. Benji deletes its copy after the reply.</span>
+  <span>✕</span>
+</div></div></div>

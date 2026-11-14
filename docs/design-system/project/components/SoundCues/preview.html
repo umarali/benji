@@ -1,0 +1,366 @@
+<!-- @dsCard group="Sound" height=720 subtitle="Five quiet cues, off by default. Play every variant, then try them in a turn" -->
+<style>
+  .sc { --sc-mint: var(--benji-mint, #66d4cf); box-sizing: border-box; padding: var(--space-5, 20px); background: var(--window-bg, #ececec); color: var(--label, #1d1d1f); font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif); font-size: 13px; line-height: 18px; display: flex; flex-direction: column; gap: var(--space-4, 16px); max-width: 760px; }
+  .sc *, .sc *::before, .sc *::after { box-sizing: border-box; }
+  .sc button { font: inherit; color: inherit; }
+  .sc-head { display: flex; flex-wrap: wrap; gap: var(--space-3, 12px); align-items: stretch; }
+  .sc-group { flex: 1 1 320px; background: var(--surface, #fff); border-radius: var(--radius-field, 10px); border: 0.5px solid var(--separator, rgba(0,0,0,.1)); padding: var(--space-3, 12px) var(--space-4, 16px); display: flex; flex-direction: column; gap: var(--space-3, 12px); }
+  .sc-group-title { font-weight: 600; }
+  .sc-row { display: flex; align-items: center; gap: var(--space-3, 12px); justify-content: space-between; }
+  .sc-help, .sc-cap { color: var(--label-secondary, rgba(0,0,0,.5)); font-size: 11px; line-height: 14px; }
+  .sc-help { margin-top: 2px; max-width: 46ch; }
+  .sc-switch { flex: none; position: relative; width: 38px; height: 22px; border-radius: var(--radius-pill, 999px); border: 0; padding: 0; background: var(--separator, rgba(0,0,0,.18)); cursor: pointer; transition: background-color 150ms cubic-bezier(0,0,.58,1); }
+  .sc-switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.3); transition: transform 240ms cubic-bezier(.2,.9,.3,1); }
+  .sc-switch[aria-checked="true"] { background: var(--accent, #007aff); }
+  .sc-switch[aria-checked="true"]::after { transform: translateX(16px); }
+  .sc-switch:focus-visible, .sc-play:focus-visible, .sc-try:focus-visible, .sc-vol input:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent, #007aff) 50%, transparent); outline-offset: 1px; }
+  .sc-vol { display: flex; align-items: center; gap: var(--space-2, 8px); flex: 1; }
+  .sc-vol input { flex: 1; min-width: 80px; accent-color: var(--accent, #007aff); }
+  .sc-vol output { min-width: 52px; text-align: right; font-variant-numeric: tabular-nums; color: var(--label-secondary, rgba(0,0,0,.5)); font-size: 11px; }
+  .sc-quiet, .sc-loud { color: var(--label-secondary, rgba(0,0,0,.5)); font-size: 11px; }
+  .sc-side { flex: 0 1 200px; display: flex; flex-direction: column; justify-content: flex-start; gap: var(--space-2, 8px); }
+  .sc-cues { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2, 8px); }
+  .sc-cue { display: grid; grid-template-columns: 150px minmax(0,1fr) 168px minmax(124px, auto); align-items: center; gap: var(--space-2, 8px) var(--space-3, 12px); background: var(--surface, #fff); border: 0.5px solid var(--separator, rgba(0,0,0,.1)); border-radius: var(--radius-field, 10px); padding: var(--space-2, 8px) var(--space-3, 12px); }
+  .sc-chip { flex: none; width: 150px; height: 28px; border-radius: var(--radius-pill, 999px); background: var(--notch-black, #000); display: flex; align-items: center; gap: 6px; padding: 0 12px; font-family: var(--font-rounded, ui-rounded, -apple-system, sans-serif); font-weight: 600; font-size: 11px; letter-spacing: .2px; white-space: nowrap; }
+  .sc-glyph { display: inline-block; min-width: 16px; text-align: center; font-family: var(--font-sans, -apple-system, sans-serif); font-weight: 700; font-size: 12px; font-variant-emoji: text; }
+  .sc-text { flex: 1 1 200px; min-width: 0; }
+  .sc-name { font-weight: 600; }
+  .sc-meta { color: var(--label-secondary, rgba(0,0,0,.5)); font-size: 11px; line-height: 14px; }
+  .sc-wave { flex: none; width: 168px; height: 30px; border-radius: 6px; background: var(--notch-black, #000); display: block; }
+  .sc-plays { flex: none; display: flex; gap: 4px; justify-content: flex-end; }
+  .sc-play { padding: 0 7px !important; }
+  .sc-play, .sc-try { border: 0.5px solid var(--separator, rgba(0,0,0,.15)); background: var(--window-bg, #ececec); border-radius: var(--radius-pill, 999px); height: 24px; padding: 0 10px; cursor: pointer; font-size: 12px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .sc-play:active, .sc-try:active { filter: brightness(.92); }
+  .sc-play[data-on="1"] { background: var(--accent, #007aff); color: #fff; border-color: transparent; }
+  .sc-demo { display: flex; flex-direction: column; gap: var(--space-2, 8px); }
+  .sc-demo-row { display: flex; flex-wrap: wrap; gap: var(--space-3, 12px); align-items: center; }
+  .sc-peek { width: 360px; max-width: 100%; height: 40px; background: var(--notch-black, #000); border-radius: 0 0 var(--radius-notch-peek, 18px) var(--radius-notch-peek, 18px); display: grid; grid-template-columns: 22px 98px 1fr; align-items: center; gap: var(--space-1, 4px); padding: 0 var(--space-3, 12px); }
+  .sc-peek .sc-glyph { font-size: 13px; transition: opacity 150ms cubic-bezier(0,0,.58,1); will-change: transform; }
+  .sc-peek .sc-status { font-family: var(--font-rounded, ui-rounded, -apple-system, sans-serif); font-size: 11px; line-height: 14px; font-weight: 600; letter-spacing: .2px; }
+  .sc-peek .sc-line { font-family: var(--font-rounded, ui-rounded, -apple-system, sans-serif); font-size: 13px; line-height: 16px; font-weight: 500; color: var(--notch-label, rgba(255,255,255,.85)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sc-tries { display: flex; flex-wrap: wrap; gap: 6px; }
+  .sc-log { font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace); font-size: 11px; line-height: 14px; color: var(--label-secondary, rgba(0,0,0,.5)); min-height: 14px; }
+  .sc[data-reduce="1"] .sc-peek .sc-glyph { transition: opacity 200ms cubic-bezier(.42,0,.58,1); }
+  .sc[data-reduce="1"] .sc-switch, .sc[data-reduce="1"] .sc-switch::after { transition: none; }
+  .sc-vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  @media (max-width: 640px) { .sc-cue { display: flex; flex-wrap: wrap; } .sc-wave { flex: 1 1 168px; } }
+  @media (max-width: 520px) { .sc { padding: var(--space-4, 16px); } .sc-wave { flex-basis: 100%; } }
+</style>
+<div class="sc" id="sc-root">
+  <div class="sc-head">
+    <section class="sc-group" aria-label="Sounds setting, as it appears in Benji's Settings">
+      <div class="sc-group-title">Sounds</div>
+      <div class="sc-row">
+        <div>
+          <div id="sc-on-label">Play quiet cues</div>
+          <div class="sc-help">A soft sound when I start or stop listening, finish, need your go-ahead, or hit a problem. The notch always shows the same thing.</div>
+        </div>
+        <button type="button" class="sc-switch" id="sc-on" role="switch" aria-checked="false" aria-labelledby="sc-on-label"></button>
+      </div>
+      <div class="sc-row">
+        <label for="sc-vol">Volume</label>
+        <div class="sc-vol">
+          <span class="sc-quiet" aria-hidden="true">quiet</span>
+          <input type="range" id="sc-vol" min="5" max="100" step="1" value="70" aria-describedby="sc-vol-out">
+          <span class="sc-loud" aria-hidden="true">loud</span>
+          <output id="sc-vol-out" for="sc-vol">−6.2 dB</output>
+        </div>
+      </div>
+    </section>
+    <div class="sc-side">
+      <div class="sc-row">
+        <span id="sc-rm-label">Reduce Motion</span>
+        <button type="button" class="sc-switch" id="sc-rm" role="switch" aria-checked="false" aria-labelledby="sc-rm-label"></button>
+      </div>
+      <div class="sc-cap">Off by default (D-61). The play buttons always sound, so you can audition. Volume plays Done when you let go. Sound never changes with Reduce Motion; only the checkmark's bounce does.</div>
+    </div>
+  </div>
+
+  <ul class="sc-cues" aria-label="Cues">
+    <li class="sc-cue" data-cue="listening-on">
+      <span class="sc-chip" style="color: var(--state-listening, #ff9f0a)"><span class="sc-glyph" aria-hidden="true">mic</span>Listening</span>
+      <div class="sc-text"><div class="sc-name">Listening on</div><div class="sc-meta">Mic engine running · 130 ms · rises F♯5→A5 · lands with the mic glyph · −4 dB</div></div>
+      <canvas class="sc-wave" aria-hidden="true"></canvas>
+      <span class="sc-plays"></span>
+    </li>
+    <li class="sc-cue" data-cue="listening-off">
+      <span class="sc-chip" style="color: var(--state-listening, #ff9f0a)"><span class="sc-glyph" aria-hidden="true" style="opacity:.6">∿</span><span style="opacity:.6">Transcribing</span></span>
+      <div class="sc-text"><div class="sc-name">Listening off</div><div class="sc-meta">Mic engine stopped · 130 ms · falls A5→F♯5 · same frame the meter fades · −6 dB</div></div>
+      <canvas class="sc-wave" aria-hidden="true"></canvas>
+      <span class="sc-plays"></span>
+    </li>
+    <li class="sc-cue" data-cue="done" data-mark="0.080">
+      <span class="sc-chip" style="color: var(--state-done, #32d74b)"><span class="sc-glyph" aria-hidden="true">✓</span>Done</span>
+      <div class="sc-text"><div class="sc-name">Done</div><div class="sc-meta">Answer delivered, not spoken · 520 ms · major third up · 2nd note on the bounce peak, 80 ms · 0 dB</div></div>
+      <canvas class="sc-wave" aria-hidden="true"></canvas>
+      <span class="sc-plays"></span>
+    </li>
+    <li class="sc-cue" data-cue="approval" data-mark="0.177">
+      <span class="sc-chip" style="color: var(--state-approval, #ffd60a)"><span class="sc-glyph" aria-hidden="true">✋︎</span>Needs approval</span>
+      <div class="sc-text"><div class="sc-name">Needs approval</div><div class="sc-meta">Waiting for Yes or No · 480 ms · two equal notes · 2nd as the card fades in, 177 ms · +1 dB</div></div>
+      <canvas class="sc-wave" aria-hidden="true"></canvas>
+      <span class="sc-plays"></span>
+    </li>
+    <li class="sc-cue" data-cue="error" data-mark="0.085">
+      <span class="sc-chip" style="color: var(--state-error, #ff453a)"><span class="sc-glyph" aria-hidden="true">⚠︎</span>Error</span>
+      <div class="sc-text"><div class="sc-name">Error</div><div class="sc-meta">Assistant, voice or capture failed · 420 ms · minor third down, low and muted · 2nd at 85 ms · −1 dB</div></div>
+      <canvas class="sc-wave" aria-hidden="true"></canvas>
+      <span class="sc-plays"></span>
+    </li>
+  </ul>
+
+  <section class="sc-demo" aria-label="Try the cues in a turn">
+    <div class="sc-demo-row">
+      <div class="sc-peek" aria-live="polite">
+        <span class="sc-glyph" id="sc-p-glyph" aria-hidden="true">●</span>
+        <span class="sc-status" id="sc-p-status">Ready</span>
+        <span class="sc-line" id="sc-p-line">Here if you need me.</span>
+      </div>
+      <div class="sc-tries">
+        <button type="button" class="sc-try" data-run="talk">Talk</button>
+        <button type="button" class="sc-try" data-run="typed">Typed task</button>
+        <button type="button" class="sc-try" data-run="approval">Approval</button>
+        <button type="button" class="sc-try" data-run="error">Error</button>
+      </div>
+    </div>
+    <div class="sc-log" id="sc-log">Cues are off, so a turn plays silently, as shipped.</div>
+  </section>
+</div>
+<script>
+(function () {
+  "use strict";
+  var SPEC = /*@cues*/{"sampleRate":48000,"peakCeilingDbfs":-18.0,"trimDb":-0.69,"cues":[{"id":"listening-on","name":"Listening on","duration":0.13,"fade":0.02,"relative_db":-4.0,"gains":[0.108921,0.108417],"variants":[[{"t0":0.0,"f0":739.9888,"f1":880.0,"glide":0.06,"amp":1.0,"attack":0.006,"tau":0.045,"partials":[[1.0,1.0,1.0],[2.0,0.125893,0.55],[4.0,0.019953,0.18]]}],[{"t0":0.0,"f0":755.1013,"f1":897.9718,"glide":0.05,"amp":1.0,"attack":0.006,"tau":0.045,"partials":[[1.0,1.0,1.0],[2.0,0.125893,0.55],[4.0,0.019953,0.18]]}]]},{"id":"listening-off","name":"Listening off","duration":0.13,"fade":0.02,"relative_db":-6.0,"gains":[0.090382,0.090249],"variants":[[{"t0":0.0,"f0":880.0,"f1":739.9888,"glide":0.06,"amp":1.0,"attack":0.006,"tau":0.04,"partials":[[1.0,1.0,1.0],[2.0,0.125893,0.55],[4.0,0.019953,0.18]]}],[{"t0":0.0,"f0":897.9718,"f1":755.1013,"glide":0.05,"amp":1.0,"attack":0.006,"tau":0.04,"partials":[[1.0,1.0,1.0],[2.0,0.125893,0.55],[4.0,0.019953,0.18]]}]]},{"id":"done","name":"Done","duration":0.52,"fade":0.03,"relative_db":0.0,"gains":[0.089354,0.08809,0.09004],"variants":[[{"t0":0.0,"f0":587.3295,"f1":587.3295,"glide":0.0,"amp":0.75,"attack":0.006,"tau":0.09,"partials":[[1.0,1.0,1.0],[2.0,0.158489,0.6],[3.0,0.039811,0.4],[4.0,0.022387,0.2]]},{"t0":0.074,"f0":739.9888,"f1":739.9888,"glide":0.0,"amp":1.0,"attack":0.006,"tau":0.13,"partials":[[1.0,1.0,1.0],[2.0,0.158489,0.6],[3.0,0.039811,0.4],[4.0,0.022387,0.2]]}],[{"t0":0.0,"f0":659.2551,"f1":659.2551,"glide":0.0,"amp":0.75,"attack":0.006,"tau":0.09,"partials":[[1.0,1.0,1.0],[2.0,0.158489,0.6],[3.0,0.039811,0.4],[4.0,0.022387,0.2]]},{"t0":0.074,"f0":830.6094,"f1":830.6094,"glide":0.0,"amp":1.0,"attack":0.006,"tau":0.13,"partials":[[1.0,1.0,1.0],[2.0,0.158489,0.6],[3.0,0.039811,0.4],[4.0,0.022387,0.2]]}],[{"t0":0.0,"f0":523.2511,"f1":523.2511,"glide":0.0,"amp":0.75,"attack":0.006,"tau":0.09,"partials":[[1.0,1.0,1.0],[2.0,0.158489,0.6],[3.0,0.039811,0.4],[4.0,0.022387,0.2]]},{"t0":0.074,"f0":659.2551,"f1":659.2551,"glide":0.0,"amp":1.0,"attack":0.006,"tau":0.13,"partials":[[1.0,1.0,1.0],[2.0,0.158489,0.6],[3.0,0.039811,0.4],[4.0,0.022387,0.2]]}]]},{"id":"approval","name":"Needs approval","duration":0.48,"fade":0.03,"relative_db":1.0,"gains":[0.110743,0.113644],"variants":[[{"t0":0.0,"f0":659.2551,"f1":659.2551,"glide":0.0,"amp":0.85,"attack":0.006,"tau":0.07,"partials":[[1.0,1.0,1.0],[2.0,0.141254,0.55],[3.0,0.031623,0.35]]},{"t0":0.171,"f0":659.2551,"f1":659.2551,"glide":0.0,"amp":1.0,"attack":0.006,"tau":0.1,"partials":[[1.0,1.0,1.0],[2.0,0.141254,0.55],[3.0,0.031623,0.35]]}],[{"t0":0.0,"f0":739.9888,"f1":739.9888,"glide":0.0,"amp":0.85,"attack":0.006,"tau":0.07,"partials":[[1.0,1.0,1.0],[2.0,0.141254,0.55],[3.0,0.031623,0.35]]},{"t0":0.171,"f0":739.9888,"f1":739.9888,"glide":0.0,"amp":1.0,"attack":0.006,"tau":0.1,"partials":[[1.0,1.0,1.0],[2.0,0.141254,0.55],[3.0,0.031623,0.35]]}]]},{"id":"error","name":"Error","duration":0.42,"fade":0.03,"relative_db":-1.0,"gains":[0.082187,0.081573],"variants":[[{"t0":0.0,"f0":440.0,"f1":440.0,"glide":0.0,"amp":0.85,"attack":0.01,"tau":0.08,"partials":[[1.0,1.0,1.0],[2.0,0.079433,0.5]]},{"t0":0.075,"f0":369.9944,"f1":369.9944,"glide":0.0,"amp":1.0,"attack":0.01,"tau":0.12,"partials":[[1.0,1.0,1.0],[2.0,0.079433,0.5]]}],[{"t0":0.0,"f0":391.9954,"f1":391.9954,"glide":0.0,"amp":0.85,"attack":0.01,"tau":0.08,"partials":[[1.0,1.0,1.0],[2.0,0.079433,0.5]]},{"t0":0.075,"f0":329.6276,"f1":329.6276,"glide":0.0,"amp":1.0,"attack":0.01,"tau":0.12,"partials":[[1.0,1.0,1.0],[2.0,0.079433,0.5]]}]]}]}/*@end*/;
+  var SR = SPEC.sampleRate || 48000;
+  var root = document.getElementById("sc-root");
+  if (!root) return;
+
+  // ---- Rendering: a line-for-line port of render() in source/synth.py --------------------
+  function glidePhase(tl, f0, f1, glide) {
+    if (glide <= 0 || f0 === f1) return f0 * tl;
+    var df = f1 - f0;
+    if (tl < glide) return f0 * tl + df * (tl / 2 - glide / (2 * Math.PI) * Math.sin(Math.PI * tl / glide));
+    return f0 * tl + df * (glide / 2 + (tl - glide));
+  }
+  function render(cue, notes, gain) {
+    var count = Math.round(cue.duration * SR), y = new Float32Array(count);
+    for (var i = 0; i < count; i++) {
+      var t = i / SR, s = 0;
+      for (var j = 0; j < notes.length; j++) {
+        var nt = notes[j], tl = t - nt.t0;
+        if (tl < 0) continue;
+        var cyc = glidePhase(tl, nt.f0, nt.f1, nt.glide);
+        var att = tl < nt.attack ? 0.5 - 0.5 * Math.cos(Math.PI * tl / nt.attack) : 1;
+        var rest = Math.max(tl - nt.attack, 0);
+        for (var k = 0; k < nt.partials.length; k++) {
+          var p = nt.partials[k];
+          s += nt.amp * p[1] * att * Math.exp(-rest / (nt.tau * p[2])) * Math.sin(2 * Math.PI * p[0] * cyc);
+        }
+      }
+      y[i] = s;
+    }
+    var fade = Math.round(cue.fade * SR);
+    for (var m = 0; m < fade; m++) y[count - fade + m] *= 0.5 + 0.5 * Math.cos(Math.PI * (m + 1) / fade);
+    for (var q = 0; q < count; q++) y[q] *= gain;
+    return y;
+  }
+  var cues = {};
+  (SPEC.cues || []).forEach(function (c) { cues[c.id] = c; });
+  var cache = {};
+  function samples(id, v) {
+    var key = id + ":" + v;
+    if (!cache[key]) cache[key] = render(cues[id], cues[id].variants[v], cues[id].gains[v]);
+    return cache[key];
+  }
+
+  // ---- Audio: one master gain, one voice (a new cue fades the old one out over 15 ms) -----
+  var ctx = null, master = null, voice = null, played = 0;
+  var vol = document.getElementById("sc-vol"), volOut = document.getElementById("sc-vol-out");
+  function volumeGain() { var p = vol.value / 100; return p * p; }      // audio taper: 70% ≈ −6 dB
+  function showVolume() {
+    var g = volumeGain();
+    volOut.textContent = (g >= 0.999 ? "0" : "−" + (-20 * Math.log10(g)).toFixed(1)) + " dB";
+    vol.setAttribute("aria-valuetext", volOut.textContent);
+    if (master) master.gain.setTargetAtTime(g, ctx.currentTime, 0.01);
+  }
+  function ensureAudio() {
+    if (ctx) return ctx;
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) { root.dataset.audio = "unsupported"; return null; }
+    try {
+      ctx = new AC({ latencyHint: "interactive" });
+      master = ctx.createGain();
+      master.gain.value = volumeGain();
+      master.connect(ctx.destination);
+      root.dataset.audio = "ready";
+    } catch (e) { root.dataset.audio = "unsupported"; ctx = null; }
+    return ctx;
+  }
+  function play(id, v) {
+    var c = ensureAudio();
+    root.dataset.lastCue = id + "-" + (v + 1);
+    root.dataset.cueCount = String(++played);
+    if (!c) return;
+    if (c.state === "suspended" && c.resume) c.resume();
+    var y = samples(id, v);
+    var buf = c.createBuffer(1, y.length, SR);
+    if (buf.copyToChannel) buf.copyToChannel(y, 0); else buf.getChannelData(0).set(y);
+    var src = c.createBufferSource(), g = c.createGain(), now = c.currentTime;
+    src.buffer = buf; src.connect(g); g.connect(master);
+    if (voice) {
+      voice.g.gain.setValueAtTime(voice.g.gain.value, now);
+      voice.g.gain.linearRampToValueAtTime(0, now + 0.015);
+      try { voice.src.stop(now + 0.02); } catch (e) {}
+    }
+    src.start(now);
+    voice = { src: src, g: g };
+    src.onended = function () { if (voice && voice.src === src) voice = null; };
+  }
+
+  // Rotation: a shuffle bag per cue, never the same variant twice in a row; Listening off
+  // reuses the variant of the Listening on it closes, so the pair always matches.
+  var bags = {}, last = {};
+  function nextVariant(id) {
+    if (id === "listening-off" && last["listening-on"] != null) return last["listening-on"];
+    var n = cues[id].variants.length;
+    if (!bags[id] || !bags[id].length) {
+      var b = []; for (var i = 0; i < n; i++) b.push(i);
+      for (var j = n - 1; j > 0; j--) { var r = Math.floor(Math.random() * (j + 1)); var t = b[j]; b[j] = b[r]; b[r] = t; }
+      if (n > 1 && b[0] === last[id]) b.push(b.shift());
+      bags[id] = b;
+    }
+    return bags[id].shift();
+  }
+
+  // ---- Settings switches ---------------------------------------------------------------
+  var onSw = document.getElementById("sc-on"), rmSw = document.getElementById("sc-rm");
+  var logEl = document.getElementById("sc-log");
+  function cuesOn() { return onSw.getAttribute("aria-checked") === "true"; }
+  function reduce() { return rmSw.getAttribute("aria-checked") === "true"; }
+  function setSwitch(el, on) { el.setAttribute("aria-checked", on ? "true" : "false"); }
+  onSw.addEventListener("click", function () {
+    setSwitch(onSw, !cuesOn());
+    logEl.textContent = cuesOn() ? "Cues on: try a turn to hear each one with its moment." : "Cues are off, so a turn plays silently, as shipped.";
+  });
+  rmSw.addEventListener("click", function () { setSwitch(rmSw, !reduce()); root.dataset.reduce = reduce() ? "1" : "0"; });
+  var mq = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
+  function fromSystem() { setSwitch(rmSw, !!(mq && mq.matches)); root.dataset.reduce = reduce() ? "1" : "0"; }
+  fromSystem();
+  if (mq && mq.addEventListener) mq.addEventListener("change", fromSystem);
+  vol.addEventListener("input", showVolume);
+  vol.addEventListener("change", function () { play("done", nextVariant("done")); });
+  showVolume();
+
+  // ---- Rows: play buttons and a still waveform per cue (black, like the notch) -------------
+  var span = 0;
+  (SPEC.cues || []).forEach(function (c) { span = Math.max(span, c.duration); });
+  Array.prototype.forEach.call(root.querySelectorAll(".sc-cue"), function (row) {
+    var id = row.dataset.cue, cue = cues[id];
+    if (!cue) return;
+    var plays = row.querySelector(".sc-plays");
+    cue.variants.forEach(function (_, v) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "sc-play";
+      b.textContent = "▶ " + (v + 1);
+      b.setAttribute("aria-label", "Play " + cue.name + ", variant " + (v + 1));
+      b.addEventListener("click", function () {
+        play(id, v);
+        Array.prototype.forEach.call(root.querySelectorAll(".sc-play"), function (o) { o.dataset.on = o === b ? "1" : "0"; });
+      });
+      plays.appendChild(b);
+    });
+    drawWave(row.querySelector(".sc-wave"), id, getComputedStyle(row.querySelector(".sc-chip")).color, parseFloat(row.dataset.mark || "0"));
+  });
+  function drawWave(cv, id, colour, mark) {
+    var dpr = window.devicePixelRatio || 1, w = cv.clientWidth || 168, h = cv.clientHeight || 30;
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    var g = cv.getContext("2d"); if (!g) return;
+    g.scale(dpr, dpr);
+    var y = samples(id, 0), peak = Math.pow(10, (SPEC.peakCeilingDbfs || -18) / 20);
+    var pad = 6, usable = w - 2 * pad, cols = Math.max(1, Math.round(usable * cues[id].duration / span));
+    g.fillStyle = colour;
+    for (var x = 0; x < cols; x++) {
+      var a = Math.floor(x * y.length / cols), b = Math.floor((x + 1) * y.length / cols), mx = 0;
+      for (var i = Math.max(0, a - 72); i < Math.min(y.length, b + 72); i++) mx = Math.max(mx, Math.abs(y[i]));   // ±1.5 ms: one period of the lowest note, so no stripes
+      var hh = Math.max(1, (h / 2 - 4) * mx / peak);
+      g.fillRect(pad + x, h / 2 - hh, 1, 2 * hh);
+    }
+    if (mark) { g.fillStyle = "rgba(255,255,255,.45)"; g.fillRect(pad + Math.round(usable * mark / span), 3, 1, h - 6); }
+  }
+
+  // ---- A turn in the peek: states come from scripted "events"; cues obey the rules -------
+  var STATES = {
+    ready:        ["●", "Ready", "var(--benji-mint, #66d4cf)", 1, "Here if you need me."],
+    listening:    ["mic", "Listening", "var(--state-listening, #ff9f0a)", 1, "Go on."],
+    transcribing: ["∿", "Transcribing", "var(--state-listening, #ff9f0a)", .6, "…"],
+    working:      ["◌", "Working", "var(--notch-label-secondary, rgba(255,255,255,.55))", 1, "Reading 3 files"],
+    speaking:     ["∿", "Speaking", "var(--benji-mint, #66d4cf)", 1, "Done. 12 files moved to Archive."],
+    approval:     ["✋︎", "Needs approval", "var(--state-approval, #ffd60a)", 1, "Move 12 files to Archive"],
+    done:         ["✓", "Done", "var(--state-done, #32d74b)", 1, "All set."],
+    error:        ["⚠︎", "Error", "var(--state-error, #ff453a)", 1, "The file is locked by another app."]
+  };
+  var pg = document.getElementById("sc-p-glyph"), ps = document.getElementById("sc-p-status"), pl = document.getElementById("sc-p-line");
+  var timers = [], raf = 0;
+  function setState(key) {
+    var s = STATES[key];
+    pg.style.opacity = "0";
+    timers.push(setTimeout(function () {
+      pg.textContent = s[0]; pg.style.color = s[2]; ps.style.color = s[2];
+      ps.style.opacity = String(s[3]); ps.textContent = s[1]; pl.textContent = s[4];
+      pg.style.opacity = String(s[3]);
+    }, reduce() ? 100 : 75));
+  }
+  function bounce() {   // motion-done: impulse on scale, d 0.45 s, b 0.3, v0 4.25/s; peak +14% at 80 ms
+    cancelAnimationFrame(raf);
+    if (reduce()) { pg.style.transform = ""; return; }
+    var w0 = 2 * Math.PI / 0.45, z = 0.7, wd = w0 * Math.sqrt(1 - z * z), t0 = performance.now();
+    (function step(now) {
+      var t = (now - t0) / 1000;
+      if (t >= 0.45) { pg.style.transform = ""; return; }   // at rest: stop drawing
+      pg.style.transform = "scale(" + (1 + 4.25 / wd * Math.exp(-z * w0 * t) * Math.sin(wd * t)).toFixed(4) + ")";
+      raf = requestAnimationFrame(step);
+    })(t0);
+  }
+  function cue(id, why) {
+    if (!cuesOn()) { logEl.textContent = why + " · silent (cues are off)"; return; }
+    var v = nextVariant(id); last[id] = v; play(id, v);
+    logEl.textContent = why + " · cue: " + cues[id].name + ", variant " + (v + 1);
+  }
+  function note(text) { logEl.textContent = text; }
+  var REPLACE = 240;   // the glyph .replace finishes before the Done bounce (and its cue) starts
+  var RUNS = {
+    talk: [
+      [0, function () { setState("listening"); cue("listening-on", "Listening"); }],
+      [1500, function () { setState("transcribing"); cue("listening-off", "Mic stopped"); }],
+      [2100, function () { setState("working"); note("Working · no cue: work is shown, never sounded"); }],
+      [3300, function () { setState("speaking"); note("Speaking · no cue: Benji's voice is the signal"); }],
+      [5300, function () { setState("done"); timers.push(setTimeout(bounce, reduce() ? 0 : REPLACE)); note("Done · no cue: the answer was already spoken"); }],
+      [7300, function () { setState("ready"); }]
+    ],
+    typed: [
+      [0, function () { setState("working"); note("Working · no cue"); }],
+      [1400, function () { setState("done"); timers.push(setTimeout(function () { bounce(); cue("done", "Done"); }, reduce() ? 0 : REPLACE)); }],
+      [3600, function () { setState("ready"); }]
+    ],
+    approval: [
+      [0, function () { setState("working"); note("Working · no cue"); }],
+      [1200, function () { setState("approval"); cue("approval", "Needs approval (the panel opens; note 2 lands as the card fades in)"); }],
+      [4200, function () { setState("ready"); }]
+    ],
+    error: [
+      [0, function () { setState("working"); note("Working · no cue"); }],
+      [1200, function () { setState("error"); cue("error", "Error"); }],
+      [4200, function () { setState("ready"); }]
+    ]
+  };
+  Array.prototype.forEach.call(root.querySelectorAll(".sc-try"), function (b) {
+    b.addEventListener("click", function () {
+      timers.forEach(clearTimeout); timers = []; cancelAnimationFrame(raf); pg.style.transform = "";
+      last = {};
+      if (cuesOn()) ensureAudio();
+      RUNS[b.dataset.run].forEach(function (step) { timers.push(setTimeout(step[1], step[0])); });
+    });
+  });
+
+  root.__soundCues = { spec: SPEC, render: render, samples: samples, play: play, nextVariant: nextVariant };
+})();
+</script>

@@ -1,0 +1,17 @@
+A plane flies by balancing four forces. Engines push it forward (thrust) against drag. The curved wings push air downward as the plane moves, and the air pushes the wings up (lift) against its weight. Lift beats weight at takeoff speed. The tail keeps it stable, and the rudder, elevators and ailerons steer it.
+
+```figure
+{"title":"An airliner","parts":[
+{"name":"fuselage","kind":"capsule","r":0.5,"h":5,"axis":"x","at":[0,0,0],"mat":"white"},
+{"name":"nose","kind":"sphere","r":0.5,"at":[3,0,0],"mat":"white"},
+{"name":"cockpit","kind":"box","size":[0.3,0.2,0.6],"at":[2.9,0.25,0],"mat":"glass"},
+{"name":"right wing","kind":"extrude","path":"M0 0 L1.4 0 L-1 -3.8 L-1.8 -3.8 Z","depth":0.12,"rot":[90,0,0],"at":[0.3,-0.2,0.5],"mat":"aluminium"},
+{"name":"left wing","kind":"extrude","path":"M0 0 L1.4 0 L-1 -3.8 L-1.8 -3.8 Z","depth":0.12,"rot":[90,0,0],"at":[0.3,-0.2,-0.5],"mat":"aluminium","mirror":"x"},
+{"name":"engine","kind":"cyl","r":0.3,"h":1,"axis":"x","at":[0.8,-0.6,1.8],"mat":"steel"},
+{"name":"engine 2","kind":"cyl","r":0.3,"h":1,"axis":"x","at":[0.8,-0.6,-1.8],"mat":"steel"},
+{"name":"tail fin","kind":"extrude","path":"M0 0 L1.2 0 L0.4 1.6 L-0.2 1.6 Z","depth":0.1,"at":[-2.9,0.8,0],"mat":"paint:blue"},
+{"name":"right stabilizer","kind":"box","size":[0.9,0.08,1.2],"at":[-2.7,0.2,0.9],"mat":"aluminium"},
+{"name":"left stabilizer","kind":"box","size":[0.9,0.08,1.2],"at":[-2.7,0.2,-0.9],"mat":"aluminium"}],
+"labels":[{"part":"right wing","text":"Wing: makes lift"},{"part":"engine","text":"Engine: thrust"},{"part":"tail fin","text":"Rudder: steers"},{"part":"right stabilizer","text":"Elevator: pitch"},{"part":"nose","text":"Nose"}],
+"view":{"turn":35,"tilt":20}}
+```

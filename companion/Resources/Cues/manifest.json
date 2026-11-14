@@ -1,0 +1,52 @@
+{
+ "sample_rate": 48000,
+ "peak_ceiling_dbfs": -18.0,
+ "cues": [
+  {
+   "id": "listening-on",
+   "name": "Listening on",
+   "duration_ms": 130,
+   "files": [
+    "benji-listening-on-1.wav",
+    "benji-listening-on-2.wav"
+   ]
+  },
+  {
+   "id": "listening-off",
+   "name": "Listening off",
+   "duration_ms": 130,
+   "files": [
+    "benji-listening-off-1.wav",
+    "benji-listening-off-2.wav"
+   ]
+  },
+  {
+   "id": "done",
+   "name": "Done",
+   "duration_ms": 520,
+   "files": [
+    "benji-done-1.wav",
+    "benji-done-2.wav",
+    "benji-done-3.wav"
+   ]
+  },
+  {
+   "id": "approval",
+   "name": "Needs approval",
+   "duration_ms": 480,
+   "files": [
+    "benji-approval-1.wav",
+    "benji-approval-2.wav"
+   ]
+  },
+  {
+   "id": "error",
+   "name": "Error",
+   "duration_ms": 420,
+   "files": [
+    "benji-error-1.wav",
+    "benji-error-2.wav"
+   ]
+  }
+ ]
+}

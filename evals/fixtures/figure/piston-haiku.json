@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "id": "figure/piston-haiku",
+  "kind": "figure",
+  "case": "piston",
+  "request": {
+    "text": "What's inside a car engine cylinder?",
+    "screen": null,
+    "spoken": false
+  },
+  "expect": {},
+  "reply": {
+    "model": "claude-haiku-5-5",
+    "effort": "low",
+    "recorded": "2026-10-31",
+    "source": "D-108 figure eval low-haiku55, reply piston",
+    "raw": "Inside each cylinder is a smooth, round bore where a **piston** slides up and down. The piston's top, together with the cylinder walls and the **cylinder head**, forms the combustion chamber, where fuel and air are compressed and burned. The **spark plug** ignites the mixture, and two or more **valves** let air in and exhaust out. A **connecting rod** links the piston to the crankshaft, turning the up-and-down motion into rotation.\n\n```figure\n{\"title\":\"Inside one engine cylinder\",\"parts\":[\n{\"name\":\"block\",\"kind\":\"box\",\"size\":[3,2.6,3],\"at\":[0,1.3,0],\"mat\":\"iron\"},\n{\"name\":\"head\",\"kind\":\"box\",\"size\":[3,0.7,3],\"at\":[0,3.15,0],\"mat\":\"aluminium\"},\n{\"name\":\"bore\",\"kind\":\"tube\",\"r\":1.2,\"path\":[[0,0.6,0],[0,2.8,0]],\"mat\":\"steel\"},\n{\"name\":\"piston\",\"kind\":\"cyl\",\"r\":1.05,\"h\":0.6,\"at\":[0,2.1,0],\"mat\":\"aluminium\"},\n{\"name\":\"connecting rod\",\"kind\":\"cyl\",\"r\":0.12,\"from\":[0,1.8,0],\"to\":[0,0.7,0],\"mat\":\"steel\"},\n{\"name\":\"crank pin\",\"kind\":\"cyl\",\"r\":0.25,\"from\":[-0.45,0.45,0],\"to\":[0.45,0.45,0],\"mat\":\"steel\"},\n{\"name\":\"spark plug\",\"kind\":\"cyl\",\"r\":0.12,\"from\":[0,3.6,0],\"to\":[0,2.9,0],\"mat\":\"ceramic\"},\n{\"name\":\"intake valve\",\"kind\":\"cyl\",\"r\":0.08,\"from\":[-0.6,3.4,0],\"to\":[-0.6,2.75,0],\"mat\":\"steel\"},\n{\"name\":\"exhaust valve\",\"kind\":\"cyl\",\"r\":0.08,\"from\":[0.6,3.4,0],\"to\":[0.6,2.75,0],\"mat\":\"steel\"}],\n\"labels\":[{\"part\":\"piston\",\"text\":\"Piston\"},{\"part\":\"bore\",\"text\":\"Cylinder wall\"},{\"part\":\"spark plug\",\"text\":\"Spark plug\"},{\"part\":\"intake valve\",\"text\":\"Intake valve\"},{\"part\":\"connecting rod\",\"text\":\"Connecting rod\"}],\n\"cut\":{\"parts\":[\"block\",\"head\"]},\n\"view\":{\"turn\":25,\"tilt\":15}}\n```",
+    "events": null,
+    "usage": {
+      "calls": 1,
+      "input_tokens": 1803,
+      "output_tokens": 2091,
+      "cache_read_tokens": 3248,
+      "cache_write_tokens": 0
+    }
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

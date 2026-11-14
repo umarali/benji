@@ -1,0 +1,16 @@
+An office chair has a five-legged star base with casters, a gas-lift column, a seat, a tilted backrest and armrests.
+
+```figure
+{"title":"An office chair","parts":[
+{"name":"star base","kind":"cyl","r":0.2,"h":0.2,"at":[0,0.1,0],"mat":"black"},
+{"name":"leg","kind":"cyl","r":0.06,"from":[0,0.1,0],"to":[0.9,0.1,0],"mat":"black","around":{"count":5,"axis":"y"}},
+{"name":"caster","kind":"sphere","r":0.08,"at":[0.9,0.08,0],"mat":"rubber","around":{"count":5,"axis":"y"}},
+{"name":"gas lift","kind":"cyl","r":0.07,"from":[0,0.2,0],"to":[0,1.1,0],"mat":"chrome"},
+{"name":"seat mount","kind":"box","size":[1.2,0.15,1.0],"at":[0,1.175,0],"mat":"steel"},
+{"name":"seat","kind":"box","size":[1.9,0.22,1.8],"at":[0,1.31,0.05],"mat":"black"},
+{"name":"backrest","kind":"box","size":[1.8,1.6,0.2],"at":[0,2.2,-0.85],"rot":[-10,0,0],"mat":"black"},
+{"name":"armrest post","kind":"cyl","r":0.05,"from":[0.85,1.35,-0.2],"to":[0.85,1.9,-0.2],"mat":"steel","mirror":"x"},
+{"name":"armrest","kind":"box","size":[0.14,0.08,0.9],"at":[0.85,1.97,-0.2],"mat":"black","mirror":"x"}],
+"labels":[{"part":"seat","text":"Seat"},{"part":"backrest","text":"Backrest"},{"part":"armrest","text":"Armrest"},{"part":"gas lift","text":"Gas lift"},{"part":"star base","text":"Base"},{"part":"caster","text":"Caster"}],
+"view":{"turn":30,"tilt":15}}
+```

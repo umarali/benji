@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <title>Chilly app icon, Breeze concept (light)</title>
+  <!-- body: macOS grid, 824 x 824 at 100,100 -->
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="#00C7BE"/>
+  <!-- glyph: the wordmark's "ll" laid down as two calm strokes, each breathing out into one air curl;
+       the curls sit half a turn apart (180-degree symmetry): the turn from cold to calm -->
+  <g fill="none" stroke="#FFFFFF" stroke-width="72" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M250 442 H 612 A 92 92 0 1 0 520 350"/>
+    <path d="M774 582 H 412 A 92 92 0 1 0 504 674"/>
+  </g>
+</svg>

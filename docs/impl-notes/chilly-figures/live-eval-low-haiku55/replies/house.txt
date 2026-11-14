@@ -1,0 +1,15 @@
+A simple house with a gabled roof, a front door, two windows and a chimney.
+
+```figure
+{"title":"A house","parts":[
+{"name":"walls","kind":"box","size":[4,2.5,3],"at":[0,1.25,0],"mat":"paint:cream"},
+{"name":"roof","kind":"extrude","path":"M-2.3 0 L2.3 0 L0 1.8 Z","depth":3.4,"at":[0,2.5,0],"mat":"paint:red"},
+{"name":"chimney","kind":"box","size":[0.5,1.4,0.5],"at":[1,3.2,-0.6],"mat":"brick"},
+{"name":"door","kind":"box","size":[0.8,1.5,0.1],"at":[0,0.75,1.55],"mat":"paint:brown"},
+{"name":"door knob","kind":"sphere","r":0.06,"at":[0.3,0.8,1.65],"mat":"brass"},
+{"name":"left window","kind":"box","size":[0.7,0.7,0.1],"at":[-1.3,1.4,1.55],"mat":"glass"},
+{"name":"right window","kind":"box","size":[0.7,0.7,0.1],"at":[1.3,1.4,1.55],"mat":"glass"},
+{"name":"step","kind":"box","size":[1.2,0.2,0.4],"at":[0,0.1,1.7],"mat":"matte"}],
+"labels":[{"part":"roof","text":"Roof"},{"part":"chimney","text":"Chimney"},{"part":"door","text":"Door"},{"part":"left window","text":"Window"}],
+"view":{"turn":25,"tilt":15}}
+```

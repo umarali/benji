@@ -1,0 +1,8 @@
+For a notes app you sync between two Macs, iCloud is the easy choice and a local folder is the private one.
+```card
+{"title":"Where to keep notes","heading":"Easy or private: pick one","layout":"compare",
+"items":[{"label":"iCloud Drive","icon":"icloud","points":["syncs on its own","works on your phone","Apple holds a copy"]},
+{"label":"Local folder","icon":"externaldrive","points":["never leaves the Mac","you sync it yourself","back it up by hand"]}],
+"takeaway":"Use iCloud unless the notes are private.",
+"chips":["Can I encrypt iCloud notes?","How do I back up a folder?"]}
+```

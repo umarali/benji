@@ -1,0 +1,122 @@
+{
+  "schema": 1,
+  "id": "beats/options",
+  "kind": "beats",
+  "case": "options",
+  "request": {
+    "text": "What are my options for backing up my Mac?",
+    "screen": null,
+    "spoken": false
+  },
+  "expect": {
+    "card": true
+  },
+  "reply": {
+    "model": "claude-haiku-5-5",
+    "effort": "low",
+    "recorded": "2026-11-01",
+    "source": "D-127 beats eval, turn options",
+    "raw": null,
+    "events": [
+      {
+        "type": "accepted",
+        "id": "r0c2"
+      },
+      {
+        "type": "card",
+        "id": "r0c2",
+        "card": {
+          "title": "Mac backup options",
+          "heading": "Local, cloud, or both",
+          "layout": "list"
+        },
+        "at": 0
+      },
+      {
+        "type": "card_item",
+        "id": "r0c2",
+        "item": {
+          "label": "Time Machine",
+          "note": "external drive, automatic",
+          "icon": "clock.arrow.circlepath"
+        },
+        "at": 95
+      },
+      {
+        "type": "card_item",
+        "id": "r0c2",
+        "item": {
+          "label": "Disk clone",
+          "note": "bootable copy, e.g. Carbon Copy Cloner",
+          "icon": "externaldrive"
+        },
+        "at": 179
+      },
+      {
+        "type": "card_item",
+        "id": "r0c2",
+        "item": {
+          "label": "iCloud",
+          "note": "synced, not a full backup",
+          "icon": "icloud"
+        },
+        "at": 271
+      },
+      {
+        "type": "card_item",
+        "id": "r0c2",
+        "item": {
+          "label": "Cloud backup",
+          "note": "off-site, paid subscription",
+          "icon": "cloud"
+        },
+        "at": 367
+      },
+      {
+        "type": "card_takeaway",
+        "id": "r0c2",
+        "text": "Use Time Machine plus one off-site copy, such as iCloud or a cloud service.",
+        "at": 367
+      },
+      {
+        "type": "card_chips",
+        "id": "r0c2",
+        "chips": [
+          "How do I set up Time Machine?",
+          "Which external drive should I buy?"
+        ],
+        "at": 367
+      },
+      {
+        "type": "card_end",
+        "id": "r0c2"
+      },
+      {
+        "type": "answer",
+        "id": "r0c2",
+        "text": "The simplest option is Time Machine, which keeps hourly and daily copies on an external drive.\nA bootable clone copies the whole disk, so you can start from it if your Mac fails.\niCloud keeps your Documents, Desktop, Photos and more in sync, but it is not a full backup.\nThird-party cloud services back up everything on the Mac to an online server for a monthly fee.\n",
+        "targets": []
+      },
+      {
+        "type": "usage",
+        "id": "r0c2",
+        "calls": 1,
+        "input_tokens": 1573,
+        "output_tokens": 611,
+        "cache_read_tokens": 4427,
+        "cache_write_tokens": 0
+      },
+      {
+        "type": "done",
+        "id": "r0c2",
+        "status": "ok"
+      }
+    ],
+    "usage": null
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

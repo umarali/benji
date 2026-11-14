@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "id": "figure/airliner-haiku",
+  "kind": "figure",
+  "case": "airliner",
+  "request": {
+    "text": "Show me how a plane flies.",
+    "screen": null,
+    "spoken": false
+  },
+  "expect": {},
+  "reply": {
+    "model": "claude-haiku-5-5",
+    "effort": "low",
+    "recorded": "2026-10-31",
+    "source": "D-108 figure eval low-haiku55, reply airliner",
+    "raw": "A plane flies because its wings push air down, and the air pushes the wings up. The wing's curved top and tilted angle make air move faster over the top, lowering pressure there, and the wing deflects air downward. The reaction force is **lift**. Engines provide **thrust** to overcome drag, and in steady level flight lift balances **weight**.\n\n```figure\n{\"title\":\"How a plane flies\",\"parts\":[\n{\"name\":\"fuselage\",\"kind\":\"capsule\",\"r\":0.5,\"h\":4.2,\"axis\":\"x\",\"at\":[0,0,0],\"mat\":\"white\"},\n{\"name\":\"main wing\",\"kind\":\"box\",\"size\":[1.3,0.08,5.0],\"at\":[0,-0.1,0],\"mat\":\"paint:grey\"},\n{\"name\":\"tail fin\",\"kind\":\"extrude\",\"path\":\"M-1.8 0 L-0.6 0 L-1.4 1.3 L-2.0 1.3 Z\",\"depth\":0.1,\"at\":[0,0.4,0],\"mat\":\"paint:red\"},\n{\"name\":\"tailplane\",\"kind\":\"box\",\"size\":[0.7,0.07,2.0],\"at\":[-1.9,0.3,0],\"mat\":\"paint:grey\"},\n{\"name\":\"left engine\",\"kind\":\"cyl\",\"r\":0.3,\"from\":[0.4,-0.4,1.4],\"to\":[1.4,-0.4,1.4],\"mat\":\"steel\"},\n{\"name\":\"right engine\",\"kind\":\"cyl\",\"r\":0.3,\"from\":[0.4,-0.4,-1.4],\"to\":[1.4,-0.4,-1.4],\"mat\":\"steel\"},\n{\"name\":\"lift arrow\",\"kind\":\"cyl\",\"r\":0.06,\"from\":[0,0.2,2.2],\"to\":[0,1.8,2.2],\"mat\":\"glow:green\"},\n{\"name\":\"weight arrow\",\"kind\":\"cyl\",\"r\":0.06,\"from\":[0,-0.7,0],\"to\":[0,-2.1,0],\"mat\":\"glow:red\"},\n{\"name\":\"thrust arrow\",\"kind\":\"cyl\",\"r\":0.06,\"from\":[1.6,-0.4,1.4],\"to\":[2.9,-0.4,1.4],\"mat\":\"glow:orange\"}],\n\"labels\":[{\"part\":\"main wing\",\"text\":\"Wing: shape and angle make lift\"},{\"part\":\"lift arrow\",\"text\":\"Lift\"},{\"part\":\"weight arrow\",\"text\":\"Weight\"},{\"part\":\"thrust arrow\",\"text\":\"Thrust\"},{\"part\":\"left engine\",\"text\":\"Engine\"}],\n\"view\":{\"turn\":30,\"tilt\":15}}\n```",
+    "events": null,
+    "usage": {
+      "calls": 1,
+      "input_tokens": 1800,
+      "output_tokens": 2851,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3248
+    }
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

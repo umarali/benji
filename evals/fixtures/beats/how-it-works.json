@@ -1,0 +1,122 @@
+{
+  "schema": 1,
+  "id": "beats/how-it-works",
+  "kind": "beats",
+  "case": "how it works",
+  "request": {
+    "text": "How does a heat pump work?",
+    "screen": null,
+    "spoken": true
+  },
+  "expect": {
+    "card": true
+  },
+  "reply": {
+    "model": "claude-haiku-5-5",
+    "effort": "low",
+    "recorded": "2026-11-01",
+    "source": "D-127 beats eval, turn how-it-works",
+    "raw": null,
+    "events": [
+      {
+        "type": "accepted",
+        "id": "r0c0"
+      },
+      {
+        "type": "card",
+        "id": "r0c0",
+        "card": {
+          "title": "How a heat pump works",
+          "heading": "Moves heat, doesn't make it",
+          "layout": "flow"
+        },
+        "at": 0
+      },
+      {
+        "type": "card_item",
+        "id": "r0c0",
+        "item": {
+          "label": "Evaporator",
+          "note": "absorbs outside heat",
+          "icon": "thermometer.snowflake"
+        },
+        "at": 181
+      },
+      {
+        "type": "card_item",
+        "id": "r0c0",
+        "item": {
+          "label": "Compressor",
+          "note": "squeezes, so it heats up",
+          "icon": "bolt.fill"
+        },
+        "at": 244
+      },
+      {
+        "type": "card_item",
+        "id": "r0c0",
+        "item": {
+          "label": "Condenser",
+          "note": "releases heat indoors",
+          "icon": "flame"
+        },
+        "at": 311
+      },
+      {
+        "type": "card_item",
+        "id": "r0c0",
+        "item": {
+          "label": "Expansion valve",
+          "note": "cools it, then repeats",
+          "icon": "wind"
+        },
+        "at": 396
+      },
+      {
+        "type": "card_takeaway",
+        "id": "r0c0",
+        "text": "It's a fridge run in reverse, so it delivers several times more heat than the electricity it uses.",
+        "at": 396
+      },
+      {
+        "type": "card_chips",
+        "id": "r0c0",
+        "chips": [
+          "Why does it work in cold weather?",
+          "Heat pump versus gas boiler?"
+        ],
+        "at": 396
+      },
+      {
+        "type": "card_end",
+        "id": "r0c0"
+      },
+      {
+        "type": "answer",
+        "id": "r0c0",
+        "text": "A heat pump moves heat from outside to inside using a refrigerant that changes between liquid and gas. First, the refrigerant absorbs heat from the outside air, even on a cold day.\nA compressor then squeezes the refrigerant, which heats it up.\nIn the condenser, the hot refrigerant gives its heat to your home.\nAn expansion valve then lowers its pressure, so it cools and the cycle starts again.\n",
+        "targets": []
+      },
+      {
+        "type": "usage",
+        "id": "r0c0",
+        "calls": 1,
+        "input_tokens": 1773,
+        "output_tokens": 870,
+        "cache_read_tokens": 1932,
+        "cache_write_tokens": 2495
+      },
+      {
+        "type": "done",
+        "id": "r0c0",
+        "status": "ok"
+      }
+    ],
+    "usage": null
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

@@ -1,0 +1,33 @@
+I'll draw a rocket on its launch pad as a 3D figure for you.
+
+```figure
+{
+  "title": "Rocket on Launch Pad",
+  "parts": [
+    {"name": "pad base", "kind": "box", "size": [8, 0.4, 8], "at": [0, 0.2, 0], "mat": "iron"},
+    {"name": "support pillar 1", "kind": "box", "size": [0.5, 3, 0.5], "at": [-2.5, 1.5, -2.5], "mat": "steel"},
+    {"name": "support pillar 2", "kind": "box", "size": [0.5, 3, 0.5], "at": [2.5, 1.5, -2.5], "mat": "steel"},
+    {"name": "support pillar 3", "kind": "box", "size": [0.5, 3, 0.5], "at": [2.5, 1.5, 2.5], "mat": "steel"},
+    {"name": "support pillar 4", "kind": "box", "size": [0.5, 3, 0.5], "at": [-2.5, 1.5, 2.5], "mat": "steel"},
+    {"name": "launch platform", "kind": "box", "size": [6, 0.3, 6], "at": [0, 3.15, 0], "mat": "steel"},
+    {"name": "flame trench", "kind": "box", "size": [2, 0.5, 6], "at": [0, 2.65, 0], "mat": "iron"},
+    {"name": "main body", "kind": "cyl", "r": 0.8, "h": 8, "at": [0, 7.5, 0], "mat": "paint:white"},
+    {"name": "fuel tank lower", "kind": "cyl", "r": 0.75, "h": 2.5, "at": [0, 4.75, 0], "mat": "paint:orange"},
+    {"name": "fin 1", "kind": "extrude", "path": "M0 0 L1.2 0 L0.3 2 Z", "depth": 0.15, "at": [0, 3.5, 0.8], "rot": [0, 0, 0], "mat": "steel"},
+    {"name": "fin 2", "kind": "extrude", "path": "M0 0 L1.2 0 L0.3 2 Z", "depth": 0.15, "at": [0.8, 3.5, 0], "rot": [0, 90, 0], "mat": "steel"},
+    {"name": "fin 3", "kind": "extrude", "path": "M0 0 L1.2 0 L0.3 2 Z", "depth": 0.15, "at": [0, 3.5, -0.8], "rot": [0, 180, 0], "mat": "steel"},
+    {"name": "fin 4", "kind": "extrude", "path": "M0 0 L1.2 0 L0.3 2 Z", "depth": 0.15, "at": [-0.8, 3.5, 0], "rot": [0, 270, 0], "mat": "steel"},
+    {"name": "window", "kind": "sphere", "r": 0.3, "at": [0, 10.5, 0.8], "mat": "glass"},
+    {"name": "nose cone", "kind": "cone", "r": 0.8, "r2": 0, "h": 2.5, "at": [0, 13, 0], "mat": "paint:red"},
+    {"name": "engine nozzle", "kind": "cone", "r": 0.5, "r2": 0.7, "h": 1, "at": [0, 3, 0], "mat": "iron"}
+  ],
+  "labels": [
+    {"part": "nose cone", "text": "Nose cone"},
+    {"part": "main body", "text": "Main stage"},
+    {"part": "fin 1", "text": "Stabilizer fin"},
+    {"part": "engine nozzle", "text": "Engine"},
+    {"part": "launch platform", "text": "Launch platform"}
+  ],
+  "view": {"turn": 35, "tilt": 20}
+}
+```

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <title>Chilly app icon: Calm ripple (dark)</title>
+  <!-- body: macOS icon grid, 824 x 824 rounded square at 100,100 -->
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="#000000"/>
+  <!-- glyph layer 1: the halo ripple, wider and softer (echoes the pointer ring's halo) -->
+  <path d="M620.98 479.09 A 290 124 0 1 1 403.02 479.09" fill="none" stroke="#66D4CF" stroke-opacity="0.45" stroke-width="30" stroke-linecap="round"/>
+  <!-- glyph layer 2: the crisp ripple, broken where the drop passes in front of it -->
+  <path d="M602.93 534.77 A 172 58 0 1 1 421.07 534.77" fill="none" stroke="#66D4CF" stroke-width="46" stroke-linecap="round"/>
+  <!-- glyph layer 3: the soft drop, rounded tip -->
+  <path d="M512 286.4 C 520.91 286.4 527.6 293.09 534.29 304.23 C 565.49 355.49 590 404.51 590 458 A 78 78 0 0 1 434 458 C 434 404.51 458.51 355.49 489.71 304.23 C 496.4 293.09 503.09 286.4 512 286.4 Z" fill="#66D4CF"/>
+</svg>

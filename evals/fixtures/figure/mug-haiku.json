@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "id": "figure/mug-haiku",
+  "kind": "figure",
+  "case": "mug",
+  "request": {
+    "text": "Draw a coffee mug.",
+    "screen": null,
+    "spoken": false
+  },
+  "expect": {},
+  "reply": {
+    "model": "claude-haiku-5-5",
+    "effort": "low",
+    "recorded": "2026-10-31",
+    "source": "D-108 figure eval low-haiku55, reply mug",
+    "raw": "Here is a coffee mug: a cylindrical body with a hollow-looking handle on the side, sitting on a flat base.\n\n```figure\n{\"title\":\"A coffee mug\",\"parts\":[\n{\"name\":\"body\",\"kind\":\"cyl\",\"r\":1,\"h\":2.2,\"at\":[0,1.1,0],\"mat\":\"ceramic\"},\n{\"name\":\"base\",\"kind\":\"cyl\",\"r\":1.05,\"h\":0.12,\"at\":[0,0.06,0],\"mat\":\"black\"},\n{\"name\":\"coffee\",\"kind\":\"cyl\",\"r\":0.9,\"h\":0.05,\"at\":[0,2.1,0],\"mat\":\"brown\"},\n{\"name\":\"handle\",\"kind\":\"torus\",\"r\":0.55,\"tube\":0.13,\"at\":[1.05,1.15,0],\"rot\":[0,0,90],\"mat\":\"ceramic\"},\n{\"name\":\"rim\",\"kind\":\"torus\",\"r\":1,\"tube\":0.05,\"at\":[0,2.2,0],\"rot\":[90,0,0],\"mat\":\"ceramic\"}],\n\"labels\":[{\"part\":\"body\",\"text\":\"Body\"},{\"part\":\"handle\",\"text\":\"Handle\"},{\"part\":\"coffee\",\"text\":\"Coffee\"}],\n\"view\":{\"turn\":25,\"tilt\":15}}\n```",
+    "events": null,
+    "usage": {
+      "calls": 1,
+      "input_tokens": 1800,
+      "output_tokens": 419,
+      "cache_read_tokens": 3248,
+      "cache_write_tokens": 0
+    }
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

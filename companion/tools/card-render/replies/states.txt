@@ -1,0 +1,8 @@
+Benji is always in exactly one of three states: it listens, it thinks, then it speaks.
+```card
+{"title":"Benji's three states","heading":"One state at a time","layout":"flow",
+"items":[{"label":"Listening","note":"hears you while the key is down","icon":"ear"},
+{"label":"Thinking","note":"works out the answer","icon":"sparkles"},
+{"label":"Speaking","note":"answers out loud, stops if you talk","icon":"waveform"}],
+"chips":["How does it know I'm done?","Can I interrupt it?","Where does my voice go?"]}
+```

@@ -1,0 +1,149 @@
+name: ci
+
+# Everything here is offline and headless: no API key, no network calls by the tests, no visible
+# window. (Chrome, where a test uses it, is started with --headless=new and a throwaway profile.)
+# This workflow has been checked for YAML syntax only: it has never run on GitHub.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  selftest:
+    name: Engine selftest (${{ matrix.os }}, Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, python: "3.11" }
+          - { os: ubuntu-latest, python: "3.12" }
+          - { os: macos-latest, python: "3.12" }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run selftest.py
+        shell: bash
+        run: |
+          set -o pipefail
+          python3 selftest.py 2>&1 | tee selftest.log
+      - name: Show what failed
+        if: failure()
+        shell: bash
+        run: |
+          echo "::group::Failed checks"
+          grep -n "FAIL" selftest.log || echo "(no FAIL line: the run stopped early, see the end of the log)"
+          echo "::endgroup::"
+          grep -n "FAIL" selftest.log | head -20 | while IFS= read -r line; do echo "::error title=selftest::${line}"; done
+          echo "### selftest failed on ${{ matrix.os }} / Python ${{ matrix.python }}" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          { grep "FAIL" selftest.log || tail -n 30 selftest.log; } | head -40 >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload the log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selftest-log-${{ matrix.os }}-py${{ matrix.python }}
+          path: selftest.log
+
+  browser-extension:
+    name: Browser extension tests (node)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Pure rules (core.js against a fake chrome)
+        run: node --test browser-extension/test/core.test.mjs browser-extension/test/act.test.mjs
+      - name: Page text and page actions (headless Chrome with a throwaway profile)
+        # Skipped by the test itself when no Chrome is installed. Headless only; no extension is loaded.
+        run: |
+          if command -v google-chrome >/dev/null 2>&1 || command -v chromium >/dev/null 2>&1 || command -v chromium-browser >/dev/null 2>&1; then
+            echo "Chrome found; the test runs it with --headless=new."
+          else
+            echo "::warning title=browser-extension::No Chrome on this runner; the page-text test will be skipped, not failed."
+          fi
+          node --test browser-extension/test/page-text.test.mjs browser-extension/test/page-actions.test.mjs
+
+  swift-tests:
+    name: Swift tests and ServeCheck (macOS)
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Toolchain
+        run: xcrun swift --version
+      - name: swift test
+        working-directory: companion
+        shell: bash
+        run: |
+          set -o pipefail
+          xcrun swift test 2>&1 | tee ../swift-test.log
+      - name: Swift failures
+        if: failure()
+        shell: bash
+        run: |
+          echo "::group::error lines"
+          grep -nE "error:|failed|Fatal error" swift-test.log | head -40 || true
+          echo "::endgroup::"
+          grep -nE "error:|failed \(" swift-test.log | head -20 | while IFS= read -r line; do echo "::error title=swift test::${line}"; done
+      - name: ServeCheck (the real ServeBackend against a real engine and a fake model on localhost)
+        run: python3 -I companion/ServeCheck/run.py
+      - name: Upload the log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swift-test-log
+          path: swift-test.log
+
+  hygiene:
+    name: Repository checks (placeholders, export)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Unfilled owner placeholders (a warning, not a failure)
+        shell: bash
+        run: |
+          if grep -rIn "OWNER-""TODO" --exclude-dir=.git --exclude=ci.yml --exclude=RELEASING.md --exclude=selftest_oss.py . > todo.txt; then
+            while IFS= read -r line; do echo "::warning title=placeholder::${line}"; done < todo.txt
+          else
+            echo "No owner placeholders left."
+          fi
+      - name: Export check on this repository
+        # The export tool builds the public tree from a commit and runs the secret,
+        # path, email and private-reference checks on it. It names private material, so it is only
+        # in the maintainer's own repository; the public repository does not have it.
+        shell: bash
+        run: |
+          found=0
+          for tool in tools/make_public_*.py; do
+            [ -f "$tool" ] || continue
+            found=1
+            python3 "$tool" HEAD --out "$RUNNER_TEMP/benji-export"
+          done
+          if [ "$found" = 0 ]; then
+            echo "The export tool is not in this repository (it ships only in the maintainer's private one): nothing to check."
+          fi

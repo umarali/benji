@@ -1,0 +1,116 @@
+{
+  "schema": 1,
+  "id": "beats/stages-screen",
+  "kind": "beats",
+  "case": "stages, screen",
+  "request": {
+    "text": "What happens to an email after I press send?",
+    "screen": "document",
+    "spoken": true
+  },
+  "expect": {
+    "card": true
+  },
+  "reply": {
+    "model": "claude-haiku-5-5",
+    "effort": "low",
+    "recorded": "2026-11-01",
+    "source": "D-127 beats eval, turn stages-screen",
+    "raw": null,
+    "events": [
+      {
+        "type": "accepted",
+        "id": "r0c5"
+      },
+      {
+        "type": "card",
+        "id": "r0c5",
+        "card": {
+          "title": "After you press send",
+          "heading": "Four hops to the inbox",
+          "layout": "flow"
+        },
+        "at": 0
+      },
+      {
+        "type": "card_item",
+        "id": "r0c5",
+        "item": {
+          "label": "Outbox",
+          "note": "your provider queues it",
+          "icon": "paperplane"
+        },
+        "at": 99
+      },
+      {
+        "type": "card_item",
+        "id": "r0c5",
+        "item": {
+          "label": "Routing",
+          "note": "DNS finds their server",
+          "icon": "network"
+        },
+        "at": 221
+      },
+      {
+        "type": "card_item",
+        "id": "r0c5",
+        "item": {
+          "label": "Their server",
+          "note": "scanned and stored",
+          "icon": "server.rack"
+        },
+        "at": 314
+      },
+      {
+        "type": "card_item",
+        "id": "r0c5",
+        "item": {
+          "label": "Inbox",
+          "note": "they download it",
+          "icon": "tray.and.arrow.down"
+        },
+        "at": 372
+      },
+      {
+        "type": "card_chips",
+        "id": "r0c5",
+        "chips": [
+          "What if the address is wrong?",
+          "Why does it sometimes arrive late?"
+        ],
+        "at": 372
+      },
+      {
+        "type": "card_end",
+        "id": "r0c5"
+      },
+      {
+        "type": "answer",
+        "id": "r0c5",
+        "text": "Your mail app hands the message to your provider's outgoing server, which checks it and queues it.\nThe server looks up the recipient's domain in DNS to find their mail server, then passes the message across the internet.\nThe recipient's server runs spam and virus checks, then stores the message in their mailbox.\nTheir mail app fetches it, and it appears in their inbox.\n",
+        "targets": []
+      },
+      {
+        "type": "usage",
+        "id": "r0c5",
+        "calls": 1,
+        "input_tokens": 5911,
+        "output_tokens": 636,
+        "cache_read_tokens": 4427,
+        "cache_write_tokens": 0
+      },
+      {
+        "type": "done",
+        "id": "r0c5",
+        "status": "ok"
+      }
+    ],
+    "usage": null
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

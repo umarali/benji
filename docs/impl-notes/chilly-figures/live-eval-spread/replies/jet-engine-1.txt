@@ -1,0 +1,34 @@
+I'll show you the inside of a jet engine with its main components.
+
+A jet engine works by compressing air, mixing it with fuel and igniting it, then using the expanding gases to spin turbines and produce thrust. The main parts from front to back are: the fan that pulls in air, compressor stages that squeeze the air, the combustion chamber where fuel burns, turbines that extract energy to power the compressor and fan, and the exhaust nozzle where hot gases exit at high speed.
+
+```figure
+{
+  "title": "Inside a Jet Engine",
+  "cut": {"parts": ["casing"]},
+  "parts": [
+    {"name": "casing", "kind": "cyl", "r": 1.3, "h": 10, "at": [0, 0, 0], "axis": "z", "mat": "steel"},
+    {"name": "intake cone", "kind": "cone", "r": 0.3, "r2": 0.5, "from": [0, 0, -1.2], "to": [0, 0, 0], "mat": "aluminium"},
+    {"name": "fan", "kind": "cyl", "r": 1.1, "h": 0.4, "at": [0, 0, 0.2], "axis": "z", "mat": "steel"},
+    {"name": "fan blades", "kind": "box", "size": [0.15, 1.0, 0.3], "at": [0, 0.55, 0.2], "mat": "steel", "around": {"count": 12, "axis": "z"}},
+    {"name": "compressor stages", "kind": "cyl", "r": 0.9, "h": 3.5, "at": [0, 0, 2.65], "axis": "z", "mat": "steel"},
+    {"name": "compressor blades", "kind": "box", "size": [0.08, 0.5, 0.15], "at": [0, 0.45, 1.5], "mat": "steel", "around": {"count": 16, "axis": "z"}},
+    {"name": "combustion chamber", "kind": "cyl", "r": 0.7, "h": 2.0, "at": [0, 0, 5.4], "axis": "z", "mat": "steel"},
+    {"name": "flame", "kind": "cyl", "r": 0.5, "h": 1.6, "at": [0, 0, 5.4], "axis": "z", "mat": "glow:orange"},
+    {"name": "fuel injectors", "kind": "cyl", "r": 0.05, "h": 0.4, "at": [0, 0.5, 4.6], "mat": "brass", "around": {"count": 8, "axis": "z"}},
+    {"name": "turbine stages", "kind": "cyl", "r": 0.85, "h": 2.5, "at": [0, 0, 7.65], "axis": "z", "mat": "steel"},
+    {"name": "turbine blades", "kind": "box", "size": [0.1, 0.6, 0.2], "at": [0, 0.45, 7.0], "mat": "ceramic", "around": {"count": 14, "axis": "z"}},
+    {"name": "exhaust nozzle", "kind": "cone", "r": 0.75, "r2": 0.65, "from": [0, 0, 9.15], "to": [0, 0, 10.5], "mat": "steel"},
+    {"name": "central shaft", "kind": "cyl", "r": 0.15, "h": 8.5, "at": [0, 0, 4.65], "axis": "z", "mat": "steel"}
+  ],
+  "labels": [
+    {"part": "fan", "text": "Fan"},
+    {"part": "compressor stages", "text": "Compressor"},
+    {"part": "combustion chamber", "text": "Combustion"},
+    {"part": "turbine stages", "text": "Turbine"},
+    {"part": "exhaust nozzle", "text": "Exhaust"},
+    {"part": "central shaft", "text": "Shaft"}
+  ],
+  "view": {"turn": 20, "tilt": 10}
+}
+```

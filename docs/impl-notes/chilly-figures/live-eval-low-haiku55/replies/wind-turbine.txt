@@ -1,0 +1,14 @@
+A wind turbine has a tall tubular tower topped by a nacelle, the housing that holds the generator, with three long blades on a hub at the front. The blades turn slowly into the wind, and the hub faces upwind.
+
+```figure
+{"title":"A wind turbine","parts":[
+{"name":"foundation","kind":"cyl","r":1.6,"h":0.5,"at":[0,0.25,0],"mat":"paint:grey"},
+{"name":"tower","kind":"cone","r":0.45,"r2":0.25,"from":[0,0.5,0],"to":[0,8,0],"mat":"paint:white"},
+{"name":"nacelle","kind":"box","size":[1.6,0.9,0.9],"at":[0.2,8.45,0],"mat":"paint:white"},
+{"name":"hub","kind":"sphere","r":0.35,"at":[0.95,8.45,0],"mat":"paint:white"},
+{"name":"blade 1","kind":"extrude","path":"M0 0 L0.35 0 L0.12 4.6 L-0.12 4.6 Z","depth":0.12,"at":[1.0,8.45,0],"mat":"paint:white"},
+{"name":"blade 2","kind":"extrude","path":"M0 0 L0.35 0 L0.12 4.6 L-0.12 4.6 Z","depth":0.12,"at":[1.0,8.45,0],"rot":[0,0,120],"mat":"paint:white"},
+{"name":"blade 3","kind":"extrude","path":"M0 0 L0.35 0 L0.12 4.6 L-0.12 4.6 Z","depth":0.12,"at":[1.0,8.45,0],"rot":[0,0,240],"mat":"paint:white"}],
+"labels":[{"part":"tower","text":"Tower"},{"part":"nacelle","text":"Nacelle"},{"part":"hub","text":"Hub"},{"part":"blade 1","text":"Blade"}],
+"view":{"turn":30,"tilt":10}}
+```

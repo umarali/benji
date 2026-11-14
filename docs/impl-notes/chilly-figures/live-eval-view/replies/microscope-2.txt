@@ -1,0 +1,34 @@
+I'll show you a compound microscope with its main parts labeled.
+
+```figure
+{
+  "title": "Compound Microscope",
+  "parts": [
+    {"name": "base", "kind": "box", "size": [3, 0.4, 2], "at": [0, 0.2, 0], "mat": "iron"},
+    {"name": "pillar", "kind": "box", "size": [0.4, 5, 1.2], "at": [0, 2.7, -0.3], "mat": "paint:grey"},
+    {"name": "stage", "kind": "box", "size": [3, 0.3, 2.5], "at": [0, 3.2, 0.5], "mat": "steel"},
+    {"name": "stage clip left", "kind": "box", "size": [0.15, 0.15, 0.8], "at": [-1, 3.45, 0.5], "mat": "chrome"},
+    {"name": "stage clip right", "kind": "box", "size": [0.15, 0.15, 0.8], "at": [1, 3.45, 0.5], "mat": "chrome"},
+    {"name": "aperture", "kind": "cyl", "r": 0.4, "h": 0.35, "at": [0, 3.2, 0.5], "axis": "z", "mat": "black"},
+    {"name": "arm", "kind": "box", "size": [0.5, 3.5, 0.6], "at": [0, 5, -0.6], "mat": "paint:grey"},
+    {"name": "coarse focus", "kind": "cyl", "r": 0.25, "h": 0.8, "at": [-0.5, 3.8, -0.9], "axis": "x", "mat": "black"},
+    {"name": "fine focus", "kind": "cyl", "r": 0.18, "h": 0.8, "at": [-0.5, 4.3, -0.9], "axis": "x", "mat": "black"},
+    {"name": "nosepiece", "kind": "cyl", "r": 0.6, "h": 0.4, "at": [0, 4, 0.5], "mat": "chrome"},
+    {"name": "objective low", "kind": "cyl", "r": 0.25, "h": 0.6, "at": [-0.35, 3.5, 0.5], "mat": "brass"},
+    {"name": "objective medium", "kind": "cyl", "r": 0.25, "h": 0.8, "at": [0, 3.3, 0.5], "mat": "brass"},
+    {"name": "objective high", "kind": "cyl", "r": 0.25, "h": 1, "at": [0.35, 3.1, 0.5], "mat": "brass"},
+    {"name": "body tube", "kind": "cyl", "r": 0.5, "h": 2, "at": [0, 5.5, 0.5], "mat": "steel"},
+    {"name": "eyepiece", "kind": "cyl", "r": 0.35, "h": 0.8, "at": [0, 7, 0.5], "mat": "black"},
+    {"name": "mirror", "kind": "cyl", "r": 0.6, "h": 0.1, "at": [0, 0.6, 0], "axis": "z", "rot": [45, 0, 0], "mat": "chrome"}
+  ],
+  "labels": [
+    {"part": "eyepiece", "text": "Eyepiece"},
+    {"part": "body tube", "text": "Body Tube"},
+    {"part": "objective medium", "text": "Objectives"},
+    {"part": "stage", "text": "Stage"},
+    {"part": "coarse focus", "text": "Focus Knobs"},
+    {"part": "base", "text": "Base"}
+  ],
+  "view": {"turn": 35, "tilt": 20}
+}
+```

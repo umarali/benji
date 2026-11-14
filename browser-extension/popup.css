@@ -1,0 +1,7 @@
+:root { color-scheme: light dark; }
+body { width: 300px; margin: 0; padding: 14px 16px; font: 13px/1.4 -apple-system, system-ui, sans-serif; }
+h1 { font-size: 15px; margin: 0 0 8px; }
+p { margin: 6px 0; }
+.small { font-size: 11px; opacity: 0.7; margin-top: 12px; }
+.row { display: flex; gap: 8px; margin-top: 8px; }
+button { font: inherit; padding: 5px 10px; border-radius: 6px; border: 1px solid #8884; background: #8882; cursor: pointer; }

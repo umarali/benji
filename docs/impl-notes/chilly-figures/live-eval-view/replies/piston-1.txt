@@ -1,0 +1,38 @@
+A car engine cylinder contains several key components that work together to generate power:
+
+The **piston** moves up and down inside the cylinder bore. Above it is the **combustion chamber** where the air-fuel mixture ignites. The **piston rings** seal against the cylinder walls to contain pressure and control oil. A **connecting rod** links the piston to the crankshaft below.
+
+At the top, **valves** (intake and exhaust) open and close to let fuel-air mixture in and exhaust gases out. A **spark plug** protrudes into the combustion chamber to ignite the mixture. The cylinder walls are part of the **engine block**, and the top is sealed by the **cylinder head** with a gasket between them.
+
+```figure
+{
+  "title": "Car engine cylinder cutaway",
+  "parts": [
+    {"name": "block", "kind": "cyl", "r": 1.8, "h": 5, "at": [0, 2.5, 0], "mat": "iron"},
+    {"name": "cylinder bore", "kind": "cyl", "r": 1.4, "h": 5.1, "at": [0, 2.55, 0], "mat": "steel"},
+    {"name": "head", "kind": "cyl", "r": 1.8, "h": 0.8, "at": [0, 5.4, 0], "mat": "aluminium"},
+    {"name": "combustion chamber", "kind": "sphere", "r": 0.9, "at": [0, 4.6, 0], "mat": "steel"},
+    {"name": "piston", "kind": "cyl", "r": 1.35, "h": 1.2, "at": [0, 2.1, 0], "mat": "aluminium"},
+    {"name": "piston top", "kind": "cyl", "r": 1.35, "h": 0.15, "at": [0, 2.775, 0], "mat": "aluminium"},
+    {"name": "ring 1", "kind": "torus", "r": 1.38, "tube": 0.08, "at": [0, 2.5, 0], "mat": "steel"},
+    {"name": "ring 2", "kind": "torus", "r": 1.38, "tube": 0.08, "at": [0, 2.2, 0], "mat": "steel"},
+    {"name": "connecting rod", "kind": "box", "size": [0.3, 2, 0.4], "at": [0, 0.5, 0], "mat": "steel"},
+    {"name": "piston pin", "kind": "cyl", "r": 0.15, "h": 1.5, "axis": "x", "at": [0, 1.6, 0], "mat": "chrome"},
+    {"name": "intake valve", "kind": "cyl", "r": 0.35, "from": [0.5, 5.8, 0], "to": [0.5, 4.8, 0], "mat": "steel"},
+    {"name": "exhaust valve", "kind": "cyl", "r": 0.35, "from": [-0.5, 5.8, 0], "to": [-0.5, 4.8, 0], "mat": "steel"},
+    {"name": "spark plug", "kind": "cyl", "r": 0.25, "from": [0, 6.2, 0.8], "to": [0, 4.9, 0.8], "mat": "ceramic"},
+    {"name": "spark tip", "kind": "cone", "r": 0.15, "r2": 0.05, "h": 0.3, "at": [0, 4.75, 0.8], "mat": "copper"},
+    {"name": "crankshaft journal", "kind": "cyl", "r": 0.4, "h": 1.2, "axis": "x", "at": [0, -0.5, 0], "mat": "steel"}
+  ],
+  "cut": {"parts": ["block", "head"]},
+  "labels": [
+    {"part": "piston", "text": "Piston"},
+    {"part": "combustion chamber", "text": "Combustion chamber"},
+    {"part": "spark plug", "text": "Spark plug"},
+    {"part": "intake valve", "text": "Intake valve"},
+    {"part": "connecting rod", "text": "Connecting rod"},
+    {"part": "ring 1", "text": "Piston rings"}
+  ],
+  "view": {"turn": 35, "tilt": 20}
+}
+```

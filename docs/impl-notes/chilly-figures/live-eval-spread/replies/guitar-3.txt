@@ -1,0 +1,37 @@
+I'll show you an acoustic guitar in 3D.
+
+```figure
+{
+  "title": "Acoustic Guitar",
+  "parts": [
+    {"name": "body", "kind": "lathe", "profile": [[0, -3], [2.5, -3], [3.2, -2], [3.2, 0], [3.2, 2], [2.5, 3], [0, 3]], "at": [0, 0, 0], "mat": "wood"},
+    {"name": "soundhole", "kind": "cyl", "r": 0.8, "h": 0.15, "at": [0, 0.5, 3.2], "axis": "z", "mat": "black"},
+    {"name": "bridge", "kind": "box", "size": [1.5, 0.15, 0.4], "at": [0, -1.2, 3.25], "mat": "wood"},
+    {"name": "neck", "kind": "box", "size": [0.8, 9, 0.5], "at": [0, 7.5, 2.95], "mat": "wood"},
+    {"name": "fretboard", "kind": "box", "size": [0.85, 8.5, 0.08], "at": [0, 7.25, 3.46], "mat": "wood"},
+    {"name": "fret 1", "kind": "box", "size": [0.9, 0.04, 0.03], "at": [0, 3.8, 3.5], "mat": "steel"},
+    {"name": "fret 2", "kind": "box", "size": [0.9, 0.04, 0.03], "at": [0, 4.5, 3.5], "mat": "steel"},
+    {"name": "fret 3", "kind": "box", "size": [0.9, 0.04, 0.03], "at": [0, 5.2, 3.5], "mat": "steel"},
+    {"name": "fret 4", "kind": "box", "size": [0.9, 0.04, 0.03], "at": [0, 5.9, 3.5], "mat": "steel"},
+    {"name": "fret 5", "kind": "box", "size": [0.9, 0.04, 0.03], "at": [0, 6.6, 3.5], "mat": "steel"},
+    {"name": "headstock", "kind": "extrude", "path": "M-0.5 0 L0.5 0 L0.7 1.2 L0.7 2 L-0.7 2 L-0.7 1.2 Z", "depth": 0.4, "at": [0, 12, 3], "mat": "wood"},
+    {"name": "tuning peg 1", "kind": "cyl", "r": 0.08, "h": 0.9, "at": [-0.5, 13.2, 2.8], "axis": "x", "mat": "chrome"},
+    {"name": "tuning peg 2", "kind": "cyl", "r": 0.08, "h": 0.9, "at": [-0.5, 13.6, 2.8], "axis": "x", "mat": "chrome"},
+    {"name": "tuning peg 3", "kind": "cyl", "r": 0.08, "h": 0.9, "at": [-0.5, 14, 2.8], "axis": "x", "mat": "chrome"},
+    {"name": "tuning peg 4", "kind": "cyl", "r": 0.08, "h": 0.9, "at": [0.5, 13.2, 2.8], "axis": "x", "mat": "chrome"},
+    {"name": "tuning peg 5", "kind": "cyl", "r": 0.08, "h": 0.9, "at": [0.5, 13.6, 2.8], "axis": "x", "mat": "chrome"},
+    {"name": "tuning peg 6", "kind": "cyl", "r": 0.08, "h": 0.9, "at": [0.5, 14, 2.8], "axis": "x", "mat": "chrome"},
+    {"name": "strings", "kind": "tube", "r": 0.01, "path": [[-0.35, -1.2, 3.3], [-0.35, 3, 3.5], [-0.35, 12, 3.2], [-0.35, 13.2, 3.2]], "mat": "steel"},
+    {"name": "string 2", "kind": "tube", "r": 0.01, "path": [[-0.21, -1.2, 3.3], [-0.21, 3, 3.5], [-0.21, 12, 3.2], [-0.21, 13.6, 3.2]], "mat": "steel"},
+    {"name": "string 3", "kind": "tube", "r": 0.01, "path": [[-0.07, -1.2, 3.3], [-0.07, 3, 3.5], [-0.07, 12, 3.2], [-0.07, 14, 3.2]], "mat": "steel"}
+  ],
+  "labels": [
+    {"part": "body", "text": "Body"},
+    {"part": "soundhole", "text": "Soundhole"},
+    {"part": "neck", "text": "Neck"},
+    {"part": "headstock", "text": "Headstock"},
+    {"part": "bridge", "text": "Bridge"}
+  ],
+  "view": {"turn": 30, "tilt": 10}
+}
+```

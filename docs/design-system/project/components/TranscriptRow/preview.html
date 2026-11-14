@@ -1,0 +1,24 @@
+<!-- @dsCard group="Panel" height=300 subtitle="Every role" -->
+<style>
+  body { margin: 0; background: var(--window-bg); color: var(--label); font-family: var(--font-sans); }
+  .stage { padding: 20px; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+  .cap { font-family: var(--font-sans); font-size: 11px; line-height: 14px; color: var(--label-secondary); }
+  .notch { background: var(--notch-black); color: var(--notch-label); }
+  .sym { font-family: var(--font-sans); font-weight: 600; }
+</style>
+<style>
+  .panel { width: 440px; background: var(--notch-black); border-radius: var(--radius-card); padding: var(--space-4); display: grid; grid-template-columns: 16px 1fr; gap: var(--space-2) var(--space-2); color: var(--notch-label); font-size: 13px; line-height: 16px; }
+  .g { text-align: center; font-weight: 700; }
+  .sec { color: var(--notch-label-secondary); font-size: 12px; line-height: 15px; }
+  code { font-family: var(--font-mono); font-size: 12px; }
+  .thumb { display: inline-block; width: 64px; height: 40px; border-radius: 6px; background: var(--notch-raised); border: 1px solid var(--notch-hairline); vertical-align: middle; margin-right: 8px; }
+</style>
+<div class="stage"><div class="panel">
+  <span class="g" style="color:var(--notch-label-secondary)">›</span><span>Where's the share button?</span>
+  <span class="g" style="color:var(--state-looking)">⌖</span><span class="sec"><span class="thumb"></span>Screen attached · 1330 × 864 · sent to Anthropic</span>
+  <span class="g" style="color:var(--notch-label-secondary)">·</span><span class="sec">run_shell <code>ls ~/Desktop</code></span>
+  <span class="g" style="color:var(--benji-mint)">●</span><span>It's the Share button, top right of the window.</span>
+  <span class="g" style="color:var(--state-done)">✓</span><span class="sec">Approved: move 12 files to Archive</span>
+  <span class="g" style="color:var(--state-error)">⚠</span><span style="color:var(--state-error)">That didn't work: the file is locked by another app.</span>
+  <span class="g" style="color:var(--notch-label-secondary)">›</span><span class="sec" style="font-style:italic; font-size:13px">rename the screenshots on my…</span>
+</div></div>

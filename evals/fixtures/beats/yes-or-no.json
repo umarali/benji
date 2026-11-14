@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "id": "beats/yes-or-no",
+  "kind": "beats",
+  "case": "yes or no",
+  "request": {
+    "text": "Is Python case sensitive?",
+    "screen": null,
+    "spoken": true
+  },
+  "expect": {
+    "card": false
+  },
+  "reply": {
+    "model": "claude-haiku-5-5",
+    "effort": "low",
+    "recorded": "2026-11-01",
+    "source": "D-127 beats eval, turn yes-or-no",
+    "raw": null,
+    "events": [
+      {
+        "type": "accepted",
+        "id": "r0c8"
+      },
+      {
+        "type": "answer",
+        "id": "r0c8",
+        "text": "Yes. Python treats names that differ only in case as different, so `Name`, `name` and `NAME` are three separate variables. The same applies to keywords: `True` works, but `true` is just an undefined name.",
+        "targets": []
+      },
+      {
+        "type": "usage",
+        "id": "r0c8",
+        "calls": 1,
+        "input_tokens": 1774,
+        "output_tokens": 68,
+        "cache_read_tokens": 4427,
+        "cache_write_tokens": 0
+      },
+      {
+        "type": "done",
+        "id": "r0c8",
+        "status": "ok"
+      }
+    ],
+    "usage": null
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

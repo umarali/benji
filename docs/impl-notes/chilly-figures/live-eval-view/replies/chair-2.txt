@@ -1,0 +1,33 @@
+I'll draw a typical office chair with its key components.
+
+```figure
+{
+  "title": "Office Chair",
+  "parts": [
+    {"name": "base star", "kind": "cyl", "r": 1.2, "h": 0.08, "at": [0, 0.04, 0], "mat": "black"},
+    {"name": "caster 1", "kind": "sphere", "r": 0.12, "at": [1.1, 0.04, 0], "mat": "rubber"},
+    {"name": "caster 2", "kind": "sphere", "r": 0.12, "at": [-0.55, 0.04, 0.95], "mat": "rubber"},
+    {"name": "caster 3", "kind": "sphere", "r": 0.12, "at": [-0.55, 0.04, -0.95], "mat": "rubber"},
+    {"name": "caster 4", "kind": "sphere", "r": 0.12, "at": [0.35, 0.04, 0.8], "mat": "rubber"},
+    {"name": "caster 5", "kind": "sphere", "r": 0.12, "at": [0.35, 0.04, -0.8], "mat": "rubber"},
+    {"name": "gas lift", "kind": "cyl", "r": 0.15, "h": 2, "at": [0, 1.08, 0], "mat": "chrome"},
+    {"name": "seat mount", "kind": "box", "size": [1.6, 0.15, 1.4], "at": [0, 2.15, 0], "mat": "black"},
+    {"name": "seat cushion", "kind": "box", "size": [1.8, 0.3, 1.6], "at": [0, 2.38, 0], "mat": "paint:grey"},
+    {"name": "backrest mount", "kind": "cyl", "r": 0.08, "h": 0.8, "at": [0, 2.93, -0.7], "mat": "steel"},
+    {"name": "backrest lower", "kind": "box", "size": [1.6, 0.8, 0.25], "at": [0, 3.13, -0.78], "mat": "paint:grey"},
+    {"name": "backrest upper", "kind": "box", "size": [1.6, 1.2, 0.25], "at": [0, 4.23, -0.73], "mat": "paint:grey"},
+    {"name": "armrest 1 post", "kind": "cyl", "r": 0.06, "h": 0.9, "at": [0.85, 2.78, 0.2], "mat": "black"},
+    {"name": "armrest 1 pad", "kind": "box", "size": [0.25, 0.12, 0.7], "at": [0.85, 3.29, 0.2], "mat": "rubber"},
+    {"name": "armrest 2 post", "kind": "cyl", "r": 0.06, "h": 0.9, "at": [-0.85, 2.78, 0.2], "mat": "black"},
+    {"name": "armrest 2 pad", "kind": "box", "size": [0.25, 0.12, 0.7], "at": [-0.85, 3.29, 0.2], "mat": "rubber"}
+  ],
+  "labels": [
+    {"part": "seat cushion", "text": "Seat"},
+    {"part": "backrest upper", "text": "Backrest"},
+    {"part": "armrest 1 pad", "text": "Armrest"},
+    {"part": "gas lift", "text": "Gas lift"},
+    {"part": "base star", "text": "Base"}
+  ],
+  "view": {"turn": 35, "tilt": 18}
+}
+```

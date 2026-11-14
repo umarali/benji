@@ -1,0 +1,23 @@
+A wind turbine is a tall tower with three long, narrow blades mounted on a hub at the top. The blades rotate to capture wind energy and connect to a nacelle (the housing that contains the generator). The tower is typically cylindrical and tapers slightly toward the top, standing on a wide base foundation.
+
+```figure
+{
+  "title": "Wind Turbine",
+  "parts": [
+    {"name": "foundation", "kind": "cyl", "r": 2.5, "h": 0.5, "at": [0, 0.25, 0], "mat": "ceramic"},
+    {"name": "tower", "kind": "cone", "r": 1.2, "r2": 0.8, "h": 15, "at": [0, 7.5, 0], "axis": "y", "mat": "paint:white"},
+    {"name": "nacelle", "kind": "box", "size": [2.5, 1.8, 5], "at": [0, 15.5, 0], "mat": "paint:white"},
+    {"name": "hub", "kind": "cyl", "r": 0.9, "h": 1.2, "at": [0, 15.5, 2.5], "axis": "z", "mat": "steel"},
+    {"name": "blade 1", "kind": "extrude", "path": "M0 0 L0.4 0 L0.15 8 L0 8 Z", "depth": 0.3, "at": [0, 15.5, 3.1], "rot": [0, 0, 0], "mat": "paint:cream"},
+    {"name": "blade 2", "kind": "extrude", "path": "M0 0 L0.4 0 L0.15 8 L0 8 Z", "depth": 0.3, "at": [0, 15.5, 3.1], "rot": [0, 0, 120], "mat": "paint:cream"},
+    {"name": "blade 3", "kind": "extrude", "path": "M0 0 L0.4 0 L0.15 8 L0 8 Z", "depth": 0.3, "at": [0, 15.5, 3.1], "rot": [0, 0, 240], "mat": "paint:cream"}
+  ],
+  "labels": [
+    {"part": "blade 1", "text": "Blades"},
+    {"part": "nacelle", "text": "Nacelle"},
+    {"part": "hub", "text": "Hub"},
+    {"part": "tower", "text": "Tower"}
+  ],
+  "view": {"turn": 35, "tilt": 20}
+}
+```

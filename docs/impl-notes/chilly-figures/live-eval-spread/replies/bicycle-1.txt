@@ -1,0 +1,35 @@
+I'll show you a bicycle as a 3D figure with all its key parts.
+
+```figure
+{
+  "title": "A bicycle",
+  "parts": [
+    {"name": "front wheel", "kind": "torus", "r": 0.65, "tube": 0.08, "at": [0, 0.65, 1.2], "axis": "x", "mat": "rubber"},
+    {"name": "rear wheel", "kind": "torus", "r": 0.65, "tube": 0.08, "at": [0, 0.65, -1.2], "axis": "x", "mat": "rubber"},
+    {"name": "front hub", "kind": "cyl", "r": 0.05, "h": 0.15, "at": [0, 0.65, 1.2], "axis": "x", "mat": "chrome"},
+    {"name": "rear hub", "kind": "cyl", "r": 0.05, "h": 0.15, "at": [0, 0.65, -1.2], "axis": "x", "mat": "chrome"},
+    {"name": "down tube", "kind": "cyl", "r": 0.04, "from": [0, 1.1, 1.1], "to": [0, 0.45, -0.9], "mat": "paint:red"},
+    {"name": "top tube", "kind": "cyl", "r": 0.04, "from": [0, 1.1, 1.1], "to": [0, 1.1, -1.0], "mat": "paint:red"},
+    {"name": "seat tube", "kind": "cyl", "r": 0.04, "from": [0, 0.45, -0.9], "to": [0, 1.1, -1.0], "mat": "paint:red"},
+    {"name": "seat post", "kind": "cyl", "r": 0.025, "h": 0.35, "at": [0, 1.3, -1.0], "mat": "steel"},
+    {"name": "seat", "kind": "box", "size": [0.25, 0.08, 0.4], "at": [0, 1.5, -0.95], "mat": "black"},
+    {"name": "head tube", "kind": "cyl", "r": 0.05, "from": [0, 1.1, 1.1], "to": [0, 0.85, 1.35], "mat": "steel"},
+    {"name": "fork", "kind": "cyl", "r": 0.03, "from": [0, 0.85, 1.35], "to": [0, 0.65, 1.2], "mat": "chrome"},
+    {"name": "handlebar stem", "kind": "cyl", "r": 0.025, "from": [0, 1.1, 1.1], "to": [0, 1.25, 1.15], "mat": "steel"},
+    {"name": "handlebar", "kind": "cyl", "r": 0.025, "h": 0.9, "at": [0, 1.28, 1.15], "axis": "x", "mat": "black"},
+    {"name": "chain stay left", "kind": "cyl", "r": 0.025, "from": [-0.08, 0.45, -0.9], "to": [-0.08, 0.65, -1.2], "mat": "paint:red"},
+    {"name": "chain stay right", "kind": "cyl", "r": 0.025, "from": [0.08, 0.45, -0.9], "to": [0.08, 0.65, -1.2], "mat": "paint:red"},
+    {"name": "crank", "kind": "cyl", "r": 0.02, "from": [0.15, 0.45, -0.9], "to": [0.15, 0.15, -0.75], "mat": "steel"},
+    {"name": "pedal", "kind": "box", "size": [0.12, 0.05, 0.25], "at": [0.15, 0.15, -0.75], "mat": "black"},
+    {"name": "chainring", "kind": "torus", "r": 0.18, "tube": 0.015, "at": [0.1, 0.45, -0.9], "axis": "x", "mat": "steel"}
+  ],
+  "labels": [
+    {"part": "front wheel", "text": "Front wheel"},
+    {"part": "rear wheel", "text": "Rear wheel"},
+    {"part": "seat", "text": "Seat"},
+    {"part": "handlebar", "text": "Handlebar"},
+    {"part": "pedal", "text": "Pedal"}
+  ],
+  "view": {"turn": 35, "tilt": 10}
+}
+```

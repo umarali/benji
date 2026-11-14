@@ -1,0 +1,35 @@
+I'll show you a bicycle in 3D with all its key parts.
+
+```figure
+{
+  "title": "A bicycle",
+  "parts": [
+    {"name": "frame top tube", "kind": "tube", "r": 0.02, "path": [[0, 0.9, 0], [0.65, 0.9, 0]], "mat": "paint:red"},
+    {"name": "frame down tube", "kind": "tube", "r": 0.022, "path": [[0, 0.9, 0], [0.65, 0.15, 0]], "mat": "paint:red"},
+    {"name": "frame seat tube", "kind": "tube", "r": 0.02, "path": [[0.65, 0.9, 0], [0.65, 0.15, 0]], "mat": "paint:red"},
+    {"name": "seat post", "kind": "cyl", "r": 0.015, "h": 0.35, "at": [0.65, 1.075, 0], "axis": "x", "mat": "aluminium"},
+    {"name": "saddle", "kind": "box", "size": [0.25, 0.08, 0.15], "at": [0.65, 1.25, 0], "mat": "black"},
+    {"name": "front fork", "kind": "tube", "r": 0.018, "path": [[0, 0.9, 0], [0, 0.35, 0.08]], "mat": "chrome"},
+    {"name": "handlebar stem", "kind": "cyl", "r": 0.015, "h": 0.15, "at": [0, 1.0, 0.08], "axis": "x", "mat": "aluminium"},
+    {"name": "handlebar", "kind": "tube", "r": 0.012, "path": [[-0.25, 1.0, 0.2], [0, 1.0, 0.15], [0.25, 1.0, 0.2]], "mat": "black"},
+    {"name": "rear wheel rim", "kind": "torus", "r": 0.33, "tube": 0.025, "at": [0.65, 0.35, 0], "axis": "x", "mat": "aluminium"},
+    {"name": "rear tire", "kind": "torus", "r": 0.35, "tube": 0.03, "at": [0.65, 0.35, 0], "axis": "x", "mat": "rubber"},
+    {"name": "front wheel rim", "kind": "torus", "r": 0.33, "tube": 0.025, "at": [0, 0.35, 0], "axis": "x", "mat": "aluminium"},
+    {"name": "front tire", "kind": "torus", "r": 0.35, "tube": 0.03, "at": [0, 0.35, 0], "axis": "x", "mat": "rubber"},
+    {"name": "pedal crank left", "kind": "cyl", "r": 0.012, "from": [0.65, 0.15, -0.08], "to": [0.55, 0.02, -0.08], "mat": "aluminium"},
+    {"name": "pedal crank right", "kind": "cyl", "r": 0.012, "from": [0.65, 0.15, 0.08], "to": [0.75, 0.28, 0.08], "mat": "aluminium"},
+    {"name": "pedal left", "kind": "box", "size": [0.1, 0.03, 0.08], "at": [0.55, 0.02, -0.08], "mat": "black"},
+    {"name": "pedal right", "kind": "box", "size": [0.1, 0.03, 0.08], "at": [0.75, 0.28, 0.08], "mat": "black"},
+    {"name": "chain ring", "kind": "torus", "r": 0.08, "tube": 0.008, "at": [0.65, 0.15, 0.06], "axis": "x", "mat": "steel"}
+  ],
+  "labels": [
+    {"part": "saddle", "text": "Saddle"},
+    {"part": "handlebar", "text": "Handlebar"},
+    {"part": "frame top tube", "text": "Frame"},
+    {"part": "front tire", "text": "Front wheel"},
+    {"part": "rear tire", "text": "Rear wheel"},
+    {"part": "pedal right", "text": "Pedal"}
+  ],
+  "view": {"turn": 20, "tilt": 10}
+}
+```

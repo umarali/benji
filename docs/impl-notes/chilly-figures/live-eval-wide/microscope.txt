@@ -1,0 +1,33 @@
+I'll show you a microscope with its key parts labeled in 3D.
+
+A compound microscope has optical components at the top (eyepiece and objective lenses) mounted on a rotating turret, a stage in the middle where you place slides, and illumination from below. The focus knobs adjust the stage height, while the arm and base provide structural support.
+
+```figure
+{
+  "title": "Compound Microscope",
+  "parts": [
+    {"name": "base", "kind": "box", "size": [3, 0.4, 2.5], "at": [0, 0.2, 0], "mat": "paint:grey"},
+    {"name": "arm", "kind": "box", "size": [0.5, 6, 0.6], "at": [0, 3.2, -0.8], "mat": "paint:grey"},
+    {"name": "stage", "kind": "box", "size": [2.8, 0.3, 2.2], "at": [0, 3, 0.3], "mat": "steel"},
+    {"name": "illuminator", "kind": "cyl", "r": 0.6, "h": 0.5, "at": [0, 0.65, 0.3], "mat": "glow:white"},
+    {"name": "condenser", "kind": "cyl", "r": 0.4, "h": 0.8, "at": [0, 1.7, 0.3], "mat": "aluminium"},
+    {"name": "body tube", "kind": "cyl", "r": 0.35, "h": 3.5, "at": [0, 5.95, -0.8], "axis": "y", "mat": "paint:black"},
+    {"name": "nosepiece", "kind": "cyl", "r": 0.6, "h": 0.5, "at": [0, 4, -0.8], "mat": "chrome"},
+    {"name": "objective lens 4x", "kind": "cyl", "r": 0.25, "h": 0.8, "at": [0.5, 3.2, -0.8], "axis": "y", "mat": "brass"},
+    {"name": "objective lens 10x", "kind": "cyl", "r": 0.25, "h": 1, "at": [0, 3.15, -0.3], "axis": "y", "mat": "brass"},
+    {"name": "objective lens 40x", "kind": "cyl", "r": 0.25, "h": 1.2, "at": [-0.5, 3.2, -0.8], "axis": "y", "mat": "brass"},
+    {"name": "coarse focus knob", "kind": "cyl", "r": 0.5, "h": 0.2, "at": [0.6, 4, -0.8], "axis": "x", "mat": "plastic"},
+    {"name": "fine focus knob", "kind": "cyl", "r": 0.35, "h": 0.2, "at": [0.9, 4, -0.8], "axis": "x", "mat": "plastic"},
+    {"name": "eyepiece", "kind": "cyl", "r": 0.3, "h": 1.2, "at": [0, 8.35, -0.8], "axis": "y", "mat": "black"}
+  ],
+  "labels": [
+    {"part": "eyepiece", "text": "Eyepiece"},
+    {"part": "objective lens 10x", "text": "Objective Lenses"},
+    {"part": "stage", "text": "Stage"},
+    {"part": "coarse focus knob", "text": "Focus Knobs"},
+    {"part": "illuminator", "text": "Light Source"},
+    {"part": "base", "text": "Base"}
+  ],
+  "view": {"turn": 35, "tilt": 20}
+}
+```

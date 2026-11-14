@@ -1,0 +1,5 @@
+{"backend":"serve","screen":false,"sent_to_finished_ms":1900,"spoken":true,"ts":"2026-11-05T04:01:00Z"}
+{"backend":"serve","screen":true,"sent_to_finished_ms":8200,"spoken":true,"ts":"2026-11-05T04:20:00Z"}
+{"backend":"oneshot","screen":false,"sent_to_finished_ms":5100,"spoken":false,"ts":"2026-11-05T04:41:00Z"}
+{"backend":"serve","screen":false,"sent_to_finished_ms":300000,"spoken":false,"ts":"2026-10-01T04:41:00Z"}
+{"backend":"serve","sent_to_finished_ms":"x","ts":"2026-11-05T04:41:00Z"}

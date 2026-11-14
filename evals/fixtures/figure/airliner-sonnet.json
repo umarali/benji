@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "id": "figure/airliner-sonnet",
+  "kind": "figure",
+  "case": "airliner",
+  "request": {
+    "text": "Show me how a plane flies.",
+    "screen": null,
+    "spoken": false
+  },
+  "expect": {},
+  "reply": {
+    "model": "claude-sonnet-5-5",
+    "effort": "low",
+    "recorded": "2026-10-31",
+    "source": "D-108 figure eval low-sonnet55, reply airliner",
+    "raw": "A plane flies by balancing four forces. Engines push it forward (thrust) against drag. The curved wings push air downward as the plane moves, and the air pushes the wings up (lift) against its weight. Lift beats weight at takeoff speed. The tail keeps it stable, and the rudder, elevators and ailerons steer it.\n\n```figure\n{\"title\":\"An airliner\",\"parts\":[\n{\"name\":\"fuselage\",\"kind\":\"capsule\",\"r\":0.5,\"h\":5,\"axis\":\"x\",\"at\":[0,0,0],\"mat\":\"white\"},\n{\"name\":\"nose\",\"kind\":\"sphere\",\"r\":0.5,\"at\":[3,0,0],\"mat\":\"white\"},\n{\"name\":\"cockpit\",\"kind\":\"box\",\"size\":[0.3,0.2,0.6],\"at\":[2.9,0.25,0],\"mat\":\"glass\"},\n{\"name\":\"right wing\",\"kind\":\"extrude\",\"path\":\"M0 0 L1.4 0 L-1 -3.8 L-1.8 -3.8 Z\",\"depth\":0.12,\"rot\":[90,0,0],\"at\":[0.3,-0.2,0.5],\"mat\":\"aluminium\"},\n{\"name\":\"left wing\",\"kind\":\"extrude\",\"path\":\"M0 0 L1.4 0 L-1 -3.8 L-1.8 -3.8 Z\",\"depth\":0.12,\"rot\":[90,0,0],\"at\":[0.3,-0.2,-0.5],\"mat\":\"aluminium\",\"mirror\":\"x\"},\n{\"name\":\"engine\",\"kind\":\"cyl\",\"r\":0.3,\"h\":1,\"axis\":\"x\",\"at\":[0.8,-0.6,1.8],\"mat\":\"steel\"},\n{\"name\":\"engine 2\",\"kind\":\"cyl\",\"r\":0.3,\"h\":1,\"axis\":\"x\",\"at\":[0.8,-0.6,-1.8],\"mat\":\"steel\"},\n{\"name\":\"tail fin\",\"kind\":\"extrude\",\"path\":\"M0 0 L1.2 0 L0.4 1.6 L-0.2 1.6 Z\",\"depth\":0.1,\"at\":[-2.9,0.8,0],\"mat\":\"paint:blue\"},\n{\"name\":\"right stabilizer\",\"kind\":\"box\",\"size\":[0.9,0.08,1.2],\"at\":[-2.7,0.2,0.9],\"mat\":\"aluminium\"},\n{\"name\":\"left stabilizer\",\"kind\":\"box\",\"size\":[0.9,0.08,1.2],\"at\":[-2.7,0.2,-0.9],\"mat\":\"aluminium\"}],\n\"labels\":[{\"part\":\"right wing\",\"text\":\"Wing: makes lift\"},{\"part\":\"engine\",\"text\":\"Engine: thrust\"},{\"part\":\"tail fin\",\"text\":\"Rudder: steers\"},{\"part\":\"right stabilizer\",\"text\":\"Elevator: pitch\"},{\"part\":\"nose\",\"text\":\"Nose\"}],\n\"view\":{\"turn\":35,\"tilt\":20}}\n```",
+    "events": null,
+    "usage": {
+      "calls": 1,
+      "input_tokens": 1800,
+      "output_tokens": 962,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3249
+    }
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

@@ -1,0 +1,24 @@
+<!-- @dsCard group="Setup" height=300 subtitle="Light window; dark follows the system" -->
+<style>
+  body { margin: 0; background: var(--window-bg); color: var(--label); font-family: var(--font-sans); }
+  .stage { padding: 20px; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+  .cap { font-family: var(--font-sans); font-size: 11px; line-height: 14px; color: var(--label-secondary); }
+  .notch { background: var(--notch-black); color: var(--notch-label); }
+  .sym { font-family: var(--font-sans); font-weight: 600; }
+</style>
+<style>
+  .form { width: 460px; background: var(--surface); border-radius: var(--radius-card); border: 1px solid var(--separator); }
+  .r { display: grid; grid-template-columns: 1fr auto; gap: 2px var(--space-3); padding: 10px var(--space-4); border-top: 1px solid var(--separator); align-items: center; }
+  .r:first-child { border-top: none; }
+  .n { font-size: 13px; line-height: 16px; color: var(--label); }
+  .p { font-size: 12px; line-height: 15px; color: var(--label); grid-column: 1; }
+  .ok { grid-row: 1 / span 2; grid-column: 2; font-size: 12px; color: var(--label); display: flex; gap: 6px; align-items: center; }
+  .ok b { color: var(--system-green); }
+  .allow { grid-row: 1 / span 2; grid-column: 2; background: var(--accent); color: #ffffff; border-radius: var(--radius-control); padding: 3px 10px; font-size: 12px; font-weight: 600; }
+</style>
+<div class="stage"><div class="form">
+  <div class="r"><span class="n">Microphone</span><span class="ok"><b>✓</b>Allowed</span><span class="p">To hear you when you talk</span></div>
+  <div class="r"><span class="n">Speech Recognition</span><span class="ok"><b>✓</b>Allowed</span><span class="p">To turn your voice into text on this Mac</span></div>
+  <div class="r"><span class="n">Accessibility</span><span class="allow">Allow…</span><span class="p">For the Right Option talk key</span></div>
+  <div class="r"><span class="n">Screen Recording</span><span class="allow">Allow…</span><span class="p">Only when you include your screen with a message</span></div>
+</div></div>

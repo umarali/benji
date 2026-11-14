@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "id": "figure/wind-turbine-haiku",
+  "kind": "figure",
+  "case": "wind-turbine",
+  "request": {
+    "text": "What does a wind turbine look like?",
+    "screen": null,
+    "spoken": false
+  },
+  "expect": {},
+  "reply": {
+    "model": "claude-haiku-5-5",
+    "effort": "low",
+    "recorded": "2026-10-31",
+    "source": "D-108 figure eval low-haiku55, reply wind-turbine",
+    "raw": "A wind turbine has a tall tubular tower topped by a nacelle, the housing that holds the generator, with three long blades on a hub at the front. The blades turn slowly into the wind, and the hub faces upwind.\n\n```figure\n{\"title\":\"A wind turbine\",\"parts\":[\n{\"name\":\"foundation\",\"kind\":\"cyl\",\"r\":1.6,\"h\":0.5,\"at\":[0,0.25,0],\"mat\":\"paint:grey\"},\n{\"name\":\"tower\",\"kind\":\"cone\",\"r\":0.45,\"r2\":0.25,\"from\":[0,0.5,0],\"to\":[0,8,0],\"mat\":\"paint:white\"},\n{\"name\":\"nacelle\",\"kind\":\"box\",\"size\":[1.6,0.9,0.9],\"at\":[0.2,8.45,0],\"mat\":\"paint:white\"},\n{\"name\":\"hub\",\"kind\":\"sphere\",\"r\":0.35,\"at\":[0.95,8.45,0],\"mat\":\"paint:white\"},\n{\"name\":\"blade 1\",\"kind\":\"extrude\",\"path\":\"M0 0 L0.35 0 L0.12 4.6 L-0.12 4.6 Z\",\"depth\":0.12,\"at\":[1.0,8.45,0],\"mat\":\"paint:white\"},\n{\"name\":\"blade 2\",\"kind\":\"extrude\",\"path\":\"M0 0 L0.35 0 L0.12 4.6 L-0.12 4.6 Z\",\"depth\":0.12,\"at\":[1.0,8.45,0],\"rot\":[0,0,120],\"mat\":\"paint:white\"},\n{\"name\":\"blade 3\",\"kind\":\"extrude\",\"path\":\"M0 0 L0.35 0 L0.12 4.6 L-0.12 4.6 Z\",\"depth\":0.12,\"at\":[1.0,8.45,0],\"rot\":[0,0,240],\"mat\":\"paint:white\"}],\n\"labels\":[{\"part\":\"tower\",\"text\":\"Tower\"},{\"part\":\"nacelle\",\"text\":\"Nacelle\"},{\"part\":\"hub\",\"text\":\"Hub\"},{\"part\":\"blade 1\",\"text\":\"Blade\"}],\n\"view\":{\"turn\":30,\"tilt\":10}}\n```",
+    "events": null,
+    "usage": {
+      "calls": 1,
+      "input_tokens": 1801,
+      "output_tokens": 701,
+      "cache_read_tokens": 3248,
+      "cache_write_tokens": 0
+    }
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

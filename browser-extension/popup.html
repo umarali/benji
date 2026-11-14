@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Benji</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<h1>Benji</h1>
+<p id="state" role="status">Checking…</p>
+<p id="access"></p>
+<div class="row">
+  <button id="allow" type="button">Allow Benji to read pages</button>
+  <button id="remove" type="button" hidden>Remove access</button>
+</div>
+<p class="small">Benji's background jobs can read only the sites you approve for each job, only in the tabs of the “Benji” tab group. Clicking and typing is a separate yes for each site, and a button that sends, pays, posts or deletes, a form, a link to another site, a download and every file upload ask you each time. While Benji acts, Chrome shows a bar saying it is debugging this browser: <b>Cancel on that bar stops the job.</b></p>
+<script src="popup.js" type="module"></script>
+</body>
+</html>

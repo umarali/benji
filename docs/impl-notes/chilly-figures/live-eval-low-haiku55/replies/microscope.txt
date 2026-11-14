@@ -1,0 +1,18 @@
+A compound light microscope has a base with a light source, an arm that holds the optics, a stage where the slide sits, the objective lenses above the stage, and an eyepiece at the top of the body tube. The focus knob on the arm moves the stage or tube to sharpen the image.
+
+```figure
+{"title":"Parts of a compound microscope","parts":[
+{"name":"base","kind":"box","size":[2.2,0.25,1.6],"at":[0,0.125,0],"mat":"black"},
+{"name":"lamp","kind":"sphere","r":0.15,"at":[0.25,0.4,0],"mat":"glow:yellow"},
+{"name":"arm","kind":"box","size":[0.35,2.6,0.5],"at":[-0.7,1.55,0],"mat":"black"},
+{"name":"focus knob","kind":"torus","r":0.3,"tube":0.05,"at":[-0.92,2.0,0],"rot":[0,0,90],"mat":"brass"},
+{"name":"stage","kind":"box","size":[1.5,0.12,1.0],"at":[0.15,1.2,0],"mat":"steel"},
+{"name":"slide","kind":"box","size":[0.9,0.03,0.4],"at":[0.25,1.275,0],"mat":"glass"},
+{"name":"condenser","kind":"cyl","r":0.15,"from":[0.25,0.98,0],"to":[0.25,1.14,0],"mat":"steel"},
+{"name":"objective","kind":"cyl","r":0.09,"from":[0.25,1.32,0],"to":[0.25,1.77,0],"mat":"brass"},
+{"name":"nosepiece","kind":"cyl","r":0.22,"from":[0.25,1.77,0],"to":[0.25,1.9,0],"mat":"steel"},
+{"name":"body tube","kind":"cyl","r":0.14,"from":[0.25,1.9,0],"to":[0.25,2.9,0],"mat":"black"},
+{"name":"eyepiece","kind":"cyl","r":0.16,"from":[0.25,2.9,0],"to":[0.25,3.25,0],"mat":"black"}],
+"labels":[{"part":"eyepiece","text":"Eyepiece"},{"part":"body tube","text":"Body tube"},{"part":"objective","text":"Objective"},{"part":"stage","text":"Stage"},{"part":"arm","text":"Arm"},{"part":"base","text":"Base"}],
+"view":{"turn":25,"tilt":15}}
+```

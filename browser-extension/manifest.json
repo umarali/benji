@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Benji",
+  "version": "0.2.0",
+  "description": "Lets Benji's background jobs read, and with your approval click and type on, pages you approved, in a tab group called Benji.",
+  "minimum_chrome_version": "120",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApVpCxrFmPbOfk22tY6TS8Geu5WEC2jf/IH1YcJZ2EsnxSpKZhSeHbfkLN7TsKJ2tcrH7qNLFhrXVjUJ53b4lGK2vIX38ngsu5Tsp3N0WPPLidrofCULf107adzg3Y/U12b8W+xV5JXqbUIKiJDixpVGPo2FFJ8hDz395JCbwJ3UCDGgF7p67HBjm2cZAL7SGwSG1C+gPoC/ffVuznFj9t7FpEP6mRkgNIWvxsxKOLuhpBL38aHt+GfEygsbzeVcNTc83BU6y6vJbMcov5SGT14ky9QZSb7a8PCxHYXXD8kZw+QkKv3wiQZfLUtUEGG08S21sRJsuFevkTkPVUrPWkQIDAQAB",
+  "permissions": ["nativeMessaging", "tabGroups", "scripting", "storage", "alarms", "debugger"],
+  "optional_host_permissions": ["https://*/*"],
+  "background": { "service_worker": "service-worker.js", "type": "module" },
+  "action": { "default_title": "Benji", "default_popup": "popup.html" }
+}

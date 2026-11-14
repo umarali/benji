@@ -1,0 +1,102 @@
+<!-- @dsCard group="Motion" height=560 subtitle="The seven motion tokens: curves, settle times and a live demo of each" -->
+<style>
+  body { margin: 0; background: var(--window-bg, #ececec); }
+  .mt { font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, system-ui, sans-serif); color: var(--label, #1d1d1f); padding: 16px 20px 12px; box-sizing: border-box; }
+  .mt-bar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 10px; font-size: 12px; }
+  .mt button { font: inherit; font-size: 12px; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--separator, rgba(0,0,0,.15)); background: var(--surface, #fff); color: var(--label, #1d1d1f); cursor: pointer; }
+  .mt-bar label { display: inline-flex; gap: 5px; align-items: center; color: var(--label-secondary, #6e6e73); cursor: pointer; }
+  .mt-row { display: grid; grid-template-columns: minmax(150px, 1.1fr) 168px minmax(140px, 1fr) auto; gap: 12px; align-items: center; padding: 7px 0; border-top: 1px solid var(--separator, rgba(0,0,0,.1)); }
+  .mt-name { font-family: var(--font-mono, ui-monospace, Menlo, monospace); font-size: 12px; font-weight: 600; }
+  .mt-use { font-size: 11px; line-height: 14px; color: var(--label-secondary, #6e6e73); margin-top: 2px; }
+  .mt-plot { display: block; }
+  .mt-plot .ax { stroke: var(--separator, rgba(0,0,0,.15)); stroke-width: 1; }
+  .mt-plot .cv { fill: none; stroke: var(--label, #1d1d1f); stroke-width: 1.6; }
+  .mt-plot .cv2 { fill: none; stroke: var(--label-secondary, #6e6e73); stroke-width: 1.2; stroke-dasharray: 3 2; }
+  .mt-plot .ph { stroke: var(--benji-mint, #66d4cf); stroke-width: 1.5; opacity: 0; }
+  .mt-plot text { font-size: 9px; fill: var(--label-secondary, #6e6e73); font-family: var(--font-sans, system-ui, sans-serif); }
+  .mt-track { position: relative; height: 26px; border-radius: 999px; background: var(--notch-black, #000); }
+  .mt-dot { position: absolute; top: 5px; left: 5px; width: 16px; height: 16px; border-radius: 50%; background: var(--benji-mint, #66d4cf); }
+  .mt-tgt { position: absolute; top: 3px; width: 20px; height: 20px; border-radius: 50%; border: 1.5px dashed var(--notch-label-secondary, rgba(255,255,255,.55)); box-sizing: border-box; opacity: 0; }
+  .mt-chk { position: absolute; left: 50%; top: 3px; margin-left: -10px; width: 20px; height: 20px; color: var(--state-done, #32d74b); }
+  .mt-num { font-size: 11px; color: var(--label-secondary, #6e6e73); font-variant-numeric: tabular-nums; text-align: right; width: 104px; }
+  .mt-note { margin-top: 8px; font-size: 11px; line-height: 15px; color: var(--label-secondary, #6e6e73); }
+  @media (max-width: 560px) { .mt-row { grid-template-columns: 1fr 1fr; } .mt-plot { grid-column: 1 / -1; } }
+</style>
+<div class="mt" id="mt">
+  <div class="mt-bar"><button id="mt-all">Play all</button><label><input type="checkbox" id="mt-rm"> Reduce Motion</label></div>
+  <div id="mt-rows"></div>
+  <div class="mt-note">Springs: <i>k</i> = (2π/<i>d</i>)², <i>c</i> = 4π(1 − <i>b</i>)/<i>d</i>, mass 1. All are critically damped (<i>b</i> = 0) except motion-done. Plots run 0–700 ms; the dashed curve is the ease-in half of motion-fade, and the follow plot shows a retarget at 120 ms keeping its velocity. Under Reduce Motion every spatial demo becomes the motion-reduce crossfade.</div>
+</div>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const T = [
+    { id: 'motion-peek', use: 'Closed ↔ peek', d: 0.30, b: 0, kind: 'spring' },
+    { id: 'motion-open', use: 'Anything to or from open', d: 0.50, b: 0, kind: 'spring' },
+    { id: 'motion-content', use: 'Changes inside one size', d: 0.24, b: 0, kind: 'spring' },
+    { id: 'motion-follow', use: 'Retargeted while moving (pointer ring)', d: 0.35, b: 0, kind: 'follow' },
+    { id: 'motion-fade', use: 'Content opacity in / out, 150 ms', kind: 'fade' },
+    { id: 'motion-done', use: 'Only the Done checkmark: the one bounce', d: 0.45, b: 0.3, kind: 'done' },
+    { id: 'motion-reduce', use: 'Reduce Motion stand-in: 200 ms crossfade', kind: 'reduce' }
+  ];
+  let reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; $('mt-rm').checked = reduce;
+  $('mt-rm').addEventListener('change', (e) => { reduce = e.target.checked; });
+  const kc = (d, b) => { const w = 2 * Math.PI / d; return [w * w, 4 * Math.PI * (1 - b) / d]; };
+  function simulate(d, b, x0, v0, to, ms, retarget) { // returns samples every 1 ms
+    const [k, c] = kc(d, b); let x = x0, v = v0, tg = to; const out = [];
+    for (let i = 0; i <= ms; i++) { out.push(x); if (retarget && i === retarget[0]) tg = retarget[1]; for (let j = 0; j < 4; j++) { v += (-k * (x - tg) - c * v) * 0.00025; x += v * 0.00025; } }
+    return out;
+  }
+  function settle(s, to) { for (let i = s.length - 1; i >= 0; i--) if (Math.abs(s[i] - to) > 0.005) return i + 1; return 0; }
+  const bez = (p1, p2) => (x) => { // cubic-bezier(p1x,p1y,p2x,p2y) solved for y at x
+    let lo = 0, hi = 1, t = x; for (let i = 0; i < 30; i++) { t = (lo + hi) / 2; const bx = 3 * (1 - t) * (1 - t) * t * p1[0] + 3 * (1 - t) * t * t * p2[0] + t * t * t; if (bx < x) lo = t; else hi = t; }
+    return 3 * (1 - t) * (1 - t) * t * p1[1] + 3 * (1 - t) * t * t * p2[1] + t * t * t; };
+  const easeOut = bez([0, 0], [0.58, 1]), easeIn = bez([0.42, 0], [1, 1]), easeInOut = bez([0.42, 0], [0.58, 1]);
+  const PW = 168, PH = 44, MS = 700;
+  function poly(vals, lo, hi) { return vals.map((v, i) => `${(i / MS * PW).toFixed(1)},${(PH - 6 - (v - lo) / (hi - lo) * (PH - 12)).toFixed(1)}`).join(' '); }
+  function curveFor(t) {
+    if (t.kind === 'spring') { const s = simulate(t.d, t.b, 0, 0, 1, MS); return { a: s, lo: 0, hi: 1, settle: settle(s, 1) }; }
+    if (t.kind === 'follow') { const s = simulate(t.d, 0, 0, 0, 1, MS, [120, 0.4]); return { a: s, lo: 0, hi: 1, settle: settle(simulate(t.d, 0, 0, 0, 1, MS), 1) }; }
+    if (t.kind === 'done') { const s = simulate(t.d, t.b, 0, 4.25, 0, MS); let pk = 0, pi = 0; s.forEach((v, i) => { if (v > pk) { pk = v; pi = i; } }); return { a: s.map((v) => 1 + v), lo: 0.98, hi: 1.16, settle: settle(s, 0), peak: [pk, pi] }; }
+    if (t.kind === 'fade') { const a = [], b2 = []; for (let i = 0; i <= MS; i++) { a.push(i >= 150 ? 1 : easeOut(i / 150)); b2.push(i >= 150 ? 0 : 1 - easeIn(i / 150)); } return { a, b: b2, lo: 0, hi: 1, settle: 150 }; }
+    const a = []; for (let i = 0; i <= MS; i++) a.push(i >= 200 ? 1 : easeInOut(i / 200)); return { a, lo: 0, hi: 1, settle: 200 };
+  }
+  const rows = $('mt-rows');
+  T.forEach((t) => {
+    const cv = curveFor(t); t.cv = cv;
+    const row = document.createElement('div'); row.className = 'mt-row';
+    const num = t.kind === 'done' ? `+${(cv.peak[0] * 100).toFixed(0)}% at ${cv.peak[1]} ms<br>rest ≈ ${Math.round(cv.settle / 10) * 10} ms` : (t.d ? `d ${t.d.toFixed(2)} s, b ${t.b}<br>settles ≈ ${cv.settle} ms` : `${cv.settle} ms`);
+    row.innerHTML = `<div><div class="mt-name">${t.id}</div><div class="mt-use">${t.use}</div></div>
+      <svg class="mt-plot" width="${PW}" height="${PH}" aria-hidden="true"><line class="ax" x1="0" y1="${PH - 6}" x2="${PW}" y2="${PH - 6}"/><line class="ax" x1="0" y1="6" x2="${PW}" y2="6" stroke-dasharray="2 3"/>
+      ${cv.b ? `<polyline class="cv2" points="${poly(cv.b, cv.lo, cv.hi)}"/>` : ''}<polyline class="cv" points="${poly(cv.a, cv.lo, cv.hi)}"/><line class="ph" x1="0" y1="2" x2="0" y2="${PH - 2}"/></svg>
+      <div class="mt-track">${t.kind === 'done' ? '<svg class="mt-chk" viewBox="0 0 16 16"><path d="M3.2 8.6l3.2 3.1 6.4-7.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' : '<span class="mt-tgt"></span><span class="mt-dot"></span>'}</div>
+      <div class="mt-num">${num}</div>`;
+    rows.appendChild(row); t.row = row;
+    row.querySelector('.mt-track').addEventListener('click', () => play(t));
+    row.querySelector('.mt-track').setAttribute('title', 'Click to play');
+  });
+  function play(t) {
+    const tr = t.row.querySelector('.mt-track'), ph = t.row.querySelector('.ph'), dot = tr.querySelector('.mt-dot'), chk = tr.querySelector('.mt-chk'), tgt = tr.querySelector('.mt-tgt');
+    const span = tr.clientWidth - 26; cancelAnimationFrame(t.raf);
+    const spatial = t.kind === 'spring' || t.kind === 'follow' || t.kind === 'done';
+    if (reduce && spatial) { // crossfade: the end state fades in, nothing travels or scales
+      const el = dot || chk; el.style.transition = 'none'; el.style.opacity = 0; if (dot) dot.style.transform = `translateX(${span}px)`; if (chk) chk.style.transform = 'none';
+      requestAnimationFrame(() => requestAnimationFrame(() => { el.style.transition = 'opacity 200ms cubic-bezier(.42,0,.58,1)'; el.style.opacity = 1; }));
+      return;
+    }
+    if (tgt) { tgt.style.opacity = t.kind === 'follow' ? 1 : 0; tgt.style.left = (3 + span) + 'px'; }
+    const t0 = performance.now(); ph.style.opacity = 1; if (dot) { dot.style.transition = 'none'; dot.style.opacity = 1; } if (chk) chk.style.opacity = 1;
+    function f(now) {
+      const ms = Math.min(MS, now - t0), v = t.cv.a[Math.floor(ms)];
+      ph.setAttribute('x1', ms / MS * PW); ph.setAttribute('x2', ms / MS * PW);
+      if (t.kind === 'follow' && ms >= 120 && tgt) tgt.style.left = (3 + span * 0.4) + 'px';
+      if (dot) { if (t.kind === 'fade' || t.kind === 'reduce') { dot.style.transform = `translateX(${span / 2}px)`; dot.style.opacity = v; } else dot.style.transform = `translateX(${v * span}px)`; }
+      if (chk) chk.style.transform = `scale(${v})`;
+      if (ms < MS) t.raf = requestAnimationFrame(f); else ph.style.opacity = 0;
+    }
+    t.raf = requestAnimationFrame(f);
+  }
+  $('mt-all').addEventListener('click', () => T.forEach((t, i) => setTimeout(() => play(t), i * 120)));
+  window.__mt = { tokens: T.map((t) => ({ id: t.id, settle: t.cv.settle, peak: t.cv.peak })) };
+})();
+</script>

@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "id": "card/five-steps",
+  "kind": "card",
+  "case": "five steps",
+  "request": {
+    "text": "Walk me through making a pull request, step by step.",
+    "screen": "document",
+    "spoken": false
+  },
+  "expect": {
+    "card": true,
+    "layout": "steps"
+  },
+  "reply": {
+    "model": "claude-haiku-5-5",
+    "effort": "low",
+    "recorded": "2026-11-01",
+    "source": "D-125 card eval, reply five-steps",
+    "raw": "A pull request asks the people who maintain a project to review your changes before they're merged in. Here's the route.\n\n```card\n{\"title\":\"Making a pull request\",\"heading\":\"Branch, commit, push, open, review\",\"layout\":\"steps\",\n\"items\":[{\"label\":\"Create a branch\",\"note\":\"a separate copy for your work\",\"icon\":\"arrow.triangle.branch\"},\n{\"label\":\"Commit changes\",\"note\":\"save your edits with a message\",\"icon\":\"square.and.pencil\"},\n{\"label\":\"Push the branch\",\"note\":\"upload it to the remote\",\"icon\":\"arrow.up.circle\"},\n{\"label\":\"Open the PR\",\"note\":\"pick base and compare branches\",\"icon\":\"arrow.triangle.pull\"},\n{\"label\":\"Describe it\",\"note\":\"say what changed and why\",\"icon\":\"text.alignleft\"},\n{\"label\":\"Review and merge\",\"note\":\"answer feedback, then merge\",\"icon\":\"checkmark.seal\"}],\n\"chips\":[\"What does a commit message look like?\",\"What if main changed meanwhile?\"]}\n```\n\nStep 1: from the project's folder, run `git checkout -b my-fix` (use a name that describes your change). This gives you a branch, so your work stays apart from the main line of code. Have you got the project cloned on your Mac yet?",
+    "events": null,
+    "usage": null
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

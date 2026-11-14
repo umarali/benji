@@ -1,0 +1,36 @@
+I'll show you an acoustic guitar with its key parts labeled.
+
+```figure
+{
+  "title": "Acoustic Guitar",
+  "parts": [
+    {"name": "body", "kind": "extrude", "path": "M-3 0 Q-3 -4 0 -5 Q3 -4 3 0 Q3 2 2.2 3 Q1.5 3.5 0 3.5 Q-1.5 3.5 -2.2 3 Q-3 2 -3 0 Z", "depth": 2, "at": [0, 2, 0], "mat": "wood"},
+    {"name": "soundhole", "kind": "cyl", "r": 0.8, "h": 0.3, "at": [0, 1, 1.1], "axis": "z", "mat": "black"},
+    {"name": "bridge", "kind": "box", "size": [2, 0.15, 0.5], "at": [0, 3.5, 1.1], "mat": "wood"},
+    {"name": "saddle", "kind": "box", "size": [2, 0.2, 0.08], "at": [0, 3.6, 1.1], "mat": "paint:cream"},
+    {"name": "neck", "kind": "box", "size": [0.8, 8, 0.6], "at": [0, 9.5, 0.7], "mat": "wood"},
+    {"name": "fretboard", "kind": "box", "size": [0.85, 8, 0.15], "at": [0, 9.5, 1.08], "mat": "wood"},
+    {"name": "fret1", "kind": "box", "size": [0.9, 0.04, 0.04], "at": [0, 6.5, 1.16], "mat": "steel"},
+    {"name": "fret2", "kind": "box", "size": [0.9, 0.04, 0.04], "at": [0, 7.2, 1.16], "mat": "steel"},
+    {"name": "fret3", "kind": "box", "size": [0.9, 0.04, 0.04], "at": [0, 7.9, 1.16], "mat": "steel"},
+    {"name": "fret4", "kind": "box", "size": [0.9, 0.04, 0.04], "at": [0, 8.6, 1.16], "mat": "steel"},
+    {"name": "fret5", "kind": "box", "size": [0.9, 0.04, 0.04], "at": [0, 9.3, 1.16], "mat": "steel"},
+    {"name": "headstock", "kind": "box", "size": [1.2, 1.5, 0.4], "at": [0, 14.2, 0.7], "mat": "wood"},
+    {"name": "nut", "kind": "box", "size": [0.85, 0.1, 0.08], "at": [0, 13.3, 1.08], "mat": "paint:cream"},
+    {"name": "tuner1", "kind": "cyl", "r": 0.15, "h": 0.6, "at": [-0.5, 13.7, 0.7], "axis": "x", "mat": "chrome"},
+    {"name": "tuner2", "kind": "cyl", "r": 0.15, "h": 0.6, "at": [-0.5, 14.2, 0.7], "axis": "x", "mat": "chrome"},
+    {"name": "tuner3", "kind": "cyl", "r": 0.15, "h": 0.6, "at": [-0.5, 14.7, 0.7], "axis": "x", "mat": "chrome"},
+    {"name": "tuner4", "kind": "cyl", "r": 0.15, "h": 0.6, "at": [0.5, 13.7, 0.7], "axis": "x", "mat": "chrome"},
+    {"name": "tuner5", "kind": "cyl", "r": 0.15, "h": 0.6, "at": [0.5, 14.2, 0.7], "axis": "x", "mat": "chrome"},
+    {"name": "tuner6", "kind": "cyl", "r": 0.15, "h": 0.6, "at": [0.5, 14.7, 0.7], "axis": "x", "mat": "chrome"}
+  ],
+  "labels": [
+    {"part": "headstock", "text": "Headstock"},
+    {"part": "fretboard", "text": "Fretboard"},
+    {"part": "soundhole", "text": "Soundhole"},
+    {"part": "body", "text": "Body"},
+    {"part": "bridge", "text": "Bridge"}
+  ],
+  "view": {"turn": 30, "tilt": 15}
+}
+```

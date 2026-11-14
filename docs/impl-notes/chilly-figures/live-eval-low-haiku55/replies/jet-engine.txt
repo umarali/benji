@@ -1,0 +1,15 @@
+A jet engine is a tube that sucks in air, squeezes it, burns fuel in it, and sends the hot gas out the back. The fan at the front pulls in air, and the compressor packs it tighter. Fuel burns in the combustor, and the hot gas spins the turbine, which drives the fan and compressor through a central shaft. The exhaust leaves through the nozzle, and that backward rush pushes the plane forward.
+
+```figure
+{"title":"A turbofan jet engine (cutaway)","parts":[
+{"name":"nacelle","kind":"cyl","r":1.6,"from":[-4,0,0],"to":[3,0,0],"mat":"aluminium"},
+{"name":"fan","kind":"cyl","r":1.35,"from":[-3.6,0,0],"to":[-3,0,0],"mat":"steel"},
+{"name":"compressor","kind":"cone","r":0.95,"r2":0.5,"from":[-3,0,0],"to":[-1,0,0],"mat":"steel"},
+{"name":"combustor","kind":"cyl","r":0.9,"from":[-1,0,0],"to":[0.5,0,0],"mat":"paint:orange"},
+{"name":"turbine","kind":"cyl","r":0.95,"from":[0.5,0,0],"to":[1.8,0,0],"mat":"brass"},
+{"name":"shaft","kind":"cyl","r":0.2,"from":[-3.5,0,0],"to":[2.5,0,0],"mat":"steel"},
+{"name":"nozzle","kind":"cone","r":1.0,"r2":0.7,"from":[3,0,0],"to":[4.2,0,0],"mat":"copper"}],
+"cut":{"parts":["nacelle"]},
+"labels":[{"part":"fan","text":"Fan"},{"part":"compressor","text":"Compressor"},{"part":"combustor","text":"Combustor"},{"part":"turbine","text":"Turbine"},{"part":"nozzle","text":"Nozzle"}],
+"view":{"turn":30,"tilt":15}}
+```

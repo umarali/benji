@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "id": "card/fact-no-card",
+  "kind": "card",
+  "case": "fact, no card",
+  "request": {
+    "text": "What's the capital of Australia?",
+    "screen": null,
+    "spoken": true
+  },
+  "expect": {
+    "card": false
+  },
+  "reply": {
+    "model": "claude-haiku-5-5",
+    "effort": "low",
+    "recorded": "2026-11-01",
+    "source": "D-125 card eval, reply fact-no-card",
+    "raw": "The capital of Australia is Canberra.",
+    "events": null,
+    "usage": null
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

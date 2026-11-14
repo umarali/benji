@@ -1,0 +1,24 @@
+A bicycle is a light frame with two wheels, a saddle, handlebars, and a chain drive at the crank. Here it is in side view.
+
+```figure
+{"title":"A bicycle","parts":[
+{"name":"rear wheel","kind":"torus","r":1.0,"tube":0.05,"at":[-1.2,1.0,0],"mat":"rubber"},
+{"name":"front wheel","kind":"torus","r":1.0,"tube":0.05,"at":[1.2,1.0,0],"mat":"rubber"},
+{"name":"rear hub","kind":"cyl","r":0.08,"from":[-1.2,1.0,-0.08],"to":[-1.2,1.0,0.08],"mat":"steel"},
+{"name":"front hub","kind":"cyl","r":0.08,"from":[1.2,1.0,-0.08],"to":[1.2,1.0,0.08],"mat":"steel"},
+{"name":"top tube","kind":"cyl","r":0.05,"from":[-0.7,2.1,0],"to":[0.9,1.9,0],"mat":"paint:red"},
+{"name":"down tube","kind":"cyl","r":0.055,"from":[-0.2,1.0,0],"to":[0.9,1.5,0],"mat":"paint:red"},
+{"name":"seat tube","kind":"cyl","r":0.05,"from":[-0.2,1.0,0],"to":[-0.7,2.1,0],"mat":"paint:red"},
+{"name":"head tube","kind":"cyl","r":0.07,"from":[0.9,1.5,0],"to":[0.9,1.9,0],"mat":"paint:red"},
+{"name":"fork","kind":"cyl","r":0.04,"from":[0.9,1.5,0],"to":[1.2,1.0,0],"mat":"steel"},
+{"name":"chainstay","kind":"cyl","r":0.04,"from":[-0.2,1.0,0],"to":[-1.2,1.0,0],"mat":"paint:red"},
+{"name":"seatstay","kind":"cyl","r":0.035,"from":[-0.7,1.9,0],"to":[-1.2,1.0,0],"mat":"paint:red"},
+{"name":"saddle","kind":"box","size":[0.5,0.1,0.18],"at":[-0.75,2.2,0],"mat":"black"},
+{"name":"stem","kind":"cyl","r":0.05,"from":[0.9,1.9,0],"to":[0.95,2.15,0],"mat":"aluminium"},
+{"name":"handlebar","kind":"cyl","r":0.03,"from":[0.95,2.15,-0.35],"to":[0.95,2.15,0.35],"mat":"black"},
+{"name":"crank","kind":"cyl","r":0.03,"from":[-0.2,1.0,0.12],"to":[-0.2,0.7,0.2],"mat":"steel"},
+{"name":"chainring","kind":"cyl","r":0.3,"from":[-0.2,1.0,-0.14],"to":[-0.2,1.0,-0.1],"mat":"steel"},
+{"name":"pedal","kind":"box","size":[0.25,0.06,0.12],"at":[-0.2,0.68,0.2],"mat":"black"}],
+"labels":[{"part":"top tube","text":"Frame"},{"part":"saddle","text":"Saddle"},{"part":"handlebar","text":"Handlebar"},{"part":"chainring","text":"Chainring"},{"part":"fork","text":"Fork"}],
+"view":{"turn":30,"tilt":10}}
+```

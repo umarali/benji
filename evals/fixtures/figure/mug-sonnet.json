@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "id": "figure/mug-sonnet",
+  "kind": "figure",
+  "case": "mug",
+  "request": {
+    "text": "Draw a coffee mug.",
+    "screen": null,
+    "spoken": false
+  },
+  "expect": {},
+  "reply": {
+    "model": "claude-sonnet-5-5",
+    "effort": "low",
+    "recorded": "2026-10-31",
+    "source": "D-108 figure eval low-sonnet55, reply mug",
+    "raw": "A coffee mug is a hollow cylinder with a handle on one side. It's drawn here as a ring of wall around a dark coffee surface.\n\n```figure\n{\"title\":\"A coffee mug\",\"parts\":[\n{\"name\":\"base\",\"kind\":\"cyl\",\"r\":0.9,\"h\":0.15,\"at\":[0,0.075,0],\"mat\":\"ceramic\"},\n{\"name\":\"wall\",\"kind\":\"lathe\",\"profile\":[[0.9,0.15],[1,0.3],[1,2.0],[0.88,2.0],[0.88,0.3],[0.8,0.15]],\"at\":[0,0,0],\"mat\":\"paint:white\"},\n{\"name\":\"floor\",\"kind\":\"cyl\",\"r\":0.88,\"h\":0.2,\"at\":[0,0.25,0],\"mat\":\"ceramic\"},\n{\"name\":\"coffee\",\"kind\":\"cyl\",\"r\":0.87,\"h\":0.1,\"at\":[0,1.7,0],\"mat\":\"paint:brown\"},\n{\"name\":\"rim\",\"kind\":\"torus\",\"r\":0.94,\"tube\":0.07,\"at\":[0,2.0,0],\"rot\":[90,0,0],\"mat\":\"ceramic\"},\n{\"name\":\"handle\",\"kind\":\"torus\",\"r\":0.45,\"tube\":0.11,\"at\":[1.2,1.1,0],\"mat\":\"paint:white\"},\n{\"name\":\"handle top joint\",\"kind\":\"sphere\",\"r\":0.12,\"at\":[1.0,1.5,0],\"mat\":\"paint:white\"},\n{\"name\":\"handle bottom joint\",\"kind\":\"sphere\",\"r\":0.12,\"at\":[1.0,0.7,0],\"mat\":\"paint:white\"}],\n\"labels\":[{\"part\":\"wall\",\"text\":\"Body\"},{\"part\":\"handle\",\"text\":\"Handle\"},{\"part\":\"coffee\",\"text\":\"Coffee\"},{\"part\":\"rim\",\"text\":\"Rim\"},{\"part\":\"base\",\"text\":\"Base\"}],\n\"view\":{\"turn\":30,\"tilt\":25}}\n```",
+    "events": null,
+    "usage": {
+      "calls": 1,
+      "input_tokens": 1800,
+      "output_tokens": 653,
+      "cache_read_tokens": 3249,
+      "cache_write_tokens": 0
+    }
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

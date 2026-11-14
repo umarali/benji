@@ -1,0 +1,15 @@
+A coffee mug is a hollow cylinder with a handle on one side. It's drawn here as a ring of wall around a dark coffee surface.
+
+```figure
+{"title":"A coffee mug","parts":[
+{"name":"base","kind":"cyl","r":0.9,"h":0.15,"at":[0,0.075,0],"mat":"ceramic"},
+{"name":"wall","kind":"lathe","profile":[[0.9,0.15],[1,0.3],[1,2.0],[0.88,2.0],[0.88,0.3],[0.8,0.15]],"at":[0,0,0],"mat":"paint:white"},
+{"name":"floor","kind":"cyl","r":0.88,"h":0.2,"at":[0,0.25,0],"mat":"ceramic"},
+{"name":"coffee","kind":"cyl","r":0.87,"h":0.1,"at":[0,1.7,0],"mat":"paint:brown"},
+{"name":"rim","kind":"torus","r":0.94,"tube":0.07,"at":[0,2.0,0],"rot":[90,0,0],"mat":"ceramic"},
+{"name":"handle","kind":"torus","r":0.45,"tube":0.11,"at":[1.2,1.1,0],"mat":"paint:white"},
+{"name":"handle top joint","kind":"sphere","r":0.12,"at":[1.0,1.5,0],"mat":"paint:white"},
+{"name":"handle bottom joint","kind":"sphere","r":0.12,"at":[1.0,0.7,0],"mat":"paint:white"}],
+"labels":[{"part":"wall","text":"Body"},{"part":"handle","text":"Handle"},{"part":"coffee","text":"Coffee"},{"part":"rim","text":"Rim"},{"part":"base","text":"Base"}],
+"view":{"turn":30,"tilt":25}}
+```

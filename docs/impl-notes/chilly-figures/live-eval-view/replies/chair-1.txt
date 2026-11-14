@@ -1,0 +1,37 @@
+I'll draw an office chair for you with all its typical components.
+
+```figure
+{
+  "title": "An office chair",
+  "parts": [
+    {"name": "caster1", "kind": "sphere", "r": 0.12, "at": [0.35, 0.12, 0.35], "mat": "black"},
+    {"name": "caster2", "kind": "sphere", "r": 0.12, "at": [-0.35, 0.12, 0.35], "mat": "black"},
+    {"name": "caster3", "kind": "sphere", "r": 0.12, "at": [0.35, 0.12, -0.35], "mat": "black"},
+    {"name": "caster4", "kind": "sphere", "r": 0.12, "at": [-0.35, 0.12, -0.35], "mat": "black"},
+    {"name": "caster5", "kind": "sphere", "r": 0.12, "at": [0, 0.12, 0.5], "mat": "black"},
+    {"name": "base leg1", "kind": "cyl", "r": 0.06, "from": [0, 0.12, 0], "to": [0.4, 0.12, 0.4], "mat": "chrome"},
+    {"name": "base leg2", "kind": "cyl", "r": 0.06, "from": [0, 0.12, 0], "to": [-0.4, 0.12, 0.4], "mat": "chrome"},
+    {"name": "base leg3", "kind": "cyl", "r": 0.06, "from": [0, 0.12, 0], "to": [0.4, 0.12, -0.4], "mat": "chrome"},
+    {"name": "base leg4", "kind": "cyl", "r": 0.06, "from": [0, 0.12, 0], "to": [-0.4, 0.12, -0.4], "mat": "chrome"},
+    {"name": "base leg5", "kind": "cyl", "r": 0.06, "from": [0, 0.12, 0], "to": [0, 0.12, 0.55], "mat": "chrome"},
+    {"name": "gas lift", "kind": "cyl", "r": 0.08, "h": 1.5, "at": [0, 0.87, 0], "mat": "chrome"},
+    {"name": "seat base", "kind": "cyl", "r": 0.55, "h": 0.12, "at": [0, 1.68, 0], "mat": "black"},
+    {"name": "seat cushion", "kind": "cyl", "r": 0.5, "h": 0.18, "at": [0, 1.83, 0.05], "mat": "paint:grey"},
+    {"name": "backrest mount", "kind": "cyl", "r": 0.06, "from": [0, 1.74, -0.35], "to": [0, 2.2, -0.4], "mat": "chrome"},
+    {"name": "backrest lower", "kind": "box", "size": [0.6, 0.55, 0.15], "at": [0, 2.48, -0.475], "mat": "paint:grey"},
+    {"name": "backrest upper", "kind": "box", "size": [0.58, 0.45, 0.12], "at": [0, 3.23, -0.46], "mat": "paint:grey"},
+    {"name": "armrest left", "kind": "box", "size": [0.12, 0.08, 0.4], "at": [-0.42, 2.05, 0], "mat": "black"},
+    {"name": "armrest right", "kind": "box", "size": [0.12, 0.08, 0.4], "at": [0.42, 2.05, 0], "mat": "black"},
+    {"name": "armrest pad left", "kind": "box", "size": [0.12, 0.06, 0.35], "at": [-0.42, 2.12, 0], "mat": "paint:grey"},
+    {"name": "armrest pad right", "kind": "box", "size": [0.12, 0.06, 0.35], "at": [0.42, 2.12, 0], "mat": "paint:grey"}
+  ],
+  "labels": [
+    {"part": "backrest upper", "text": "Backrest"},
+    {"part": "seat cushion", "text": "Seat"},
+    {"part": "armrest pad left", "text": "Armrest"},
+    {"part": "gas lift", "text": "Height adjustment"},
+    {"part": "caster1", "text": "Casters"}
+  ],
+  "view": {"turn": 35, "tilt": 20}
+}
+```

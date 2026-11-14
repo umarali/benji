@@ -1,0 +1,37 @@
+I'll show you a bicycle with its main parts in 3D.
+
+```figure
+{
+  "title": "A bicycle",
+  "parts": [
+    {"name": "front wheel rim", "kind": "torus", "r": 0.35, "tube": 0.03, "at": [0, 0.35, 1.2], "axis": "x", "mat": "aluminium"},
+    {"name": "front tire", "kind": "torus", "r": 0.35, "tube": 0.06, "at": [0, 0.35, 1.2], "axis": "x", "mat": "rubber"},
+    {"name": "rear wheel rim", "kind": "torus", "r": 0.35, "tube": 0.03, "at": [0, 0.35, -1.2], "axis": "x", "mat": "aluminium"},
+    {"name": "rear tire", "kind": "torus", "r": 0.35, "tube": 0.06, "at": [0, 0.35, -1.2], "axis": "x", "mat": "rubber"},
+    {"name": "front fork left", "kind": "cyl", "r": 0.025, "from": [-0.1, 0.35, 1.2], "to": [-0.1, 1.0, 1.05], "mat": "steel"},
+    {"name": "front fork right", "kind": "cyl", "r": 0.025, "from": [0.1, 0.35, 1.2], "to": [0.1, 1.0, 1.05], "mat": "steel"},
+    {"name": "head tube", "kind": "cyl", "r": 0.04, "from": [0, 1.0, 1.05], "to": [0, 1.3, 0.85], "mat": "paint:red"},
+    {"name": "top tube", "kind": "cyl", "r": 0.03, "from": [0, 1.3, 0.85], "to": [0, 1.15, -0.9], "mat": "paint:red"},
+    {"name": "down tube", "kind": "cyl", "r": 0.035, "from": [0, 1.0, 1.05], "to": [0, 0.5, -0.5], "mat": "paint:red"},
+    {"name": "seat tube", "kind": "cyl", "r": 0.03, "from": [0, 0.5, -0.5], "to": [0, 1.15, -0.9], "mat": "paint:red"},
+    {"name": "seat post", "kind": "cyl", "r": 0.02, "from": [0, 1.15, -0.9], "to": [0, 1.5, -1.0], "mat": "steel"},
+    {"name": "saddle", "kind": "box", "size": [0.22, 0.08, 0.3], "at": [0, 1.55, -1.0], "mat": "black"},
+    {"name": "chain stay left", "kind": "cyl", "r": 0.02, "from": [-0.15, 0.5, -0.5], "to": [-0.15, 0.35, -1.2], "mat": "paint:red"},
+    {"name": "chain stay right", "kind": "cyl", "r": 0.02, "from": [0.15, 0.5, -0.5], "to": [0.15, 0.35, -1.2], "mat": "paint:red"},
+    {"name": "handlebar post", "kind": "cyl", "r": 0.025, "from": [0, 1.3, 0.85], "to": [0, 1.45, 0.95], "mat": "steel"},
+    {"name": "handlebar", "kind": "cyl", "r": 0.02, "from": [-0.25, 1.45, 0.95], "to": [0.25, 1.45, 0.95], "axis": "x", "mat": "black"},
+    {"name": "crank left", "kind": "cyl", "r": 0.015, "from": [-0.15, 0.5, -0.5], "to": [-0.28, 0.25, -0.4], "mat": "black"},
+    {"name": "crank right", "kind": "cyl", "r": 0.015, "from": [0.15, 0.5, -0.5], "to": [0.28, 0.75, -0.6], "mat": "black"},
+    {"name": "pedal left", "kind": "box", "size": [0.1, 0.03, 0.08], "at": [-0.28, 0.25, -0.4], "mat": "plastic"},
+    {"name": "pedal right", "kind": "box", "size": [0.1, 0.03, 0.08], "at": [0.28, 0.75, -0.6], "mat": "plastic"}
+  ],
+  "labels": [
+    {"part": "saddle", "text": "Saddle"},
+    {"part": "handlebar", "text": "Handlebar"},
+    {"part": "front tire", "text": "Front wheel"},
+    {"part": "rear tire", "text": "Rear wheel"},
+    {"part": "pedal left", "text": "Pedal"}
+  ],
+  "view": {"turn": 25, "tilt": 10}
+}
+```

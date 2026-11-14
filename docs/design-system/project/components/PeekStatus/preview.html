@@ -1,0 +1,224 @@
+<!-- @dsCard group="Notch" height=320 subtitle="Every peek state and how it changes: glyph replace, meters, shimmer, the one bounce on Done" -->
+<style>
+  body { margin: 0; background: var(--window-bg, #ececec); }
+  .ps { --ps-label: var(--notch-label, rgba(255,255,255,.85)); --ps-label2: var(--notch-label-secondary, rgba(255,255,255,.55));
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, system-ui, sans-serif); color: var(--label, #1d1d1f); padding: 16px 20px 12px; box-sizing: border-box; }
+  .ps-bar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 8px; font-size: 12px; }
+  .ps-bar button { font: inherit; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--separator, rgba(0,0,0,.15)); background: var(--surface, #fff); color: var(--label, #1d1d1f); cursor: pointer; }
+  .ps-bar button[aria-pressed="true"] { background: var(--label, #1d1d1f); color: var(--window-bg, #ececec); border-color: transparent; }
+  .ps-bar .sep { width: 1px; height: 18px; background: var(--separator, rgba(0,0,0,.15)); margin: 0 4px; }
+  .ps-bar label { display: inline-flex; gap: 5px; align-items: center; color: var(--label-secondary, #6e6e73); cursor: pointer; }
+  .ps-stage { position: relative; height: 110px; margin-top: 10px; border-radius: 10px; overflow: hidden; background: linear-gradient(160deg, #8fb7c9 0%, #c9d6c1 55%, #e6dcc8 100%); }
+  .ps-menubar { position: absolute; left: 0; right: 0; top: 0; height: 33px; background: rgba(246,246,246,.78); }
+  .ps-svg { position: absolute; left: 50%; top: 0; margin-left: -260px; overflow: visible; }
+  .ps-peek { position: absolute; left: 50%; top: 0; width: 360px; height: 60px; margin-left: -180px; color: var(--ps-label); }
+  .ps-l, .ps-r { position: absolute; top: 0; height: 32px; display: flex; align-items: center; gap: 4px; }
+  .ps-l { right: calc(50% + 92.5px + 10px); justify-content: flex-end; }
+  .ps-r { left: calc(50% + 92.5px + 10px); width: 70px; }
+  .ps-g { position: relative; width: 16px; height: 16px; }
+  .ps-g svg { position: absolute; inset: 0; transform-origin: 50% 50%; }
+  .ps-word { font-family: var(--font-rounded, ui-rounded, -apple-system, system-ui, sans-serif); font-size: 11px; line-height: 14px; font-weight: 600; letter-spacing: .2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70px; }
+  .ps-m { display: flex; gap: 2px; align-items: center; height: 14px; opacity: 0; width: 0; overflow: hidden; }
+  .ps-m i { display: block; width: 3px; height: 3px; border-radius: 999px; background: currentColor; }
+  .ps-line { position: absolute; left: 22px; right: 22px; top: 38px; height: 16px; text-align: center; font-family: var(--font-rounded, ui-rounded, -apple-system, system-ui, sans-serif); font-size: 13px; line-height: 16px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ps-line .w { opacity: 0; transition: opacity 120ms cubic-bezier(0,0,.58,1); }
+  .ps-line .w.on { opacity: 1; }
+  .ps-shim { background: linear-gradient(90deg, var(--ps-label2) 0%, var(--ps-label2) 40%, rgba(255,255,255,.95) 50%, var(--ps-label2) 60%, var(--ps-label2) 100%); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent !important; animation: ps-sweep 2s linear infinite; }
+  @keyframes ps-sweep { 0% { background-position: 100% 0; } 70% { background-position: 0% 0; } 100% { background-position: 0% 0; } }
+  .ps-read { margin-top: 8px; font-size: 11px; line-height: 15px; color: var(--label-secondary, #6e6e73); min-height: 30px; }
+  .ps-read b { color: var(--label, #1d1d1f); font-weight: 600; }
+  .ps-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+</style>
+<div class="ps" id="ps">
+  <div class="ps-bar" role="toolbar" aria-label="Peek state" id="ps-states"></div>
+  <div class="ps-bar">
+    <button id="ps-turn">Play a turn</button>
+    <span class="sep"></span>
+    <label><input type="checkbox" id="ps-rm"> Reduce Motion</label>
+  </div>
+  <div class="ps-stage">
+    <div class="ps-menubar"></div>
+    <svg class="ps-svg" width="520" height="80" aria-hidden="true"><path id="ps-path" fill="#000"/></svg>
+    <div class="ps-peek" id="ps-peek">
+      <div class="ps-l"><span class="ps-g" id="ps-g"></span><span class="ps-m" id="ps-m"><i></i><i></i><i></i><i></i></span></div>
+      <div class="ps-r"><span class="ps-word" id="ps-word"></span></div>
+      <div class="ps-line" id="ps-line"></div>
+    </div>
+  </div>
+  <div class="ps-read" id="ps-read"></div>
+  <div class="ps-sr" id="ps-live" aria-live="polite"></div>
+</div>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const C = (n, f) => `var(--${n}, ${f})`;
+  const G = {
+    dot: '<circle cx="8" cy="8" r="3.5" fill="currentColor"/>',
+    mic: '<rect x="5.6" y="1.5" width="4.8" height="8" rx="2.4" fill="currentColor"/><path d="M3.5 7.5a4.5 4.5 0 0 0 9 0M8 12v2.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>',
+    wave: '<path d="M2.5 6.5v3M5.25 4v8M8 2v12M10.75 4.5v7M13.5 6.5v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+    dotted: '<circle cx="8" cy="8" r="5.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="1.4 2.3" stroke-linecap="round"/>',
+    hand: '<rect x="3.6" y="7" width="8.6" height="7.5" rx="3.4" fill="currentColor"/><rect x="3.6" y="3.4" width="1.8" height="6" rx=".9" fill="currentColor"/><rect x="5.9" y="1.6" width="1.8" height="7" rx=".9" fill="currentColor"/><rect x="8.2" y="1.9" width="1.8" height="7" rx=".9" fill="currentColor"/><rect x="10.5" y="3.4" width="1.8" height="6" rx=".9" fill="currentColor"/>',
+    finder: '<path d="M2 5.5V3a1 1 0 0 1 1-1h2.5M10.5 2H13a1 1 0 0 1 1 1v2.5M14 10.5V13a1 1 0 0 1-1 1h-2.5M5.5 14H3a1 1 0 0 1-1-1v-2.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="8" r="2.2" fill="currentColor"/>',
+    scope: '<circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5v3M8 11.5v3M1.5 8h3M11.5 8h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="8" r="1.3" fill="currentColor"/>',
+    check: '<path d="M3.2 8.6l3.2 3.1 6.4-7.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+    warn: '<path d="M8 1.8l6.6 11.6a.8.8 0 0 1-.7 1.2H2.1a.8.8 0 0 1-.7-1.2z" fill="currentColor"/><path d="M8 6v3.6" stroke="#000" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="11.9" r=".9" fill="#000"/>',
+    lock: '<rect x="3" y="7" width="10" height="7.5" rx="1.8" fill="currentColor"/><path d="M5.2 7V5.2a2.8 2.8 0 0 1 5.6 0V7" fill="none" stroke="currentColor" stroke-width="1.6"/>'
+  };
+  const S = {
+    ready:      { name: 'Ready', g: 'dot', col: C('benji-mint', '#66d4cf'), word: 'Ready', line: 'Here if you need me.', sig: 'hovered while idle' },
+    listening:  { name: 'Listening', g: 'mic', col: C('state-listening', '#ff9f0a'), word: 'Listening', line: 'rename the screenshots on my desktop by date', meter: 'mic', stream: true, sig: 'microphone engine running', say: 'Listening' },
+    transcribing: { name: 'Transcribing', g: 'wave', col: C('state-listening', '#ff9f0a'), dim: true, word: 'Transcribing', line: '…', sig: 'audio ended, final text pending' },
+    working:    { name: 'Working', g: 'dotted', col: C('notch-label-secondary', 'rgba(255,255,255,.55)'), word: 'Working', line: 'Reading 3 files', shimmer: true, sig: 'assistant process running' },
+    approval:   { name: 'Needs approval', g: 'hand', col: C('state-approval', '#ffd60a'), word: 'Approval', line: 'Move 12 files to Archive', sig: 'assistant waiting for Yes or No', say: 'Benji needs approval: Move 12 files to Archive', note: 'In the product this grows straight to open with the approval card (see NotchMorph).' },
+    speaking:   { name: 'Speaking', g: 'wave', col: C('benji-mint', '#66d4cf'), word: 'Speaking', line: 'Done. 12 files moved to Archive.', meter: 'speech', speech: true, sig: 'speech synthesizer started' },
+    looking:    { name: 'Looking', g: 'finder', col: C('state-looking', '#bf5af2'), word: 'Looking', line: 'Looking at this screen once', sig: 'screenshot attached to this message' },
+    pointing:   { name: 'Pointing', g: 'scope', col: C('benji-mint', '#66d4cf'), word: 'Pointing', line: 'It’s the Share button, top right.', sig: 'answer carried a point on screen', say: 'Pointing at Share button' },
+    done:       { name: 'Done', g: 'check', col: C('state-done', '#32d74b'), word: 'Done', line: 'All set.', bounce: true, sig: 'answer delivered', say: 'All set.' },
+    error:      { name: 'Error', g: 'warn', col: C('state-error', '#ff453a'), word: 'Error', line: 'That didn’t work: the file is locked by another app.', sig: 'assistant, voice or capture error', say: 'That didn’t work: the file is locked by another app.' },
+    permission: { name: 'Needs permission', g: 'lock', col: C('notch-label-secondary', 'rgba(255,255,255,.55)'), word: 'Permission', line: 'I need Accessibility to hear the talk key.', sig: 'a macOS permission is missing' }
+  };
+  let reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; $('ps-rm').checked = reduce;
+  $('ps-rm').addEventListener('change', (e) => { reduce = e.target.checked; if (cur) setState(cur, true); });
+
+  // Springs: k = (2π/d)², c = 4π(1−b)/d, integrated in small steps.
+  function spring(d, b, x0, v0, to, onStep, onDone) {
+    const w = 2 * Math.PI / d, k = w * w, c = 4 * Math.PI * (1 - b) / d;
+    let x = x0, v = v0, last = performance.now(), live = true;
+    function f(now) {
+      if (!live) return;
+      const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      const n = Math.max(1, Math.ceil(dt * 960)), h = dt / n;
+      for (let i = 0; i < n; i++) { v += (-k * (x - to) - c * v) * h; x += v * h; }
+      if (Math.abs(x - to) < 0.0005 && Math.abs(v) < 0.005) { x = to; live = false; onStep(x); onDone && onDone(); return; }
+      onStep(x); requestAnimationFrame(f);
+    }
+    requestAnimationFrame(f);
+    return { stop() { live = false; } };
+  }
+
+  // The peek shape (closes after Done's hold; reopens on the next state).
+  let shapeH = 0, shapeAnim = null; // 0 = closed, 1 = peek
+  function path(t) {
+    const W = 185 + 175 * t, H = 32 + 28 * t, r = 10 + 8 * t, s = 6 + 2 * t, cx = 260, L = cx - W / 2, R = cx + W / 2;
+    const q = Math.min(1.4 * r, H - s), a = 0.552 * s, b = 0.33 * q;
+    return `M${L - s},0 C${L - s + a},0 ${L},${s - a} ${L},${s} L${L},${H - q} C${L},${H - b} ${L + b},${H} ${L + q},${H} L${R - q},${H} C${R - b},${H} ${R},${H - b} ${R},${H - q} L${R},${s} C${R},${s - a} ${R + s - a},0 ${R + s},0 Z`;
+  }
+  function drawShape(t) { $('ps-path').setAttribute('d', path(t)); }
+  function setOpen(open, after) {
+    const to = open ? 1 : 0; if (shapeAnim) shapeAnim.stop();
+    const peek = $('ps-peek');
+    if (reduce) { shapeH = to; drawShape(to); peek.style.transition = 'opacity 200ms cubic-bezier(.42,0,.58,1)'; peek.style.opacity = to; after && after(); return; }
+    if (open) { setTimeout(() => { peek.style.transition = 'opacity 150ms cubic-bezier(0,0,.58,1)'; peek.style.opacity = 1; }, 106); }
+    else { peek.style.transition = 'opacity 150ms cubic-bezier(.42,0,1,1)'; peek.style.opacity = 0; }
+    const run = () => { shapeAnim = spring(0.30, 0, shapeH, 0, to, (x) => { shapeH = x; drawShape(x); }, after); };
+    if (open) run(); else setTimeout(run, 100);
+  }
+
+  // Meter: one level, attack 35 ms / release 140 ms, redrawn only when it changes by > 1%, ≤ 48 fps.
+  let meterTimer = null, level = 0, drawn = -1;
+  const PROFILE = [0.55, 1.0, 0.8, 0.5];
+  function drawMeter() { const bars = $('ps-m').children; for (let i = 0; i < 4; i++) bars[i].style.height = (3 + 11 * level * PROFILE[i]).toFixed(1) + 'px'; drawn = level; }
+  function runMeter(source) {
+    stopMeter(); let t0 = performance.now(), lastT = t0, target = 0;
+    const m = $('ps-m'); m.style.transition = 'opacity 150ms cubic-bezier(0,0,.58,1)'; m.style.width = '26px'; m.style.opacity = 1;
+    meterTimer = setInterval(() => {
+      const now = performance.now(), dt = (now - lastT) / 1000; lastT = now;
+      target = source((now - t0) / 1000);
+      const tau = target > level ? 0.035 : 0.140; level += (target - level) * (1 - Math.exp(-dt / tau));
+      if (reduce) { if (now - (runMeter.lastStatic || 0) > 250) { runMeter.lastStatic = now; drawMeter(); } return; }
+      if (Math.abs(level - drawn) > 0.01) drawMeter();
+    }, 1000 / 48);
+  }
+  function stopMeter() { clearInterval(meterTimer); meterTimer = null; const m = $('ps-m'); m.style.transition = 'opacity 150ms cubic-bezier(.42,0,1,1)'; m.style.opacity = 0; level = 0; setTimeout(() => { if (!meterTimer) m.style.width = '0'; }, 150); }
+  // Simulated input for the preview only: syllable-like bursts about 4.5 a second (the product uses the real level).
+  function voiceLike(seed) { let s = seed; const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280; const amps = Array.from({ length: 64 }, () => 0.35 + 0.65 * rnd());
+    return (t) => { const i = Math.floor(t * 4.5), ph = t * 4.5 - i; return amps[i % 64] * Math.max(0, Math.sin(Math.PI * Math.min(1, ph / 0.75))); }; }
+
+  // Glyph replace (approximation of the system effect) and the one bounce on Done.
+  let glyphSvg = null, bounceAnim = null, doneCount = 0;
+  function setGlyph(st) {
+    const box = $('ps-g'), next = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    next.setAttribute('viewBox', '0 0 16 16'); next.setAttribute('width', '16'); next.setAttribute('height', '16'); next.innerHTML = G[st.g];
+    next.style.color = st.col; next.style.opacity = st.dim ? 0.6 : 1;
+    const old = glyphSvg; glyphSvg = next; box.appendChild(next);
+    if (bounceAnim) bounceAnim.stop();
+    if (reduce || !old) {
+      next.style.opacity = 0; next.style.transition = 'opacity 200ms cubic-bezier(.42,0,.58,1)';
+      requestAnimationFrame(() => requestAnimationFrame(() => { next.style.opacity = st.dim ? 0.6 : 1; }));
+      if (old) { old.style.transition = 'opacity 200ms cubic-bezier(.42,0,.58,1)'; old.style.opacity = 0; setTimeout(() => old.remove(), 220); }
+      return Promise.resolve();
+    }
+    old.style.transition = 'opacity 120ms cubic-bezier(.42,0,1,1), transform 120ms cubic-bezier(.42,0,1,1)'; old.style.opacity = 0; old.style.transform = 'scale(.5)';
+    setTimeout(() => old.remove(), 140);
+    next.style.opacity = 0; next.style.transform = 'scale(.5)';
+    return new Promise((res) => setTimeout(() => {
+      next.style.opacity = st.dim ? 0.6 : 1;
+      spring(0.24, 0, 0.5, 0, 1, (x) => { next.style.transform = `scale(${x})`; }, res);
+    }, 90));
+  }
+  function bounce(el) {
+    doneCount++; if (reduce) return;
+    bounceAnim = spring(0.45, 0.3, 0, 4.25, 0, (x) => { el.style.transform = `scale(${1 + x})`; });
+  }
+
+  // Line: plain swap, streamed live words, or speech-paced reveal.
+  let lineTimers = [];
+  function syllables(w) { const m = w.toLowerCase().replace(/[^a-z]/g, '').replace(/e$/, '').match(/[aeiouy]+/g); return Math.max(1, m ? m.length : 1); }
+  function setLine(st) {
+    lineTimers.forEach(clearTimeout); lineTimers = [];
+    const el = $('ps-line'); el.classList.toggle('ps-shim', !!st.shimmer && !reduce);
+    el.style.color = st.shimmer ? 'var(--notch-label-secondary, rgba(255,255,255,.55))' : '';
+    if (!(st.stream || st.speech) || reduce) {
+      el.style.transition = 'none'; el.style.opacity = 0; el.textContent = st.line;
+      requestAnimationFrame(() => { el.style.transition = reduce ? 'none' : 'opacity 150ms cubic-bezier(0,0,.58,1)'; el.style.opacity = 1; });
+      return 0;
+    }
+    el.style.opacity = 1; el.innerHTML = '';
+    const words = st.line.split(' '); let t = 0; const spans = words.map((w, i) => { const s = document.createElement('span'); s.className = 'w'; s.textContent = (i ? ' ' : '') + w; el.appendChild(s); return s; });
+    const times = words.map((w) => { const at = t; t += (syllables(w) + (/[,]$/.test(w) ? 1 : 0) + (/[.?!]$/.test(w) ? 2 : 0)) / 4.5; return at; });
+    if (st.stream) times.forEach((_, i) => { times[i] = i * 0.38; }); // live recognition arrives about word by word
+    spans.forEach((s, i) => lineTimers.push(setTimeout(() => s.classList.add('on'), times[i] * 1000 - 40)));
+    return t;
+  }
+  function speechLevel(st) { // follows the reveal: a burst per syllable, quiet at sentence ends
+    const words = st.line.split(' '); const sylls = []; let t = 0;
+    words.forEach((w) => { for (let i = 0; i < syllables(w); i++) { sylls.push(t); t += 1 / 4.5; } if (/[,]$/.test(w)) t += 1 / 4.5; if (/[.?!]$/.test(w)) t += 2 / 4.5; });
+    return (x) => { for (const s of sylls) if (x >= s && x < s + 0.2) return 0.85 * Math.sin(Math.PI * (x - s) / 0.2); return 0; };
+  }
+
+  let cur = null, holdTimer = null;
+  function setState(key, refresh) {
+    const st = S[key]; const prev = cur; cur = key; clearTimeout(holdTimer);
+    document.querySelectorAll('#ps-states button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.s === key)));
+    const wasClosed = shapeH < 0.5;
+    if (wasClosed) setOpen(true);
+    const word = $('ps-word');
+    word.style.transition = reduce ? 'none' : 'opacity 150ms cubic-bezier(.42,0,1,1)'; word.style.opacity = 0;
+    setTimeout(() => { word.textContent = st.word; word.style.color = st.col; word.style.transition = reduce ? 'none' : 'opacity 150ms cubic-bezier(0,0,.58,1)'; word.style.opacity = 1; }, reduce ? 0 : 150);
+    const replaced = setGlyph(st);
+    if (st.meter) runMeter(st.meter === 'mic' ? voiceLike(7) : speechLevel(st)); else stopMeter();
+    $('ps-m').style.color = st.col;
+    const lineDur = setLine(st);
+    if (st.bounce) replaced.then(() => bounce(glyphSvg));
+    const words = st.line.split(' ').length, hold = Math.min(4, Math.max(1.5, 0.5 + 0.25 * words));
+    $('ps-read').innerHTML = `<b>${st.name}</b> · signal: ${st.sig}` + (st.bounce ? ` · bounce: motion-done${reduce ? ' (off under Reduce Motion)' : ''} · hold ${hold.toFixed(2)} s, then closes` : '') +
+      (st.speech ? ` · speech-paced reveal, ${lineDur.toFixed(2)} s at 4.5 syllables/s (estimate)` : '') + (st.meter === 'mic' ? ' · preview uses a simulated level; the product uses the real mic level' : '') +
+      (st.shimmer ? (reduce ? ' · no shimmer under Reduce Motion' : ' · shimmer 1.4 s sweep + 0.6 s rest') : '') + (st.note ? ' · ' + st.note : '');
+    if (!refresh) $('ps-live').textContent = st.say || st.name;
+    if (st.bounce) holdTimer = setTimeout(() => { stopMeter(); setOpen(false); cur = null; document.querySelectorAll('#ps-states button').forEach((b) => b.setAttribute('aria-pressed', 'false')); }, (reduce ? 0 : 300) + hold * 1000);
+    if (st.meter === 'mic') holdTimer = setTimeout(() => { if (cur === 'listening') stopMeter(); }, 6000);
+    if (st.speech) holdTimer = setTimeout(() => { if (cur === 'speaking') stopMeter(); }, lineDur * 1000 + 200);
+  }
+  const bar = $('ps-states');
+  Object.keys(S).forEach((k) => { const b = document.createElement('button'); b.textContent = S[k].name; b.dataset.s = k; b.setAttribute('aria-pressed', 'false'); b.addEventListener('click', () => { clearTour(); setState(k); }); bar.appendChild(b); });
+  let tour = [];
+  function clearTour() { tour.forEach(clearTimeout); tour = []; }
+  $('ps-turn').addEventListener('click', () => {
+    clearTour(); const steps = [['listening', 0], ['transcribing', 3200], ['working', 3800], ['speaking', 6800], ['done', 9600]];
+    steps.forEach(([k, at]) => tour.push(setTimeout(() => setState(k), at)));
+  });
+  drawShape(0); $('ps-peek').style.opacity = 0;
+  $('ps-read').textContent = 'Closed. Pick a state, or play a turn: listening, transcribing, working, speaking, done.';
+  window.__ps = { setState, state: () => ({ cur, shapeH, level }) };
+})();
+</script>

@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "id": "card/compare",
+  "kind": "card",
+  "case": "compare",
+  "request": {
+    "text": "Compare iCloud and a local folder for keeping my notes.",
+    "screen": "document",
+    "spoken": false
+  },
+  "expect": {
+    "card": true,
+    "layout": "compare"
+  },
+  "reply": {
+    "model": "claude-haiku-5-5",
+    "effort": "low",
+    "recorded": "2026-11-01",
+    "source": "D-125 card eval, reply compare",
+    "raw": "Both work. iCloud Drive keeps notes synced across your Apple devices and backed up off the Mac, but it depends on your storage plan and on sync. A local folder is simpler and always available offline, but it only has the backups you set up yourself.\n\n```card\n{\"title\":\"iCloud vs local folder\",\"heading\":\"Sync and backup, or simple and private\",\"layout\":\"compare\",\n\"items\":[{\"label\":\"iCloud Drive\",\"note\":\"synced by Apple\",\"icon\":\"icloud\",\"points\":[\"Works on iPhone, iPad and Mac\",\"Backed up off the Mac\",\"Needs storage space and a connection\",\"Sync can be slow or confusing at times\"]},\n{\"label\":\"Local folder\",\"note\":\"stays on this Mac\",\"icon\":\"folder\",\"points\":[\"Works offline, always fast\",\"No subscription or storage limit\",\"No automatic backup unless you add one\",\"Not on your other devices by default\"]}],\n\"takeaway\":\"Pick iCloud if you use several Apple devices; a local folder with Time Machine if you don't.\",\n\"chips\":[\"How do I set up Time Machine?\",\"How much iCloud storage do I need?\",\"Can I sync a local folder?\"]}\n```",
+    "events": null,
+    "usage": null
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

@@ -1,0 +1,33 @@
+I'll show you an airplane in flight with its key components labeled.
+
+An airplane flies by generating lift with its wings as air flows over them, thrust from the engines to move forward, and using control surfaces like the tail to steer and stabilize.
+
+```figure
+{
+  "title": "Airplane in Flight",
+  "parts": [
+    {"name": "fuselage", "kind": "capsule", "r": 0.7, "from": [-6, 0, 0], "to": [4, 0, 0], "mat": "aluminium"},
+    {"name": "cockpit", "kind": "sphere", "r": 0.75, "at": [3.5, 0, 0], "mat": "glass"},
+    {"name": "nose cone", "kind": "cone", "r": 0.7, "r2": 0.1, "from": [4, 0, 0], "to": [5.2, 0, 0], "mat": "aluminium"},
+    {"name": "left wing", "kind": "extrude", "path": "M0 0 L-4.5 0 L-5 -0.8 L-0.5 -0.5 Z", "depth": 0.3, "at": [0, 0, -0.15], "rot": [0, 0, 0], "mat": "aluminium"},
+    {"name": "right wing", "kind": "extrude", "path": "M0 0 L-4.5 0 L-5 -0.8 L-0.5 -0.5 Z", "depth": 0.3, "at": [0, 0, 0.15], "mirror": "z", "mat": "aluminium"},
+    {"name": "left engine", "kind": "cyl", "r": 0.4, "h": 1.8, "axis": "x", "at": [-2.5, -0.5, -2.8], "mat": "steel"},
+    {"name": "right engine", "kind": "cyl", "r": 0.4, "h": 1.8, "axis": "x", "at": [-2.5, -0.5, 2.8], "mat": "steel"},
+    {"name": "left engine front", "kind": "cyl", "r": 0.5, "h": 0.3, "axis": "x", "at": [-1.5, -0.5, -2.8], "mat": "iron"},
+    {"name": "right engine front", "kind": "cyl", "r": 0.5, "h": 0.3, "axis": "x", "at": [-1.5, -0.5, 2.8], "mat": "iron"},
+    {"name": "vertical stabilizer", "kind": "extrude", "path": "M0 0 L0 2.2 L-1.8 2.2 L-0.8 0 Z", "depth": 0.2, "at": [-5, 0, -0.1], "mat": "aluminium"},
+    {"name": "left horizontal stabilizer", "kind": "extrude", "path": "M0 0 L-1.8 0 L-2 -0.5 L-0.3 -0.4 Z", "depth": 0.15, "at": [-5, 2, -0.075], "mat": "aluminium"},
+    {"name": "right horizontal stabilizer", "kind": "extrude", "path": "M0 0 L-1.8 0 L-2 -0.5 L-0.3 -0.4 Z", "depth": 0.15, "at": [-5, 2, 0.075], "mirror": "z", "mat": "aluminium"},
+    {"name": "left winglet", "kind": "extrude", "path": "M0 0 L0 0.6 L-0.4 0.5 L-0.2 0 Z", "depth": 0.1, "at": [-4.5, 0, -4.85], "mat": "paint:blue"},
+    {"name": "right winglet", "kind": "extrude", "path": "M0 0 L0 0.6 L-0.4 0.5 L-0.2 0 Z", "depth": 0.1, "at": [-4.5, 0, 4.85], "mat": "paint:blue"}
+  ],
+  "labels": [
+    {"part": "left wing", "text": "Wing (generates lift)"},
+    {"part": "left engine", "text": "Engine (thrust)"},
+    {"part": "vertical stabilizer", "text": "Tail (stability)"},
+    {"part": "fuselage", "text": "Fuselage"},
+    {"part": "cockpit", "text": "Cockpit"}
+  ],
+  "view": {"turn": 60, "tilt": 10}
+}
+```

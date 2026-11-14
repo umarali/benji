@@ -1,0 +1,24 @@
+I'll draw a simple house with its key features.
+
+```figure
+{
+  "title": "A house",
+  "parts": [
+    {"name": "foundation", "kind": "box", "size": [6, 0.3, 5], "at": [0, 0.15, 0], "mat": "iron"},
+    {"name": "walls", "kind": "box", "size": [6, 3, 5], "at": [0, 1.65, 0], "mat": "paint:cream"},
+    {"name": "roof", "kind": "extrude", "path": "M-3 0 L3 0 L0 2 Z", "depth": 5, "at": [0, 3.15, 0], "mat": "paint:red"},
+    {"name": "door", "kind": "box", "size": [1, 2.2, 0.1], "at": [0, 1.25, 2.55], "mat": "wood"},
+    {"name": "door handle", "kind": "sphere", "r": 0.08, "at": [0.35, 1.25, 2.65], "mat": "brass"},
+    {"name": "left window", "kind": "box", "size": [1.2, 1, 0.1], "at": [-1.8, 2, 2.55], "mat": "glass"},
+    {"name": "right window", "kind": "box", "size": [1.2, 1, 0.1], "at": [1.8, 2, 2.55], "mat": "glass"},
+    {"name": "chimney", "kind": "box", "size": [0.6, 1.8, 0.6], "at": [1.5, 4.05, -0.5], "mat": "paint:red"}
+  ],
+  "labels": [
+    {"part": "roof", "text": "Roof"},
+    {"part": "door", "text": "Door"},
+    {"part": "left window", "text": "Window"},
+    {"part": "chimney", "text": "Chimney"}
+  ],
+  "view": {"turn": 30, "tilt": 20}
+}
+```

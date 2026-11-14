@@ -1,0 +1,31 @@
+A car engine cylinder contains several key components that work together to convert fuel into motion:
+
+The **piston** moves up and down inside the cylinder bore, connected to the **crankshaft** by a **connecting rod**. At the top, the **cylinder head** seals the chamber and houses the **intake and exhaust valves** that control air/fuel flow and exhaust gases. 
+
+The **spark plug** (in gasoline engines) ignites the compressed air-fuel mixture. **Piston rings** seal the piston against the cylinder wall to contain combustion pressure and control oil. The space above the piston when it's at the top forms the **combustion chamber** where the explosion happens.
+
+During operation, the cylinder goes through four strokes: intake (fuel/air in), compression (piston squeezes mixture), power (spark ignites, explosion pushes piston down), and exhaust (burned gases out).
+
+```figure
+{"title":"Inside a Car Engine Cylinder","parts":[
+{"name":"cylinder block","kind":"cyl","r":1.8,"h":5,"at":[0,2.5,0],"mat":"aluminium"},
+{"name":"cylinder head","kind":"cyl","r":2,"h":0.8,"at":[0,5.4,0],"mat":"aluminium"},
+{"name":"combustion chamber","kind":"cyl","r":1.3,"h":0.4,"at":[0,5,0],"mat":"matte"},
+{"name":"piston","kind":"cyl","r":1.5,"h":1.2,"at":[0,3.2,0],"mat":"aluminium"},
+{"name":"piston rings","kind":"torus","r":1.5,"tube":0.08,"at":[0,3.6,0],"mat":"steel"},
+{"name":"piston pin","kind":"cyl","r":0.15,"h":2,"at":[0,2.6,0],"axis":"x","mat":"steel"},
+{"name":"connecting rod","kind":"box","size":[0.3,2.5,0.4],"at":[0,1,0],"mat":"steel"},
+{"name":"crankshaft journal","kind":"cyl","r":0.4,"h":1.5,"at":[0,-0.4,0],"axis":"x","mat":"steel"},
+{"name":"intake valve","kind":"cyl","r":0.4,"from":[0.8,5.8,0],"to":[0.8,4.8,0],"mat":"steel"},
+{"name":"exhaust valve","kind":"cyl","r":0.4,"from":[-0.8,5.8,0],"to":[-0.8,4.8,0],"mat":"steel"},
+{"name":"spark plug","kind":"cyl","r":0.2,"from":[0,6.2,0],"to":[0,5.2,0],"mat":"ceramic"},
+{"name":"cylinder bore","kind":"tube","r":1.6,"path":[[0,0.5,0],[0,4.8,0]],"mat":"iron"}],
+"cut":{"parts":["cylinder block","cylinder head"]},
+"labels":[
+{"part":"spark plug","text":"Spark plug"},
+{"part":"intake valve","text":"Intake valve"},
+{"part":"piston","text":"Piston"},
+{"part":"connecting rod","text":"Connecting rod"},
+{"part":"combustion chamber","text":"Combustion chamber"}],
+"view":{"turn":25,"tilt":10}}
+```

@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "id": "card/picture-no-card",
+  "kind": "card",
+  "case": "picture, no card",
+  "request": {
+    "text": "Draw a cat in the empty space.",
+    "screen": "desktop",
+    "spoken": false
+  },
+  "expect": {
+    "card": false,
+    "marks": "picture"
+  },
+  "reply": {
+    "model": "claude-haiku-5-5",
+    "effort": "low",
+    "recorded": "2026-11-01",
+    "source": "D-125 card eval, reply picture-no-card",
+    "raw": "A sitting cat, facing you.\n[OVAL:1040,430,1140,520:Head][SHAPE:1048,445,1052,398,1076,425:Left ear][SHAPE:1114,425,1132,398,1136,445:Right ear][SHAPE:1050,515,1040,600,1030,680,1150,680,1140,600,1130,515:Body][PATH:1140,670,1190,665,1215,630,1210,590,1230,570:Tail][LINE:1042,690,1072,690,1072,680:Left paw][LINE:1108,680,1108,690,1138,690:Right paw][OVAL:1073,468,1081,480:Left eye][OVAL:1099,468,1107,480:Right eye][SHAPE:1086,492,1094,492,1090,498:Nose][PATH:1080,502,1090,506,1100,502:Mouth][LINE:1040,495,1070,492:Whisker][LINE:1040,505,1070,502:Whisker][LINE:1110,492,1140,495:Whisker][LINE:1110,502,1140,505:Whisker]",
+    "events": null,
+    "usage": null
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

@@ -1,0 +1,13 @@
+Here's a simple coffee mug for you.
+
+```figure
+{"title":"A coffee mug","parts":[
+{"name":"body","kind":"cyl","r":1.2,"h":3,"at":[0,1.5,0],"mat":"ceramic"},
+{"name":"inner","kind":"cyl","r":1.1,"h":2.8,"at":[0,1.6,0],"mat":"paint:cream"},
+{"name":"bottom","kind":"cyl","r":1.15,"h":0.3,"at":[0,0.15,0],"mat":"ceramic"},
+{"name":"handle outer","kind":"torus","r":0.6,"tube":0.18,"at":[1.2,1.8,0],"rot":[0,0,90],"mat":"ceramic"},
+{"name":"handle cut","kind":"box","size":[0.8,1.5,0.8],"at":[0.85,1.8,0],"mat":"ceramic"},
+{"name":"coffee","kind":"cyl","r":1.05,"h":0.1,"at":[0,2.95,0],"mat":"paint:brown"}],
+"labels":[{"part":"body","text":"Cup"},{"part":"handle outer","text":"Handle"},{"part":"coffee","text":"Coffee"}],
+"view":{"turn":35,"tilt":18}}
+```

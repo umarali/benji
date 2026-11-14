@@ -1,0 +1,27 @@
+I'll draw a house with its main parts in 3D.
+
+```figure
+{
+  "title": "A house",
+  "parts": [
+    {"name": "foundation", "kind": "box", "size": [6, 0.3, 5], "at": [0, 0.15, 0], "mat": "ceramic"},
+    {"name": "front wall", "kind": "box", "size": [6, 3, 0.3], "at": [0, 1.8, 2.35], "mat": "paint:cream"},
+    {"name": "back wall", "kind": "box", "size": [6, 3, 0.3], "at": [0, 1.8, -2.35], "mat": "paint:cream"},
+    {"name": "left wall", "kind": "box", "size": [0.3, 3, 5], "at": [-2.85, 1.8, 0], "mat": "paint:cream"},
+    {"name": "right wall", "kind": "box", "size": [0.3, 3, 5], "at": [2.85, 1.8, 0], "mat": "paint:cream"},
+    {"name": "roof left", "kind": "extrude", "path": "M-3 0 L0 2 L0 0 Z", "depth": 5, "at": [0, 3.3, 0], "mat": "paint:red"},
+    {"name": "roof right", "kind": "extrude", "path": "M0 0 L3 0 L0 2 Z", "depth": 5, "at": [0, 3.3, 0], "mat": "paint:red"},
+    {"name": "door", "kind": "box", "size": [1, 2.2, 0.1], "at": [0, 1.4, 2.4], "mat": "wood"},
+    {"name": "window left", "kind": "box", "size": [0.9, 0.9, 0.1], "at": [-1.5, 2.2, 2.4], "mat": "glass"},
+    {"name": "window right", "kind": "box", "size": [0.9, 0.9, 0.1], "at": [1.5, 2.2, 2.4], "mat": "glass"},
+    {"name": "chimney", "kind": "box", "size": [0.5, 1.8, 0.5], "at": [1.8, 4.6, -0.8], "mat": "paint:red"},
+    {"name": "doorknob", "kind": "sphere", "r": 0.08, "at": [0.4, 1.4, 2.45], "mat": "brass"}
+  ],
+  "labels": [
+    {"part": "roof left", "text": "Roof"},
+    {"part": "door", "text": "Door"},
+    {"part": "chimney", "text": "Chimney"}
+  ],
+  "view": {"turn": 30, "tilt": 20}
+}
+```

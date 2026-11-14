@@ -1,0 +1,20 @@
+I'll draw a 3D coffee mug for you.
+
+```figure
+{
+  "title": "A coffee mug",
+  "parts": [
+    {"name": "body", "kind": "lathe", "profile": [[0.8, 0], [0.8, 0.1], [0.75, 0.2], [0.75, 2.5], [0.8, 2.6], [0.85, 2.7]], "at": [0, 0, 0], "mat": "ceramic"},
+    {"name": "inner cavity", "kind": "lathe", "profile": [[0.72, 2.7], [0.72, 0.3], [0.3, 0.2], [0, 0.2]], "at": [0, 0, 0], "mat": "paint:brown"},
+    {"name": "base", "kind": "cyl", "r": 0.65, "h": 0.08, "at": [0, 0.04, 0], "mat": "ceramic"},
+    {"name": "handle outer", "kind": "torus", "r": 0.45, "tube": 0.18, "at": [0.85, 1.35, 0], "rot": [0, 90, 0], "mat": "ceramic"}
+  ],
+  "cut": {"parts": ["body", "base"]},
+  "labels": [
+    {"part": "body", "text": "Body"},
+    {"part": "handle outer", "text": "Handle"},
+    {"part": "inner cavity", "text": "Coffee"}
+  ],
+  "view": {"turn": 35, "tilt": 18}
+}
+```

@@ -1,0 +1,10 @@
+I'll draw a 3D coffee mug for you.
+
+```figure
+{"title":"Coffee mug","parts":[
+{"name":"body","kind":"lathe","profile":[[0,0],[1.2,0],[1.3,0.3],[1.3,2.5],[1.2,2.8],[0.9,3]],"at":[0,0,0],"mat":"ceramic"},
+{"name":"handle","kind":"torus","r":0.45,"tube":0.12,"at":[1.3,1.5,0],"rot":[0,90,0],"mat":"ceramic"},
+{"name":"coffee","kind":"cyl","r":1.25,"h":0.1,"at":[0,2.7,0],"mat":"paint:brown"}],
+"labels":[{"part":"body","text":"Body"},{"part":"handle","text":"Handle"},{"part":"coffee","text":"Coffee"}],
+"view":{"turn":35,"tilt":20}}
+```

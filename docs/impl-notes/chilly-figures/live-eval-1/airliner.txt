@@ -1,0 +1,23 @@
+I'll show you a 3D model of an airplane with its key components labeled to explain how it flies.
+
+```figure
+{
+  "title": "How a plane flies",
+  "parts": [
+    {"name": "fuselage", "kind": "capsule", "r": 0.6, "h": 9, "axis": "z", "mat": "paint:white"},
+    {"name": "cockpit", "kind": "box", "size": [0.6, 0.16, 0.4], "at": [0, 0.52, 3.95], "rot": [35, 0, 0], "mat": "glass"},
+    {"name": "wing", "kind": "box", "size": [4, 0.14, 1.5], "at": [2.3, -0.3, 0.3], "rot": [0, 18, 4], "mirror": "x", "mat": "aluminium"},
+    {"name": "engine", "kind": "cyl", "r": 0.3, "from": [1.9, -0.7, 1.3], "to": [1.9, -0.7, 0], "mirror": "x", "mat": "steel"},
+    {"name": "tail fin", "kind": "extrude", "path": "M0 0 L1.5 0 L2.1 -1.6 L1.45 -1.6 Z", "depth": 0.12, "at": [0, 0.5, -2.4], "rot": [0, 90, 0], "mat": "paint:blue"},
+    {"name": "tailplane", "kind": "box", "size": [1.5, 0.1, 0.7], "at": [0.8, 0.2, -3.7], "rot": [0, 20, 0], "mirror": "x", "mat": "aluminium"}
+  ],
+  "labels": [
+    {"part": "wing", "text": "Wings (lift)"},
+    {"part": "engine", "text": "Engines (thrust)"},
+    {"part": "tail fin", "text": "Tail (stability)"}
+  ],
+  "view": {"turn": 35, "tilt": 22}
+}
+```
+
+A plane flies using four forces: the engines provide thrust to move forward, the wings create lift as air flows over them, weight pulls down, and drag resists motion. The wings' shape causes air to move faster over the top, creating lower pressure that lifts the plane up.

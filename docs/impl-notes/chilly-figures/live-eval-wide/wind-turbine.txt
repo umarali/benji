@@ -1,0 +1,27 @@
+I'll show you a modern wind turbine with its main components.
+
+A wind turbine is a tall structure with three long blades mounted on a nacelle (housing) at the top of a tower. The blades catch the wind and spin a generator inside the nacelle to produce electricity. They typically stand 80-100 meters tall, with blade spans of 100+ meters on large models.
+
+```figure
+{
+  "title": "A wind turbine",
+  "parts": [
+    {"name": "foundation", "kind": "cyl", "r": 3.5, "h": 1, "at": [0, 0.5, 0], "mat": "paint:grey"},
+    {"name": "tower", "kind": "cone", "r": 2.5, "r2": 1.8, "h": 80, "at": [0, 40, 0], "mat": "paint:white"},
+    {"name": "nacelle", "kind": "box", "size": [12, 4, 4], "at": [0, 81, 0], "mat": "paint:cream"},
+    {"name": "hub", "kind": "cyl", "r": 2, "h": 2.5, "at": [6.5, 81, 0], "axis": "x", "mat": "paint:white"},
+    {"name": "blade 1", "kind": "extrude", "path": "M0 0 L1.5 35 L0.8 45 L0 45 L-0.5 35 Z", "depth": 1.2, "at": [8, 81, 0], "rot": [0, 0, 0], "mat": "paint:white"},
+    {"name": "blade 2", "kind": "extrude", "path": "M0 0 L1.5 35 L0.8 45 L0 45 L-0.5 35 Z", "depth": 1.2, "at": [8, 81, 0], "rot": [0, 0, 120], "mat": "paint:white"},
+    {"name": "blade 3", "kind": "extrude", "path": "M0 0 L1.5 35 L0.8 45 L0 45 L-0.5 35 Z", "depth": 1.2, "at": [8, 81, 0], "rot": [0, 0, 240], "mat": "paint:white"},
+    {"name": "door", "kind": "box", "size": [2, 3.5, 0.15], "at": [0, 3, 2.45], "mat": "paint:grey"},
+    {"name": "platform", "kind": "box", "size": [8, 0.3, 8], "at": [0, 0, 0], "mat": "paint:grey"}
+  ],
+  "labels": [
+    {"part": "blade 1", "text": "Rotor blades"},
+    {"part": "nacelle", "text": "Nacelle (generator housing)"},
+    {"part": "hub", "text": "Hub"},
+    {"part": "tower", "text": "Tower"}
+  ],
+  "view": {"turn": 35, "tilt": 20}
+}
+```

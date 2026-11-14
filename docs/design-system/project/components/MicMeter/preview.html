@@ -1,0 +1,19 @@
+<!-- @dsCard group="Voice" height=120 subtitle="Quiet, speaking, loud" -->
+<style>
+  body { margin: 0; background: var(--window-bg); color: var(--label); font-family: var(--font-sans); }
+  .stage { padding: 20px; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+  .cap { font-family: var(--font-sans); font-size: 11px; line-height: 14px; color: var(--label-secondary); }
+  .notch { background: var(--notch-black); color: var(--notch-label); }
+  .sym { font-family: var(--font-sans); font-weight: 600; }
+</style>
+<style>
+  .row { display: flex; gap: 24px; align-items: center; }
+  .chip { background: var(--notch-black); border-radius: var(--radius-pill); padding: 8px 14px; display: flex; gap: 6px; align-items: center; color: var(--state-listening); font-weight: 700; font-size: 12px; }
+  .bars { display: flex; gap: 2px; align-items: center; height: 14px; }
+  .bars i { width: 3px; border-radius: var(--radius-pill); background: var(--state-listening); display: block; }
+</style>
+<div class="stage"><div class="row">
+  <div class="chip">mic<span class="bars"><i style="height:3.6px"></i><i style="height:4.1px"></i><i style="height:3.9px"></i><i style="height:3.5px"></i></span></div>
+  <div class="chip">mic<span class="bars"><i style="height:6.6px"></i><i style="height:9.6px"></i><i style="height:8.3px"></i><i style="height:6.3px"></i></span></div>
+  <div class="chip">mic<span class="bars"><i style="height:9.1px"></i><i style="height:14.0px"></i><i style="height:11.8px"></i><i style="height:8.5px"></i></span></div>
+</div><div class="cap">Level 0.1, 0.6, 1.0 · bars follow the real microphone signal</div></div>

@@ -1,0 +1,16 @@
+A plane flies because its wings push air down, and the air pushes the wings up. The wing's curved top and tilted angle make air move faster over the top, lowering pressure there, and the wing deflects air downward. The reaction force is **lift**. Engines provide **thrust** to overcome drag, and in steady level flight lift balances **weight**.
+
+```figure
+{"title":"How a plane flies","parts":[
+{"name":"fuselage","kind":"capsule","r":0.5,"h":4.2,"axis":"x","at":[0,0,0],"mat":"white"},
+{"name":"main wing","kind":"box","size":[1.3,0.08,5.0],"at":[0,-0.1,0],"mat":"paint:grey"},
+{"name":"tail fin","kind":"extrude","path":"M-1.8 0 L-0.6 0 L-1.4 1.3 L-2.0 1.3 Z","depth":0.1,"at":[0,0.4,0],"mat":"paint:red"},
+{"name":"tailplane","kind":"box","size":[0.7,0.07,2.0],"at":[-1.9,0.3,0],"mat":"paint:grey"},
+{"name":"left engine","kind":"cyl","r":0.3,"from":[0.4,-0.4,1.4],"to":[1.4,-0.4,1.4],"mat":"steel"},
+{"name":"right engine","kind":"cyl","r":0.3,"from":[0.4,-0.4,-1.4],"to":[1.4,-0.4,-1.4],"mat":"steel"},
+{"name":"lift arrow","kind":"cyl","r":0.06,"from":[0,0.2,2.2],"to":[0,1.8,2.2],"mat":"glow:green"},
+{"name":"weight arrow","kind":"cyl","r":0.06,"from":[0,-0.7,0],"to":[0,-2.1,0],"mat":"glow:red"},
+{"name":"thrust arrow","kind":"cyl","r":0.06,"from":[1.6,-0.4,1.4],"to":[2.9,-0.4,1.4],"mat":"glow:orange"}],
+"labels":[{"part":"main wing","text":"Wing: shape and angle make lift"},{"part":"lift arrow","text":"Lift"},{"part":"weight arrow","text":"Weight"},{"part":"thrust arrow","text":"Thrust"},{"part":"left engine","text":"Engine"}],
+"view":{"turn":30,"tilt":15}}
+```

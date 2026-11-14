@@ -1,0 +1,23 @@
+A wind turbine is a tall tower with three long blades mounted on top that spin to generate electricity. The blades are attached to a housing called the nacelle that sits on the tower and can rotate to face the wind. Modern wind turbines are massive—the tower can be over 80 meters tall, and each blade can be 40-50 meters long.
+
+```figure
+{
+  "title": "A wind turbine",
+  "parts": [
+    {"name": "base", "kind": "cyl", "r": 3, "h": 1, "at": [0, 0.5, 0], "mat": "steel"},
+    {"name": "tower", "kind": "cyl", "r": 1.5, "r2": 1, "h": 35, "at": [0, 18, 0], "mat": "paint:cream"},
+    {"name": "nacelle", "kind": "box", "size": [5, 3, 3], "at": [0, 36.5, 0], "mat": "paint:grey"},
+    {"name": "hub", "kind": "cyl", "r": 1.2, "h": 2, "at": [0, 36.5, 1.5], "axis": "z", "mat": "steel"},
+    {"name": "blade 1", "kind": "extrude", "path": "M0 0 L0.8 15 L0.3 17 L-0.3 17 L-0.8 15 L0 0 Z", "depth": 0.3, "at": [0, 36.5, 2.5], "mat": "paint:white"},
+    {"name": "blade 2", "kind": "extrude", "path": "M0 0 L0.8 15 L0.3 17 L-0.3 17 L-0.8 15 L0 0 Z", "depth": 0.3, "at": [0, 36.5, 2.5], "rot": [0, 0, 120], "mat": "paint:white"},
+    {"name": "blade 3", "kind": "extrude", "path": "M0 0 L0.8 15 L0.3 17 L-0.3 17 L-0.8 15 L0 0 Z", "depth": 0.3, "at": [0, 36.5, 2.5], "rot": [0, 0, 240], "mat": "paint:white"}
+  ],
+  "labels": [
+    {"part": "blade 1", "text": "Blade"},
+    {"part": "nacelle", "text": "Nacelle"},
+    {"part": "tower", "text": "Tower"},
+    {"part": "base", "text": "Base"}
+  ],
+  "view": {"turn": 35, "tilt": 25}
+}
+```

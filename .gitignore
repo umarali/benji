@@ -1,0 +1,32 @@
+# Secrets — never commit
+.benji.env
+.chilly.env
+.pal.env
+
+# Python
+__pycache__/
+*.pyc
+
+# menu-bar build artifacts
+menubar/palbar
+menubar/makeicon
+menubar/AppIcon.iconset/
+menubar/AppIcon.icns
+menubar/PalBar.app/
+
+# companion build artifacts
+companion/.build/
+companion/PalCompanion.app/
+companion/Benji.app/
+companion/Chilly.app/
+
+# Benji working-folder artifacts if someone sets workdir here
+output/
+tmp/
+
+# macOS Finder metadata
+.DS_Store
+
+# Eval harness: the user's own captured turns and local run output (D-155)
+evals/fixtures/private/
+evals/runs/

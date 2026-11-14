@@ -1,0 +1,121 @@
+{
+ "about": "Lines and what redaction must make of them. benji/audit.py redact() and BenjiCore/LogRedaction.swift both run every case (selftest.py, LogRedactionTests.swift).",
+ "cases": [
+  {
+   "in": "[Benji] approval a1 (yes): write_file/write_outside_folder",
+   "out": "[Benji] approval a1 (yes): write_file/write_outside_folder"
+  },
+  {
+   "in": "Benji 0.1.0 serving  ·  provider=claude  model=claude-haiku-5-5  sends to=Anthropic  workdir=/Users/someone/benji",
+   "out": "Benji 0.1.0 serving  ·  provider=claude  model=claude-haiku-5-5  sends to=Anthropic  workdir=~/benji"
+  },
+  {
+   "in": "BENJI_BASE_URL='https://user:hunter2@example.com/v1?key=abc123' must be an http(s) URL.",
+   "out": "BENJI_BASE_URL='https://example.com/…' must be an http(s) URL."
+  },
+  {
+   "in": "x-api-key: sk-ant-api03-AbCdEfGhIjKlMnOpQrStUv_wxyz0123",
+   "out": "x-api-key=[redacted]"
+  },
+  {
+   "in": "Authorization: Bearer abcdef0123456789ghijkl",
+   "out": "Authorization=[redacted]"
+  },
+  {
+   "in": "got Bearer abcdef0123456789ghijkl back",
+   "out": "got Bearer [key] back"
+  },
+  {
+   "in": "ANTHROPIC_API_KEY=sk-ant-realkeyrealkeyrealkey and OPENAI_API_KEY=\"quoted value\"",
+   "out": "ANTHROPIC_API_KEY=[redacted] and OPENAI_API_KEY=[redacted]"
+  },
+  {
+   "in": "token = abc123def",
+   "out": "token=[redacted]"
+  },
+  {
+   "in": "see https://example.com/a/b?q=1#frag and http://localhost:8080 done",
+   "out": "see https://example.com/… and http://localhost:8080 done"
+  },
+  {
+   "in": "HTTPS://Example.COM",
+   "out": "https://Example.COM"
+  },
+  {
+   "in": "ghp_0123456789abcdefghijABCDEFGHIJ0123 pushed",
+   "out": "[key] pushed"
+  },
+  {
+   "in": "AKIAABCDEFGHIJKLMNOP is an id",
+   "out": "[key] is an id"
+  },
+  {
+   "in": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dBjftJeZ4CVPmB92K27uhbUJU1p1r",
+   "out": "[key]"
+  },
+  {
+   "in": "blob 0123456789abcdef0123456789abcdef0123456789abcdef end",
+   "out": "blob [redacted] end"
+  },
+  {
+   "in": "Traceback (most recent call last):",
+   "out": "Traceback (most recent call last):"
+  },
+  {
+   "in": "  serve.py:203 in handle",
+   "out": "  serve.py:203 in handle"
+  },
+  {
+   "in": "KeyError",
+   "out": "KeyError"
+  },
+  {
+   "in": "job 3f2a9c1e-5b7d-4e8f-9a0b-1c2d3e4f5a6b: 4 model calls",
+   "out": "job 3f2a9c1e-5b7d-4e8f-9a0b-1c2d3e4f5a6b: 4 model calls"
+  },
+  {
+   "in": "wrote /Users/someone/benji/output/notes.txt",
+   "out": "wrote ~/benji/output/notes.txt"
+  },
+  {
+   "in": "password: s3cr3t!",
+   "out": "password=[redacted]"
+  },
+  {
+   "in": "plain line with nothing to hide",
+   "out": "plain line with nothing to hide"
+  },
+  {
+   "in": "got 0123456789abcdef0123456789abcdef.AbCdEfGhIj12 from z.ai",
+   "out": "got [key] from z.ai"
+  },
+  {
+   "in": "DEEPSEEK_API_KEY=sk-FAKE0123456789notArealKEYzz failed",
+   "out": "DEEPSEEK_API_KEY=[redacted] failed"
+  },
+  {
+   "in": "MOONSHOT_API_KEY: sk-kimiabcdefghijklmnop1234",
+   "out": "MOONSHOT_API_KEY=[redacted]"
+  },
+  {
+   "in": "calling https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions?api_key=sk-abc123 now",
+   "out": "calling https://dashscope-intl.aliyuncs.com/… now"
+  },
+  {
+   "in": "plan key sk-sp-0123456789abcdef0123 rejected",
+   "out": "plan key [key] rejected"
+  },
+  {
+   "in": "ZAI_API_KEY=0123456789abcdef0123456789abcdef.AbCdEfGhIj12",
+   "out": "ZAI_API_KEY=[redacted]"
+  },
+  {
+   "in": "HTTP 401 from api.deepseek.com: Authentication Fails (auth header Bearer sk-0123456789abcdef0123)",
+   "out": "HTTP 401 from api.deepseek.com: Authentication Fails (auth header Bearer [key])"
+  },
+  {
+   "in": "a model id glm-5.3-flash and qwen3.8-flash and kimi-k3.1-pro stay",
+   "out": "a model id glm-5.3-flash and qwen3.8-flash and kimi-k3.1-pro stay"
+  }
+ ]
+}

@@ -1,0 +1,18 @@
+A jet engine (a turbofan) pulls air in with a big fan. Most of that air bypasses the core to give thrust. The rest is squeezed by the compressor, burned with fuel in the combustor, and spun through the turbine, which drives the fan and compressor through a central shaft. The hot exhaust then shoots out the nozzle.
+
+```figure
+{"title":"Turbofan jet engine, cutaway","parts":[
+{"name":"nacelle","kind":"cyl","r":1.3,"from":[-2.8,0,0],"to":[2.4,0,0],"mat":"aluminium"},
+{"name":"shaft","kind":"cyl","r":0.12,"from":[-2.4,0,0],"to":[2.0,0,0],"mat":"steel"},
+{"name":"spinner","kind":"cone","r":0.4,"r2":0.03,"from":[-2.4,0,0],"to":[-3.1,0,0],"mat":"chrome"},
+{"name":"fan hub","kind":"cyl","r":0.4,"from":[-2.5,0,0],"to":[-2.1,0,0],"mat":"steel"},
+{"name":"fan blades","kind":"box","size":[0.12,0.9,0.04],"at":[-2.3,0.8,0],"around":{"count":16,"axis":"x"},"mat":"chrome"},
+{"name":"core cowl","kind":"cyl","r":0.6,"from":[-1.8,0,0],"to":[2.0,0,0],"mat":"grey"},
+{"name":"compressor","kind":"cone","r":0.5,"r2":0.3,"from":[-1.7,0,0],"to":[-0.3,0,0],"mat":"paint:blue"},
+{"name":"combustor","kind":"torus","r":0.4,"tube":0.18,"at":[0.2,0,0],"rot":[0,90,0],"mat":"glow:orange"},
+{"name":"turbine","kind":"cyl","r":0.5,"from":[0.8,0,0],"to":[1.7,0,0],"mat":"copper"},
+{"name":"exhaust nozzle","kind":"cone","r":0.45,"r2":0.1,"from":[2.0,0,0],"to":[3.2,0,0],"mat":"iron"}],
+"labels":[{"part":"fan blades","text":"Fan"},{"part":"compressor","text":"Compressor"},{"part":"combustor","text":"Combustor"},{"part":"turbine","text":"Turbine"},{"part":"shaft","text":"Shaft"},{"part":"exhaust nozzle","text":"Nozzle"}],
+"cut":{"parts":["nacelle","core cowl"]},
+"view":{"turn":30,"tilt":15}}
+```

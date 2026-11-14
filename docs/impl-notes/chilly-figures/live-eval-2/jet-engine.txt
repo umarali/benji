@@ -1,0 +1,27 @@
+I'll show you the inside of a jet engine with its key components.
+
+A jet engine works by compressing air, mixing it with fuel and igniting it, then expelling the hot gases to produce thrust. The main components from front to back are: the fan that draws in air, compressor stages that squeeze the air, the combustion chamber where fuel burns, turbine blades that extract energy to power the compressor and fan, and the exhaust nozzle. The whole assembly sits inside a casing, with a central shaft connecting the turbines to the compressor and fan.
+
+```figure
+{"title":"Inside a jet engine","parts":[
+{"name":"casing","kind":"cyl","r":1.8,"h":12,"axis":"z","at":[0,0,0],"mat":"steel"},
+{"name":"intake cone","kind":"cone","r":0.3,"r2":0.6,"h":2,"axis":"z","at":[0,0,5],"mat":"aluminium"},
+{"name":"fan blades","kind":"box","size":[1.4,0.15,0.8],"at":[0,0.7,4.2],"around":{"count":16,"axis":"z"},"mat":"aluminium"},
+{"name":"compressor","kind":"cyl","r":1.2,"h":4,"axis":"z","at":[0,0,1],"mat":"steel"},
+{"name":"compressor blades","kind":"box","size":[0.8,0.1,0.3],"at":[0,0.6,2],"around":{"count":24,"axis":"z"},"mat":"aluminium"},
+{"name":"combustion chamber","kind":"cyl","r":1,"h":2.5,"axis":"z","at":[0,0,-1.75],"mat":"ceramic"},
+{"name":"fuel injectors","kind":"capsule","r":0.08,"h":0.4,"at":[0,0.7,-1.2],"around":{"count":12,"axis":"z"},"mat":"brass"},
+{"name":"turbine","kind":"cyl","r":1.1,"h":2,"axis":"z","at":[0,0,-4],"mat":"steel"},
+{"name":"turbine blades","kind":"box","size":[0.7,0.12,0.35],"at":[0,0.65,-4],"around":{"count":20,"axis":"z"},"mat":"chrome"},
+{"name":"central shaft","kind":"cyl","r":0.25,"h":11,"axis":"z","at":[0,0,0.5],"mat":"steel"},
+{"name":"exhaust nozzle","kind":"cone","r":1.3,"r2":1.1,"h":1.5,"axis":"z","at":[0,0,-5.75],"mat":"steel"}],
+"labels":[
+{"part":"fan blades","text":"Fan"},
+{"part":"compressor","text":"Compressor"},
+{"part":"combustion chamber","text":"Combustion chamber"},
+{"part":"turbine","text":"Turbine"},
+{"part":"central shaft","text":"Drive shaft"},
+{"part":"exhaust nozzle","text":"Exhaust"}],
+"cut":{"axis":"z","parts":["casing"]},
+"view":{"turn":25,"tilt":18}}
+```

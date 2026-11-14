@@ -1,0 +1,33 @@
+I'll show you what's inside a car engine cylinder with a 3D cutaway view.
+
+A car engine cylinder contains several key components: the piston (which moves up and down inside the cylinder bore), piston rings (which seal against the cylinder wall), a connecting rod (which links the piston to the crankshaft), and the combustion chamber at the top where fuel and air mix and ignite. The cylinder head sits on top with intake and exhaust valves that control the flow of air/fuel mixture in and exhaust gases out. Spark plugs ignite the mixture in gasoline engines.
+
+```figure
+{
+  "title": "Car Engine Cylinder (Cutaway)",
+  "cut": {"parts": ["block", "cylinder wall"]},
+  "parts": [
+    {"name": "block", "kind": "box", "size": [3.5, 5, 3.5], "at": [0, 2.5, 0], "mat": "aluminium"},
+    {"name": "cylinder wall", "kind": "cyl", "r": 1.1, "h": 4.5, "at": [0, 2.25, 0], "mat": "steel"},
+    {"name": "cylinder head", "kind": "box", "size": [3.5, 0.8, 3.5], "at": [0, 5.2, 0], "mat": "aluminium"},
+    {"name": "combustion chamber", "kind": "cyl", "r": 1, "h": 0.4, "at": [0, 4.6, 0], "mat": "ceramic"},
+    {"name": "piston", "kind": "cyl", "r": 1.05, "h": 0.8, "at": [0, 2, 0], "mat": "aluminium"},
+    {"name": "piston rings", "kind": "torus", "r": 1.05, "tube": 0.06, "at": [0, 2.2, 0], "mat": "steel"},
+    {"name": "piston pin", "kind": "cyl", "r": 0.15, "h": 1.4, "axis": "x", "at": [0, 1.6, 0], "mat": "steel"},
+    {"name": "connecting rod", "kind": "capsule", "r": 0.2, "from": [0, 1.6, 0], "to": [0.6, -0.8, 0], "mat": "steel"},
+    {"name": "intake valve", "kind": "cyl", "r": 0.25, "from": [-0.5, 5.6, 0], "to": [-0.5, 4.4, 0], "mat": "steel"},
+    {"name": "exhaust valve", "kind": "cyl", "r": 0.25, "from": [0.5, 5.6, 0], "to": [0.5, 4.4, 0], "mat": "steel"},
+    {"name": "spark plug", "kind": "cyl", "r": 0.18, "from": [0, 5.6, 0.7], "to": [0, 4.7, 0.7], "mat": "ceramic"},
+    {"name": "spark electrode", "kind": "box", "size": [0.1, 0.25, 0.1], "at": [0, 4.5, 0.7], "mat": "copper"}
+  ],
+  "labels": [
+    {"part": "piston", "text": "Piston"},
+    {"part": "combustion chamber", "text": "Combustion chamber"},
+    {"part": "connecting rod", "text": "Connecting rod"},
+    {"part": "intake valve", "text": "Intake valve"},
+    {"part": "exhaust valve", "text": "Exhaust valve"},
+    {"part": "spark plug", "text": "Spark plug"}
+  ],
+  "view": {"turn": 30, "tilt": 20}
+}
+```

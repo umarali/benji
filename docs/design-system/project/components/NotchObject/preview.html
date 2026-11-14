@@ -1,0 +1,202 @@
+<!-- @dsCard group="Notch" height=600 subtitle="Closed, peek and open as one spring-driven shape; hover the notch" -->
+<style>
+  .nm { --nm-black: var(--notch-black, #000); --nm-raised: var(--notch-raised, #1c1c1e); --nm-hair: var(--notch-hairline, rgba(255,255,255,.12)); --nm-label: var(--notch-label, rgba(255,255,255,.85)); --nm-label2: var(--notch-label-secondary, rgba(255,255,255,.55)); --nm-mint: var(--benji-mint, #66d4cf);
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, system-ui, sans-serif); color: var(--label, #1d1d1f); padding: 16px 20px 12px; box-sizing: border-box; }
+  body { margin: 0; background: var(--window-bg, #ececec); }
+  .nm-bar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 12px; font-size: 12px; }
+  .nm-bar button { font: inherit; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--separator, rgba(0,0,0,.15)); background: var(--surface, #fff); color: var(--label, #1d1d1f); cursor: pointer; }
+  .nm-bar button[aria-pressed="true"] { background: var(--label, #1d1d1f); color: var(--window-bg, #ececec); border-color: transparent; }
+  .nm-bar .sep { width: 1px; height: 18px; background: var(--separator, rgba(0,0,0,.15)); margin: 0 4px; }
+  .nm-bar label { display: inline-flex; gap: 5px; align-items: center; color: var(--label-secondary, #6e6e73); cursor: pointer; }
+  .nm-fit { position: relative; overflow: hidden; }
+  .nm-screen { position: absolute; left: 0; top: 0; width: 640px; height: 440px; transform-origin: 0 0; border-radius: 10px; overflow: hidden;
+    background: linear-gradient(160deg, #8fb7c9 0%, #c9d6c1 55%, #e6dcc8 100%); }
+  .nm-menubar { position: absolute; left: 0; right: 0; top: 0; height: 33px; background: rgba(246,246,246,.78); display: flex; align-items: center; justify-content: space-between; padding: 0 12px; font-size: 13px; color: #1d1d1f; box-sizing: border-box; }
+  .nm-menubar b { font-weight: 600; margin-right: 14px; } .nm-menubar span { margin-right: 14px; }
+  .nm-win { position: absolute; left: 36px; top: 70px; width: 300px; height: 210px; border-radius: 10px; background: #fbfbfb; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
+  .nm-win::before { content: ""; position: absolute; left: 12px; top: 12px; width: 52px; height: 12px; background: radial-gradient(circle at 6px 6px, #ff5f57 5px, transparent 6px), radial-gradient(circle at 26px 6px, #febc2e 5px, transparent 6px), radial-gradient(circle at 46px 6px, #28c840 5px, transparent 6px); }
+  .nm-svg { position: absolute; left: 0; top: 0; overflow: visible; }
+  .nm-ghost { opacity: 0; }
+  .nm-layer { position: absolute; opacity: 0; pointer-events: none; }
+  .nm-wing { top: 0; height: 32px; display: flex; align-items: center; gap: 4px; font-family: var(--font-rounded, ui-rounded, -apple-system, system-ui, sans-serif); font-size: 11px; font-weight: 600; letter-spacing: .2px; color: var(--nm-mint); }
+  .nm-wl { right: calc(320px + 92.5px + 10px); justify-content: flex-end; }
+  .nm-wr { left: calc(320px + 92.5px + 10px); }
+  .nm-line { top: 38px; left: 0; width: 640px; text-align: center; font-family: var(--font-rounded, ui-rounded, -apple-system, system-ui, sans-serif); font-size: 13px; line-height: 16px; font-weight: 500; color: var(--nm-label); }
+  .nm-open { left: calc(320px - 230px); top: 32px; width: 460px; height: 348px; padding: 10px 16px 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px; color: var(--nm-label); font-size: 13px; line-height: 16px; }
+  .nm-open .u { align-self: flex-end; background: var(--nm-raised); border-radius: 12px; padding: 6px 10px; max-width: 75%; }
+  .nm-open .t { color: var(--nm-label2); font-size: 12px; font-family: var(--font-mono, ui-monospace, Menlo, monospace); }
+  .nm-open .field { margin-top: auto; background: var(--nm-raised); border: 1px solid var(--nm-hair); border-radius: 10px; padding: 8px 10px; color: var(--nm-label2); display: flex; justify-content: space-between; align-items: center; }
+  .nm-open .send { width: 18px; height: 18px; border-radius: 50%; background: var(--nm-mint); color: #000; font-weight: 700; font-size: 12px; display: grid; place-items: center; }
+  .nm-hot { position: absolute; left: calc(320px - 92.5px - 8px); top: 0; width: 201px; height: 40px; }
+  .nm-read { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 8px; font-size: 11px; line-height: 14px; color: var(--label-secondary, #6e6e73); font-variant-numeric: tabular-nums; }
+  .nm-read b { color: var(--label, #1d1d1f); font-weight: 600; }
+  .nm-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+</style>
+<div class="nm" id="nm">
+  <div class="nm-bar" role="toolbar" aria-label="Notch size">
+    <button data-to="closed" aria-pressed="true">Closed</button>
+    <button data-to="peek" aria-pressed="false">Peek</button>
+    <button data-to="open" aria-pressed="false">Open</button>
+    <span class="sep"></span>
+    <button data-act="reverse" title="Starts Open, reverses to Closed 180 ms in: the shape keeps its speed">Reverse mid-flight</button>
+    <span class="sep"></span>
+    <label><input type="checkbox" id="nm-rm"> Reduce Motion</label>
+    <label><input type="checkbox" id="nm-slow"> Slow ×5</label>
+  </div>
+  <div class="nm-fit" id="nm-fit">
+    <div class="nm-screen" id="nm-screen">
+      <div class="nm-menubar"><div><b>Finder</b><span>File</span></div><div><span>9:41</span></div></div>
+      <div class="nm-win"></div>
+      <svg class="nm-svg" width="640" height="440" aria-hidden="true">
+        <defs><filter id="nm-sh" x="-30%" y="-30%" width="160%" height="190%"><feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#000" flood-opacity="0.3" id="nm-shf"/></filter></defs>
+        <path id="nm-ghost" class="nm-ghost" fill="#000"/>
+        <path id="nm-path" fill="#000" filter="url(#nm-sh)"/>
+      </svg>
+      <div class="nm-layer nm-wing nm-wl" id="nm-wl"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="3.5" fill="currentColor"/></svg></div>
+      <div class="nm-layer nm-wing nm-wr" id="nm-wr">Ready</div>
+      <div class="nm-layer nm-line" id="nm-line">Here if you need me.</div>
+      <div class="nm-layer nm-open" id="nm-open">
+        <div class="u">Rename the screenshots on my Desktop by date.</div>
+        <div class="t">list_dir ~/Desktop</div>
+        <div>Found 12 screenshots. I'll rename them by date. Go ahead?</div>
+        <div class="field"><span>Ask Benji…</span><span class="send">↑</span></div>
+      </div>
+      <div class="nm-hot" id="nm-hot" title="Hover here: rest 100 ms to peek"></div>
+    </div>
+  </div>
+  <div class="nm-read" aria-live="off">
+    <span>Size <b id="nm-size">185 × 32</b></span>
+    <span>Token <b id="nm-tok">none</b></span>
+    <span>Display link <b id="nm-dl">stopped</b></span>
+    <span>Frames this change <b id="nm-fr">0</b></span>
+    <span id="nm-hint">Hover the notch, rest 100 ms to peek; click the peek to open; Escape closes. The screen is drawn narrow: on a 1512 pt display the peek clears the menus.</span>
+  </div>
+  <div class="nm-sr" id="nm-live" aria-live="polite"></div>
+</div>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const SIZES = { closed: [185, 32, 10, 6], peek: [360, 60, 18, 8], open: [460, 380, 26, 12] };
+  const TOK = { peek: 0.30, open: 0.50 };
+  const CX = 320;
+  let cur = SIZES.closed.slice(), vel = [0, 0, 0, 0], tgt = SIZES.closed.slice();
+  let size = 'closed', k = 0, c = 0, running = false, last = 0, frames = 0, timers = [];
+  let reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  $('nm-rm').checked = reduce;
+  const slow = () => ($('nm-slow').checked ? 5 : 1);
+
+  function path(W, H, r, s) {
+    const L = CX - W / 2, R = CX + W / 2, q = Math.min(1.4 * r, H - s, W / 2), a = 0.552 * s, b = 0.33 * q;
+    return `M${L - s},0 C${L - s + a},0 ${L},${s - a} ${L},${s} L${L},${H - q} C${L},${H - b} ${L + b},${H} ${L + q},${H} ` +
+      `L${R - q},${H} C${R - b},${H} ${R},${H - b} ${R},${H - q} L${R},${s} C${R},${s - a} ${R + s - a},0 ${R + s},0 Z`;
+  }
+  function draw() {
+    $('nm-path').setAttribute('d', path(...cur));
+    $('nm-shf').setAttribute('flood-opacity', (0.3 * Math.min(1, Math.max(0, (cur[1] - 60) / 320))).toFixed(3));
+    $('nm-size').textContent = Math.round(cur[0]) + ' × ' + Math.round(cur[1]);
+    $('nm-fr').textContent = frames;
+  }
+  function fade(el, on, delayMs) {
+    const d = 150 * slow();
+    el.style.transition = `opacity ${d}ms ${on ? 'cubic-bezier(0,0,.58,1)' : 'cubic-bezier(.42,0,1,1)'} ${delayMs || 0}ms`;
+    el.style.opacity = on ? 1 : 0;
+  }
+  function layersFor(s) { return { wl: s !== 'closed', wr: s !== 'closed', line: s === 'peek', open: s === 'open' }; }
+  const EL = { wl: 'nm-wl', wr: 'nm-wr', line: 'nm-line', open: 'nm-open' };
+  function clearTimers() { timers.forEach(clearTimeout); timers = []; }
+  function tick(now) {
+    const dt = Math.min(0.05, (now - last) / 1000) / slow(); last = now; frames++;
+    const n = Math.max(1, Math.ceil(dt * 960)), h = dt / n;
+    let done = true;
+    for (let i = 0; i < 4; i++) {
+      for (let j = 0; j < n; j++) { vel[i] += (-k * (cur[i] - tgt[i]) - c * vel[i]) * h; cur[i] += vel[i] * h; }
+      if (Math.abs(cur[i] - tgt[i]) > 0.05 || Math.abs(vel[i]) > 0.5) done = false;
+    }
+    if (done) { cur = tgt.slice(); vel = [0, 0, 0, 0]; running = false; $('nm-dl').textContent = 'stopped'; }
+    draw();
+    if (running) requestAnimationFrame(tick);
+  }
+  function start() {
+    if (running) return;
+    running = true; frames = 0; last = performance.now(); $('nm-dl').textContent = 'running';
+    requestAnimationFrame(tick);
+  }
+  function announce(s) { $('nm-live').textContent = s === 'closed' ? '' : (s === 'open' ? 'Benji, expanded' : 'Benji, Ready'); }
+  function go(to) {
+    if (to === size) return;
+    const from = size; size = to; clearTimers();
+    document.querySelectorAll('.nm-bar [data-to]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.to === to)));
+    const tok = (from === 'open' || to === 'open') ? 'open' : 'peek';
+    const want = layersFor(to), had = layersFor(from);
+    announce(to);
+    if (reduce) {
+      $('nm-tok').textContent = 'motion-reduce'; running = false; $('nm-dl').textContent = 'stopped (CSS fade only)';
+      const g = $('nm-ghost'), d = 200 * slow(), e = 'cubic-bezier(.42,0,.58,1)';
+      g.setAttribute('d', path(...cur)); g.style.transition = 'none'; g.style.opacity = 1;
+      const p = $('nm-path'); p.style.transition = 'none'; p.style.opacity = 0;
+      cur = SIZES[to].slice(); tgt = cur.slice(); vel = [0, 0, 0, 0]; frames = 0; draw();
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        g.style.transition = `opacity ${d}ms ${e}`; g.style.opacity = 0;
+        p.style.transition = `opacity ${d}ms ${e}`; p.style.opacity = 1;
+        for (const key in EL) { const el = $(EL[key]); el.style.transition = `opacity ${d}ms ${e}`; el.style.opacity = want[key] ? 1 : 0; }
+      }));
+      return;
+    }
+    $('nm-path').style.opacity = 1;
+    $('nm-tok').textContent = 'motion-' + tok;
+    const d = TOK[tok], w = 2 * Math.PI / d; k = w * w; c = 4 * Math.PI / d;
+    const growing = SIZES[to][0] * SIZES[to][1] > cur[0] * cur[1];
+    for (const key in EL) if (had[key] && !want[key]) fade($(EL[key]), false, 0);
+    const fromRest = !running;
+    const launch = () => { tgt = SIZES[to].slice(); start(); };
+    if (!growing && fromRest && from !== 'closed') timers.push(setTimeout(launch, 100 * slow())); else launch();
+    const inDelay = growing ? 0.353 * d * 1000 * slow() : 0;
+    for (const key in EL) if (want[key] && (!had[key] || $(EL[key]).style.opacity !== '1')) {
+      if (growing) timers.push(setTimeout(() => fade($(EL[key]), true, 0), inDelay));
+      else timers.push(setTimeout(() => fade($(EL[key]), true, 0), 0.353 * d * 1000 * slow() + 100 * slow()));
+    }
+  }
+  document.querySelectorAll('.nm-bar [data-to]').forEach((b) => b.addEventListener('click', () => go(b.dataset.to)));
+  document.querySelector('[data-act="reverse"]').addEventListener('click', () => {
+    clearTimers(); hoverClear();
+    const rm = reduce; reduce = false; cur = SIZES.closed.slice(); vel = [0, 0, 0, 0]; tgt = cur.slice(); size = 'closed';
+    for (const key in EL) { $(EL[key]).style.transition = 'none'; $(EL[key]).style.opacity = 0; }
+    draw(); reduce = rm;
+    go('open'); timers.push(setTimeout(() => go('closed'), 180 * slow()));
+  });
+  $('nm-rm').addEventListener('change', (e) => { reduce = e.target.checked; });
+
+  // Hover: rest 100 ms inside the hot zone, slower than 150 pt/s; close 0.7 s after leaving when idle.
+  let dwell = null, grace = null, lastMove = null;
+  function hoverClear() { clearTimeout(dwell); clearTimeout(grace); }
+  const hot = $('nm-hot'), scr = $('nm-screen');
+  hot.addEventListener('pointermove', (e) => {
+    const now = performance.now(), p = { x: e.clientX, y: e.clientY, t: now };
+    let speed = 0;
+    if (lastMove) speed = Math.hypot(p.x - lastMove.x, p.y - lastMove.y) / Math.max(1, now - lastMove.t) * 1000 / scale;
+    lastMove = p; clearTimeout(grace);
+    if (size !== 'closed') return;
+    clearTimeout(dwell);
+    if (speed < 150) dwell = setTimeout(() => { if (size === 'closed') go('peek'); }, 100);
+  });
+  function inside(e) {
+    const r = scr.getBoundingClientRect(), x = (e.clientX - r.left) / scale, y = (e.clientY - r.top) / scale;
+    return Math.abs(x - CX) <= cur[0] / 2 + cur[3] + 8 && y <= cur[1] + 8;
+  }
+  scr.addEventListener('pointermove', (e) => {
+    if (size === 'closed' || inside(e)) { clearTimeout(grace); grace = null; return; }
+    if (!grace) grace = setTimeout(() => { grace = null; go('closed'); }, 700);
+  });
+  scr.addEventListener('pointerleave', () => { clearTimeout(dwell); if (size !== 'closed' && !grace) grace = setTimeout(() => { grace = null; go('closed'); }, 700); });
+  scr.addEventListener('click', (e) => { if (size === 'peek' && inside(e)) go('open'); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && size !== 'closed') go('closed'); });
+
+  let scale = 1;
+  function fit() {
+    const w = $('nm-fit').clientWidth || 640; scale = Math.min(1, w / 640);
+    $('nm-screen').style.transform = `scale(${scale})`; $('nm-fit').style.height = Math.round(440 * scale) + 'px';
+  }
+  addEventListener('resize', fit); fit(); draw();
+  window.__nm = { go, state: () => ({ size, cur: cur.slice(), running, frames }) };
+})();
+</script>

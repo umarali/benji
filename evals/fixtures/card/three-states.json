@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "id": "card/three-states",
+  "kind": "card",
+  "case": "three states",
+  "request": {
+    "text": "Show me Chilly's three states: listening, thinking and speaking.",
+    "screen": "document",
+    "spoken": true
+  },
+  "expect": {
+    "card": true,
+    "layout": "flow"
+  },
+  "reply": {
+    "model": "claude-haiku-5-5",
+    "effort": "low",
+    "recorded": "2026-11-01",
+    "source": "D-125 card eval, reply three-states",
+    "raw": "Chilly shows three states: it listens while you speak, thinks while it works, and speaks its answer aloud.\n\n```card\n{\"title\":\"Chilly's three states\",\"heading\":\"Listen, think, then speak\",\"layout\":\"flow\",\n\"items\":[{\"label\":\"Listening\",\"note\":\"hears you through the mic\",\"icon\":\"mic.fill\"},\n{\"label\":\"Thinking\",\"note\":\"works out and runs tools\",\"icon\":\"brain\"},\n{\"label\":\"Speaking\",\"note\":\"reads the answer aloud\",\"icon\":\"speaker.wave.2.fill\"}],\n\"chips\":[\"What can you do?\",\"How do I talk to you?\",\"Can you draw on my screen?\"]}\n```",
+    "events": null,
+    "usage": null
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

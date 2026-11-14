@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <title>Chilly app icon, Pebble (dark)</title>
+  <!-- layer 1, body: notch black -->
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="#000000"/>
+  <!-- layer 2, pebble: dark systemMint, kept luminous -->
+  <path d="M806 530 C811 680 632 702 518 704 C409 706 223 695 218 550 C213 399 383 347 505 340 C634 333 800 374 806 530 Z" fill="#66D4CF"/>
+  <!-- layer 3, shade: light systemMint as the settled side -->
+  <path d="M790 459 C799 480 805 503 806 530 C811 680 632 702 518 704 C415 706 243 696 220 572 C267 662 414 670 506 668 C620 666 799 644 794 494 C794 482 792 470 790 459 Z" fill="#00C7BE"/>
+</svg>

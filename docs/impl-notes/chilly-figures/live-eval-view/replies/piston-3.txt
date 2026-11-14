@@ -1,0 +1,35 @@
+A car engine cylinder contains several key components that work together to convert fuel into motion:
+
+The **cylinder bore** is a precisely machined tube in the engine block. Inside it, a **piston** moves up and down, connected to the crankshaft by a **connecting rod**. At the top, the **cylinder head** seals the cylinder and holds the **valves** (intake and exhaust) that let air-fuel mixture in and exhaust gases out. The **spark plug** ignites the compressed mixture. Between the piston and head is the **combustion chamber** where the fuel-air mixture burns. Piston **rings** seal against the cylinder wall, and the **crankshaft** at the bottom converts the piston's linear motion into rotation.
+
+```figure
+{
+  "title": "Inside a car engine cylinder",
+  "parts": [
+    {"name": "cylinder block", "kind": "box", "size": [3, 5, 3], "at": [0, 2.5, 0], "mat": "iron"},
+    {"name": "cylinder bore", "kind": "cyl", "r": 1.2, "h": 5, "at": [0, 2.5, 0], "mat": "steel"},
+    {"name": "piston", "kind": "cyl", "r": 1.15, "h": 0.8, "at": [0, 1.5, 0], "mat": "aluminium"},
+    {"name": "ring1", "kind": "torus", "r": 1.18, "tube": 0.08, "at": [0, 1.75, 0], "mat": "steel"},
+    {"name": "ring2", "kind": "torus", "r": 1.18, "tube": 0.08, "at": [0, 1.5, 0], "mat": "steel"},
+    {"name": "piston pin", "kind": "cyl", "r": 0.15, "h": 1.8, "at": [0, 1.2, 0], "axis": "x", "mat": "steel"},
+    {"name": "connecting rod", "kind": "box", "size": [0.3, 2, 0.5], "at": [0, 0, 0], "mat": "steel"},
+    {"name": "crankshaft journal", "kind": "cyl", "r": 0.35, "h": 1.5, "at": [0, -1.2, 0], "axis": "x", "mat": "steel"},
+    {"name": "cylinder head", "kind": "box", "size": [3.5, 1, 3.5], "at": [0, 5.5, 0], "mat": "iron"},
+    {"name": "combustion chamber", "kind": "cyl", "r": 1.15, "h": 0.6, "at": [0, 5, 0], "mat": "ceramic"},
+    {"name": "intake valve", "kind": "cyl", "r": 0.35, "h": 1.5, "at": [-0.6, 5.75, 0], "mat": "steel"},
+    {"name": "exhaust valve", "kind": "cyl", "r": 0.35, "h": 1.5, "at": [0.6, 5.75, 0], "mat": "steel"},
+    {"name": "spark plug", "kind": "cyl", "r": 0.25, "h": 2, "at": [0, 6.5, 0], "mat": "ceramic"},
+    {"name": "electrode", "kind": "cyl", "r": 0.05, "h": 0.8, "at": [0, 5.1, 0], "mat": "copper"}
+  ],
+  "cut": {"parts": ["cylinder block", "cylinder head"]},
+  "labels": [
+    {"part": "piston", "text": "Piston"},
+    {"part": "connecting rod", "text": "Connecting rod"},
+    {"part": "combustion chamber", "text": "Combustion chamber"},
+    {"part": "intake valve", "text": "Intake valve"},
+    {"part": "exhaust valve", "text": "Exhaust valve"},
+    {"part": "spark plug", "text": "Spark plug"}
+  ],
+  "view": {"turn": 35, "tilt": 15}
+}
+```

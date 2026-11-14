@@ -1,0 +1,21 @@
+A car engine cylinder contains the piston, piston rings, and the combustion chamber where fuel and air mix and ignite. Inside, you'll find the piston moving up and down, sealed by rings against the cylinder wall. At the top is the combustion chamber formed between the piston crown and the cylinder head, with intake and exhaust valves that open and close to let air-fuel mixture in and exhaust gases out. The spark plug (in gas engines) protrudes into this chamber to ignite the mixture. The connecting rod links the piston to the crankshaft below, converting the piston's linear motion into rotation.
+
+```figure
+{"title":"Inside an engine cylinder","parts":[
+{"name":"cylinder block","kind":"cyl","r":1.2,"h":4,"at":[0,2,0],"mat":"iron"},
+{"name":"cylinder bore","kind":"cyl","r":0.9,"h":4.1,"at":[0,2,0],"mat":"steel"},
+{"name":"piston","kind":"cyl","r":0.85,"h":0.8,"at":[0,1.4,0],"mat":"aluminium"},
+{"name":"piston crown","kind":"cyl","r":0.85,"h":0.15,"at":[0,1.875,0],"mat":"aluminium"},
+{"name":"piston rings","kind":"torus","r":0.875,"tube":0.06,"at":[0,1.65,0],"mat":"steel"},
+{"name":"connecting rod","kind":"capsule","r":0.15,"from":[0,1,0],"to":[0,0.3,0],"mat":"steel"},
+{"name":"crankshaft pin","kind":"cyl","r":0.25,"h":0.8,"at":[0,0.3,0],"axis":"x","mat":"steel"},
+{"name":"cylinder head","kind":"cyl","r":1.2,"h":0.6,"at":[0,4.3,0],"mat":"iron"},
+{"name":"combustion chamber","kind":"sphere","r":0.65,"at":[0,3.7,0],"mat":"ceramic"},
+{"name":"intake valve","kind":"cone","r":0.35,"r2":0.08,"from":[-0.5,4.5,0],"to":[-0.5,3.9,0],"mat":"steel"},
+{"name":"exhaust valve","kind":"cone","r":0.35,"r2":0.08,"from":[0.5,4.5,0],"to":[0.5,3.9,0],"mat":"steel"},
+{"name":"spark plug","kind":"cyl","r":0.12,"h":1.2,"at":[0,4.6,0],"mat":"ceramic"},
+{"name":"electrode","kind":"capsule","r":0.04,"from":[0,3.85,0],"to":[0,3.6,0],"mat":"copper"}],
+"labels":[{"part":"piston","text":"Piston"},{"part":"piston rings","text":"Piston rings"},{"part":"combustion chamber","text":"Combustion chamber"},{"part":"spark plug","text":"Spark plug"},{"part":"intake valve","text":"Intake valve"},{"part":"exhaust valve","text":"Exhaust valve"}],
+"cut":{"parts":["cylinder block","cylinder head"]},
+"view":{"turn":25,"tilt":20}}
+```

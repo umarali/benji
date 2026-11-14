@@ -1,0 +1,47 @@
+Benji 0.1.0 diagnostics · the last 24 hours to 2026-11-05 12:00 +0500
+No message text, page text, file contents or addresses are in this report.
+
+Activity
+  Turns: 4 (ok 2 · error 1 · cancelled 1) · job turns: 1 (error 1)
+  Tool calls: 6 — free 2 · asked 2 · denied 2
+  Tools used: write_file 2, web_fetch 2, list_dir 1, read_file 1
+  Read outside content (turn marked tainted): 1 (web_page 1)
+  Job row buttons: answer 1 · stop 1
+
+Denied or declined (refused in code, or answered No)
+  11-05 09:10  read_file [private path]: refused in code (private_path) — a private file or folder (keys, mail, browser data): refused, never asked
+  11-05 09:10  write_file [outside path]: declined by you (write_outside_folder) — a write outside the working folder
+  11-05 09:20  web_fetch 127.0.0.1: refused in code (host_refused) — a web address on this Mac or its network: refused
+  11-05 09:20  write_file [inside path]: declined by you (tainted_change) — a change after reading outside content
+
+Approvals
+  Asked 2 · answered 2 (yes 1 · no 1)
+  Answered by: row 1 · card 1
+  Asked for: write_outside_folder ×2
+
+Jobs
+  2 seen: failed 1 · stopped 1
+  11-05 09:30  job 3f2a9c1e failed (provider_error)
+
+Browser
+  Settings switch: turned on 1×, off 0×
+  Link: waiting 1 · connected 1 · rejected 1 (refused hellos: bad_token 1)
+  Sites approved for jobs: example.com 1
+  Refused: bank.example ×2 (browser_not_listed), (no valid host) ×1 (browser_bad_url)
+
+Errors
+  provider ×1 in turn (ProviderError)
+
+Engine
+  Started 2× (1 restart) · exits that weren't a clean quit: 1
+  11-05 09:40  exit (code -9) seen by the app
+
+2 lines of events.jsonl weren't in the log's format and were skipped.
+
+Engine log (engine.log)
+  6 lines, 1 traceback (ProviderError 1 · ValueError 1)
+
+Slowest turns (latency.jsonl, from sending to finished)
+  11-05 09:20  8.2 s  (serve · spoken · with the screen)
+  11-05 09:41  5.1 s  (oneshot)
+  11-05 09:01  1.9 s  (serve · spoken)

@@ -1,0 +1,33 @@
+I'll show you a compound microscope with its key components labeled.
+
+```figure
+{
+  "title": "Compound Microscope",
+  "parts": [
+    {"name": "base", "kind": "box", "size": [3, 0.4, 2.5], "at": [0, 0.2, 0], "mat": "iron"},
+    {"name": "arm", "kind": "box", "size": [0.4, 5, 0.5], "at": [0, 2.7, -0.5], "mat": "iron"},
+    {"name": "stage", "kind": "box", "size": [2.8, 0.3, 2.2], "at": [0, 2.2, 0.3], "mat": "aluminium"},
+    {"name": "stage clips", "kind": "box", "size": [0.15, 0.08, 0.6], "at": [1, 2.28, 0.3], "copies": {"count": 2, "step": [-2, 0, 0]}, "mat": "steel"},
+    {"name": "aperture", "kind": "cyl", "r": 0.4, "h": 0.3, "at": [0, 2.05, 0.3], "mat": "black"},
+    {"name": "mirror base", "kind": "cyl", "r": 0.5, "h": 0.15, "at": [0, 0.475, 0.3], "mat": "brass"},
+    {"name": "mirror", "kind": "cyl", "r": 0.45, "h": 0.05, "at": [0, 0.575, 0.3], "rot": [15, 0, 0], "mat": "chrome"},
+    {"name": "body tube", "kind": "cyl", "r": 0.35, "h": 2.5, "at": [0, 4.25, -0.5], "mat": "black"},
+    {"name": "nosepiece", "kind": "cyl", "r": 0.5, "h": 0.3, "at": [0, 2.75, -0.5], "mat": "brass"},
+    {"name": "objective 1", "kind": "cyl", "r": 0.18, "from": [0.32, 2.6, -0.5], "to": [0.32, 1.95, -0.5], "mat": "chrome"},
+    {"name": "objective 2", "kind": "cyl", "r": 0.18, "from": [-0.32, 2.6, -0.5], "to": [-0.32, 1.95, -0.5], "mat": "chrome"},
+    {"name": "coarse focus", "kind": "cyl", "r": 0.25, "h": 0.15, "at": [0.6, 3.5, -0.5], "axis": "x", "mat": "brass"},
+    {"name": "fine focus", "kind": "cyl", "r": 0.2, "h": 0.15, "at": [0.6, 3, -0.5], "axis": "x", "mat": "brass"},
+    {"name": "eyepiece tube", "kind": "cyl", "r": 0.28, "h": 0.8, "at": [0, 5.9, -0.5], "mat": "black"},
+    {"name": "eyepiece", "kind": "cyl", "r": 0.22, "h": 0.4, "at": [0, 6.5, -0.5], "mat": "rubber"}
+  ],
+  "labels": [
+    {"part": "eyepiece", "text": "Eyepiece"},
+    {"part": "body tube", "text": "Body Tube"},
+    {"part": "coarse focus", "text": "Coarse Focus"},
+    {"part": "nosepiece", "text": "Nosepiece"},
+    {"part": "objective 1", "text": "Objectives"},
+    {"part": "stage", "text": "Stage"}
+  ],
+  "view": {"turn": 35, "tilt": 18}
+}
+```

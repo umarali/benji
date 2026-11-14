@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "id": "figure/bicycle-sonnet",
+  "kind": "figure",
+  "case": "bicycle",
+  "request": {
+    "text": "Show me a bicycle.",
+    "screen": null,
+    "spoken": false
+  },
+  "expect": {},
+  "reply": {
+    "model": "claude-sonnet-5-5",
+    "effort": "low",
+    "recorded": "2026-10-31",
+    "source": "D-108 figure eval low-sonnet55, reply bicycle",
+    "raw": "Here's a bicycle seen from the side, with the front wheel on the right.\n\n```figure\n{\"title\":\"A bicycle\",\"parts\":[\n{\"name\":\"rear wheel\",\"kind\":\"torus\",\"r\":1,\"tube\":0.07,\"at\":[-1.6,1,0],\"mat\":\"rubber\"},\n{\"name\":\"front wheel\",\"kind\":\"torus\",\"r\":1,\"tube\":0.07,\"at\":[1.6,1,0],\"mat\":\"rubber\"},\n{\"name\":\"rear hub\",\"kind\":\"cyl\",\"r\":0.1,\"h\":0.2,\"at\":[-1.6,1,0],\"axis\":\"z\",\"mat\":\"chrome\"},\n{\"name\":\"front hub\",\"kind\":\"cyl\",\"r\":0.1,\"h\":0.2,\"at\":[1.6,1,0],\"axis\":\"z\",\"mat\":\"chrome\"},\n{\"name\":\"seat tube\",\"kind\":\"cyl\",\"r\":0.06,\"from\":[0,0.5,0],\"to\":[-0.45,1.85,0],\"mat\":\"paint:red\"},\n{\"name\":\"top tube\",\"kind\":\"cyl\",\"r\":0.06,\"from\":[-0.45,1.85,0],\"to\":[1.05,1.9,0],\"mat\":\"paint:red\"},\n{\"name\":\"down tube\",\"kind\":\"cyl\",\"r\":0.07,\"from\":[0,0.5,0],\"to\":[1.15,1.6,0],\"mat\":\"paint:red\"},\n{\"name\":\"head tube\",\"kind\":\"cyl\",\"r\":0.08,\"from\":[1.15,1.6,0],\"to\":[1.05,1.95,0],\"mat\":\"paint:red\"},\n{\"name\":\"chain stay\",\"kind\":\"cyl\",\"r\":0.05,\"from\":[0,0.5,0],\"to\":[-1.6,1,0],\"mat\":\"paint:red\"},\n{\"name\":\"seat stay\",\"kind\":\"cyl\",\"r\":0.05,\"from\":[-0.45,1.85,0],\"to\":[-1.6,1,0],\"mat\":\"paint:red\"},\n{\"name\":\"fork\",\"kind\":\"cyl\",\"r\":0.05,\"from\":[1.15,1.6,0],\"to\":[1.6,1,0],\"mat\":\"steel\"},\n{\"name\":\"stem\",\"kind\":\"cyl\",\"r\":0.05,\"from\":[1.05,1.95,0],\"to\":[0.95,2.2,0],\"mat\":\"steel\"},\n{\"name\":\"handlebar\",\"kind\":\"cyl\",\"r\":0.05,\"h\":0.9,\"at\":[0.95,2.2,0],\"axis\":\"z\",\"mat\":\"black\"},\n{\"name\":\"seat post\",\"kind\":\"cyl\",\"r\":0.05,\"from\":[-0.45,1.85,0],\"to\":[-0.5,2.1,0],\"mat\":\"steel\"},\n{\"name\":\"saddle\",\"kind\":\"box\",\"size\":[0.7,0.12,0.3],\"at\":[-0.5,2.16,0],\"mat\":\"black\"},\n{\"name\":\"chainring\",\"kind\":\"cyl\",\"r\":0.3,\"h\":0.05,\"at\":[0,0.5,0.12],\"axis\":\"z\",\"mat\":\"steel\"},\n{\"name\":\"crank\",\"kind\":\"cyl\",\"r\":0.03,\"from\":[0,0.5,0.2],\"to\":[0.2,0.25,0.2],\"mat\":\"steel\"},\n{\"name\":\"pedal\",\"kind\":\"box\",\"size\":[0.3,0.06,0.15],\"at\":[0.2,0.25,0.28],\"mat\":\"black\"}],\n\"labels\":[{\"part\":\"front wheel\",\"text\":\"Wheel\"},{\"part\":\"saddle\",\"text\":\"Saddle\"},{\"part\":\"handlebar\",\"text\":\"Handlebar\"},{\"part\":\"top tube\",\"text\":\"Frame\"},{\"part\":\"chainring\",\"text\":\"Chainring\"},{\"part\":\"pedal\",\"text\":\"Pedal\"}],\n\"view\":{\"turn\":30,\"tilt\":10}}\n```",
+    "events": null,
+    "usage": {
+      "calls": 1,
+      "input_tokens": 1799,
+      "output_tokens": 1807,
+      "cache_read_tokens": 3249,
+      "cache_write_tokens": 0
+    }
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

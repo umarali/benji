@@ -1,0 +1,24 @@
+I'll show you the key parts of an airplane and how they work together to achieve flight.
+
+An airplane flies through four forces working together: **lift** from the wings pushing upward, **weight** pulling down, **thrust** from the engines pushing forward, and **drag** (air resistance) pushing back. The wings are shaped so air moves faster over the top than the bottom, creating lower pressure above and higher pressure below—that difference generates lift. The engines provide thrust to move the plane forward, and control surfaces (ailerons, rudder, elevators) let the pilot steer.
+
+```figure
+{
+  "title": "How a plane flies",
+  "parts": [
+    {"name": "fuselage", "kind": "capsule", "r": 0.6, "h": 9, "axis": "z", "mat": "paint:white"},
+    {"name": "cockpit", "kind": "box", "size": [0.6, 0.16, 0.4], "at": [0, 0.52, 3.95], "rot": [35, 0, 0], "mat": "glass"},
+    {"name": "wing", "kind": "box", "size": [4, 0.14, 1.5], "at": [2.3, -0.3, 0.3], "rot": [0, 18, 4], "mirror": "x", "mat": "aluminium"},
+    {"name": "engine", "kind": "cyl", "r": 0.3, "from": [1.9, -0.7, 1.3], "to": [1.9, -0.7, 0], "mirror": "x", "mat": "steel"},
+    {"name": "tail fin", "kind": "extrude", "path": "M0 0 L1.5 0 L2.1 1.6 L1.45 1.6 Z", "depth": 0.12, "at": [0, 0.5, -2.4], "rot": [0, 90, 0], "mat": "paint:blue"},
+    {"name": "tailplane", "kind": "box", "size": [1.5, 0.1, 0.7], "at": [0.8, 0.2, -3.7], "rot": [0, 20, 0], "mirror": "x", "mat": "aluminium"}
+  ],
+  "labels": [
+    {"part": "wing", "text": "Wings (lift)"},
+    {"part": "engine", "text": "Engines (thrust)"},
+    {"part": "tail fin", "text": "Rudder (yaw)"},
+    {"part": "tailplane", "text": "Elevators (pitch)"}
+  ],
+  "view": {"turn": 35, "tilt": 22}
+}
+```

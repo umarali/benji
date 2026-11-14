@@ -1,0 +1,10 @@
+A pull request goes through five steps, from your branch to the main line.
+```card
+{"title":"A pull request","heading":"From your branch to main","layout":"steps",
+"items":[{"label":"Branch","note":"make a branch off main"},
+{"label":"Commit","note":"small commits, clear messages"},
+{"label":"Open the PR","note":"say what changed and why"},
+{"label":"Review","note":"answer comments, push fixes"},
+{"label":"Merge","note":"once checks pass and it's approved"}],
+"chips":["What makes a good commit message?","Squash or merge?"]}
+```

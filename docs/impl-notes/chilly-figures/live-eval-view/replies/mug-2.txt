@@ -1,0 +1,65 @@
+Here's a classic coffee mug with a handle.
+
+```figure
+{
+  "title": "A coffee mug",
+  "parts": [
+    {
+      "name": "body",
+      "kind": "cyl",
+      "r": 0.8,
+      "h": 1.2,
+      "at": [0, 0.6, 0],
+      "mat": "ceramic"
+    },
+    {
+      "name": "base",
+      "kind": "cyl",
+      "r": 0.65,
+      "h": 0.08,
+      "at": [0, 0.04, 0],
+      "mat": "ceramic"
+    },
+    {
+      "name": "rim",
+      "kind": "torus",
+      "r": 0.8,
+      "tube": 0.05,
+      "at": [0, 1.2, 0],
+      "mat": "ceramic"
+    },
+    {
+      "name": "handle outer",
+      "kind": "torus",
+      "r": 0.35,
+      "tube": 0.12,
+      "at": [0.95, 0.75, 0],
+      "axis": "z",
+      "mat": "ceramic"
+    },
+    {
+      "name": "handle inner cut",
+      "kind": "torus",
+      "r": 0.35,
+      "tube": 0.08,
+      "at": [0.95, 0.75, 0],
+      "axis": "z",
+      "mat": "ceramic"
+    },
+    {
+      "name": "coffee",
+      "kind": "cyl",
+      "r": 0.78,
+      "h": 0.95,
+      "at": [0, 0.475, 0],
+      "mat": "paint:brown"
+    }
+  ],
+  "labels": [
+    {"part": "body", "text": "Body"},
+    {"part": "handle outer", "text": "Handle"},
+    {"part": "coffee", "text": "Coffee"}
+  ],
+  "view": {"turn": 35, "tilt": 20}
+}
+```

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <title>Chilly app icon, Notch concept (dark)</title>
+  <defs>
+    <clipPath id="body"><rect x="100" y="100" width="824" height="824" rx="185"/></clipPath>
+    <radialGradient id="glow" gradientUnits="userSpaceOnUse" cx="512" cy="170" r="410" gradientTransform="matrix(1 0 0 0.9 0 17)">
+      <stop offset="0" stop-color="#66D4CF" stop-opacity="1"/>
+      <stop offset="0.32" stop-color="#66D4CF" stop-opacity="0.72"/>
+      <stop offset="0.66" stop-color="#66D4CF" stop-opacity="0.26"/>
+      <stop offset="1" stop-color="#66D4CF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- body: the screen, dark graphite, so the black notch still reads as a hole -->
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="#1C1C1E"/>
+  <g clip-path="url(#body)">
+    <!-- the calm glow Chilly brings out of the notch (one soft layer) -->
+    <rect x="100" y="100" width="824" height="640" fill="url(#glow)"/>
+    <!-- backlit rim: concentric with the notch, the pointer ring's language -->
+    <path d="M240 70V100A18 18 0 0 1 258 118V204A94 94 0 0 0 352 298H672A94 94 0 0 0 766 204V118A18 18 0 0 1 784 100V70Z" fill="#66D4CF"/>
+    <!-- the notch: flat top, concave shoulders, rounded bottom corners -->
+    <path d="M252 70V100A30 30 0 0 1 282 130V204A64 64 0 0 0 346 268H678A64 64 0 0 0 742 204V130A30 30 0 0 1 772 100V70Z" fill="#000000"/>
+  </g>
+</svg>

@@ -1,0 +1,16 @@
+A wind turbine is a tall tower with a nacelle (housing) at the top that holds the generator and mechanical parts. Three long, slender blades are mounted on a hub at the front of the nacelle, rotating to catch the wind. The tower is typically white or light gray, and the whole structure stands on a wide base anchored to the ground.
+
+```figure
+{"title":"A wind turbine","parts":[
+{"name":"base","kind":"cyl","r":1.2,"h":0.4,"at":[0,0.2,0],"mat":"steel"},
+{"name":"tower","kind":"cyl","r":0.4,"from":[0,0.4,0],"to":[0,8,0],"mat":"paint:white"},
+{"name":"nacelle","kind":"box","size":[2,1.2,1],"at":[0,8,0],"mat":"paint:white"},
+{"name":"hub","kind":"cyl","r":0.5,"h":0.6,"at":[1.3,8,0],"axis":"x","mat":"paint:grey"},
+{"name":"blade1","kind":"box","size":[0.3,4,0.6],"at":[1.6,10.5,0],"mat":"paint:white"},
+{"name":"blade2","kind":"box","size":[0.3,4,0.6],"at":[1.6,5.5,0],"mat":"paint:white"},
+{"name":"blade3","kind":"box","size":[0.6,2.5,0.3],"at":[1.6,8,-2],"rot":[0,0,90],"mat":"paint:white"},
+{"name":"rotor cap","kind":"cone","r":0.52,"r2":0.3,"from":[1.6,8,0],"to":[2.1,8,0],"mat":"paint:grey"},
+{"name":"door","kind":"box","size":[0.6,1.2,0.05],"at":[0,1.2,0.4],"mat":"steel"}],
+"labels":[{"part":"blade1","text":"Blade"},{"part":"nacelle","text":"Nacelle"},{"part":"hub","text":"Hub"},{"part":"tower","text":"Tower"}],
+"view":{"turn":35,"tilt":10}}
+```

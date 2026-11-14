@@ -1,0 +1,30 @@
+I'll show you the parts of a microscope as a 3D figure with labels.
+
+A compound microscope has optical and mechanical components that work together to magnify small specimens. The eyepiece at the top magnifies the image, while objective lenses on a rotating turret provide different magnification levels. The stage holds the specimen slide, and light from the base illuminates it from below. The coarse and fine focus knobs adjust the distance between the objective and the specimen.
+
+```figure
+{"title":"Compound Microscope","parts":[
+{"name":"base","kind":"box","size":[3,0.4,2.5],"at":[0,0.2,0],"mat":"paint:grey"},
+{"name":"light source","kind":"cyl","r":0.6,"h":0.3,"at":[0,0.55,0],"mat":"glow:cream"},
+{"name":"arm","kind":"box","size":[0.5,6,0.6],"at":[0,3.4,-0.8],"mat":"paint:grey"},
+{"name":"stage","kind":"box","size":[2.8,0.3,2],"at":[0,2.5,0.3],"mat":"steel"},
+{"name":"stage clip 1","kind":"box","size":[0.15,0.08,0.6],"at":[-0.8,2.69,0.3],"mat":"chrome"},
+{"name":"stage clip 2","kind":"box","size":[0.15,0.08,0.6],"at":[0.8,2.69,0.3],"mat":"chrome"},
+{"name":"condenser","kind":"cyl","r":0.4,"h":0.6,"at":[0,1.5,0],"mat":"black"},
+{"name":"nosepiece","kind":"cyl","r":0.5,"h":0.4,"at":[0,3.2,0.5],"mat":"chrome"},
+{"name":"objective 1","kind":"cyl","r":0.22,"h":0.8,"at":[-0.35,2.6,0.5],"mat":"black"},
+{"name":"objective 2","kind":"cyl","r":0.22,"h":1,"at":[0,2.5,0.5],"mat":"black"},
+{"name":"objective 3","kind":"cyl","r":0.22,"h":1.2,"at":[0.35,2.4,0.5],"mat":"black"},
+{"name":"body tube","kind":"cyl","r":0.35,"h":3,"at":[0,5,0.5],"mat":"black"},
+{"name":"coarse knob","kind":"cyl","r":0.35,"h":0.2,"at":[0,3.8,-0.8],"axis":"x","mat":"paint:grey"},
+{"name":"fine knob","kind":"cyl","r":0.25,"h":0.15,"at":[0,3.2,-0.8],"axis":"x","mat":"paint:grey"},
+{"name":"eyepiece","kind":"cyl","r":0.3,"h":0.8,"at":[0,6.8,0.5],"mat":"black"}],
+"labels":[
+{"part":"eyepiece","text":"Eyepiece"},
+{"part":"objective 2","text":"Objectives"},
+{"part":"stage","text":"Stage"},
+{"part":"coarse knob","text":"Coarse Focus"},
+{"part":"light source","text":"Light Source"},
+{"part":"nosepiece","text":"Nosepiece"}],
+"view":{"turn":35,"tilt":18}}
+```

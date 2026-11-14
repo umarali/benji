@@ -1,0 +1,33 @@
+I'll draw a rocket on its launch pad for you as a 3D figure.
+
+```figure
+{
+  "title": "Rocket on Launch Pad",
+  "parts": [
+    {"name": "launch pad base", "kind": "box", "size": [8, 0.4, 8], "at": [0, 0.2, 0], "mat": "iron"},
+    {"name": "pad platform", "kind": "box", "size": [6, 0.3, 6], "at": [0, 0.65, 0], "mat": "steel"},
+    {"name": "support tower", "kind": "box", "size": [0.8, 12, 0.8], "at": [3.5, 6, 0], "mat": "steel"},
+    {"name": "flame trench left", "kind": "box", "size": [1.5, 0.5, 8], "at": [-2, 0.25, 0], "mat": "ceramic"},
+    {"name": "flame trench right", "kind": "box", "size": [1.5, 0.5, 8], "at": [2, 0.25, 0], "mat": "ceramic"},
+    {"name": "rocket body lower", "kind": "cyl", "r": 0.8, "h": 8, "at": [0, 5, 0], "mat": "white"},
+    {"name": "rocket body upper", "kind": "cyl", "r": 0.8, "h": 4, "at": [0, 11, 0], "mat": "white"},
+    {"name": "nose cone", "kind": "cone", "r": 0.8, "r2": 0, "h": 3, "at": [0, 14.5, 0], "mat": "paint:red"},
+    {"name": "booster left", "kind": "cyl", "r": 0.35, "h": 6, "at": [-1.3, 3.5, 0], "mat": "white"},
+    {"name": "booster right", "kind": "cyl", "r": 0.35, "h": 6, "at": [1.3, 3.5, 0], "mat": "white"},
+    {"name": "engine main", "kind": "cone", "r": 0.6, "r2": 0.4, "h": 0.8, "at": [0, 0.6, 0], "mat": "brass"},
+    {"name": "engine left", "kind": "cone", "r": 0.25, "r2": 0.18, "h": 0.6, "at": [-1.3, 0.5, 0], "mat": "brass"},
+    {"name": "engine right", "kind": "cone", "r": 0.25, "r2": 0.18, "h": 0.6, "at": [1.3, 0.5, 0], "mat": "brass"},
+    {"name": "stripe upper", "kind": "cyl", "r": 0.82, "h": 0.6, "at": [0, 10, 0], "mat": "paint:red"},
+    {"name": "stripe lower", "kind": "cyl", "r": 0.82, "h": 0.6, "at": [0, 6, 0], "mat": "paint:red"},
+    {"name": "window", "kind": "sphere", "r": 0.3, "at": [0, 12.5, 0.75], "mat": "glass"}
+  ],
+  "labels": [
+    {"part": "nose cone", "text": "Nose Cone"},
+    {"part": "rocket body upper", "text": "Payload Section"},
+    {"part": "support tower", "text": "Service Tower"},
+    {"part": "engine main", "text": "Main Engine"},
+    {"part": "launch pad base", "text": "Launch Pad"}
+  ],
+  "view": {"turn": 35, "tilt": 20}
+}
+```

@@ -1,0 +1,30 @@
+I'll show you the key parts of an airplane and how they work together for flight.
+
+An airplane flies by generating lift from its wings as air flows over them. The wings are curved on top and flatter below, making air move faster over the top, creating lower pressure that lifts the plane up. The engines provide thrust to push the plane forward through the air. The tail stabilizers keep it balanced, while control surfaces (ailerons on the wings, elevators on the tail, and the rudder) let the pilot steer by changing the airflow.
+
+```figure
+{"title":"How a plane flies","parts":[
+{"name":"fuselage","kind":"lathe","profile":[[0,0],[0.6,0.5],[0.85,2],[0.9,4],[0.88,6],[0.82,8],[0.7,9.5],[0.5,10.5],[0.3,11],[0,11.3]],"at":[0,0,0],"mat":"aluminium"},
+{"name":"left wing","kind":"box","size":[6,0.3,2.5],"at":[-3.85,0.3,-0.5],"rot":[0,0,-3],"mat":"aluminium"},
+{"name":"right wing","kind":"box","size":[6,0.3,2.5],"at":[3.85,0.3,-0.5],"rot":[0,0,3],"mat":"aluminium"},
+{"name":"left aileron","kind":"box","size":[1.2,0.12,0.6],"at":[-5.8,0.15,-0.3],"mat":"steel"},
+{"name":"right aileron","kind":"box","size":[1.2,0.12,0.6],"at":[5.8,0.15,-0.3],"mat":"steel"},
+{"name":"left engine","kind":"cyl","r":0.5,"h":1.8,"at":[-2.5,0,-0.5],"axis":"z","mat":"iron"},
+{"name":"right engine","kind":"cyl","r":0.5,"h":1.8,"at":[2.5,0,-0.5],"axis":"z","mat":"iron"},
+{"name":"vertical stabilizer","kind":"box","size":[0.2,2,1.8],"at":[0,1.5,9.8],"mat":"aluminium"},
+{"name":"rudder","kind":"box","size":[0.1,1.2,0.5],"at":[0,2.1,10.8],"mat":"steel"},
+{"name":"left horizontal stabilizer","kind":"box","size":[2,0.15,1],"at":[-1.1,0.5,10],"rot":[0,0,-2],"mat":"aluminium"},
+{"name":"right horizontal stabilizer","kind":"box","size":[2,0.15,1],"at":[1.1,0.5,10],"rot":[0,0,2],"mat":"aluminium"},
+{"name":"left elevator","kind":"box","size":[0.8,0.08,0.4],"at":[-1.5,0.4,10.6],"mat":"steel"},
+{"name":"right elevator","kind":"box","size":[0.8,0.08,0.4],"at":[1.5,0.4,10.6],"mat":"steel"},
+{"name":"cockpit windows","kind":"box","size":[1.2,0.5,0.8],"at":[0,1.2,0.5],"mat":"glass"},
+{"name":"nose cone","kind":"cone","r":0.5,"r2":0.05,"from":[0,0.3,-1],"to":[0,0.3,-2.2],"mat":"paint:red"}],
+"labels":[
+{"part":"left wing","text":"Wings (lift)"},
+{"part":"left engine","text":"Engines (thrust)"},
+{"part":"left aileron","text":"Ailerons (roll)"},
+{"part":"rudder","text":"Rudder (yaw)"},
+{"part":"left elevator","text":"Elevators (pitch)"},
+{"part":"vertical stabilizer","text":"Tail stabilizers"}],
+"view":{"turn":60,"tilt":20}}
+```

@@ -1,0 +1,28 @@
+I'll show you an airplane with its key parts that enable flight.
+
+An airplane flies by using its wings to generate lift as air flows over them. The engines provide forward thrust, pushing the plane through the air. As the plane moves faster, air flowing over the curved top of the wing moves faster than air below, creating lower pressure above and higher pressure below—this pressure difference lifts the plane up. The tail stabilizers keep it balanced, while the rudder and ailerons on the wings and tail allow the pilot to steer and control the plane's direction and angle.
+
+```figure
+{
+  "title": "Airplane in flight",
+  "parts": [
+    {"name": "fuselage", "kind": "cyl", "r": 0.6, "from": [-4, 0, 0], "to": [3, 0, 0], "mat": "aluminium"},
+    {"name": "nose cone", "kind": "cone", "r": 0.6, "r2": 0.1, "from": [-4, 0, 0], "to": [-5.5, 0, 0], "mat": "aluminium"},
+    {"name": "cockpit windows", "kind": "box", "size": [1.2, 0.5, 0.8], "at": [-4.2, 0.3, 0], "mat": "glass"},
+    {"name": "left wing", "kind": "extrude", "path": "M0 0 L4 0 L3.2 -1.5 L-0.3 -0.8 Z", "depth": 0.3, "at": [-1, 0, -0.15], "rot": [0, 0, 0], "mat": "aluminium"},
+    {"name": "right wing", "kind": "extrude", "path": "M0 0 L4 0 L3.2 -1.5 L-0.3 -0.8 Z", "depth": 0.3, "at": [-1, 0, 0.45], "rot": [0, 180, 0], "mat": "aluminium"},
+    {"name": "left engine", "kind": "cyl", "r": 0.35, "h": 1.4, "axis": "x", "at": [0.5, -0.4, -2], "mat": "steel"},
+    {"name": "right engine", "kind": "cyl", "r": 0.35, "h": 1.4, "axis": "x", "at": [0.5, -0.4, 2], "mat": "steel"},
+    {"name": "vertical stabilizer", "kind": "extrude", "path": "M0 0 L0 1.8 L-1.2 1.5 L-1.2 0 Z", "depth": 0.2, "at": [2.5, 0, -0.1], "mat": "aluminium"},
+    {"name": "horizontal stabilizer left", "kind": "extrude", "path": "M0 0 L1.5 0 L1.2 -0.6 L-0.2 -0.4 Z", "depth": 0.15, "at": [2.3, 0.3, -0.075], "mat": "aluminium"},
+    {"name": "horizontal stabilizer right", "kind": "extrude", "path": "M0 0 L1.5 0 L1.2 -0.6 L-0.2 -0.4 Z", "depth": 0.15, "at": [2.3, 0.3, 0.225], "rot": [0, 180, 0], "mat": "aluminium"}
+  ],
+  "labels": [
+    {"part": "left wing", "text": "Wing (generates lift)"},
+    {"part": "left engine", "text": "Engine (thrust)"},
+    {"part": "vertical stabilizer", "text": "Rudder (steering)"},
+    {"part": "horizontal stabilizer left", "text": "Stabilizer (balance)"}
+  ],
+  "view": {"turn": -25, "tilt": 10}
+}
+```

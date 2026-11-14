@@ -1,0 +1,34 @@
+I'll show you the main parts of a microscope as a 3D figure.
+
+A microscope has optical and mechanical components that work together to magnify tiny objects. The eyepiece is where you look, the objective lenses provide different magnification levels, the stage holds the specimen slide, and the light source illuminates from below. The coarse and fine focus knobs adjust the clarity of the image.
+
+```figure
+{
+  "title": "Parts of a Microscope",
+  "parts": [
+    {"name": "base", "kind": "box", "size": [3, 0.4, 2.5], "at": [0, 0.2, 0], "mat": "iron"},
+    {"name": "arm", "kind": "box", "size": [0.5, 6, 0.6], "at": [0, 3.2, -0.5], "mat": "iron"},
+    {"name": "stage", "kind": "box", "size": [2.8, 0.3, 2.2], "at": [0, 3, 0.5], "mat": "steel"},
+    {"name": "stage clips", "kind": "box", "size": [0.15, 0.1, 0.8], "at": [0.8, 3.2, 0.5], "mat": "chrome", "copies": {"count": 2, "step": [-1.6, 0, 0]}},
+    {"name": "light source", "kind": "cyl", "r": 0.6, "h": 0.5, "at": [0, 0.65, 0.5], "mat": "glow:white"},
+    {"name": "condenser", "kind": "cyl", "r": 0.4, "h": 1, "at": [0, 1.5, 0.5], "mat": "aluminium"},
+    {"name": "body tube", "kind": "cyl", "r": 0.35, "h": 3, "at": [0, 5, 0], "axis": "z", "mat": "black"},
+    {"name": "nosepiece", "kind": "cyl", "r": 0.7, "h": 0.4, "at": [0, 3.5, 0.8], "mat": "chrome"},
+    {"name": "objective lens 4x", "kind": "cyl", "r": 0.25, "h": 0.6, "at": [-0.45, 3.2, 0.8], "mat": "brass"},
+    {"name": "objective lens 10x", "kind": "cyl", "r": 0.25, "h": 0.8, "at": [0, 2.9, 0.8], "mat": "brass"},
+    {"name": "objective lens 40x", "kind": "cyl", "r": 0.25, "h": 1, "at": [0.45, 2.7, 0.8], "mat": "brass"},
+    {"name": "coarse focus knob", "kind": "cyl", "r": 0.5, "h": 0.2, "at": [0.6, 4, -0.5], "axis": "x", "mat": "black"},
+    {"name": "fine focus knob", "kind": "cyl", "r": 0.35, "h": 0.2, "at": [-0.6, 3.5, -0.5], "axis": "x", "mat": "black"},
+    {"name": "eyepiece", "kind": "cyl", "r": 0.28, "h": 1.2, "at": [0, 6.8, 0], "axis": "z", "mat": "black"}
+  ],
+  "labels": [
+    {"part": "eyepiece", "text": "Eyepiece"},
+    {"part": "objective lens 10x", "text": "Objective lenses"},
+    {"part": "stage", "text": "Stage"},
+    {"part": "coarse focus knob", "text": "Coarse focus"},
+    {"part": "fine focus knob", "text": "Fine focus"},
+    {"part": "light source", "text": "Light source"}
+  ],
+  "view": {"turn": 35, "tilt": 20}
+}
+```

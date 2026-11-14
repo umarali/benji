@@ -1,0 +1,29 @@
+A Ferris wheel turns on a fixed axle: spokes hold a rim, and the cabins hang from it so they stay level as it turns.
+```figure
+{"title":"A Ferris wheel","parts":[
+{"name":"rim","kind":"torus","r":4.2,"tube":0.09,"axis":"z","at":[0,5.4,0.55],"mirror":"z","mat":"paint:white"},
+{"name":"inner ring","kind":"torus","r":2.1,"tube":0.06,"axis":"z","at":[0,5.4,0.55],"mirror":"z","mat":"paint:white"},
+{"name":"spoke","kind":"box","size":[0.07,4.2,0.07],"at":[0,7.5,0.55],"around":{"count":12,"axis":"z","center":[0,5.4,0.55]},"mirror":"z","mat":"steel"},
+{"name":"bulbs","kind":"box","size":[0.13,0.13,0.13],"at":[0,9.6,0.55],"around":{"count":24,"axis":"z","center":[0,5.4,0.55]},"mat":"glow:yellow"},
+{"name":"hub","kind":"cyl","r":0.42,"h":1.5,"axis":"z","at":[0,5.4,0],"mat":"paint:red"},
+{"name":"hub cap","kind":"sphere","r":0.3,"at":[0,5.4,0.8],"mat":"chrome"},
+{"name":"axle","kind":"cyl","r":0.12,"h":3.2,"axis":"z","at":[0,5.4,0],"mat":"iron"},
+{"name":"hanger","kind":"cyl","r":0.03,"from":[0,9.6,0.55],"to":[0,9.0,0],"around":{"count":12,"axis":"z","center":[0,5.4,0]},"mat":"steel"},
+{"name":"cabin","kind":"sphere","r":0.34,"scale":[1,1,1.5],"at":[0,8.75,0],"around":{"count":12,"axis":"z","center":[0,5.4,0]},"mat":"paint:orange"},
+{"name":"cabin window","kind":"box","size":[0.28,0.2,0.05],"at":[0,8.8,0.5],"around":{"count":12,"axis":"z","center":[0,5.4,0]},"mat":"glass"},
+{"name":"support leg","kind":"cyl","r":0.15,"from":[3.5,0.2,1.3],"to":[0,5.4,0.55],"mirror":["x","z"],"mat":"paint:blue"},
+{"name":"lower brace","kind":"cyl","r":0.08,"from":[2.45,1.9,1.05],"to":[-2.45,1.9,1.05],"mirror":"z","mat":"steel"},
+{"name":"upper brace","kind":"cyl","r":0.08,"from":[1.35,3.6,0.8],"to":[-1.35,3.6,0.8],"mirror":"z","mat":"steel"},
+{"name":"base","kind":"box","size":[8.6,0.2,3.4],"at":[0,0.1,0],"mat":"paint:grey"},
+{"name":"ground","kind":"cyl","r":8.5,"h":0.1,"at":[0,-0.05,0],"mat":"paint:green"},
+{"name":"path","kind":"box","size":[1.6,0.04,5],"at":[0,0.02,4.6],"mat":"ceramic"},
+{"name":"ticket booth","kind":"box","size":[1.4,1.2,1.2],"at":[-3.2,0.6,5.2],"mat":"paint:cream"},
+{"name":"booth roof","kind":"cone","r":1.1,"r2":0,"h":0.7,"at":[-3.2,1.55,5.2],"mat":"paint:red"},
+{"name":"gate post","kind":"cyl","r":0.1,"h":1.8,"at":[0.95,0.9,6.8],"mirror":"x","mat":"paint:blue"},
+{"name":"gate sign","kind":"box","size":[2,0.4,0.08],"at":[0,1.75,6.8],"mat":"paint:red"},
+{"name":"fence post","kind":"box","size":[0.08,0.8,0.08],"at":[2.2,0.4,6.8],"copies":{"count":5,"step":[0.9,0,0]},"mirror":"x","mat":"wood"},
+{"name":"tree trunk","kind":"cyl","r":0.18,"h":1.4,"at":[5.6,0.7,3],"mat":"wood"},
+{"name":"tree crown","kind":"sphere","r":1,"at":[5.6,2.1,3],"mat":"paint:green"}],
+"labels":[{"part":"rim","text":"Rim"},{"part":"cabin","text":"Cabin"},{"part":"axle","text":"Axle"},{"part":"support leg","text":"Support leg"},{"part":"spoke","text":"Spoke"},{"part":"ticket booth","text":"Ticket booth"}],
+"view":{"turn":25,"tilt":12}}
+```

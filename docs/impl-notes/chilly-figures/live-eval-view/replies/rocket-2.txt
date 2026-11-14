@@ -1,0 +1,29 @@
+I'll draw a rocket on its launch pad as a 3D figure.
+
+```figure
+{"title":"Rocket on Launch Pad","parts":[
+{"name":"pad base","kind":"box","size":[6,0.4,6],"at":[0,0.2,0],"mat":"iron"},
+{"name":"support pillar 1","kind":"box","size":[0.4,3,0.4],"at":[-1.5,1.5,1.5],"mat":"steel"},
+{"name":"support pillar 2","kind":"box","size":[0.4,3,0.4],"at":[1.5,1.5,1.5],"mat":"steel"},
+{"name":"support pillar 3","kind":"box","size":[0.4,3,0.4],"at":[-1.5,1.5,-1.5],"mat":"steel"},
+{"name":"support pillar 4","kind":"box","size":[0.4,3,0.4],"at":[1.5,1.5,-1.5],"mat":"steel"},
+{"name":"platform","kind":"box","size":[4,0.3,4],"at":[0,3.15,0],"mat":"steel"},
+{"name":"flame trench","kind":"box","size":[2,0.6,8],"at":[0,0.3,-1],"mat":"paint:black"},
+{"name":"first stage","kind":"cyl","r":0.7,"h":4,"at":[0,5.5,0],"mat":"paint:white"},
+{"name":"second stage","kind":"cyl","r":0.6,"h":2.5,"at":[0,8.75,0],"mat":"paint:white"},
+{"name":"payload fairing","kind":"cone","r":0.6,"r2":0.1,"h":2,"at":[0,10.5,0],"mat":"paint:white"},
+{"name":"engine nozzle 1","kind":"cone","r":0.25,"r2":0.35,"h":0.6,"at":[-0.3,3.2,0],"rot":[180,0,0],"mat":"chrome"},
+{"name":"engine nozzle 2","kind":"cone","r":0.25,"r2":0.35,"h":0.6,"at":[0.3,3.2,0],"rot":[180,0,0],"mat":"chrome"},
+{"name":"engine nozzle 3","kind":"cone","r":0.25,"r2":0.35,"h":0.6,"at":[0,3.2,0.3],"rot":[180,0,0],"mat":"chrome"},
+{"name":"red stripe","kind":"cyl","r":0.71,"h":0.5,"at":[0,7.25,0],"mat":"paint:red"},
+{"name":"fin 1","kind":"extrude","path":"M0 0 L0.6 0 L0.4 1 L0 1 Z","depth":0.1,"at":[0,3.5,0.7]},
+{"name":"fin 2","kind":"extrude","path":"M0 0 L0.6 0 L0.4 1 L0 1 Z","depth":0.1,"at":[0,3.5,-0.7],"rot":[0,180,0]},
+{"name":"fin 3","kind":"extrude","path":"M0 0 L0.6 0 L0.4 1 L0 1 Z","depth":0.1,"at":[0.7,3.5,0],"rot":[0,90,0]},
+{"name":"fin 4","kind":"extrude","path":"M0 0 L0.6 0 L0.4 1 L0 1 Z","depth":0.1,"at":[-0.7,3.5,0],"rot":[0,-90,0]}],
+"labels":[
+{"part":"payload fairing","text":"Payload Fairing"},
+{"part":"first stage","text":"First Stage"},
+{"part":"engine nozzle 1","text":"Engine Nozzles"},
+{"part":"platform","text":"Launch Platform"}],
+"view":{"turn":35,"tilt":20}}
+```

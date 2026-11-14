@@ -1,0 +1,30 @@
+I'll draw an office chair for you with its key parts.
+
+```figure
+{
+  "title": "An office chair",
+  "parts": [
+    {"name": "base", "kind": "cyl", "r": 1.2, "h": 0.15, "at": [0, 0.075, 0], "mat": "black"},
+    {"name": "caster1", "kind": "sphere", "r": 0.15, "at": [1.1, 0.075, 0], "mat": "grey"},
+    {"name": "caster2", "kind": "sphere", "r": 0.15, "at": [-0.55, 0.075, 0.95], "mat": "grey"},
+    {"name": "caster3", "kind": "sphere", "r": 0.15, "at": [-0.55, 0.075, -0.95], "mat": "grey"},
+    {"name": "gas lift", "kind": "cyl", "r": 0.12, "h": 1.8, "at": [0, 1.05, 0], "mat": "chrome"},
+    {"name": "seat", "kind": "cyl", "r": 0.9, "h": 0.25, "at": [0, 2.075, 0], "mat": "paint:grey"},
+    {"name": "seat cushion", "kind": "cyl", "r": 0.85, "h": 0.08, "at": [0, 2.24, 0], "mat": "black"},
+    {"name": "backrest mount", "kind": "box", "size": [0.15, 0.6, 0.15], "at": [0, 2.5, -0.8], "mat": "black"},
+    {"name": "backrest", "kind": "box", "size": [1.4, 1.8, 0.12], "at": [0, 3.7, -0.86], "mat": "paint:grey"},
+    {"name": "backrest cushion", "kind": "box", "size": [1.3, 1.7, 0.08], "at": [0, 3.7, -0.78], "mat": "black"},
+    {"name": "left armrest support", "kind": "cyl", "r": 0.08, "from": [-0.65, 2.2, 0], "to": [-0.65, 3.2, 0], "mat": "black"},
+    {"name": "right armrest support", "kind": "cyl", "r": 0.08, "from": [0.65, 2.2, 0], "to": [0.65, 3.2, 0], "mat": "black"},
+    {"name": "left armrest", "kind": "box", "size": [0.8, 0.12, 0.25], "at": [-0.65, 3.26, 0], "mat": "black"},
+    {"name": "right armrest", "kind": "box", "size": [0.8, 0.12, 0.25], "at": [0.65, 3.26, 0], "mat": "black"}
+  ],
+  "labels": [
+    {"part": "backrest cushion", "text": "Backrest"},
+    {"part": "seat cushion", "text": "Seat"},
+    {"part": "left armrest", "text": "Armrest"},
+    {"part": "gas lift", "text": "Height adjustment"}
+  ],
+  "view": {"turn": 25, "tilt": 18}
+}
+```

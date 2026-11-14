@@ -1,0 +1,25 @@
+I'll draw a 3D office chair for you with its key components.
+
+```figure
+{"title":"An office chair","parts":[
+{"name":"seat","kind":"box","size":[1.8,0.3,1.6],"at":[0,1.9,0],"mat":"paint:grey"},
+{"name":"seat cushion","kind":"box","size":[1.7,0.12,1.5],"at":[0,2.11,0],"mat":"paint:black"},
+{"name":"backrest","kind":"box","size":[1.6,1.8,0.25],"at":[0,2.9,-0.7],"mat":"paint:grey"},
+{"name":"back cushion","kind":"box","size":[1.5,1.7,0.12],"at":[0,2.9,-0.58],"mat":"paint:black"},
+{"name":"armrest left","kind":"box","size":[0.25,0.6,1.2],"at":[-0.95,2.2,0.1],"mat":"plastic"},
+{"name":"armrest right","kind":"box","size":[0.25,0.6,1.2],"at":[0.95,2.2,0.1],"mat":"plastic"},
+{"name":"gas lift","kind":"cyl","r":0.15,"h":1.5,"at":[0,0.75,0],"mat":"chrome"},
+{"name":"center hub","kind":"cyl","r":0.35,"h":0.2,"at":[0,0.1,0],"mat":"plastic"},
+{"name":"base leg 1","kind":"capsule","r":0.08,"from":[0,0.1,0],"to":[1.2,0.05,0],"mat":"plastic"},
+{"name":"base leg 2","kind":"capsule","r":0.08,"from":[0,0.1,0],"to":[-0.6,0.05,1.04],"mat":"plastic"},
+{"name":"base leg 3","kind":"capsule","r":0.08,"from":[0,0.1,0],"to":[-0.6,0.05,-1.04],"mat":"plastic"},
+{"name":"base leg 4","kind":"capsule","r":0.08,"from":[0,0.1,0],"to":[0.6,0.05,1.04],"mat":"plastic"},
+{"name":"base leg 5","kind":"capsule","r":0.08,"from":[0,0.1,0],"to":[0.6,0.05,-1.04],"mat":"plastic"},
+{"name":"caster 1","kind":"sphere","r":0.12,"at":[1.2,0.05,0],"mat":"rubber"},
+{"name":"caster 2","kind":"sphere","r":0.12,"at":[-0.6,0.05,1.04],"mat":"rubber"},
+{"name":"caster 3","kind":"sphere","r":0.12,"at":[-0.6,0.05,-1.04],"mat":"rubber"},
+{"name":"caster 4","kind":"sphere","r":0.12,"at":[0.6,0.05,1.04],"mat":"rubber"},
+{"name":"caster 5","kind":"sphere","r":0.12,"at":[0.6,0.05,-1.04],"mat":"rubber"}],
+"labels":[{"part":"backrest","text":"Backrest"},{"part":"seat","text":"Seat"},{"part":"armrest left","text":"Armrest"},{"part":"gas lift","text":"Height Adjuster"},{"part":"caster 1","text":"Caster"}],
+"view":{"turn":35,"tilt":20}}
+```

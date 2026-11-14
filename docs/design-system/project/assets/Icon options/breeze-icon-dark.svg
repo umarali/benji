@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <title>Chilly app icon, Breeze concept (dark)</title>
+  <!-- body: notch black -->
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="#000000"/>
+  <!-- glyph kept luminous in dark systemMint -->
+  <g fill="none" stroke="#66D4CF" stroke-width="72" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M250 442 H 612 A 92 92 0 1 0 520 350"/>
+    <path d="M774 582 H 412 A 92 92 0 1 0 504 674"/>
+  </g>
+</svg>

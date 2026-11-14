@@ -1,0 +1,25 @@
+I'll show you a wind turbine in 3D so you can see its structure clearly.
+
+A wind turbine has three main blades mounted on a hub at the top of a tall tower. Inside the nacelle (the housing behind the blades) are the gears and generator that convert wind energy into electricity. The whole assembly sits on a cylindrical tower, typically white, anchored to a concrete base.
+
+```figure
+{
+  "title": "A wind turbine",
+  "parts": [
+    {"name": "base", "kind": "cyl", "r": 3, "h": 0.8, "at": [0, 0.4, 0], "mat": "ceramic"},
+    {"name": "tower", "kind": "cyl", "r": 0.8, "r2": 0.5, "h": 20, "at": [0, 10, 0], "mat": "paint:white"},
+    {"name": "nacelle", "kind": "box", "size": [2.5, 1.8, 6], "at": [0, 20.9, 0], "mat": "paint:white"},
+    {"name": "hub", "kind": "cyl", "r": 1, "h": 1.2, "at": [0, 20.9, -3.6], "axis": "z", "mat": "paint:grey"},
+    {"name": "blade 1", "kind": "extrude", "path": "M0 0 L0.4 0 L0.15 12 L0 11.8 Z", "depth": 0.3, "at": [0, 20.9, -4.2], "rot": [90, 0, 0], "mat": "paint:white"},
+    {"name": "blade 2", "kind": "extrude", "path": "M0 0 L0.4 0 L0.15 12 L0 11.8 Z", "depth": 0.3, "at": [0, 20.9, -4.2], "rot": [90, 0, 120], "mat": "paint:white"},
+    {"name": "blade 3", "kind": "extrude", "path": "M0 0 L0.4 0 L0.15 12 L0 11.8 Z", "depth": 0.3, "at": [0, 20.9, -4.2], "rot": [90, 0, 240], "mat": "paint:white"}
+  ],
+  "labels": [
+    {"part": "blade 1", "text": "Blade"},
+    {"part": "nacelle", "text": "Nacelle"},
+    {"part": "hub", "text": "Hub"},
+    {"part": "tower", "text": "Tower"}
+  ],
+  "view": {"turn": 35, "tilt": 20}
+}
+```

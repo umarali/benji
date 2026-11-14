@@ -1,0 +1,33 @@
+I'll draw a rocket on its launch pad for you as a 3D figure.
+
+```figure
+{
+  "title": "Rocket on Launch Pad",
+  "parts": [
+    {"name": "pad base", "kind": "box", "size": [6, 0.4, 6], "at": [0, 0.2, 0], "mat": "iron"},
+    {"name": "tower pillar 1", "kind": "box", "size": [0.3, 8, 0.3], "at": [-2.5, 4, -2.5], "mat": "steel"},
+    {"name": "tower pillar 2", "kind": "box", "size": [0.3, 8, 0.3], "at": [-2.5, 4, 2.5], "mat": "steel"},
+    {"name": "tower cross beam", "kind": "box", "size": [0.2, 0.2, 5.3], "at": [-2.5, 6, 0], "mat": "steel"},
+    {"name": "support 1", "kind": "box", "size": [1.2, 0.3, 0.3], "at": [-1.4, 0.55, 1.5], "mat": "aluminium"},
+    {"name": "support 2", "kind": "box", "size": [1.2, 0.3, 0.3], "at": [-1.4, 0.55, -1.5], "mat": "aluminium"},
+    {"name": "support 3", "kind": "box", "size": [0.3, 0.3, 1.2], "at": [1.5, 0.55, 1.4], "mat": "aluminium"},
+    {"name": "rocket body", "kind": "cyl", "r": 0.7, "h": 7, "at": [0, 4.2, 0], "mat": "paint:white"},
+    {"name": "rocket nose", "kind": "cone", "r": 0.7, "r2": 0, "h": 1.5, "at": [0, 8.95, 0], "mat": "paint:red"},
+    {"name": "window 1", "kind": "sphere", "r": 0.2, "at": [0, 7, 0.7], "mat": "glass"},
+    {"name": "window 2", "kind": "sphere", "r": 0.2, "at": [0.6, 7, -0.35], "mat": "glass"},
+    {"name": "fin 1", "kind": "extrude", "path": "M0 0 L1.2 0 L0.3 1.5 Z", "depth": 0.1, "at": [0, 0.7, 0.7], "mat": "paint:red"},
+    {"name": "fin 2", "kind": "extrude", "path": "M0 0 L1.2 0 L0.3 1.5 Z", "depth": 0.1, "at": [0.6, 0.7, -0.35], "rot": [0, 120, 0], "mat": "paint:red"},
+    {"name": "fin 3", "kind": "extrude", "path": "M0 0 L1.2 0 L0.3 1.5 Z", "depth": 0.1, "at": [-0.6, 0.7, -0.35], "rot": [0, 240, 0], "mat": "paint:red"},
+    {"name": "engine nozzle", "kind": "cone", "r": 0.5, "r2": 0.65, "h": 0.6, "at": [0, 0.4, 0], "mat": "iron"},
+    {"name": "exhaust flame", "kind": "cone", "r": 0.6, "r2": 0.2, "h": 1, "at": [0, -0.4, 0], "mat": "glow:orange"}
+  ],
+  "labels": [
+    {"part": "rocket nose", "text": "Nose Cone"},
+    {"part": "rocket body", "text": "Rocket Body"},
+    {"part": "engine nozzle", "text": "Engine"},
+    {"part": "tower cross beam", "text": "Launch Tower"},
+    {"part": "pad base", "text": "Launch Pad"}
+  ],
+  "view": {"turn": 35, "tilt": 20}
+}
+```

@@ -1,0 +1,20 @@
+```figure
+{
+  "title": "House",
+  "parts": [
+    {"name": "foundation", "kind": "box", "size": [8, 0.5, 6], "at": [0, 0.25, 0], "mat": "matte"},
+    {"name": "walls", "kind": "box", "size": [8, 4, 6], "at": [0, 2.5, 0], "mat": "paint:beige"},
+    {"name": "roof", "kind": "extrude", "path": "M-4 0 L0 2.5 L4 0 Z", "depth": 6, "at": [0, 4.5, -3], "rot": [90, 0, 0], "mat": "paint:brown"},
+    {"name": "door", "kind": "box", "size": [1.2, 2.5, 0.2], "at": [0, 1.25, 3.1], "mat": "wood"},
+    {"name": "window left", "kind": "box", "size": [1.5, 1.2, 0.15], "at": [-2.5, 2.5, 3.05], "mat": "glass"},
+    {"name": "window right", "kind": "box", "size": [1.5, 1.2, 0.15], "at": [2.5, 2.5, 3.05], "mat": "glass"},
+    {"name": "chimney", "kind": "box", "size": [0.8, 2.5, 0.8], "at": [2, 6, -1], "mat": "paint:red"}
+  ],
+  "labels": [
+    {"part": "roof", "text": "Roof"},
+    {"part": "door", "text": "Door"},
+    {"part": "window left", "text": "Window"}
+  ],
+  "view": {"turn": 25, "tilt": 15}
+}
+```

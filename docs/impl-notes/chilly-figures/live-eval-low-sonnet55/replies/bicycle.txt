@@ -1,0 +1,25 @@
+Here's a bicycle seen from the side, with the front wheel on the right.
+
+```figure
+{"title":"A bicycle","parts":[
+{"name":"rear wheel","kind":"torus","r":1,"tube":0.07,"at":[-1.6,1,0],"mat":"rubber"},
+{"name":"front wheel","kind":"torus","r":1,"tube":0.07,"at":[1.6,1,0],"mat":"rubber"},
+{"name":"rear hub","kind":"cyl","r":0.1,"h":0.2,"at":[-1.6,1,0],"axis":"z","mat":"chrome"},
+{"name":"front hub","kind":"cyl","r":0.1,"h":0.2,"at":[1.6,1,0],"axis":"z","mat":"chrome"},
+{"name":"seat tube","kind":"cyl","r":0.06,"from":[0,0.5,0],"to":[-0.45,1.85,0],"mat":"paint:red"},
+{"name":"top tube","kind":"cyl","r":0.06,"from":[-0.45,1.85,0],"to":[1.05,1.9,0],"mat":"paint:red"},
+{"name":"down tube","kind":"cyl","r":0.07,"from":[0,0.5,0],"to":[1.15,1.6,0],"mat":"paint:red"},
+{"name":"head tube","kind":"cyl","r":0.08,"from":[1.15,1.6,0],"to":[1.05,1.95,0],"mat":"paint:red"},
+{"name":"chain stay","kind":"cyl","r":0.05,"from":[0,0.5,0],"to":[-1.6,1,0],"mat":"paint:red"},
+{"name":"seat stay","kind":"cyl","r":0.05,"from":[-0.45,1.85,0],"to":[-1.6,1,0],"mat":"paint:red"},
+{"name":"fork","kind":"cyl","r":0.05,"from":[1.15,1.6,0],"to":[1.6,1,0],"mat":"steel"},
+{"name":"stem","kind":"cyl","r":0.05,"from":[1.05,1.95,0],"to":[0.95,2.2,0],"mat":"steel"},
+{"name":"handlebar","kind":"cyl","r":0.05,"h":0.9,"at":[0.95,2.2,0],"axis":"z","mat":"black"},
+{"name":"seat post","kind":"cyl","r":0.05,"from":[-0.45,1.85,0],"to":[-0.5,2.1,0],"mat":"steel"},
+{"name":"saddle","kind":"box","size":[0.7,0.12,0.3],"at":[-0.5,2.16,0],"mat":"black"},
+{"name":"chainring","kind":"cyl","r":0.3,"h":0.05,"at":[0,0.5,0.12],"axis":"z","mat":"steel"},
+{"name":"crank","kind":"cyl","r":0.03,"from":[0,0.5,0.2],"to":[0.2,0.25,0.2],"mat":"steel"},
+{"name":"pedal","kind":"box","size":[0.3,0.06,0.15],"at":[0.2,0.25,0.28],"mat":"black"}],
+"labels":[{"part":"front wheel","text":"Wheel"},{"part":"saddle","text":"Saddle"},{"part":"handlebar","text":"Handlebar"},{"part":"top tube","text":"Frame"},{"part":"chainring","text":"Chainring"},{"part":"pedal","text":"Pedal"}],
+"view":{"turn":30,"tilt":10}}
+```

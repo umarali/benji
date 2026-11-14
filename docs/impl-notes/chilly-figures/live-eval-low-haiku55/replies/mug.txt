@@ -1,0 +1,12 @@
+Here is a coffee mug: a cylindrical body with a hollow-looking handle on the side, sitting on a flat base.
+
+```figure
+{"title":"A coffee mug","parts":[
+{"name":"body","kind":"cyl","r":1,"h":2.2,"at":[0,1.1,0],"mat":"ceramic"},
+{"name":"base","kind":"cyl","r":1.05,"h":0.12,"at":[0,0.06,0],"mat":"black"},
+{"name":"coffee","kind":"cyl","r":0.9,"h":0.05,"at":[0,2.1,0],"mat":"brown"},
+{"name":"handle","kind":"torus","r":0.55,"tube":0.13,"at":[1.05,1.15,0],"rot":[0,0,90],"mat":"ceramic"},
+{"name":"rim","kind":"torus","r":1,"tube":0.05,"at":[0,2.2,0],"rot":[90,0,0],"mat":"ceramic"}],
+"labels":[{"part":"body","text":"Body"},{"part":"handle","text":"Handle"},{"part":"coffee","text":"Coffee"}],
+"view":{"turn":25,"tilt":15}}
+```

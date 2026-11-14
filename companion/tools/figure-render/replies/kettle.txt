@@ -1,0 +1,16 @@
+An electric kettle heats the water with an element in its base, and the lid keeps the steam in until it boils.
+```figure
+{"title":"An electric kettle","parts":[
+{"name":"base","kind":"cyl","r":1.45,"h":0.18,"at":[0,0.09,0],"mat":"black"},
+{"name":"body","kind":"lathe","at":[0,0.18,0],"mat":"chrome","profile":[[0,0],[1.1,0],[1.3,0.15],[1.42,0.9],[1.22,2],[0.8,2.5],[0.62,2.6]]},
+{"name":"band","kind":"torus","r":1.41,"tube":0.04,"at":[0,1.08,0],"mat":"paint:blue"},
+{"name":"lid","kind":"cone","r":0.64,"r2":0.5,"h":0.2,"at":[0,2.88,0],"mat":"black"},
+{"name":"lid knob","kind":"sphere","r":0.16,"at":[0,3.05,0],"mat":"black"},
+{"name":"spout","kind":"cone","r":0.34,"r2":0.14,"from":[1.25,1.2,0],"to":[2.1,2.35,0],"mat":"chrome"},
+{"name":"handle","kind":"tube","r":0.08,"path":[[-1.2,2.35,0],[-1.95,2.15,0],[-2.3,1.5,0],[-2,0.8,0],[-1.35,0.6,0]],"mat":"black"},
+{"name":"water gauge","kind":"box","size":[0.16,1.3,0.08],"at":[0,1.5,1.33],"mat":"glass"},
+{"name":"power switch","kind":"box","size":[0.4,0.1,0.25],"at":[0.6,0.12,1.3],"mat":"paint:grey"},
+{"name":"power light","kind":"sphere","r":0.07,"at":[-0.35,0.14,1.32],"mat":"glow:blue"}],
+"labels":[{"part":"lid","text":"Lid"},{"part":"spout","text":"Spout"},{"part":"handle","text":"Handle"},{"part":"water gauge","text":"Water level"},{"part":"base","text":"Heating base"}],
+"view":{"turn":35,"tilt":16}}
+```

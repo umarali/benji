@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "id": "card/cycle-no-screen",
+  "kind": "card",
+  "case": "cycle, no screen",
+  "request": {
+    "text": "Explain the water cycle.",
+    "screen": null,
+    "spoken": true
+  },
+  "expect": {
+    "card": true,
+    "layout": "flow"
+  },
+  "reply": {
+    "model": "claude-haiku-5-5",
+    "effort": "low",
+    "recorded": "2026-11-01",
+    "source": "D-125 card eval, reply cycle-no-screen",
+    "raw": "The water cycle is the continuous movement of water between the sea, the air, and the land. The sun heats water, which rises as vapor, cools into clouds, falls as rain or snow, and drains back to the oceans.\n\n```card\n{\"title\":\"The water cycle\",\"heading\":\"Water never leaves, it only moves\",\"layout\":\"flow\",\n\"items\":[{\"label\":\"Evaporation\",\"note\":\"sun turns water to vapor\",\"icon\":\"sun.max\"},\n{\"label\":\"Condensation\",\"note\":\"vapor cools into clouds\",\"icon\":\"cloud\"},\n{\"label\":\"Precipitation\",\"note\":\"rain or snow falls\",\"icon\":\"cloud.rain\"},\n{\"label\":\"Collection\",\"note\":\"runs off into oceans and lakes\",\"icon\":\"drop\"}],\n\"chips\":[\"Where does groundwater fit?\",\"Why do clouds form?\",\"What is transpiration?\"]}\n```",
+    "events": null,
+    "usage": null
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

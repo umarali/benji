@@ -1,0 +1,36 @@
+I'll show you what's inside a car engine cylinder with a cutaway 3D view.
+
+A car engine cylinder contains several key components working together. The cylinder itself is a precisely machined chamber in the engine block. Inside, a piston moves up and down, connected to the crankshaft by a connecting rod. At the top is the cylinder head with valves (intake and exhaust) that open and close to let the air-fuel mixture in and exhaust gases out. Spark plugs ignite the mixture. The piston has rings that seal against the cylinder wall to contain compression and combustion pressure.
+
+```figure
+{
+  "title": "Inside a Car Engine Cylinder",
+  "cut": {
+    "parts": ["cylinder block", "cylinder head"]
+  },
+  "parts": [
+    {"name": "cylinder block", "kind": "cyl", "r": 1.8, "h": 4, "at": [0, 2, 0], "mat": "aluminium"},
+    {"name": "cylinder wall", "kind": "tube", "r": 0.9, "h": 4, "at": [0, 2, 0], "mat": "steel"},
+    {"name": "piston", "kind": "cyl", "r": 0.85, "h": 0.6, "at": [0, 1.5, 0], "mat": "aluminium"},
+    {"name": "piston rings", "kind": "torus", "r": 0.88, "tube": 0.06, "at": [0, 1.7, 0], "mat": "iron"},
+    {"name": "piston pin", "kind": "cyl", "r": 0.12, "from": [-0.5, 1.2, 0], "to": [0.5, 1.2, 0], "axis": "x", "mat": "steel"},
+    {"name": "connecting rod", "kind": "box", "size": [0.3, 2, 0.25], "at": [0, 0.1, 0], "mat": "steel"},
+    {"name": "crankshaft pin", "kind": "cyl", "r": 0.2, "from": [-0.4, -1, 0], "to": [0.4, -1, 0], "axis": "x", "mat": "steel"},
+    {"name": "cylinder head", "kind": "cyl", "r": 1.8, "h": 1.2, "at": [0, 4.6, 0], "mat": "aluminium"},
+    {"name": "combustion chamber", "kind": "sphere", "r": 0.7, "at": [0, 4, 0], "scale": [1, 0.6, 1], "mat": "matte"},
+    {"name": "intake valve", "kind": "cyl", "r": 0.35, "from": [-0.5, 5.2, 0], "to": [-0.5, 4.2, 0], "mat": "steel"},
+    {"name": "exhaust valve", "kind": "cyl", "r": 0.35, "from": [0.5, 5.2, 0], "to": [0.5, 4.2, 0], "mat": "steel"},
+    {"name": "spark plug", "kind": "cyl", "r": 0.2, "from": [0, 5.2, 0.8], "to": [0, 4.1, 0.8], "mat": "ceramic"},
+    {"name": "spark electrode", "kind": "capsule", "r": 0.05, "from": [0, 4.1, 0.8], "to": [0, 3.9, 0.8], "mat": "chrome"}
+  ],
+  "labels": [
+    {"part": "piston", "text": "Piston"},
+    {"part": "combustion chamber", "text": "Combustion chamber"},
+    {"part": "intake valve", "text": "Intake valve"},
+    {"part": "exhaust valve", "text": "Exhaust valve"},
+    {"part": "spark plug", "text": "Spark plug"},
+    {"part": "connecting rod", "text": "Connecting rod"}
+  ],
+  "view": {"turn": 35, "tilt": 25}
+}
+```

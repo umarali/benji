@@ -1,0 +1,126 @@
+{
+  "schema": 1,
+  "id": "beats/steps",
+  "kind": "beats",
+  "case": "steps",
+  "request": {
+    "text": "How do I make a pull request?",
+    "screen": null,
+    "spoken": true
+  },
+  "expect": {
+    "card": true
+  },
+  "reply": {
+    "model": "claude-haiku-5-5",
+    "effort": "low",
+    "recorded": "2026-11-01",
+    "source": "D-127 beats eval, turn steps",
+    "raw": null,
+    "events": [
+      {
+        "type": "accepted",
+        "id": "r0c3"
+      },
+      {
+        "type": "card",
+        "id": "r0c3",
+        "card": {
+          "title": "Opening a pull request",
+          "heading": "Five steps from change to review",
+          "layout": "steps"
+        },
+        "at": 0
+      },
+      {
+        "type": "card_item",
+        "id": "r0c3",
+        "item": {
+          "label": "New branch",
+          "note": "git switch -c my-change",
+          "icon": "arrow.triangle.branch"
+        },
+        "at": 38
+      },
+      {
+        "type": "card_item",
+        "id": "r0c3",
+        "item": {
+          "label": "Commit",
+          "note": "git commit -m \"message\"",
+          "icon": "square.and.pencil"
+        },
+        "at": 83
+      },
+      {
+        "type": "card_item",
+        "id": "r0c3",
+        "item": {
+          "label": "Push",
+          "note": "git push -u origin my-change",
+          "icon": "arrow.up.circle"
+        },
+        "at": 110
+      },
+      {
+        "type": "card_item",
+        "id": "r0c3",
+        "item": {
+          "label": "Open PR",
+          "note": "Compare & pull request button",
+          "icon": "doc.text.magnifyingglass"
+        },
+        "at": 174
+      },
+      {
+        "type": "card_item",
+        "id": "r0c3",
+        "item": {
+          "label": "Submit",
+          "note": "Create pull request",
+          "icon": "paperplane.fill"
+        },
+        "at": 235
+      },
+      {
+        "type": "card_chips",
+        "id": "r0c3",
+        "chips": [
+          "What if GitHub shows a banner?",
+          "How do I update a PR?"
+        ],
+        "at": 235
+      },
+      {
+        "type": "card_end",
+        "id": "r0c3"
+      },
+      {
+        "type": "answer",
+        "id": "r0c3",
+        "text": "First, make a branch for your change.\nThen commit your edits with a clear message.\nPush the branch to GitHub.\nOpen the repository on GitHub and click Compare & pull request.\nAdd a title and description, then click Create pull request.\n",
+        "targets": []
+      },
+      {
+        "type": "usage",
+        "id": "r0c3",
+        "calls": 1,
+        "input_tokens": 1773,
+        "output_tokens": 671,
+        "cache_read_tokens": 4427,
+        "cache_write_tokens": 0
+      },
+      {
+        "type": "done",
+        "id": "r0c3",
+        "status": "ok"
+      }
+    ],
+    "usage": null
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

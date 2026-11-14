@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "id": "card/kinds-no-screen",
+  "kind": "card",
+  "case": "kinds, no screen",
+  "request": {
+    "text": "What are the main kinds of clouds?",
+    "screen": null,
+    "spoken": false
+  },
+  "expect": {
+    "card": true,
+    "layout": "list"
+  },
+  "reply": {
+    "model": "claude-haiku-5-5",
+    "effort": "low",
+    "recorded": "2026-11-01",
+    "source": "D-125 card eval, reply kinds-no-screen",
+    "raw": "The main kinds are classified by shape and height: cirrus (high, wispy), cumulus (puffy, fair-weather), and stratus (flat, low, grey sheets). Cumulonimbus, the tall storm cloud, combines the puffy and high forms.\n\n```card\n{\"title\":\"Main cloud types\",\"heading\":\"Three shapes, set by height\",\"layout\":\"list\",\n\"items\":[{\"label\":\"Cirrus\",\"note\":\"high, wispy ice crystals\",\"icon\":\"wind\"},\n{\"label\":\"Cumulus\",\"note\":\"puffy, fair-weather heaps\",\"icon\":\"cloud.sun\"},\n{\"label\":\"Stratus\",\"note\":\"flat, grey layers, low\",\"icon\":\"cloud.fill\"},\n{\"label\":\"Cumulonimbus\",\"note\":\"tall storm clouds\",\"icon\":\"cloud.bolt.rain\"}],\n\"chips\":[\"What makes rain clouds?\",\"Why are clouds high or low?\"]}\n```",
+    "events": null,
+    "usage": null
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

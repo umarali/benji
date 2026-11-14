@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "id": "figure/house-sonnet",
+  "kind": "figure",
+  "case": "house",
+  "request": {
+    "text": "Draw a house.",
+    "screen": null,
+    "spoken": false
+  },
+  "expect": {},
+  "reply": {
+    "model": "claude-sonnet-5-5",
+    "effort": "low",
+    "recorded": "2026-10-31",
+    "source": "D-108 figure eval low-sonnet55, reply house",
+    "raw": "Here's a simple house with a pitched roof, a chimney, a door and two windows.\n\n```figure\n{\"title\":\"A house\",\"parts\":[\n{\"name\":\"walls\",\"kind\":\"box\",\"size\":[4,2.6,3],\"at\":[0,1.3,0],\"mat\":\"paint:cream\"},\n{\"name\":\"roof\",\"kind\":\"extrude\",\"path\":\"M-2.4 0 L2.4 0 L0 1.6 Z\",\"depth\":3.6,\"at\":[0,2.6,0],\"mat\":\"paint:brown\"},\n{\"name\":\"chimney\",\"kind\":\"box\",\"size\":[0.5,1.2,0.5],\"at\":[1.3,3.2,-0.6],\"mat\":\"paint:red\"},\n{\"name\":\"door\",\"kind\":\"box\",\"size\":[0.8,1.6,0.1],\"at\":[0,0.8,1.55],\"mat\":\"wood\"},\n{\"name\":\"knob\",\"kind\":\"sphere\",\"r\":0.06,\"at\":[0.25,0.8,1.63],\"mat\":\"brass\"},\n{\"name\":\"left window\",\"kind\":\"box\",\"size\":[0.8,0.8,0.1],\"at\":[-1.918,1.6,1.55],\"mat\":\"glass\"},\n{\"name\":\"right window\",\"kind\":\"box\",\"size\":[0.8,0.8,0.1],\"at\":[1.2,1.6,1.55],\"mat\":\"glass\"},\n{\"name\":\"step\",\"kind\":\"box\",\"size\":[1.2,0.1,0.4],\"at\":[0,0.05,1.7],\"mat\":\"grey\"},\n{\"name\":\"foundation\",\"kind\":\"box\",\"size\":[4.2,0.2,3.2],\"at\":[0,-0.1,0],\"mat\":\"grey\"}],\n\"labels\":[{\"part\":\"roof\",\"text\":\"Roof\"},{\"part\":\"chimney\",\"text\":\"Chimney\"},{\"part\":\"door\",\"text\":\"Door\"},{\"part\":\"right window\",\"text\":\"Window\"},{\"part\":\"walls\",\"text\":\"Walls\"}],\n\"view\":{\"turn\":30,\"tilt\":20}}\n```",
+    "events": null,
+    "usage": {
+      "calls": 1,
+      "input_tokens": 1796,
+      "output_tokens": 655,
+      "cache_read_tokens": 3249,
+      "cache_write_tokens": 0
+    }
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

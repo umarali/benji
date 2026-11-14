@@ -1,0 +1,36 @@
+I'll show you a bicycle with all its key parts in 3D.
+
+```figure
+{
+  "title": "A bicycle",
+  "parts": [
+    {"name": "frame top tube", "kind": "tube", "r": 0.02, "path": [[0, 0.9, 0], [0.6, 0.9, 0]], "mat": "steel"},
+    {"name": "frame down tube", "kind": "tube", "r": 0.025, "path": [[0, 0.9, 0], [0.6, 0.3, 0]], "mat": "steel"},
+    {"name": "frame seat tube", "kind": "tube", "r": 0.022, "path": [[0.6, 0.9, 0], [0.6, 0.3, 0]], "mat": "steel"},
+    {"name": "frame seat stay left", "kind": "tube", "r": 0.015, "path": [[0.6, 0.9, 0], [-0.5, 0.5, -0.15]], "mat": "steel"},
+    {"name": "frame seat stay right", "kind": "tube", "r": 0.015, "path": [[0.6, 0.9, 0], [-0.5, 0.5, 0.15]], "mat": "steel"},
+    {"name": "frame chain stay left", "kind": "tube", "r": 0.018, "path": [[0.6, 0.3, 0], [-0.5, 0.5, -0.15]], "mat": "steel"},
+    {"name": "frame chain stay right", "kind": "tube", "r": 0.018, "path": [[0.6, 0.3, 0], [-0.5, 0.5, 0.15]], "mat": "steel"},
+    {"name": "front fork", "kind": "tube", "r": 0.02, "path": [[0, 0.9, 0], [0, 0.5, 0]], "mat": "steel"},
+    {"name": "rear wheel rim", "kind": "torus", "r": 0.5, "tube": 0.04, "at": [-0.5, 0.5, 0], "axis": "x", "mat": "aluminium"},
+    {"name": "front wheel rim", "kind": "torus", "r": 0.5, "tube": 0.04, "at": [0, 0.5, 0], "axis": "x", "mat": "aluminium"},
+    {"name": "rear tire", "kind": "torus", "r": 0.53, "tube": 0.06, "at": [-0.5, 0.5, 0], "axis": "x", "mat": "rubber"},
+    {"name": "front tire", "kind": "torus", "r": 0.53, "tube": 0.06, "at": [0, 0.5, 0], "axis": "x", "mat": "rubber"},
+    {"name": "seat post", "kind": "cyl", "r": 0.015, "h": 0.25, "at": [0.6, 1.025, 0], "mat": "steel"},
+    {"name": "seat", "kind": "box", "size": [0.25, 0.08, 0.12], "at": [0.6, 1.19, 0], "mat": "black"},
+    {"name": "handlebars", "kind": "tube", "r": 0.015, "path": [[0.15, 1.05, -0.25], [0.1, 1, 0], [0.15, 1.05, 0.25]], "mat": "chrome"},
+    {"name": "pedal crank left", "kind": "cyl", "r": 0.012, "from": [0.6, 0.3, -0.15], "to": [0.7, 0.15, -0.15], "mat": "aluminium"},
+    {"name": "pedal crank right", "kind": "cyl", "r": 0.012, "from": [0.6, 0.3, 0.15], "to": [0.5, 0.45, 0.15], "mat": "aluminium"},
+    {"name": "pedal left", "kind": "box", "size": [0.1, 0.03, 0.08], "at": [0.7, 0.15, -0.15], "mat": "black"},
+    {"name": "pedal right", "kind": "box", "size": [0.1, 0.03, 0.08], "at": [0.5, 0.45, 0.15], "mat": "black"}
+  ],
+  "labels": [
+    {"part": "seat", "text": "Seat"},
+    {"part": "handlebars", "text": "Handlebars"},
+    {"part": "front wheel rim", "text": "Front wheel"},
+    {"part": "rear wheel rim", "text": "Rear wheel"},
+    {"part": "pedal left", "text": "Pedal"}
+  ],
+  "view": {"turn": 35, "tilt": 18}
+}
+```

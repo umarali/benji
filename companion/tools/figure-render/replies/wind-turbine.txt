@@ -1,0 +1,12 @@
+A wind turbine turns the wind's push on its blades into electricity in the nacelle.
+```figure
+{"title":"A wind turbine","parts":[
+{"name":"tower","kind":"cone","r":0.35,"r2":0.18,"h":8,"at":[0,4,0],"mat":"paint:white"},
+{"name":"nacelle","kind":"capsule","r":0.38,"h":1.8,"axis":"z","at":[0,8.2,-0.2],"mat":"paint:white"},
+{"name":"hub","kind":"sphere","r":0.32,"scale":[1,1,1.3],"at":[0,8.2,0.85],"spin":12,"mat":"paint:grey"},
+{"name":"blade","kind":"blob","balls":[[0,0.3,0,0.2],[0,1.4,0,0.26],[0,2.6,0,0.17],[0,3.6,0,0.07]],"chain":true,"smooth":0.3,"scale":[1,1,0.35],"at":[0,8.2,0.95],"around":{"count":3,"axis":"z","center":[0,8.2,0.95]},"spin":12,"mat":"paint:white"},
+{"name":"base","kind":"cyl","r":0.9,"h":0.3,"at":[0,0.15,0],"mat":"ceramic"},
+{"name":"ground","kind":"cyl","r":3,"h":0.08,"at":[0,-0.04,0],"mat":"paint:green"}],
+"labels":[{"part":"blade","text":"Blade"},{"part":"hub","text":"Hub"},{"part":"nacelle","text":"Nacelle"},{"part":"tower","text":"Tower"}],
+"view":{"turn":30,"tilt":10}}
+```

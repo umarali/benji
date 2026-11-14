@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <title>Chilly app icon, two lines (light)</title>
+  <defs>
+    <linearGradient id="sheen" x1="0" y1="100" x2="0" y2="924" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.22"/>
+      <stop offset="0.55" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <!-- layer 1: body, chilly-mint -->
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="#66D4CF"/>
+  <!-- layer 2: the one subtle highlight -->
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#sheen)"/>
+  <!-- layer 3: the "ll", two calm strokes; the second steps back -->
+  <g fill="none" stroke="#000000" stroke-width="88" stroke-linecap="round">
+    <path d="M414 256V668"/>
+    <path d="M610 356V768"/>
+  </g>
+</svg>

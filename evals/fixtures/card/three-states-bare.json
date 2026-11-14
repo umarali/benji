@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "id": "card/three-states-bare",
+  "kind": "card",
+  "case": "three states, bare",
+  "request": {
+    "text": "Show me Chilly's three states.",
+    "screen": "document",
+    "spoken": true
+  },
+  "expect": {
+    "card": true,
+    "layout": "flow"
+  },
+  "reply": {
+    "model": "claude-haiku-5-5",
+    "effort": "low",
+    "recorded": "2026-11-01",
+    "source": "D-125 card eval, reply three-states-bare",
+    "raw": "I don't have a documented list of Chilly's three states, so I won't make one up. I can see the TextEdit window with \"River town.txt\" open, but that doesn't show Chilly's states. If you tell me what the three states are, or where they're listed, I can put them on a card.",
+    "events": null,
+    "usage": null
+  },
+  "baseline": {
+    "pass": false,
+    "why": [
+      "no card block that parses"
+    ]
+  },
+  "human": null
+}

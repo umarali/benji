@@ -1,0 +1,8 @@
+2026-11-05T09:00:00+0500 Chilly 0.1.0 serving  ·  provider=claude  model=claude-haiku-5-5  sends to=Anthropic  workdir=~/chilly
+2026-11-05T09:10:05+0500 [Chilly] approval a1 (no): write_file/write_outside_folder
+2026-11-05T09:30:40+0500 Traceback (most recent call last):
+2026-11-05T09:30:40+0500   serve.py:290 in _run_job
+2026-11-05T09:30:40+0500 ProviderError
+2026-11-05T09:40:00+0500 ValueError: an old-format traceback line that quoted what somebody typed
+2026-11-03T09:00:00+0500 KeyError: outside the window
+a line with no time is never counted

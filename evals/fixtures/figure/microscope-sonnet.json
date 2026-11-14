@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "id": "figure/microscope-sonnet",
+  "kind": "figure",
+  "case": "microscope",
+  "request": {
+    "text": "Show me the parts of a microscope.",
+    "screen": null,
+    "spoken": false
+  },
+  "expect": {},
+  "reply": {
+    "model": "claude-sonnet-5-5",
+    "effort": "low",
+    "recorded": "2026-10-31",
+    "source": "D-108 figure eval low-sonnet55, reply microscope",
+    "raw": "A compound microscope has a base that holds the light source and a curved arm that carries the stage and the optics. The eyepiece sits on top, and the objective lenses are on a rotating nosepiece above the stage.\n\n```figure\n{\"title\":\"A compound microscope\",\"parts\":[\n{\"name\":\"base\",\"kind\":\"box\",\"size\":[2.4,0.3,1.8],\"at\":[0,0.15,0],\"mat\":\"black\"},\n{\"name\":\"light\",\"kind\":\"cyl\",\"r\":0.25,\"h\":0.12,\"at\":[0,0.36,0.1],\"mat\":\"glow:yellow\"},\n{\"name\":\"arm\",\"kind\":\"tube\",\"r\":0.18,\"path\":[[0,0.3,-0.6],[0,1.5,-0.8],[0,2.8,-0.8],[0,3.8,-0.4]],\"mat\":\"paint:cream\"},\n{\"name\":\"stage\",\"kind\":\"box\",\"size\":[1.6,0.1,1.2],\"at\":[0,1.4,0.2],\"mat\":\"black\"},\n{\"name\":\"slide\",\"kind\":\"box\",\"size\":[0.9,0.04,0.3],\"at\":[0,1.48,0.2],\"mat\":\"glass\"},\n{\"name\":\"clip\",\"kind\":\"box\",\"size\":[0.1,0.05,0.5],\"at\":[0.55,1.5,0.2],\"mat\":\"steel\"},\n{\"name\":\"coarse knob\",\"kind\":\"cyl\",\"r\":0.35,\"h\":0.3,\"at\":[0.2,1.8,-0.8],\"axis\":\"x\",\"mat\":\"chrome\"},\n{\"name\":\"fine knob\",\"kind\":\"cyl\",\"r\":0.2,\"h\":0.3,\"at\":[-0.2,1.8,-0.8],\"axis\":\"x\",\"mat\":\"aluminium\"},\n{\"name\":\"head\",\"kind\":\"cyl\",\"r\":0.3,\"h\":0.5,\"from\":[0,3.7,-0.4],\"to\":[0,3.9,0],\"mat\":\"paint:cream\"},\n{\"name\":\"nosepiece\",\"kind\":\"cyl\",\"r\":0.4,\"h\":0.2,\"at\":[0,2.7,0.1],\"mat\":\"iron\"},\n{\"name\":\"objective 1\",\"kind\":\"cyl\",\"r\":0.1,\"h\":0.6,\"from\":[0.2,2.6,0.2],\"to\":[0.2,2.0,0.2],\"mat\":\"brass\"},\n{\"name\":\"objective 2\",\"kind\":\"cyl\",\"r\":0.1,\"h\":0.7,\"from\":[-0.2,2.6,0.2],\"to\":[-0.2,1.9,0.2],\"mat\":\"chrome\"},\n{\"name\":\"eyepiece\",\"kind\":\"cyl\",\"r\":0.2,\"from\":[0,3.9,0],\"to\":[0,4.7,-0.4],\"mat\":\"black\"},\n{\"name\":\"body tube\",\"kind\":\"cyl\",\"r\":0.25,\"from\":[0,2.7,0.1],\"to\":[0,3.8,0],\"mat\":\"paint:cream\"}],\n\"labels\":[{\"part\":\"eyepiece\",\"text\":\"Eyepiece\"},{\"part\":\"objective 2\",\"text\":\"Objective lens\"},{\"part\":\"stage\",\"text\":\"Stage\"},{\"part\":\"coarse knob\",\"text\":\"Coarse focus\"},{\"part\":\"arm\",\"text\":\"Arm\"},{\"part\":\"base\",\"text\":\"Base\"}],\n\"view\":{\"turn\":50,\"tilt\":15}}\n```",
+    "events": null,
+    "usage": {
+      "calls": 1,
+      "input_tokens": 1802,
+      "output_tokens": 1109,
+      "cache_read_tokens": 3249,
+      "cache_write_tokens": 0
+    }
+  },
+  "baseline": {
+    "pass": true,
+    "why": []
+  },
+  "human": null
+}

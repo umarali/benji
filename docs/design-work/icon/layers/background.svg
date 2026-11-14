@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs><linearGradient id="t" x1="0" y1="0" x2="0" y2="1024" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#151d1e"/><stop offset="1" stop-color="#020303"/></linearGradient></defs>
+  <!-- Optional. benji.icon uses its document fill (a gradient black) instead. Full bleed: the system applies the icon shape. -->
+  <rect width="1024" height="1024" fill="url(#t)"/>
+</svg>

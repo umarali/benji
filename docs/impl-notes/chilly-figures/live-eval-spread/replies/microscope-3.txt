@@ -1,0 +1,35 @@
+I'll show you a compound microscope with all its main parts.
+
+A compound microscope has optical components at the top (eyepiece, objective lenses) mounted on a body tube, supported by an arm that connects to the base. The stage holds the specimen, and light comes from below through a condenser system.
+
+```figure
+{
+  "title": "Compound Microscope",
+  "parts": [
+    {"name": "base", "kind": "box", "size": [3, 0.4, 2.5], "at": [0, 0.2, 0], "mat": "iron"},
+    {"name": "arm", "kind": "box", "size": [0.5, 5, 0.6], "at": [0, 2.7, -0.7], "rot": [10, 0, 0], "mat": "steel"},
+    {"name": "stage", "kind": "box", "size": [2.8, 0.3, 2.2], "at": [0, 2.5, 0.3], "mat": "steel"},
+    {"name": "stage opening", "kind": "cyl", "r": 0.5, "h": 0.32, "at": [0, 2.5, 0.3], "mat": "black"},
+    {"name": "body tube", "kind": "cyl", "r": 0.35, "h": 3.2, "at": [0, 4.6, -0.7], "mat": "black"},
+    {"name": "nosepiece", "kind": "cyl", "r": 0.55, "h": 0.4, "at": [0, 2.8, -0.7], "mat": "steel"},
+    {"name": "objective lens 1", "kind": "cyl", "r": 0.25, "h": 0.8, "at": [-0.35, 2.0, -0.7], "mat": "chrome"},
+    {"name": "objective lens 2", "kind": "cyl", "r": 0.25, "h": 1.2, "at": [0, 1.9, -0.7], "mat": "chrome"},
+    {"name": "objective lens 3", "kind": "cyl", "r": 0.25, "h": 1.5, "at": [0.35, 1.75, -0.7], "mat": "chrome"},
+    {"name": "coarse focus knob", "kind": "cyl", "r": 0.5, "h": 0.2, "at": [0.5, 3.2, -0.9], "axis": "x", "mat": "black"},
+    {"name": "fine focus knob", "kind": "cyl", "r": 0.4, "h": 0.15, "at": [0.45, 2.6, -0.9], "axis": "x", "mat": "paint:grey"},
+    {"name": "eyepiece", "kind": "cyl", "r": 0.28, "h": 1, "at": [0, 6.7, -0.7], "mat": "black"},
+    {"name": "illuminator", "kind": "cyl", "r": 0.4, "h": 0.3, "at": [0, 0.55, 0], "mat": "glow:white"},
+    {"name": "condenser", "kind": "cone", "r": 0.6, "r2": 0.3, "h": 0.6, "at": [0, 1.6, 0.3], "mat": "glass"},
+    {"name": "diaphragm", "kind": "cyl", "r": 0.35, "h": 0.15, "at": [0, 1.3, 0.3], "mat": "brass"}
+  ],
+  "labels": [
+    {"part": "eyepiece", "text": "Eyepiece"},
+    {"part": "body tube", "text": "Body tube"},
+    {"part": "arm", "text": "Arm"},
+    {"part": "objective lens 2", "text": "Objective lenses"},
+    {"part": "stage", "text": "Stage"},
+    {"part": "illuminator", "text": "Light source"}
+  ],
+  "view": {"turn": 35, "tilt": 20}
+}
+```

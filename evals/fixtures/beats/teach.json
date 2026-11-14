@@ -1,0 +1,108 @@
+{
+  "schema": 1,
+  "id": "beats/teach",
+  "kind": "beats",
+  "case": "teach",
+  "request": {
+    "text": "Teach me how compound interest works.",
+    "screen": null,
+    "spoken": true
+  },
+  "expect": {
+    "card": true
+  },
+  "reply": {
+    "model": "claude-haiku-5-5",
+    "effort": "low",
+    "recorded": "2026-11-01",
+    "source": "D-127 beats eval, turn teach",
+    "raw": null,
+    "events": [
+      {
+        "type": "accepted",
+        "id": "r0c4"
+      },
+      {
+        "type": "card",
+        "id": "r0c4",
+        "card": {
+          "title": "Compound interest",
+          "heading": "Interest earns interest too",
+          "layout": "flow"
+        },
+        "at": 0
+      },
+      {
+        "type": "card_item",
+        "id": "r0c4",
+        "item": {
+          "label": "Principal",
+          "note": "the money you start with",
+          "icon": "banknote"
+        },
+        "at": 70
+      },
+      {
+        "type": "card_item",
+        "id": "r0c4",
+        "item": {
+          "label": "Interest added",
+          "note": "a percentage of the balance",
+          "icon": "percent"
+        },
+        "at": 123
+      },
+      {
+        "type": "card_item",
+        "id": "r0c4",
+        "item": {
+          "label": "Bigger base",
+          "note": "earns on earlier interest",
+          "icon": "arrow.up.right"
+        },
+        "at": 202
+      },
+      {
+        "type": "card_chips",
+        "id": "r0c4",
+        "chips": [
+          "Show me an example",
+          "What is simple interest?"
+        ],
+        "at": 321
+      },
+      {
+        "type": "card_end",
+        "id": "r0c4"
+      },
+      {
+        "type": "answer",
+        "id": "r0c4",
+        "text": "Compound interest starts with money you put in, called the principal.\nEach period, the bank adds interest to that balance.\nNext period, interest is worked out on the bigger balance, so it grows faster.\nLet's start with the first step. Say you put 100 pounds in at 10 percent a year. After one year, how much do you have?\n",
+        "targets": []
+      },
+      {
+        "type": "usage",
+        "id": "r0c4",
+        "calls": 1,
+        "input_tokens": 1775,
+        "output_tokens": 509,
+        "cache_read_tokens": 4427,
+        "cache_write_tokens": 0
+      },
+      {
+        "type": "done",
+        "id": "r0c4",
+        "status": "ok"
+      }
+    ],
+    "usage": null
+  },
+  "baseline": {
+    "pass": false,
+    "why": [
+      "6 spoken sentences for 3 parts"
+    ]
+  },
+  "human": null
+}

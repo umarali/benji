@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "id": "figure/piston-sonnet",
+  "kind": "figure",
+  "case": "piston",
+  "request": {
+    "text": "What's inside a car engine cylinder?",
+    "screen": null,
+    "spoken": false
+  },
+  "expect": {},
+  "reply": {
+    "model": "claude-sonnet-5-5",
+    "effort": "low",
+    "recorded": "2026-10-31",
+    "source": "D-108 figure eval low-sonnet55, reply piston",
+    "raw": "Inside a cylinder, a piston slides up and down. The combustion chamber sits above it, and the spark plug ignites the fuel-air mix there. Two valves control the gas flow: the intake valve lets the mix in, and the exhaust valve lets burnt gas out. The piston connects through a piston pin to a connecting rod, and the rod turns the crankshaft. I've cut the block open so you can see all of this.\n\n```figure\n{\"title\":\"Engine cylinder cutaway\",\"parts\":[\n{\"name\":\"block\",\"kind\":\"box\",\"size\":[2.6,2.4,2.2],\"at\":[0,1.2,0],\"mat\":\"iron\"},\n{\"name\":\"head\",\"kind\":\"box\",\"size\":[2.6,1.0,2.2],\"at\":[0,2.9,0],\"mat\":\"aluminium\"},\n{\"name\":\"combustion chamber\",\"kind\":\"cyl\",\"r\":0.8,\"h\":0.4,\"at\":[0,2.6,0],\"mat\":\"glow:orange\"},\n{\"name\":\"piston\",\"kind\":\"cyl\",\"r\":0.8,\"h\":0.5,\"at\":[0,1.9,0],\"mat\":\"aluminium\"},\n{\"name\":\"ring top\",\"kind\":\"torus\",\"r\":0.8,\"tube\":0.04,\"at\":[0,2.05,0],\"rot\":[90,0,0],\"mat\":\"black\"},\n{\"name\":\"ring low\",\"kind\":\"torus\",\"r\":0.8,\"tube\":0.04,\"at\":[0,1.85,0],\"rot\":[90,0,0],\"mat\":\"black\"},\n{\"name\":\"piston pin\",\"kind\":\"cyl\",\"r\":0.1,\"h\":1.2,\"at\":[0,1.55,0],\"axis\":\"x\",\"mat\":\"steel\"},\n{\"name\":\"connecting rod\",\"kind\":\"cyl\",\"r\":0.1,\"from\":[0,1.55,0],\"to\":[0.3,0.3,0],\"mat\":\"steel\"},\n{\"name\":\"crank pin\",\"kind\":\"sphere\",\"r\":0.2,\"at\":[0.3,0.3,0],\"mat\":\"chrome\"},\n{\"name\":\"crankshaft\",\"kind\":\"cyl\",\"r\":0.15,\"h\":2.6,\"at\":[0,-0.2,0],\"axis\":\"z\",\"mat\":\"steel\"},\n{\"name\":\"crank web\",\"kind\":\"cyl\",\"r\":0.5,\"h\":0.15,\"at\":[0,-0.2,0.5],\"axis\":\"z\",\"mat\":\"iron\"},\n{\"name\":\"spark plug\",\"kind\":\"cyl\",\"r\":0.12,\"from\":[0,2.6,0],\"to\":[0,4.1,0],\"mat\":\"ceramic\"},\n{\"name\":\"intake valve\",\"kind\":\"cyl\",\"r\":0.05,\"from\":[-0.45,2.7,0],\"to\":[-0.45,4.1,0],\"mat\":\"chrome\"},\n{\"name\":\"exhaust valve\",\"kind\":\"cyl\",\"r\":0.05,\"from\":[0.45,2.7,0],\"to\":[0.45,4.1,0],\"mat\":\"chrome\"},\n{\"name\":\"intake port\",\"kind\":\"cyl\",\"r\":0.2,\"from\":[-1.3,3.2,0],\"to\":[-0.45,3.2,0],\"mat\":\"paint:blue\"},\n{\"name\":\"exhaust port\",\"kind\":\"cyl\",\"r\":0.2,\"from\":[0.45,3.2,0],\"to\":[1.3,3.2,0],\"mat\":\"paint:red\"}],\n\"labels\":[{\"part\":\"piston\",\"text\":\"Piston\"},{\"part\":\"spark plug\",\"text\":\"Spark plug\"},{\"part\":\"intake valve\",\"text\":\"Intake valve\"},{\"part\":\"exhaust valve\",\"text\":\"Exhaust valve\"},{\"part\":\"connecting rod\",\"text\":\"Connecting rod\"},{\"part\":\"crankshaft\",\"text\":\"Crankshaft\"}],\n\"cut\":{\"parts\":[\"block\",\"head\"]},\n\"view\":{\"turn\":25,\"tilt\":15}}\n```",
+    "events": null,
+    "usage": {
+      "calls": 1,
+      "input_tokens": 1803,
+      "output_tokens": 1283,
+      "cache_read_tokens": 3249,
+      "cache_write_tokens": 0
+    }
+  },
+  "baseline": {
+    "pass": false,
+    "why": [
+      "the words mention the block or JSON"
+    ]
+  },
+  "human": null
+}

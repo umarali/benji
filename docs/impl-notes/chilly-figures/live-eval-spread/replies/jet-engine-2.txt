@@ -1,0 +1,34 @@
+I'll show you the main components inside a jet engine.
+
+A jet engine works by compressing air, mixing it with fuel and igniting it, then using the expanding gases to spin turbines and produce thrust. The main parts from front to back are: the fan that pulls air in, compressor stages that squeeze the air, a combustion chamber where fuel burns, turbines that extract energy to drive the compressor and fan, and a nozzle where hot gases exit at high speed to create thrust.
+
+```figure
+{
+  "title": "Inside a jet engine",
+  "cut": {"parts": ["outer casing", "inlet cowl", "exhaust cone"]},
+  "parts": [
+    {"name": "outer casing", "kind": "cyl", "r": 1.8, "h": 10, "at": [0, 0, 0], "axis": "z", "mat": "aluminium"},
+    {"name": "inlet cowl", "kind": "cone", "r": 1.9, "r2": 1.5, "h": 1.5, "at": [0, 0, -2.2], "axis": "z", "mat": "steel"},
+    {"name": "fan", "kind": "cyl", "r": 1.4, "h": 0.4, "at": [0, 0, -1], "axis": "z", "mat": "steel"},
+    {"name": "fan blades", "kind": "lathe", "profile": [[0, -0.2], [1.4, -0.2], [1.3, 0.2], [0, 0.2]], "at": [0, 0, -1], "mat": "aluminium", "around": {"count": 12, "axis": "z"}},
+    {"name": "compressor", "kind": "cyl", "r": 1.1, "h": 3, "at": [0, 0, 0.5], "axis": "z", "mat": "steel"},
+    {"name": "compressor blades", "kind": "box", "size": [0.05, 0.6, 0.1], "at": [0.8, 0, 1.5], "copies": {"count": 25, "step": [0, 0, 0.12]}, "around": {"count": 16, "axis": "z"}, "mat": "chrome"},
+    {"name": "combustion chamber", "kind": "cyl", "r": 0.9, "h": 1.8, "at": [0, 0, 3], "axis": "z", "mat": "brass"},
+    {"name": "fuel injectors", "kind": "cyl", "r": 0.08, "h": 0.5, "at": [0.6, 0, 2.5], "axis": "z", "around": {"count": 8, "axis": "z"}, "mat": "copper"},
+    {"name": "flame zone", "kind": "cyl", "r": 0.7, "h": 1.2, "at": [0, 0, 3.2], "axis": "z", "mat": "glow:orange"},
+    {"name": "turbine", "kind": "cyl", "r": 1.0, "h": 2, "at": [0, 0, 4.8], "axis": "z", "mat": "iron"},
+    {"name": "turbine blades", "kind": "box", "size": [0.05, 0.7, 0.12], "at": [0.65, 0, 5.3], "copies": {"count": 14, "step": [0, 0, 0.14]}, "around": {"count": 14, "axis": "z"}, "mat": "steel"},
+    {"name": "central shaft", "kind": "cyl", "r": 0.25, "h": 9, "at": [0, 0, -1.5], "axis": "z", "mat": "chrome"},
+    {"name": "exhaust cone", "kind": "cone", "r": 1.5, "r2": 1.1, "h": 1.5, "at": [0, 0, 5.8], "axis": "z", "mat": "steel"}
+  ],
+  "labels": [
+    {"part": "fan", "text": "Fan"},
+    {"part": "compressor", "text": "Compressor"},
+    {"part": "combustion chamber", "text": "Combustion"},
+    {"part": "turbine", "text": "Turbine"},
+    {"part": "central shaft", "text": "Shaft"},
+    {"part": "flame zone", "text": "Burning fuel"}
+  ],
+  "view": {"turn": 20, "tilt": 10}
+}
+```

@@ -1,0 +1,29 @@
+I'll show you an airplane with its key parts and how they work together for flight.
+
+```figure
+{
+  "title": "Airplane in Flight",
+  "parts": [
+    {"name": "fuselage", "kind": "capsule", "r": 1.2, "h": 12, "axis": "x", "at": [0, 0, 0], "mat": "aluminium"},
+    {"name": "nose cone", "kind": "cone", "r": 1.2, "r2": 0.3, "h": 2.5, "axis": "x", "at": [7.25, 0, 0], "mat": "aluminium"},
+    {"name": "cockpit windows", "kind": "box", "size": [1.5, 0.6, 1.8], "at": [5.5, 0.7, 0], "mat": "glass"},
+    {"name": "main wing", "kind": "extrude", "path": "M-8 0 L-1 0 L-0.5 -1.2 L-7 -1.2 Z", "depth": 0.4, "at": [0, -0.5, 0], "rot": [0, 0, 0], "mat": "aluminium"},
+    {"name": "tail section", "kind": "cone", "r": 1.2, "r2": 0.4, "h": 3, "axis": "x", "at": [-7.5, 0, 0], "mat": "aluminium"},
+    {"name": "vertical stabilizer", "kind": "extrude", "path": "M0 0 L3 0 L3 4 L0.5 4 Z", "depth": 0.3, "at": [-6, 0, 0], "rot": [0, 0, 0], "mat": "aluminium"},
+    {"name": "horizontal stabilizer", "kind": "extrude", "path": "M-3 0 L-0.5 0 L0 -0.8 L-2.5 -0.8 Z", "depth": 0.3, "at": [-5, 0, 0], "rot": [0, 0, 0], "mat": "aluminium"},
+    {"name": "left engine", "kind": "capsule", "r": 0.7, "h": 2.5, "axis": "x", "at": [-3, -1.5, -4], "mat": "steel"},
+    {"name": "right engine", "kind": "capsule", "r": 0.7, "h": 2.5, "axis": "x", "at": [-3, -1.5, 4], "mat": "steel"},
+    {"name": "left engine intake", "kind": "cyl", "r": 0.75, "h": 0.4, "axis": "x", "at": [-1.5, -1.5, -4], "mat": "chrome"},
+    {"name": "right engine intake", "kind": "cyl", "r": 0.75, "h": 0.4, "axis": "x", "at": [-1.5, -1.5, 4], "mat": "chrome"},
+    {"name": "left winglet", "kind": "extrude", "path": "M0 0 L0.8 0 L0.8 1.2 L0.2 1.2 Z", "depth": 0.2, "at": [-8, -0.5, -8], "rot": [0, -20, 0], "mat": "aluminium"},
+    {"name": "right winglet", "kind": "extrude", "path": "M0 0 L0.8 0 L0.8 1.2 L0.2 1.2 Z", "depth": 0.2, "at": [-8, -0.5, 8], "rot": [0, 20, 0], "mat": "aluminium"}
+  ],
+  "labels": [
+    {"part": "main wing", "text": "Wings generate lift"},
+    {"part": "left engine", "text": "Engines provide thrust"},
+    {"part": "vertical stabilizer", "text": "Tail controls direction"},
+    {"part": "cockpit windows", "text": "Cockpit"}
+  ],
+  "view": {"turn": -25, "tilt": 10}
+}
+```
