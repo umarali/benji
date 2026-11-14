@@ -24,8 +24,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { os: ubuntu-latest, python: "3.11" }
-          - { os: ubuntu-latest, python: "3.12" }
+          # Benji is a Mac app and the suite assumes macOS; Python 3.11 is the oldest supported.
+          - { os: macos-latest, python: "3.11" }
           - { os: macos-latest, python: "3.12" }
     steps:
       - uses: actions/checkout@v4
@@ -39,7 +39,8 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          python3 selftest.py 2>&1 | tee selftest.log
+          # The same command contributors run: a throwaway home, so no test touches the runner's own.
+          python3 tools/isolated_run.py -- python3 selftest.py 2>&1 | tee selftest.log
       - name: Show what failed
         if: failure()
         shell: bash
