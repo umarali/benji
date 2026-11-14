@@ -27,7 +27,7 @@ compare it); until then it equals the short version.
 - [ ] `(cd companion && xcrun swift test)` passes (use `xcrun swift`, not plain `swift`).
 - [ ] `python3 -I companion/ServeCheck/run.py` passes.
 - [ ] `node --test browser-extension/test/core.test.mjs browser-extension/test/page-text.test.mjs` passes.
-- [ ] CI is green on the release commit on GitHub (the workflow had never run when this was written).
+- [ ] CI is green on the release commit on GitHub.
 - [ ] In the maintainer's private repository, the export tool run on the release commit with
   `--require-filled` passes. (The tool is not in the public repository. Skip this if you publish ordinary history.)
 - [ ] `SECURITY.md` and `CODE_OF_CONDUCT.md` have a real contact and no placeholder is left

@@ -76,9 +76,9 @@ unit-tested against fakes (and, where noted, scripted headless checks); never ru
 | `--voice` and `--listen` (cloud transcription, wake word) | Not live-tested | |
 | Notarised download, other Macs and macOS versions | Not available / untested | See [Build from source](#build-from-source) |
 
-Offline checks run in CI (GitHub Actions: `.github/workflows/ci.yml`) and on the maintainer's Mac
-before every change: `selftest.py` (engine), `xcrun swift test` (app logic), the extension's node
-tests, and an export check. The workflow has not yet run on a public repository.
+Offline checks run in [GitHub Actions](https://github.com/umarali/benji/actions): engine selftests
+on macOS with Python 3.11 and 3.12 (through `tools/isolated_run.py`, as in the contribution guide),
+Swift tests and ServeCheck on `macos-26`, extension tests, and repository checks.
 Details per feature are in the [docs](docs/README.md) and [docs/providers.md](docs/providers.md).
 
 ## Safety model
@@ -211,7 +211,7 @@ See [docs/ROADMAP.md](docs/ROADMAP.md).
 - A Mac with **macOS 14 or later** (Apple silicon assumed; the layout is designed for a notched
   display, other displays are handled but less tested).
 - **Python 3.11 or later** (`python3 --version`).
-- To build the app: **Xcode 15 or later** (the full app or its command-line tools) with Swift 5.9+.
+- To build the app: **Xcode 26 or later** (macOS 26 SDK), on a Mac supported by that Xcode release. See [Apple's Xcode requirements](https://developer.apple.com/xcode/system-requirements).
 - One model API key (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, or a key for DeepSeek, Z.ai, Moonshot or
   Alibaba Cloud), or a model running on your own computer.
 - Optional: `ffmpeg` and a transcription key for the command-line voice flags; a web-search key for
