@@ -32,7 +32,7 @@ Requirements: macOS 14+ to run the app, Python 3.11+ for the engine, and Xcode 2
 and should stay that way (standard library only).
 
 ```bash
-git clone <your fork> && cd benji
+git clone https://github.com/<you>/benji.git && cd benji
 python3 tools/isolated_run.py -- python3 selftest.py                          # engine
 python3 tools/isolated_run.py -- sh -c 'cd companion && xcrun swift test'     # app logic
 ```

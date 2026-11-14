@@ -44,7 +44,7 @@ def record_checks(check, here: Path) -> None:
     from benji import jobs as J
 
     print("durable jobs (D-177): the record beside the folder:")
-    with tempfile.TemporaryDirectory() as td:
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
         store = J.JobStore(Path(td) / "jobs")
         rec = store.create("A job", "The brief.", "my words")
         where = store.path(rec["id"])
@@ -70,7 +70,7 @@ def record_checks(check, here: Path) -> None:
         check("recovery finds a lost job in the new place",
               store.recover() == [rec["id"]] and store.load(rec["id"])["status"] == "failed")
 
-    with tempfile.TemporaryDirectory() as td:
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
         root = Path(td) / "jobs"
         store = J.JobStore(root)
         check("no jobs folder yet: nothing to move, no error", store.migrate() == 0)
@@ -80,14 +80,14 @@ def record_checks(check, here: Path) -> None:
         check("the folder keeps what the job made", (where / "output").is_dir())
         check("moving is once", store.migrate() == 0)
 
-    with tempfile.TemporaryDirectory() as td:
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
         root = Path(td) / "jobs"
         store = J.JobStore(root)
         where = _old_layout(root, title="Inside")
         store.record_path(JID).write_text(json.dumps({"id": JID, "title": "Beside", "created_at": 1.0}))
         check("a record already beside its folder is not replaced", store.migrate() == 0 and store.load(JID)["title"] == "Beside")
 
-    with tempfile.TemporaryDirectory() as td:
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
         root = Path(td) / "jobs"
         store = J.JobStore(root)
         where = root / JID
@@ -112,7 +112,7 @@ def gate_checks(check) -> None:
     from benji import tools as T
 
     print("durable jobs: no tool reaches a job's record:")
-    with tempfile.TemporaryDirectory() as td:
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
         jobs = Path(td).resolve() / "jobs"
         folder = jobs / JID
         (folder / "output").mkdir(parents=True)
@@ -190,7 +190,7 @@ def wait_checks(check) -> None:
     check("only what passes by itself is worth waiting for",
           all((E.explain(text)[0] in E.WORTH_WAITING) is want for text, want in table.items()))
 
-    with tempfile.TemporaryDirectory() as td:
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
         wd = Path(td)
         script = Script(net, net, net, say("All done."))
         a, clock, waits = _agent(script, wd)
@@ -310,7 +310,7 @@ def server_checks(check) -> None:
     J.WAIT_FIRST = 0.01
     t0 = 1_700_000_000.0
     try:
-        with tempfile.TemporaryDirectory() as td:
+        with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
             wd = Path(td)
             log = wd / "events.jsonl"
             audit.configure(log)
@@ -331,7 +331,7 @@ def server_checks(check) -> None:
                   waits == [("waiting", "network"), ("back", "network")])
             check("the host it couldn't reach is not in the audit log", "api.example.com" not in log.read_text())
 
-        with tempfile.TemporaryDirectory() as td:
+        with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
             wd = Path(td)
             audit.configure(wd / "events.jsonl")
             J.WAIT_FIRST = 60.0
@@ -346,7 +346,7 @@ def server_checks(check) -> None:
             stopped = ev.wait(jstate("stopped"))
             check("Stop works during the wait, at once", stopped is not None and time.monotonic() - before < 5)
 
-        with tempfile.TemporaryDirectory() as td:
+        with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
             wd = Path(td)
             audit.configure(wd / "events.jsonl")
             J.WAIT_FIRST, J.WAIT_LIMIT = 0.01, 0.03
@@ -359,7 +359,7 @@ def server_checks(check) -> None:
                   failed is not None and failed["job"]["can_continue"] is True and "couldn't reach" in failed["job"]["error"].lower()
                   and "NETWORK" not in failed["job"]["error"])
 
-        with tempfile.TemporaryDirectory() as td:
+        with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
             wd = Path(td)
             audit.configure(wd / "events.jsonl")
             J.WAIT_FIRST, J.WAIT_LIMIT = saved
@@ -462,7 +462,7 @@ def warned_job_checks(check) -> None:
     t0 = 1_700_000_000.0
 
     def run_job(steps, *after):
-        td = tempfile.TemporaryDirectory()
+        td = tempfile.TemporaryDirectory(ignore_cleanup_errors=True)
         wd = Path(td.name)
         audit.configure(wd / "events.jsonl")
         start = call("start_job", {"title": "Long", "brief": "Do all thirty."}, "s1")

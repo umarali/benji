@@ -1520,3 +1520,13 @@ D-198 adoption gate: validate ordinary figure-on and synthetic screen-context be
 - **Why:** one simple path that anyone can follow; the export already strips private material once, so later traffic stays small and reviewable.
 - **Alternatives:** periodic re-exports with force-push (rejected: rewrites contributors' history); public-only development (rejected: some work stays private).
 - **Status:** see the timeline and progress entries for what was pushed.
+
+### D-204 · The project page is published by a workflow; a hardware timing check is not enforced on shared runners (2026-11-14 21:30 PKT)
+
+- **Who:** the owner asked for GitHub Pages to be turned on and for a review of the public repository; Claude carried it out.
+- **Project page:** GitHub Pages serves a branch only from `/` or `/docs`, so `.github/workflows/pages.yml` uploads `site/` and deploys it when `site/` changes on `main`. The page is `https://umarali.github.io/benji/`.
+- **Timing check:** the gate gives a recursive shell scan 0.75 seconds and asks when that runs out. The selftest asserted that a 20,000-entry scan finishes inside that budget, which failed on `main` twice on GitHub's shared macOS runners (0.7503 s against 0.75 s) while the same commit passed as a pull request. On a shared runner (`CI` or `GITHUB_ACTIONS` set) the test now gives the scan a wide budget, still checks its answer, and prints the timing without judging it. On a real Mac the 0.75-second check is unchanged. The product's budget is unchanged.
+- **Temp-folder cleanup:** `selftest_durable.py` removed a temporary folder while a stopped job's thread could still write one last file into it, which crashed the run once on Python 3.11. Those folders are now removed with `ignore_cleanup_errors=True`.
+- **Why:** a required check that fails by chance teaches everyone to ignore it. A speed claim about a user's Mac cannot be judged on someone else's shared machine.
+- **Alternatives:** raise the product's budget (rejected: it would make every user wait longer to hide a test problem); retry failed jobs (rejected: hides real failures).
+- **Status:** see the pull request's checks.
