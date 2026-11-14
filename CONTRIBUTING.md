@@ -27,8 +27,9 @@ Thanks for looking. Benji is a small project with one maintainer, so the process
 
 ## Set up and checks
 
-Requirements: macOS 14+ for the app, Python 3.11+ for the engine, Xcode's command-line tools. The
-Python engine has **no third-party dependencies** and should stay that way (standard library only).
+Requirements: macOS 14+ to run the app, Python 3.11+ for the engine, and Xcode 26+ for building
+(on a Mac supported by that Xcode release). The Python engine has **no third-party dependencies**
+and should stay that way (standard library only).
 
 ```bash
 git clone <your fork> && cd benji
