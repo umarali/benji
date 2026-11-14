@@ -2,7 +2,6 @@ name: ci
 
 # Everything here is offline and headless: no API key, no network calls by the tests, no visible
 # window. (Chrome, where a test uses it, is started with --headless=new and a throwaway profile.)
-# This workflow has been checked for YAML syntax only: it has never run on GitHub.
 
 on:
   push:
@@ -25,8 +24,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { os: ubuntu-latest, python: "3.11" }
-          - { os: ubuntu-latest, python: "3.12" }
+          # Benji is a Mac app and the suite assumes macOS; Python 3.11 is the oldest supported.
+          - { os: macos-latest, python: "3.11" }
           - { os: macos-latest, python: "3.12" }
     steps:
       - uses: actions/checkout@v4
@@ -40,7 +39,8 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          python3 selftest.py 2>&1 | tee selftest.log
+          # The same command contributors run: a throwaway home, so no test touches the runner's own.
+          python3 tools/isolated_run.py -- python3 selftest.py 2>&1 | tee selftest.log
       - name: Show what failed
         if: failure()
         shell: bash
@@ -83,7 +83,8 @@ jobs:
 
   swift-tests:
     name: Swift tests and ServeCheck (macOS)
-    runs-on: macos-15
+    # The app uses macOS 26 APIs behind availability checks, so it needs the macOS 26 SDK (Xcode 26).
+    runs-on: macos-26
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
