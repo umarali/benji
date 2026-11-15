@@ -335,6 +335,7 @@ def main(argv: list[str] | None = None) -> int:
     except (SystemExit, ProviderError) as e:
         print(str(e), file=sys.stderr)
         return 2
+    agent.carry_taint = True        # the REPL keeps one conversation, so a page read earlier still counts
 
     def run_one(text: str, attachments: list[dict] | None = None) -> None:
         # A terminal sees the answer as it streams; a pipe gets it once, at the end.

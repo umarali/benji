@@ -21,7 +21,8 @@ Benji has two main parts and one optional one:
 
 - A SwiftPM package with two targets. `BenjiCore` holds logic that has no user interface and is
   unit-tested; `BenjiApp` holds the AppKit and SwiftUI code.
-- Speech is transcribed on the Mac with Apple's on-device recognition. Only text reaches the engine.
+- Speech is transcribed on the Mac with Apple's on-device recognition, so only text reaches the
+  engine. Cloud transcription through the engine is an opt-in setting.
 - The app starts one engine for itself: `python3 -m benji --serve`, run through a zsh login shell
   from the checkout the app was built in. Set `BENJI_DIR` to use another checkout. Because the
   engine is loaded from the checkout, keep `Benji.app` inside it.
@@ -80,4 +81,5 @@ relays messages both ways. The host reads no pages and runs no commands.
 | `browser-extension/test/` | The extension's rules | `node --test browser-extension/test/*.test.mjs` |
 | `companion/ServeCheck/` | The app's backend against a real engine | `python3 -I companion/ServeCheck/run.py` |
 
-None of them calls a live model. GitHub Actions runs all four on macOS for every pull request.
+None of them calls a live model. GitHub Actions runs all four for every pull request: the
+extension tests on Ubuntu, the rest on macOS.

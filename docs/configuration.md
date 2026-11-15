@@ -12,18 +12,22 @@ provider, and the optional extras.
 
 ### In the app
 
-- **Talk:** hold **Right ⌥**, speak and release, or tap it once to start and again to send.
+- **Talk:** hold **Right ⌥**, speak and release. A tap starts a conversation: Benji sends each
+  message when you pause, and stops when you say "that's all" or go quiet. Opening the panel
+  starts listening too, and listening can go on after the panel closes; Settings › Voice has
+  **Listen while Benji is open** and **Keep listening when the panel closes** to turn these off.
   Speech is transcribed on your Mac with Apple's on-device recognition. Spoken questions are
   answered aloud, and typed ones too if you turn on **Read answers aloud**. The key needs Accessibility; the mic button in the panel works without it.
   `defaults write com.emerssive.heybenji.app talkKey off` turns the key off.
 - **Type:** open the panel from the notch or the menu-bar icon and use the message box.
 - **Esc:** stops an answer in progress, then folds the panel; otherwise it folds or closes it. On
   an approval card it means **No**; in Settings it goes back; in the conversation list it goes home.
-- **Show your screen:** the viewfinder button sends one screenshot with the **next message only**.
-  The answer may point at a control with a ring or outline a region. There is no continuous
-  capture. If Screen Recording is off, your message waits on a confirmation card: choose **Send
-  without screen** to send it alone, or Cancel to put it back in an empty message box. A draft
-  already in the box is kept.
+- **Show your screen:** Settings › Screen decides. **Off** never sends it; **Ask** shows a card
+  before each message; **On** sends a screenshot with every message, and new installs start in
+  On. Each capture goes with one message; there is no continuous recording. The answer may point
+  at a control with a ring or outline a region. If Screen Recording is not granted, the message
+  waits on the card: choose **Send without screen** to send it alone, or Cancel to put it back in
+  the message box.
 
 ### What Benji can do
 
@@ -142,8 +146,9 @@ python3 -m benji --listen                                 # always-listening loo
 tools/voice-setup.sh                                           # optional on-device voice (Kokoro), downloads ~400 MB
 ```
 
-The app does not need these: it transcribes on-device. `--voice` and `--listen` need `ffmpeg` and
-`OPENAI_API_KEY` (Whisper) or `DEEPGRAM_API_KEY`.
+The app does not need these: it transcribes on-device unless you set its `pttTranscriber` setting
+to `engine`. `--voice` and `--listen` need `ffmpeg` and `OPENAI_API_KEY` (Whisper) or
+`DEEPGRAM_API_KEY`.
 
 ## macOS automation, skills and memory
 

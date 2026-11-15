@@ -125,10 +125,15 @@ class Ctx:
     @property
     def taint_source(self) -> str:
         """What the turn read, in the card's words: each source once, in the order they came."""
-        notes = list(dict.fromkeys(self.taint_notes.values()))
-        if not notes:
-            return ""
-        return notes[0] if len(notes) <= 1 else ", ".join(notes[:-1]) + " and " + notes[-1]
+        return _joined(self.taint_notes.values())
+
+    def carried(self) -> tuple[set[str], str]:
+        """What the next turn of the same conversation inherits: the kinds whose content stays in
+        the messages, named as read earlier. A screenshot does not stay: it leaves the conversation
+        when its turn ends."""
+        kinds = self.taints - {gate.TAINT_SCREEN}
+        notes = [note for kind, note in self.taint_notes.items() if kind in kinds]
+        return kinds, gate.earlier_note(_joined(notes)) if kinds else ""
 
     def taint(self, source: str, host: str = "", code: str = "", kinds=None) -> None:
         """The turn read `source`, of the given kinds (default: the one `source` is). Each kind
@@ -155,6 +160,13 @@ class Ctx:
             procs = list(self.running)
         for proc in procs:
             _kill_group(proc)
+
+
+def _joined(notes) -> str:
+    notes = list(dict.fromkeys(notes))
+    if not notes:
+        return ""
+    return notes[0] if len(notes) <= 1 else ", ".join(notes[:-1]) + " and " + notes[-1]
 
 
 def _kill_group(proc: subprocess.Popen) -> None:

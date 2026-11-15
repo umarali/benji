@@ -347,6 +347,62 @@ def _in_git_worktree(cwd: Path) -> bool:
                for parent in (cwd, *cwd.parents))
 
 
+# Settings in a repository's own config that make even `git status`, `diff`, `log` or `show` run another
+# program: (section, key), where a section with a subsection name ([diff "pdf"]) counts by its first word.
+_GIT_RUNS_PROGRAMS = {("core", "fsmonitor"), ("core", "pager"), ("core", "sshcommand"), ("core", "askpass"),
+                      ("diff", "textconv"), ("diff", "external"), ("diff", "command"), ("filter", "clean"),
+                      ("filter", "smudge"), ("filter", "process"), ("include", "path"), ("includeif", "path"),
+                      ("log", "showsignature"), ("gpg", "program"), ("pager", "*")}
+
+
+def _git_dirs(cwd: Path) -> list[Path]:
+    """The repository's git folders for `cwd`, found from metadata only: no git process runs."""
+    for parent in (cwd, *cwd.parents):
+        dot = parent / ".git"
+        if dot.is_dir():
+            git_dir = dot
+        elif dot.is_file():
+            try:
+                line = dot.read_text(errors="replace").strip()
+            except OSError:
+                return []
+            if not line.startswith("gitdir:"):
+                return []
+            git_dir = (parent / line[len("gitdir:"):].strip()).resolve()
+        else:
+            continue
+        dirs = [git_dir]
+        try:
+            common = (git_dir / "commondir").read_text(errors="replace").strip()
+            dirs.append((git_dir / common).resolve())
+        except OSError:
+            pass
+        return dirs
+    return []
+
+
+def git_runs_programs(cwd: Path) -> str:
+    """The first setting in the repository's own config that makes git run another program, or ""."""
+    for git_dir in _git_dirs(cwd):
+        for name in ("config", "config.worktree"):
+            try:
+                text = (git_dir / name).read_text(errors="replace")
+            except OSError:
+                continue
+            section = ""
+            for raw in text.splitlines():
+                line = raw.strip()
+                if not line or line.startswith(("#", ";")):
+                    continue
+                if line.startswith("["):
+                    section = line[1:].split("]", 1)[0].split()[0].strip('"').lower() if line[1:].strip("] ") else ""
+                    continue
+                key = line.split("=", 1)[0].strip().lower()
+                if (section, key) in _GIT_RUNS_PROGRAMS or (section, "*") in _GIT_RUNS_PROGRAMS:
+                    return f"{section}.{key}"
+    return ""
+
+
 def _find_references(args: list[str]) -> list[str]:
     paths, i = [], 0
     while i < len(args):
@@ -809,6 +865,11 @@ def _shell_check(command: str, workdir: Path, cwd: Path | None = None) -> tuple[
                 return f"read outside the working folder ({raw}) with `{prog}`", "shell_outside_path"
         if prog == "git" and argv[1:2] == ["diff"] and paths and not _in_git_worktree(cwd):
             raise _Unclear("git diff outside a worktree may implicitly read files with --no-index")
+        if prog == "git":
+            runs = git_runs_programs(cwd)
+            if runs:
+                return (f"run `{' '.join(argv[:2])}`: this repository's git settings can run other programs "
+                        f"({runs})"), "shell_args"
         if reader and reader.refused:
             return f"run `{prog}`: {reader.refused}", "shell_args"
     return None
@@ -1184,6 +1245,12 @@ def taint_kind(source: str) -> str:
     if s.startswith("the screen"):
         return TAINT_SCREEN
     return TAINT_FILE
+
+
+def earlier_note(note: str) -> str:
+    """How outside content read in an earlier turn of the same conversation is named on a card."""
+    suffix = " earlier in this conversation"
+    return note if note.endswith(suffix) else f"{note}{suffix}"
 
 
 def taint_kinds_in(text: str) -> set[str]:

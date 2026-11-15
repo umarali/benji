@@ -196,6 +196,11 @@ class Server:
         self.earlier_dropped = False        # older exchanges of this conversation are gone
         self.last_committed: str | None = None   # the turn whose answer ends the history
         self.note = ""                      # the conversation's private note (keep_note), given back each turn
+        # Outside content a committed turn read stays in the conversation (a screenshot does not), so
+        # the next turns inherit its taint, as a job inherits its starting turn's, until a new
+        # conversation starts.
+        self.taints: set[str] = set()
+        self.taint_note = ""
         self.turn: _Turn | None = None
         self.greeted = False
         self.lock = threading.RLock()   # guards history, the current turn, and turn events
@@ -974,12 +979,13 @@ class Server:
             turn.jobs = turn.jobs and info.jobs
             turn.schedules = turn.jobs and turn.schedules and info.schedules
             self._emit({"type": "accepted", "id": turn_id})   # the app marks the message as heard
+            carried = (set(self.taints), self.taint_note)
         worker = threading.Thread(target=self._run_turn, daemon=True,
-                                  args=(turn, text, images, prior, info))
+                                  args=(turn, text, images, prior, info, carried))
         worker.start()
 
     def _run_turn(self, turn: _Turn, text: str, images: list[dict], prior: list[dict],
-                  info: TurnInfo) -> None:
+                  info: TurnInfo, carried: tuple[set[str], str] = (set(), "")) -> None:
         agent = None
         status = "ok"
         try:
@@ -1027,7 +1033,10 @@ class Server:
                 turn.agent = agent
                 if turn.cancelled.is_set():
                     agent.stop()
-            answer = agent.send(text, images=images or None)
+            kinds, note = carried
+            answer = agent.send(text, images=images or None,
+                                tainted_by=note,
+                                taints=kinds or None)
         except ProviderError as e:
             audit.error("turn", "provider", e, turn.id)
             if providers_mod.is_safety_stop(e):         # the filter's stop is told as that, plainly
@@ -1047,6 +1056,7 @@ class Server:
                     return              # `done {cancelled}` was already sent
                 self.history = committed(agent.messages)
                 self.last_committed = turn.id
+                self.taints, self.taint_note = agent.ctx.carried()
                 if turn.note is not None:
                     self.note = turn.note
                 turn.committed = True   # from here a cancel can't take it back
@@ -1301,6 +1311,7 @@ class Server:
             return
         # The app has already dropped older ones itself when it says so.
         self.earlier_dropped = dropped or req.get("dropped") is True
+        self.taints, self.taint_note = set(), ""     # a restored conversation holds the exchanges' words, no tool output
 
     def _reset(self, req: dict) -> None:
         if self.busy():
@@ -1310,6 +1321,7 @@ class Server:
         self.earlier_dropped = False
         self.last_committed = None
         self.note = ""
+        self.taints, self.taint_note = set(), ""
 
 
 class Deltas:

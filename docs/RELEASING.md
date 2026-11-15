@@ -11,8 +11,9 @@ Semantic versioning, `MAJOR.MINOR.PATCH`, while pre-1.0 meaning: `0.MINOR.0` may
 the `--serve` protocol; `0.x.PATCH` is fixes only. A new permission, a new Chrome extension
 permission, or a gate rule that asks *less* is at least a MINOR and is named in the changelog.
 
-The version lives in **one place that the build reads**: `VERSION` in `companion/build.sh` (today
-`0.1.0`), which becomes `CFBundleShortVersionString` and `CFBundleVersion`. The extension has its own
+The app's version is `VERSION` in `companion/build.sh` (today `0.1.0`), which becomes
+`CFBundleShortVersionString` and `CFBundleVersion`. The engine's is `__version__` in
+`benji/__init__.py`, which `python3 -m benji --version` prints; keep the two the same. The extension has its own
 `version` in `browser-extension/manifest.json`; move it only when the extension changes. For a notarised
 build, make `CFBundleVersion` a number that goes up on every build (Apple and Sparkle-style updaters
 compare it); until then it equals the short version.
@@ -48,7 +49,7 @@ git push origin v0.1.0                                # (owner)  publishes the t
 ### 3. Build
 
 ```bash
-cd companion && ./build.sh                             # (owner)
+(cd companion && ./build.sh)                           # (owner)  from the repository root
 ```
 
 For a distributable build the local self-signed certificate is not enough: sign with the Developer ID
@@ -142,7 +143,7 @@ the app, open it, and confirm there is no Gatekeeper block and that the permissi
 ### 7. After
 
 - [ ] Move `Unreleased` items in `CHANGELOG.md` under the new version if not already done; start a fresh `Unreleased`.
-- [ ] Bump `VERSION` in `companion/build.sh` to the next development version in a separate commit.
+- [ ] Bump `VERSION` in `companion/build.sh` and `__version__` in `benji/__init__.py` to the next development version in a separate commit.
 - [ ] Add the release to the README only if install instructions changed (for example, a download link replaces "Build from source").
 
 ## Release notes format

@@ -144,8 +144,9 @@ certificate for the first typed message. See the README's
 
 This is a **user-run live check**, not an offline demo. The earlier checks did not perform it.
 
-Close guided setup with **Not now** if you are leaving permissions off. Open the panel
-from the menu-bar icon, leave the viewfinder off, and type:
+Close guided setup with **Not now** if you are leaving permissions off. New installs send a
+screenshot with every message, so set **Settings › Screen** to **Off** first (or choose **Send
+without screen** if a card asks). Open the panel from the menu-bar icon and type:
 
 > Reply with one short greeting. Do not use tools.
 
@@ -167,7 +168,7 @@ permission leaves its related feature unavailable.
 | Type and read an answer | Model configuration. No microphone or screen access needed. |
 | Speak using the mic button | Microphone and Speech Recognition. Transcription is on-device. |
 | Use the Right Option talk key | Accessibility, as well as the voice permissions. |
-| Include your screen with a message | Screen Recording. Use the viewfinder for the next message only. |
+| Include your screen with a message | Screen Recording. Settings › Screen chooses Off, Ask or On. |
 | Ask Benji to script another app | Automation for that app. macOS asks when the task needs it. |
 
 For Accessibility, guided setup opens System Settings and offers an app tile to drag into
@@ -200,3 +201,25 @@ For a bug report, run `python3 -m benji --diagnose` from the repository folder, 
 Settings → General → Diagnostics. Review the report before sharing it. Include your macOS,
 Python and Xcode versions and the step that failed. Do not attach keys or private conversation
 text. [Open a bug report](https://github.com/umarali/benji/issues/new/choose).
+
+## Uninstall
+
+These steps remove the app and what it registered, and keep your data until you choose to delete it.
+
+1. In Settings › General, turn off **Open Benji at login**. If you used browser reach, turn off
+   Settings › Browser, which removes Benji's registration from every browser, then remove the
+   extension on the browser's extensions page.
+2. Quit Benji from the menu-bar icon (**Quit Benji**), then delete the checkout folder. The app is
+   inside it.
+3. To remove the permissions you granted, remove Benji from each list in System Settings › Privacy
+   & Security, or run `tccutil reset All com.emerssive.heybenji.app`.
+4. To remove the app's settings: `defaults delete com.emerssive.heybenji.app`.
+
+Your data is still on your Mac after these steps. Delete these only if you no longer want them:
+
+| Where | What it holds |
+|---|---|
+| `~/.benji` (or your `BENJI_WORKDIR`) | Conversations, memory, job folders and logs |
+| `~/.benji.env` | Your API keys |
+| Keychain Access, items named `com.emerssive.heybenji.app.keys` | Your API keys, if you moved them to the Keychain |
+| `~/Library/Application Support/Benji` | The browser link's private files |

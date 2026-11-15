@@ -100,6 +100,19 @@ def main() -> int:
                                {"script": 'tell application "Notes" to make new note'})[0] is True)
         check("do-shell-script AppleScript IS gated",
               T.needs_approval(ctx, "run_applescript", {"script": 'do shell script "ls"'})[0] is True)
+        # Setting an app object's property changes the user's data, even though `set` also names a local variable.
+        for script in ['tell application "Notes" to set body of note 1 to "replacement"',
+                       'tell application "Notes"\n  set the body of note 1 to "x"\nend tell',
+                       'tell application "Notes"\n  tell note 1\n    set body to "replacement"\n  end tell\nend tell',
+                       'tell application "Reminders" to set completed of reminder 1 to true',
+                       'tell application "Calendar"\n  set summary of event 1 of calendar 1 to "Moved"\nend tell']:
+            check(f"AppleScript that sets an app's property IS gated: {script[:45]!r}",
+                  T.needs_approval(ctx, "run_applescript", {"script": script})[0] is True)
+        for script in ['tell application "Calendar"\n  set evs to every event of calendar 1\n  return count of evs\nend tell',
+                       'set d to (current date) - 3600\nreturn d',
+                       'tell application "Notes" to set n to name of note 1\nreturn n']:
+            check(f"AppleScript that only reads into a local variable NOT gated: {script[:45]!r}",
+                  T.needs_approval(ctx, "run_applescript", {"script": script})[0] is False)
         check("run_shortcut IS gated",
               T.needs_approval(ctx, "run_shortcut", {"name": "Pay Rent"})[0] is True)
 
@@ -125,6 +138,29 @@ def main() -> int:
                     "rg --pre sh x .", "echo $ANTHROPIC_API_KEY", "ls $(echo /)", "ls `pwd`",
                     "(cat note.txt)", "cat < note.txt", "ls {a,b}", "FOO=1 ls", "/bin/ls"]:
             check(f"shell off the read-only list, or outside the folder, IS gated: {cmd}", gated(cmd) is True)
+        # A repository's own git settings can make a read-only command run another program.
+        with tempfile.TemporaryDirectory() as gtd:
+            repo = Path(gtd)
+            (repo / ".git").mkdir()
+            (repo / ".git" / "config").write_text("[core]\n\trepositoryformatversion = 0\n\tbare = false\n")
+            gctx = T.Ctx(workdir=repo)
+            gctx.begin_turn("what changed?")
+            gask = lambda cmd: T.needs_approval(gctx, "run_shell", {"command": cmd})
+            check("git status in an ordinary repository NOT gated", gask("git status")[0] is False)
+            for section, line, cmd in [("core", "fsmonitor = ./watch.sh", "git status"),
+                                       ('diff "pdf"', "textconv = ./conv.sh", "git diff"),
+                                       ("diff", "external = ./ext.sh", "git log -p"),
+                                       ('filter "lfs"', "clean = ./clean.sh", "git status"),
+                                       ("core", "pager = ./page.sh", "git show"),
+                                       ("include", "path = ../other.cfg", "git status"),
+                                       ("log", "showSignature = true", "git log")]:
+                (repo / ".git" / "config").write_text(f"[core]\n\tbare = false\n[{section}]\n\t{line}\n")
+                asked, why = gask(cmd)
+                check(f"{cmd} IS gated when the repository sets {section} {line.split()[0]}",
+                      asked is True and "git settings can run" in why)
+            (repo / ".git" / "config").unlink()
+            (repo / ".git" / "config.worktree").write_text("[core]\n\tfsmonitor = ./watch.sh\n")
+            check("a worktree config that runs a program is gated too", gask("git status")[0] is True)
         check("allowed pieces with a subshell in the middle are asked, and the card says why",
               "can't check first" in T.needs_approval(ctx, "run_shell",
                                                       {"command": "ls; cat $(cat note.txt) | wc -l"})[1])
@@ -4033,6 +4069,11 @@ def jobs_checks() -> None:
             srv.handle({"type": "send", "id": "t2", "text": "and another", "jobs": True})
             check("the user's words for the gate are theirs, not the brief: the job ctx compares against them",
                   made["agent"].ctx.user_text.startswith("read https://news.example/story then dig deeper"))
+            second = ev.wait(lambda e: e.get("type") == "approval" and e.get("id") == "t2")
+            check("the next turn still holds the page, so its job start asks too",
+                  second is not None and "web page" in second["action"])
+            if second is not None:
+                srv.handle({"type": "approve", "id": "t2", "request": second["request"], "decision": "yes"})
             ev.wait(done("t2"))
             refusal = [m for m in fg.seen[-1][0] if m.get("role") == "tool"][-1]["content"]
             check("a second job while one is live is refused, and the model told so",

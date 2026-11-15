@@ -7,7 +7,7 @@ decision gets a new entry that supersedes it.
 
 Status values: **Active**, **Superseded by D-xx**, **Open** (needs a decision).
 
-> **Public trim.** This is the maintainer's decision log with 58 of 211 entries left out because they refer to private working material. Ids are kept, not renumbered, so gaps are expected. References to files that are not part of this repository read "(not in this export)".
+> **Public trim.** This is the maintainer's decision log with 58 of 212 entries left out because they refer to private working material. Ids are kept, not renumbered, so gaps are expected. References to files that are not part of this repository read "(not in this export)".
 
 ---
 ## Building pal: backend and CLI
@@ -1594,4 +1594,13 @@ D-198 adoption gate: validate ordinary figure-on and synthetic screen-context be
 - **Comments:** decision ids, internal codenames, dates and references to private notes are gone from the code's comments, docstrings and check names; the reasons stay.
 - **How "nothing breaks" was checked:** a syntax-tree comparison for Python and a comment-stripped comparison for Swift showed the comment passes changed no code; a load-time check that every global name each function uses exists after the `tools` split; the full engine selftest, the Swift suite, ServeCheck and the extension tests after each step.
 - **Not done:** `serve.py`'s `Server` class is still about 1,100 lines (splitting it needs real refactoring, not moves); the extension still asks for `debugger` at install.
+- **Status:** Active.
+
+### D-213 · Fixes from an independent review of the docs and the code (2026-11-15 23:45 PKT)
+
+- **Who:** the owner: "Could you get Astra 6.1 high review on the current docs? And implementation?" Astra 6.1 is not offered; the owner chose GPT-6 Astra with high reasoning. Two read-only reviews ran, one of the docs and one of the code. For the code the owner chose the approval gaps and the small engine and app bugs; browser and network hardening was not chosen. Claude (Opus 5.5) made the engine and docs changes; an Opus 5.5 agent made the app change.
+- **Approval gaps closed:** (1) outside content a turn read (a web page, a browser tab, a file outside the folder) stays in the conversation, so later turns of the same conversation inherit its taint, in the app's engine and in the command-line conversation, until a new conversation starts; a screenshot is not carried, because it leaves the conversation when its turn ends. (2) `git` in a repository whose own config can run programs (`core.fsmonitor`, `core.pager`, `diff.external`, filters, `include.path` and the rest) asks instead of running free. (3) AppleScript that sets or copies an application's property counts as a change. (4) Tool arguments that are valid JSON but not an object end in a tool error; nothing runs.
+- **App bugs fixed:** an engine started before the first message (by the talk key, or the browser or schedules switch) was not given the conversation the app was showing; a message queued before the engine was ready did not say whether that engine runs schedules.
+- **Docs corrected:** the screen modes (Off, Ask, On; new installs start in On) replace "one screenshot with the next message only"; listening starts when the panel opens and can continue after it closes; `answers.jsonl` and saved conversations hold content (the audit log is metadata only); file tools refuse private locations, while a shell command that reads them asks; cloud transcription is available in the app by a setting; a local model keeps the model's work local, while web tools still go out; plain `http://` is allowed for custom servers on private addresses; keys can move to the Keychain; the CI runners; the release steps and both version numbers; providers: Anthropic's API has been used live; an uninstall section in the setup guide. One finding was not taken: it asked to drop links to the decision log and the design system, which are public.
+- **Alternatives:** the browser hardening findings (checking a page did not change between the read and the act, DNS rebinding, closing only a job's own tabs): not chosen now. Carrying a screenshot's taint: rejected, because the picture is gone from the conversation.
 - **Status:** Active.

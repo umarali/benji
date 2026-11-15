@@ -13,9 +13,8 @@ from .context import Ctx, _run, _truncate
 # Stance: automate apps through their own scripting, never by faking clicks.
 
 # Verbs that change state, send things, or escape to the shell -> need approval.
-# Bare `set` is intentionally excluded: AppleScript uses it for local variable
-# assignment in read-only scripts (e.g. date math), so gating it would prompt on
-# nearly every read. The verbs below still catch real mutations.
+# A bare `set` is not in this list: AppleScript also uses it for local variables in read-only scripts
+# (date math, results of a read). Property writes made with `set` are caught by `_sets_a_property` below.
 # `do script` (Terminal), `run script`/`load script` (other code), raw «event»/«class» codes (the
 # user can't read them), `set URL`/`set name` and `open location`.
 _AS_MUTATING = re.compile(
@@ -24,8 +23,35 @@ _AS_MUTATING = re.compile(
     r"|«|<<\s*(?:event|class)\b|\bset\s+(?:the\s+)?(?:URL|name)\b|\bopen\s+location\b", re.I)
 
 
+# `set` and `copy` also write an app object's property: `set body of note 1 to "x"`, or inside a
+# `tell` block `set body to "x"`. A property is named with `of`; inside an app's tell block a bare name
+# set to a literal value is the target's own property. A local variable filled from a read (`set evs
+# to every event of calendar 1`) names no `of` and takes no literal, so it stays a read.
+_AS_SET = re.compile(r"\b(?:set|copy)\s+(.+?)\s+to\s+(.+)", re.I)
+_AS_COPY = re.compile(r"\bcopy\s+.+?\s+to\s+(.+)", re.I)
+_AS_LITERAL = re.compile(r"""^(?:["\u201c]|-?\d|true\b|false\b|\{|missing\s+value\b|date\s+")""", re.I)
+_AS_TELL_APP = re.compile(r"\btell\s+(?:application|app)\b", re.I)
+
+
+def _sets_a_property(script: str) -> bool:
+    in_app = bool(_AS_TELL_APP.search(script))
+    for line in script.splitlines():
+        copied = _AS_COPY.search(line)
+        if copied and re.search(r"\bof\b", copied.group(1), re.I):
+            return True
+        m = _AS_SET.search(line)
+        if not m or line.lstrip().lower().startswith("copy"):
+            continue
+        target, value = m.group(1).strip(), m.group(2).strip()
+        if re.search(r"\bof\b", target, re.I):
+            return True
+        if in_app and _AS_LITERAL.match(value):
+            return True
+    return False
+
+
 def applescript_is_mutating(script: str) -> bool:
-    return bool(_AS_MUTATING.search(script))
+    return bool(_AS_MUTATING.search(script)) or _sets_a_property(script)
 
 
 # Read-only in AppleScript's terms, but they act as the user or reach private data,

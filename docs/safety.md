@@ -6,8 +6,8 @@ How Benji limits what it can do, how a background job runs, and how a job may us
 
 - The rules that limit Benji are in **code**, not only in the prompt. A model persuaded by a web
   page still cannot widen what the code allows.
-- Anything destructive or outward-facing asks you first. Private places such as keys and mail are
-  refused outright.
+- Anything destructive or outward-facing asks you first. The file tools refuse private places such
+  as keys and mail; a shell command that reads them asks.
 - Background jobs and browser reach follow the same rules, and both are newer: see
   [Feature status](status.md).
 
@@ -21,20 +21,23 @@ Every tool call is classed *free* (read-only, inside the working folder), *quiet
 - **Asks first** (a card in the app, `y/N` in the terminal): destructive shell commands (`rm`,
   `mv`, `sudo`, `git push`…), overwrites, sends, writes outside the working folder, reads outside
   it, and sensitive capabilities.
-- **Refused outright**, including through a symlink: private locations such as keys, mail,
-  messages, browser data and Benji's own key file.
+- **Refused outright** by the file tools, including through a symlink: private locations such as
+  keys, mail, messages, browser data and Benji's own key file. A shell command that reads them
+  asks, with a card naming what it would read.
 - **The shell is a read-only allowlist.** A parser reads each command, and anything it does not
   understand asks.
 
-`--yes` approves everything automatically. Use it only where you trust everything the model
-might read.
+`--yes` approves everything that would ask, including shell reads of private locations. Use it
+only where you trust everything the model might read.
 
 ### Taint
 
 Once a turn has read something from outside (a web page, a browser tab, a file outside the
 working folder, an unverified skill), anything it then changes asks, whatever the model says.
-Looking at your screen is a weaker source and is tracked apart. Taint passes from a turn into a
-job it starts, and back to a turn that reads the job's result.
+Looking at your screen is a weaker source and is tracked apart. Outside content stays in the
+conversation, so the turns after it are tainted too, until a new conversation starts; a
+screenshot leaves the conversation with its turn, so it does not carry over. Taint passes
+from a turn into a job it starts, and back to a turn that reads the job's result.
 
 ### Instructions are data
 
@@ -150,7 +153,7 @@ stops the job. The extension attaches only for the step and lets go after.
 
 - A granted site is read and acted on **as you**, with your cookies: a signed-in page's text goes
   to your model provider, and a click is a click by you.
-- Page text is outside content, so reading it taints the job and every change the job then makes
-  asks.
+- Page text is outside content, so reading it taints the job: every change to files, apps or
+  commands then asks, and browser actions follow the table above.
 - Browser reach is **not live-tested** in a real profile. Arc and the other Chromium browsers have
   a switch but have not been tried. There is no Web Store build yet; see [ROADMAP.md](ROADMAP.md).

@@ -377,9 +377,17 @@ r = run("subshell")
 check("gate: allowed commands around a subshell are asked, and the card says why",
       approvalsSeen.count == 1 && approvalsSeen[0].action.contains("can't check first")
       && approvalsSeen[0].target == "ls; cat $(cat note.txt) | wc -l")
+// The hostile page is still in this conversation, so the next turn's remember asks; after a
+// reset (a new conversation) it needs no card.
 approvalsSeen = []
 r = run("my name is Umar")
-check("gate: remembering what the user said needs no card",
+check("gate: the page read earlier is still in the conversation, so the next remember asks and says so",
+      approvalsSeen.count == 1 && approvalsSeen[0].action.contains("earlier in this conversation")
+      && !r.events.contains(.activity(kind: "remembered", name: nil)))
+b.reset()
+approvalsSeen = []
+r = run("my name is Umar")
+check("gate: in a new conversation, remembering what the user said needs no card",
       approvalsSeen.isEmpty && r.events.contains(.activity(kind: "remembered", name: nil)))
 
 // The screen as a whiteboard: what Benji has on the screen goes with each

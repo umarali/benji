@@ -59,9 +59,9 @@ Benji works without the ones you decline.
 
 | Permission | Why |
 |---|---|
-| Microphone, Speech Recognition | Talking: recorded only while you hold the talk key or the mic button, transcribed on this Mac |
+| Microphone, Speech Recognition | Talking: while you hold the talk key, after a tap, and while the panel is open (Settings › Voice), transcribed on this Mac |
 | Accessibility | The Right ⌥ talk key, Esc to cancel, and screen control when you ask for it |
-| Screen Recording | Screen context and pointing, only when you use the viewfinder or ask a screen question |
+| Screen Recording | Screenshots with your messages, as Settings › Screen sets, and pointing |
 | Automation (per app) | AppleScript tasks you ask for; macOS asks the first time for each app, and Benji still asks you |
 
 The first launch opens a small setup window for these. Reopen it from **Settings → Permissions →
@@ -91,7 +91,8 @@ python3 -I companion/ServeCheck/run.py                                        # 
 ```
 
 The extension's page-text test starts Chrome **headless** with a throwaway profile if Chrome is
-installed, and is skipped otherwise. All of this is checked on macOS only.
+installed, and is skipped otherwise. In CI, the engine, Swift and ServeCheck jobs run on macOS;
+the extension tests and the repository checks run on Ubuntu.
 [tests/README.md](../tests/README.md) says which engine test file covers what.
 
 ## Where things are

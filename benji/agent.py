@@ -71,6 +71,9 @@ class Agent:
         # Called after each tool with its result (the --serve activity line); set by the caller.
         self.on_tool_done: Callable[[str, dict, str], None] = lambda name, inp, result: None
         self.messages: list[dict] = []
+        # True when this agent keeps one conversation across turns (the command-line REPL): outside
+        # content an earlier turn read stays in `messages`, so the next turn inherits its taint.
+        self.carry_taint = False
         # The user's policy.json: what it switches off is neither offered nor run. It can only
         # restrict; the agent never reads it again mid-turn.
         self.policy = policy or policy_mod.NONE
@@ -163,6 +166,9 @@ class Agent:
         started it had read, `taints` which kinds. The job inherits the starting turn's taint; the
         gate's rules read the kinds, and the words are shown on the card."""
         message: dict = {"role": "user", "text": user_text}
+        if self.carry_taint and not (tainted_by or taints):
+            # Outside content an earlier turn read is still in this conversation's messages.
+            taints, tainted_by = self.ctx.carried()
         # A turn with an image has taken in outside text from the start (see gate.taint_reason).
         self.ctx.begin_turn(user_text if user_words is None else user_words, screenshot=bool(images))
         if tainted_by or taints:
@@ -207,6 +213,12 @@ class Agent:
                 if self.cancelled():
                     return CANCELLED
                 name, inp = tc["name"], tc.get("input", {})
+                if not isinstance(inp, dict):
+                    # Valid JSON that is not an object (null, a list, a number): nothing can run on it.
+                    result = f"[error] the arguments for {name} must be a JSON object; nothing ran"
+                    self.on_tool_done(name, {}, result)
+                    self.messages.append({"role": "tool", "id": tc["id"], "name": name, "content": result})
+                    continue
                 if acted and name in tools_mod.SCREEN_TOOL_NAMES:
                     result = SCREEN_ONE_AT_A_TIME
                     audit.event("tool", self.ctx.run, tool=name, gate="denied", code="screen_one_at_a_time",

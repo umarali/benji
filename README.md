@@ -23,8 +23,7 @@
 <p align="center">
   <a href="https://umarali.github.io/benji/#demo"><img src="site/assets/benji-demo-jet-engine.jpg" width="820" alt="Benji in the notch of a Mac: a typed request opens a cut-away jet engine in 3D with its fan, compressor, combustion chamber, turbine and exhaust labelled, while Benji explains it aloud"></a>
   <br>
-  <sub>One unedited take, made smaller for the web. A script moved the cursor and typed the request;
-  the answer, voice and 3D drawing are Benji's own. <a href="https://umarali.github.io/benji/#demo">Watch it with sound</a>.</sub>
+  <sub><a href="https://umarali.github.io/benji/#demo">Watch it with sound</a></sub>
 </p>
 
 > [!NOTE]
@@ -34,11 +33,12 @@
 
 ## What it does
 
-- **Talk or type.** Hold Right ⌥ and speak, or type in the panel. Speech is transcribed on your Mac.
+- **Talk or type.** Hold Right ⌥ and speak, or type in the panel. Opening the panel starts
+  listening, which you can turn off in Settings › Voice. Speech is transcribed on your Mac.
 - **Get things done.** Run commands, read and write files, search the web, and script your apps
   with AppleScript and Shortcuts.
-- **Look when you ask.** One screenshot goes with your next message, and Benji can point at the
-  control you need.
+- **See your screen.** A screenshot goes with each message (Settings › Screen: Off, Ask or On),
+  and Benji can point at the control you need.
 - **Draw it in 3D.** Ask how something works and Benji builds a labelled model you can turn.
 - **Work in the background.** Hand off a longer task; it runs in its own folder while you carry on.
 - **Ask before acting.** Anything destructive or outward-facing waits for your yes. The rules are
@@ -67,10 +67,13 @@ first message and grant permissions only when you need them, follow the
 ## Safety and privacy
 
 - **A gate in code.** Every tool call is classed before it runs. Destructive commands, sends and
-  writes outside Benji's folder ask first; keys, mail, messages and browser data are refused.
+  writes outside Benji's folder ask first. File tools refuse keys, mail, messages and browser
+  data; a shell command that reads them asks.
 - **Nothing of its own leaves your Mac.** No telemetry, no account, no hosted backend. Your
-  requests go to the model provider you choose; a model you run yourself keeps them on your Mac.
-- **Logs hold metadata only.** Never message text, file contents or keys.
+  requests go to the model provider you choose. A model you run yourself keeps the model's work
+  on your Mac; web search and fetch still go out.
+- **Benji's folder stays on your Mac.** The audit log holds metadata only. Saved conversations
+  and the answer log (`BENJI_ANSWER_LOG=0` turns it off) hold what was said. Keys are never logged.
 
 Details: [safety, background jobs and browser reach](docs/safety.md) · [privacy](docs/privacy.md)
 · [reporting a vulnerability](.github/SECURITY.md)

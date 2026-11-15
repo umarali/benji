@@ -44,8 +44,9 @@ change needs a live call to verify, describe it in the pull request and keep it 
 
 ## Writing tests
 
-- Python: add a check to `tests/selftest.py` next to the closest existing one, using the offline fakes already
-  there; no network calls.
+- Python: add a check next to the closest existing one, in `tests/selftest.py` or the `tests/check_*.py` file for
+  that area ([tests/README.md](../tests/README.md) lists them), using the offline fakes already there; no network
+  calls.
 - Swift: keep decision logic in `BenjiCore` (Foundation only, so it tests headlessly) with a test in
   `companion/Tests/BenjiCoreTests`. `BenjiApp` holds AppKit and SwiftUI glue.
 - Run UI or browser checks **headless**; do not add tests that open visible windows.
