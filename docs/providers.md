@@ -4,7 +4,7 @@ Benji speaks to Anthropic (Messages API) and to anything that speaks the OpenAI 
 format. DeepSeek, GLM (Z.ai / Zhipu), Kimi (Moonshot) and Qwen (Alibaba Cloud Model Studio) are
 presets of the second: each sets an address, the key variable, a default model, which of its models
 read images, and how its thinking is switched. Ollama and LM Studio are presets for a server on your
-own computer. How to choose is in the [README](../README.md#choosing-a-model-provider); this page says
+own computer. How to choose is in [Using and configuring Benji](configuration.md#choosing-a-model-provider); this page says
 what each provider's documentation told us, and, plainly, what has and has not been checked.
 
 **Read this first.** Everything below about a provider comes from that provider's own API documentation,

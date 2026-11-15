@@ -10,6 +10,11 @@ explorations are not part of this repository.)
 | File | What it is |
 |---|---|
 | [setup.md](setup.md) | Step-by-step Mac setup, an offline check, a first message and troubleshooting. |
+| [status.md](status.md) | Feature status: what has been tried live and what has only been tested offline. |
+| [configuration.md](configuration.md) | Using and configuring Benji: features in detail, settings, choosing a model provider, command-line voice, skills and memory. |
+| [safety.md](safety.md) | The safety model, background jobs and browser reach. |
+| [privacy.md](privacy.md) | What leaves your Mac, where it goes, and what Benji keeps locally. |
+| [building.md](building.md) | Requirements, building and signing `Benji.app`, its permissions, the offline checks and the repository layout. |
 | [design-system/](design-system/) | The design system: name and wordmark, the Exchange icon, colour and type tokens, the notch object, motion, sound and the pointing overlay. |
 | [decisions.md](decisions.md) | The decision log: what was decided, why, and what was turned down. A trimmed copy: entries that refer to private working material are left out and ids are not renumbered. |
 | [proposal-serve.md](proposal-serve.md) | The protocol of `benji --serve`, the JSON-lines interface the app talks to. |
@@ -22,5 +27,5 @@ explorations are not part of this repository.)
 
 The [demo kit](../demo/README.md) explains how to record a real demo safely, in a separate macOS account.
 
-For what Benji is, how to build it and what is verified, start with the top-level
-[README](../README.md); the original design brief is [SPEC.md](../SPEC.md).
+For what Benji is, start with the top-level [README](../README.md); the original design brief is
+[SPEC.md](../SPEC.md).

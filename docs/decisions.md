@@ -7,7 +7,7 @@ decision gets a new entry that supersedes it.
 
 Status values: **Active**, **Superseded by D-xx**, **Open** (needs a decision).
 
-> **Public trim.** This is the maintainer's decision log with 57 of 208 entries left out because they refer to private working material. Ids are kept, not renumbered, so gaps are expected. References to files that are not part of this repository read "(not in this export)".
+> **Public trim.** This is the maintainer's decision log with 57 of 209 entries left out because they refer to private working material. Ids are kept, not renumbered, so gaps are expected. References to files that are not part of this repository read "(not in this export)".
 
 ---
 ## Building pal: backend and CLI
@@ -1575,3 +1575,12 @@ D-198 adoption gate: validate ordinary figure-on and synthetic screen-context be
 - **Not verified:** which model answered (the owner's configuration, not read), and whether every sentence of Benji's explanation is technically exact. The 3D model is Benji's own simplification, and its answer says so.
 - **Alternatives:** the owner records by hand (D-182, D-208): set aside for this demo by the owner. The approval-card clip: replaced by the 3D clip. Granting the agent host the two permissions: not chosen, because every agent session would gain them.
 - **Status:** Active for this demo only. Cleanup owed: the recorder app in `/Applications` and its two permissions, and the demo build.
+
+### D-210 · A short README; the reference text moves to five pages under docs/ (2026-11-15 19:17 PKT)
+
+- **Who:** the owner, on seeing the published README: "I do not really like that project page link right next to the CI-passing tag. I also don't like a huge README ... We need to organize that in a good way." Claude (Opus 5.5) restructured it.
+- **What:** `README.md` goes from 463 lines to about 100: a centred header (icon, name, the repository's one-line description, the CI badge alone, then a row of links), the demo still, what Benji does, a quick start, three lines on safety and privacy, a table of the docs, and contributing. The reference sections move word for word, with only their links repointed, to `docs/status.md`, `docs/configuration.md` (with the detailed feature list), `docs/safety.md`, `docs/privacy.md` and `docs/building.md`.
+- **Kept working:** every link into the old README sections (the setup guide, the providers page, the project page, the release checklist, the roadmap, the changelog, `AGENTS.md`) points at the new pages; a script checked 87 relative links and anchors. The selftest's README checks now read the page each text moved to, with the same strings; one new check: the README links every page. The export keeps the five pages.
+- **Why:** the build steps, the status and the safety rules sat in one long page; a front page that says what Benji is and links the detail reads better and is easier to keep true.
+- **Alternatives:** trimming the README in place (it would still mix the front page with reference text); deleting detail (rejected: the text is the evidence behind the labels).
+- **Status:** Active.

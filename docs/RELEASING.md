@@ -34,8 +34,8 @@ compare it); until then it equals the short version.
   (the export tool's `--require-filled` run above passes).
 - [ ] Live checks owed for any feature the release notes call more than "experimental" are done and
   written down (the maintainer's readiness notes list them under "Live verification still owed"). Do not upgrade a label in
-  the README's status table without one.
-- [ ] README status table, `docs/providers.md` and the changelog agree with each other.
+  the status table (`docs/status.md`) without one.
+- [ ] The status table (`docs/status.md`), `docs/providers.md` and the changelog agree with each other.
 
 ### 2. Tag
 
@@ -151,7 +151,7 @@ Same sections as the changelog entry (Keep a Changelog: Added, Changed, Deprecat
 Security). Put these first, plainly, because they decide whether someone should install it:
 
 1. **One-line summary** and the date.
-2. **Status of each headline feature** using the README's three labels (stable, experimental, not
+2. **Status of each headline feature** using the status table's three labels (stable, experimental, not
    live-tested). Never raise a label in the release notes without the live check behind it.
 3. **What this build asks of the user**: macOS version, permissions, anything that changed since the
    last version (a new permission, a changed default, a gate rule that now asks less).

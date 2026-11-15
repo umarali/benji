@@ -5,7 +5,7 @@ Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic
 Versioning](https://semver.org/) with the pre-1.0 meaning described in
 [docs/RELEASING.md](docs/RELEASING.md).
 
-Each headline feature carries the README's honesty label: **stable** (used by the maintainer on one Mac
+Each headline feature carries the status table's honesty label: **stable** (used by the maintainer on one Mac
 over weeks), **experimental** (unit-tested, run live once and briefly) or **not live-tested**
 (unit-tested against fakes only).
 
@@ -151,7 +151,7 @@ notarised download; you build it from source.
 ### Known issues and limits
 
 - No notarised build, no installer. A self-built app signed ad hoc loses its permissions on every rebuild
-  (see the README's build section).
+  (see [Building from source](docs/building.md#build-from-source)).
 - Jobs are interrupted by quitting and do not resume; one job at a time; no sound cues.
 - Browser reach: Chrome only, unpacked extension, never used in a real profile; an IDN site cannot be
   granted.

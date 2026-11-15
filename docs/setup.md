@@ -5,7 +5,7 @@ you can try a typed message and add voice or screen access when you need them.
 
 Benji is early software. There is **no signed or notarised download yet**. This guide uses
 Terminal to build the app from source, for developers comfortable with that workflow. The maintainer
-uses an Apple silicon Mac; other Macs and displays have not had the same live checks. See the [feature status](../README.md#status).
+uses an Apple silicon Mac; other Macs and displays have not had the same live checks. See the [feature status](status.md).
 
 [Check your Mac](#1-check-your-mac) · [Get the code](#2-get-the-code-and-run-an-offline-check) ·
 [Choose a model](#3-choose-a-model) · [Build and open](#4-build-and-open-the-app) ·
@@ -82,7 +82,7 @@ Terminal command, a screenshot or a bug report. Save with Control-O, press Retur
 exit with Control-X. Use a key from your provider's API account.
 
 For another provider or a model you already run locally, use the settings in
-[Choosing a model provider](../README.md#choosing-a-model-provider). Local servers must
+[Choosing a model provider](configuration.md#choosing-a-model-provider). Local servers must
 already be running with a model loaded. Benji does not install or download a model for you.
 Those provider integrations are not live-tested; the README gives the evidence for each.
 
@@ -97,7 +97,7 @@ successful result means Benji found configuration, not that the key is valid or 
 is reachable. Environment variables override file settings, so this reports the configuration
 seen by your Terminal. For the app, use the file or its Keychain setup, not a key exported
 only in your current Terminal. A hosted provider receives your messages and tool results when you send a
-request. Read [Privacy](../README.md#privacy) before sending private material.
+request. Read [Privacy](privacy.md) before sending private material.
 
 ### If you prefer the app's key form
 
@@ -138,7 +138,7 @@ from this checkout; copying just the app to Applications is not a complete insta
 The build uses a local signing certificate if one exists, otherwise an ad hoc signature.
 Ad hoc rebuilds can make macOS ask for permissions again. You do not need to create a
 certificate for the first typed message. See the README's
-[code-signing instructions](../README.md#build-from-source) if you rebuild regularly.
+[code-signing instructions](building.md#build-from-source) if you rebuild regularly.
 
 ## 5. Try one typed message
 
@@ -173,10 +173,10 @@ permission leaves its related feature unavailable.
 For Accessibility, guided setup opens System Settings and offers an app tile to drag into
 the list if Benji is missing. For Screen Recording, follow the relaunch instruction after
 enabling it. The small Accessibility helper window has offline checks; its native interaction on other
-Macs is not verified. The [status table](../README.md#status) records these limits.
+Macs is not verified. The [status table](status.md) records these limits.
 
 The [browser extension](../browser-extension/README.md) and
-[command-line voice extras](../README.md#command-line-voice-optional) are separate optional
+[command-line voice extras](configuration.md#command-line-voice-optional) are separate optional
 setups. Neither is needed for the first message.
 
 ## If something stops you
