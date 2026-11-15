@@ -23,8 +23,7 @@
 <p align="center">
   <a href="https://umarali.github.io/benji/#demo"><img src="site/assets/benji-demo-jet-engine.jpg" width="820" alt="Benji in the notch of a Mac: a typed request opens a cut-away jet engine in 3D with its fan, compressor, combustion chamber, turbine and exhaust labelled, while Benji explains it aloud"></a>
   <br>
-  <sub>One unedited take, made smaller for the web. A script moved the cursor and typed the request;
-  the answer, voice and 3D drawing are Benji's own. <a href="https://umarali.github.io/benji/#demo">Watch it with sound</a>.</sub>
+  <sub><a href="https://umarali.github.io/benji/#demo">Watch it with sound</a></sub>
 </p>
 
 > [!NOTE]
