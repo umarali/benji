@@ -5,7 +5,8 @@ approved for that job, and, for a site you allowed it to act on, click and type 
 tab group called **Benji**, lists that group's tabs, returns the visible text and address of one, lists a
 page's controls, and clicks, types, presses keys, scrolls and gives a page a file. It also reads the page in
 front of you when you ask about it and a card shows its site first. It cannot run a script of the model's,
-open a page you didn't allow, act on a site you didn't allow acting on, or touch a tab outside its group.
+open a page you didn't allow, act on a site you didn't allow acting on, or touch a tab outside its group,
+except to read the page in front when you ask, as above.
 
 **Upgrading from 0.1.0:** this version asks for the new `debugger` permission, so the browser turns the
 extension off until you approve it. Open the extensions page (`chrome://extensions`), find Benji and choose

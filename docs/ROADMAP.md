@@ -26,7 +26,6 @@ and tested.
 
 - A Web Store build of the extension, and trying Arc, Brave and Edge for real.
 - Resuming a parked job after a restart; more than one job at a time.
-- Optional sound cues (the design exists; nothing plays today).
 - Jobs for hands-free (voice-only) turns, once the approval path for them is settled.
 - A Settings switch for the audit log (today only `BENJI_AUDIT=0`).
 

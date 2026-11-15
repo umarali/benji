@@ -146,9 +146,11 @@ final class ServeBackend: CompanionBackend, JobBackend {
     /// (its stderr lines carry tool names, reason codes and ids; checked in tests/selftest.py), and
     /// every line also goes, redacted, to engine.log.
     private var stderrTail: [String] = []
-    /// The running engine was reset: the next message restores the app's memory first (a
-    /// reopened conversation); a new conversation's memory is empty and restores nothing.
-    private var restoreAfterReset = false
+    /// The current engine process holds the app's current conversation. False for every new process
+    /// (whoever launched it: a message, the talk key, the browser or schedules switch) and after a
+    /// reset (a new or reopened conversation), so the next message restores the app's memory first;
+    /// an empty memory restores nothing.
+    private var engineHasConversation = false
 
     private static let debug = ProcessInfo.processInfo.environment["BENJI_DEBUG"] == "1"
 
@@ -161,14 +163,14 @@ final class ServeBackend: CompanionBackend, JobBackend {
     func start(run: Int, task: String, imagePath: String?, memory: ConversationMemory, allowPointing: Bool,
                spoken: Bool, screen: ScreenshotGeometry?) {
         turnRun = run       // before launch(): a failure to start is reported against this run
-        if process?.isRunning != true || restoreAfterReset {
-            if process?.isRunning != true {
-                launch()
-                guard process != nil else { return }    // it could not start; the run was already ended
-            }
-            if !memory.isEmpty { write(.restore(memory.exchanges, droppedEarlier: memory.droppedEarlier)) }
+        if process?.isRunning != true {
+            launch()
+            guard process != nil else { return }    // it could not start; the run was already ended
         }
-        restoreAfterReset = false
+        if !engineHasConversation, !memory.isEmpty {
+            write(.restore(memory.exchanges, droppedEarlier: memory.droppedEarlier))
+        }
+        engineHasConversation = true
         turnCount += 1
         let id = "t\(turnCount)"
         turnID = id
@@ -313,9 +315,9 @@ final class ServeBackend: CompanionBackend, JobBackend {
 
     func reset() {
         lastTurnID = nil
+        engineHasConversation = false
         guard process?.isRunning == true else { return }
         write(.reset)
-        restoreAfterReset = true
     }
 
     func shutdown() {
@@ -348,6 +350,7 @@ final class ServeBackend: CompanionBackend, JobBackend {
         self.process = process
         input = inPipe.fileHandleForWriting
         ready = false
+        engineHasConversation = false
         queued = []
         stderrTail = []
 
@@ -469,7 +472,15 @@ final class ServeBackend: CompanionBackend, JobBackend {
             if engineSchedules, JobSchedulesSetting.isOn(UserDefaults.standard.object(forKey: JobSchedulesSetting.defaultsKey)) {
                 send(.schedulesSet(enabled: true))
             }
-            let waiting = queued
+            // A message queued before `ready` was built without knowing whether this engine runs
+            // schedules; it says so now.
+            let waiting = queued.map { request -> ServeRequest in
+                guard case let .send(id, text, imagePath, allowPointing, spoken, screen, acts, simple, canvas, jobs, _, drive) = request
+                else { return request }
+                return .send(id: id, text: text, imagePath: imagePath, allowPointing: allowPointing, spoken: spoken,
+                             screen: screen, screenActions: acts, screenSimpleSteps: simple, canvas: canvas,
+                             jobs: jobs, schedules: engineSchedules, drive: drive)
+            }
             queued = []
             waiting.forEach(send)
         case let .accepted(id):

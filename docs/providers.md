@@ -10,7 +10,8 @@ what each provider's documentation told us, and, plainly, what has and has not b
 **Read this first.** Everything below about a provider comes from that provider's own API documentation,
 read on **2026-11-05** (the pages carry no date of their own unless a date is shown). The reading was
 done through a fetcher that summarises pages, with the load-bearing DeepSeek pages re-read as raw HTML,
-so an exact parameter spelling is "as extracted". **No provider has been called live.** Benji's tests
+so an exact parameter spelling is "as extracted". **Only Anthropic's API, Benji's default, has been
+used live; no other provider has been called live.** Benji's tests
 run against a fake server for each provider that reproduces what its documentation says (the reasoning
 field, the shape of streamed tool calls, where usage sits, the output-limit parameter, what the server
 refuses, its 429 shapes); passing them means Benji does what the documents say, not that the real

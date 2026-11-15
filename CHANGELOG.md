@@ -22,9 +22,9 @@ display) against Anthropic's API. There is no signed or notarised download; you 
   fetch, AppleScript, Shortcuts, skills and a small memory; command-line use and `benji --serve`
   for the app. *Stable.*
 - **The approval gate, in code**: destructive commands, overwrites, sends, and reads and writes
-  outside the working folder ask first; private locations are refused; after a turn reads outside
-  content, anything it changes asks. *Stable*; the most recent refinements are *not live-tested*.
-- **Screen context and drawing**: one screenshot with the next message only, pointing with rings
+  outside the working folder ask first; file tools refuse private locations and the shell asks;
+  after a turn reads outside content, anything it changes asks, and so do the turns after it. *Stable*; the most recent refinements are *not live-tested*.
+- **Screen context and drawing**: a screenshot with each message (Off, Ask or On), pointing with rings
   and regions, explanation cards and 3D figures. *Stable* with Claude. Worked figure examples,
   added when you ask to draw something, are *experimental*.
 - **Background jobs**: one at a time, in their own folder, behind the same gate; approvals wait as
@@ -43,7 +43,7 @@ display) against Anthropic's API. There is no signed or notarised download; you 
 ### Security
 
 - API keys are sent only to their provider's own host; plain `http://` is refused except to your
-  own computer.
+  own computer, or to a custom server on a private address or a `.local` or `.ts.net` host.
 - Log files are written readable by you only.
 
 ### Known limits
