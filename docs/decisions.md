@@ -7,7 +7,7 @@ decision gets a new entry that supersedes it.
 
 Status values: **Active**, **Superseded by D-xx**, **Open** (needs a decision).
 
-> **Public trim.** This is the maintainer's decision log with 57 of 206 entries left out because they refer to private working material. Ids are kept, not renumbered, so gaps are expected. References to files that are not part of this repository read "(not in this export)".
+> **Public trim.** This is the maintainer's decision log with 57 of 207 entries left out because they refer to private working material. Ids are kept, not renumbered, so gaps are expected. References to files that are not part of this repository read "(not in this export)".
 
 ---
 ## Building pal: backend and CLI
@@ -1551,3 +1551,14 @@ D-198 adoption gate: validate ordinary figure-on and synthetic screen-context be
 - **Why:** the build steps sat below the feature list, the status table and the safety model, and the first engine command in the quick start needed a key. A check that costs nothing and asks for nothing shows that the engine starts before any account, permission or charge is involved.
 - **Alternatives:** a guide for people who want an installable app (the other option put to the owner; there is also nothing to install yet); the offline check alone, with no typed message (the other option offered for the first try); a guided tour inside the app, which the request named as a model (not done here: it is a product change and needs its own proposal and tests).
 - **Status:** Active. Checked offline: the guide's engine and key-file commands in a throwaway home, its 15 local links and anchors, and the strict public export. **Not checked:** anything past the offline commands. No build, first reply, guided setup or Model step, permission step or live provider request was run through this guide on any Mac, and its links to other sites were not opened. The owner will follow the guide from a fresh clone.
+
+### D-208 · The first demo video is one short clip of the approval card, recorded by the owner in their own account (2026-11-15 17:32 PKT)
+
+- **Who:** the owner, asked which video to make first and where to record it. Claude (Fable 5.2) put the options and recommended the short clip and a separate demo account. The owner took the short clip and chose their own account.
+- **What:** the first video is one clip of 20 to 30 seconds for the top of the README and the project page. Benji is asked to move a folder of invented files; the approval card is answered No and nothing moves; the request is repeated and answered Yes. The owner records it (D-182) in their own account, by the route in `demo/same-account.md`: Benji opened on an empty scratch folder, invented files from `demo/seed.sh --same-account`, a clean desktop.
+- **Why the clip:** Claude's reason for recommending it; the owner chose it without giving one. Asking before acting is what the clip has to show, and the README's status table labels the approval gate "Stable". About 70 of the run sheet's 180 seconds involve background jobs, which are labelled "Experimental".
+- **Why the account:** the owner's choice; no reason was given.
+- **What that route costs:** as `demo/same-account.md` says, nothing stops Benji from seeing the owner's files there, and every approval card shows a path with the account name. It is not a run of the setup guide in a fresh account.
+- **Not decided:** which build is on screen. Claude's recommendation is a build of public `main`, so the clip matches what a reader can build.
+- **Alternatives:** the three-minute walkthrough in `demo/RUNSHEET.md`; three short clips (pointing, asking first, drawing); a separate standard account (`demo/README.md`), recommended and not taken.
+- **Status:** Active. No video is recorded yet. The clip's flow has not been rehearsed. The rule that asks before a `mv` was read in `benji/gate.py`, not seen live; the model may move the folder another way.
