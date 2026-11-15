@@ -54,7 +54,6 @@ display) against Anthropic's API. There is no signed or notarised download; you 
 - Browser reach has never been used in a real browser profile, and a site with an international
   domain name cannot be granted.
 - Only one Mac, one macOS version and one display setup have been tried.
-- The providers' documentation was read on 2026-11-05; model ids may have changed since.
 
-[Unreleased]: https://github.com/umarali/benji/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/umarali/benji/releases/tag/v0.1.0
+[Unreleased]: https://github.com/umarali/benji/commits/main
+[0.1.0]: #010---not-yet-released

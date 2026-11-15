@@ -19,9 +19,13 @@
 
 ## Project
 
-- [Roadmap](ROADMAP.md): where the project may go. Intentions, not promises.
+- [Roadmap](ROADMAP.md): what may come next. Intentions, not promises.
+- [Changelog](../CHANGELOG.md): what changed.
+- Questions and bugs: [open an issue](https://github.com/umarali/benji/issues). Security problems
+  go privately, as [SECURITY.md](../.github/SECURITY.md) says.
 - [Releasing](RELEASING.md): the maintainer's checklist for a release.
 - [Third-party notices](THIRD_PARTY_NOTICES.md): credits and licences.
-- [Design system](design-system/): the name, icon, colours, type, motion and sound.
+- [Design system](design-system/): the name, icon, colours, type, motion and sound, for changing
+  how the app looks.
 
 Coding agents: read [AGENTS.md](../AGENTS.md) first.

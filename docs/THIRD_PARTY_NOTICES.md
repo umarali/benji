@@ -5,9 +5,9 @@
 The companion adapts these ideas and small pieces from Clicky, an open-source macOS assistant
 (checked at commit `e71105c`, 2026-10-28):
 
-- the `[POINT:x,y:label]` answer tag format, kept for compatibility (its parser was rewritten
-  as our own on 2026-10-31 together with the `[BOX:…]` tag and multi-target answers, D-56/D-68;
-  `companion/Sources/BenjiCore/Drawing/Pointing.swift`, `benji/pointing.py`);
+- the `[POINT:x,y:label]` answer tag format, kept for compatibility; Benji's parser is its own
+  and also reads `[BOX:…]` and answers with several targets
+  (`companion/Sources/BenjiCore/Drawing/Pointing.swift`, `benji/pointing.py`);
 - streaming on-device speech recognition with a fallback to the latest partial result
   (`companion/Sources/BenjiApp/Voice/VoiceController.swift`);
 - the idea of an event tap gated on Accessibility for a modifier-only talk key (ours is an
@@ -16,7 +16,7 @@ The companion adapts these ideas and small pieces from Clicky, an open-source ma
 - the permission flow: system prompt once per launch, then System Settings, and a
   remembered Screen Recording grant (`companion/Sources/BenjiCore/Safety/PermissionPolicy.swift`,
   `companion/Sources/BenjiApp/App/Permissions.swift`);
-- passing the last 10 exchanges as conversation history (`benji/history.py`).
+- sending recent exchanges with each message as conversation history (`benji/history.py`).
 
 No Clicky branding, artwork, sounds, colours or copy are used.
 
@@ -47,8 +47,8 @@ SOFTWARE.
 ## Kalam (explanation cards' handwriting face), SIL Open Font License 1.1
 
 `companion/Resources/Fonts/Kalam-Regular.ttf` and `Kalam-Bold.ttf`, unmodified, from
-github.com/google/fonts (`ofl/kalam/`, downloaded 2026-11-01 with the user's OK), bundled in
-Benji.app for the words on explanation cards (D-125). Copyright (c) 2014 Indian Type Foundry
+github.com/google/fonts (`ofl/kalam/`), bundled in Benji.app for the words on explanation
+cards. Copyright (c) 2014 Indian Type Foundry
 (info@indiantypefoundry.com). The full licence ships beside the fonts as
 `companion/Resources/Fonts/OFL.txt` and in the app's `Contents/Resources/Fonts/OFL.txt`.
 SHA-256: Regular `57cecb63d4608019371954274ae1d8c397764debd5b19d4a33c1efa4dc923c0b`,

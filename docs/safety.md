@@ -6,60 +6,84 @@ How Benji limits what it can do, how a background job runs, and how a job may us
 
 - The rules that limit Benji are in **code**, not only in the prompt. A model persuaded by a web
   page still cannot widen what the code allows.
-- Anything destructive or outward-facing asks you first. The file tools refuse private places such
-  as keys and mail; a shell command that reads them asks.
-- Background jobs and browser reach follow the same rules, and both are newer: see
+- Anything destructive or outward-facing asks you first. Keys, mail, messages and browser data
+  are never read without your yes.
+- Background jobs and browser reach follow the same rules. Both are newer: see
   [Feature status](status.md).
 
-## Safety model
+## What runs, what asks, what is refused
 
-### The gate
+Before any tool call runs, the code (`benji/gate.py`, the "gate") puts it in one of four groups:
 
-Every tool call is classed *free* (read-only, inside the working folder), *quiet*, *asked* or
-*denied* before it runs.
+- **Runs:** reading files and writing new ones inside the working folder, a shell command on the
+  read-only allowlist, a read-only AppleScript, a web search or page fetch, remembering something
+  you just said.
+- **Runs after a short pause you can stop:** some screen steps, such as a click on a named tab or
+  link (see [Acting on your screen](#acting-on-your-screen)).
+- **Asks** (a card in the app, `y/N` in the terminal): destructive commands (`rm`, `mv`, `sudo`,
+  `git push`…), overwriting a file, sends, reading or writing outside the working folder, and any
+  shell command the parser does not fully understand.
+- **Refused:** the file tools never open keys, mail, messages, browser data or Benji's own key
+  file, even through a symlink. A shell command that reads them asks, and the card says what it
+  would read.
 
-- **Asks first** (a card in the app, `y/N` in the terminal): destructive shell commands (`rm`,
-  `mv`, `sudo`, `git push`…), overwrites, sends, writes outside the working folder, reads outside
-  it, and sensitive capabilities.
-- **Refused outright** by the file tools, including through a symlink: private locations such as
-  keys, mail, messages, browser data and Benji's own key file. A shell command that reads them
-  asks, with a card naming what it would read.
-- **The shell is a read-only allowlist.** A parser reads each command, and anything it does not
-  understand asks.
+The working folder is Benji's folder (`~/.benji`) for a conversation, and a job's own folder for a
+background job.
 
-`--yes` approves everything that would ask, including shell reads of private locations. Use it
-only where you trust everything the model might read.
+`--yes` on the command line answers yes to everything that would ask. Use it only where you trust
+everything the model might read.
 
-### Taint
+## After Benji reads something from outside
 
-Once a turn has read something from outside (a web page, a browser tab, a file outside the
-working folder, an unverified skill), anything it then changes asks, whatever the model says.
-Looking at your screen is a weaker source and is tracked apart. Outside content stays in the
-conversation, so the turns after it are tainted too, until a new conversation starts; a
-screenshot leaves the conversation with its turn, so it does not carry over. Taint passes
-from a turn into a job it starts, and back to a turn that reads the job's result.
+Once a turn has read a web page, a browser tab, a file outside the working folder, the output of
+AppleScript or of a command that is not read-only, or an unverified skill, everything it then
+changes asks, even what would otherwise run, such as writing a file in
+the working folder. (The code calls this *taint*.)
 
-### Instructions are data
+- It lasts for the rest of the conversation, because what was read stays in it. A new conversation
+  starts clean.
+- A screenshot counts too, for its own turn: writing a file, running a Shortcut or remembering
+  something then asks. It does not carry to the next turn, because the picture is not kept.
+- A job started by such a turn inherits it, and so does a turn that reads the job's result.
 
-The text of files, pages, command output and screenshots is treated as data, never as commands.
-That is a prompt rule backed by the code checks above. It is **not a sandbox**: read what you
-approve. See [SECURITY.md](../.github/SECURITY.md).
+The text of files, pages, command output and screenshots is treated as data, never as
+instructions. That is a prompt rule backed by the checks above. It is **not a sandbox**: read
+what you approve. See [SECURITY.md](../.github/SECURITY.md).
 
-### Job approvals wait for you
+## Acting on your screen
+
+With a screenshot, Benji can point at things, and also click, scroll and type for you. Settings ›
+Screen › Acting on your screen has two choices:
+
+- **Act on simple steps** (the default): scrolling, tabs, links and menus happen while you watch.
+  A click is ringed for about a second first. Anything that could send, buy, delete or close
+  something asks, and so does every drag.
+- **Ask before every step:** every click, scroll or key waits for your OK.
+
+Moving the mouse, typing or pressing Esc stops Benji at once. A turn can take at most five steps
+without asking.
+
+**Drive:** for a longer task on screen ("fill in this form"), Benji asks once, on a card that names
+the goal, and then works toward it. Only the card's button grants it, never a spoken yes, and the
+card declines itself after 45 seconds. A drive ends with its turn, when you stop it, or as soon as
+the turn reads a web page, a browser tab or a file outside the working folder.
+
+## Job approvals wait for you
 
 A job that needs your answer waits, with no timeout, as **Needs you** in its row. Only that row's
 own Yes and No buttons answer it: not a spoken "yes", not a key press, not Esc. Stop answers No.
 
-### The audit log
+## The audit log
 
-`events.jsonl` in the working folder records what ran, how the gate classed it and why, how each
-approval was answered, job states and errors. Every field is checked against a closed list before
-it is written, so the log **cannot** hold message text, page text, file contents, addresses or
-keys. It is readable by you only.
+`events.jsonl` in Benji's folder records what ran, how it was classed and why, how each approval
+was answered, job states and errors. Every field is checked against a closed list before it is
+written: the log cannot hold message text, page text, file contents, file names, full web
+addresses, keys or screenshots. It can hold a host name, such as the provider's or a site a job
+was allowed to open. It is readable by you only.
 
 - `benji --diagnose [--hours N]` prints a short report from it, to read or to paste into a bug
   report. The app has the same under Settings › General › Diagnostics.
-- `BENJI_AUDIT=0` (or `false`, `no`, `off`) turns the log off.
+- `BENJI_AUDIT=0` turns the log off.
 
 ## Background jobs
 
@@ -71,8 +95,8 @@ in a sentence, and carries on.
 gate and taint rules, with its own folder as its working folder, so a write elsewhere or a read of
 your files outside it asks.
 
-**What you see:** one row above the conversation, with the state (*working*, *needs you*, *done*,
-*failed*, *stopped*), what the job is doing, Stop, a field to steer it and, when it ends, its files
+**What you see:** one row above the conversation, with the state (*Starting*, *Working*, *Needs
+you*, *Done*, *Didn't finish*, *Stopped*), what the job is doing, Stop, a field to steer it and, when it ends, its files
 and follow-up chips. The state comes from the code, never from what the model writes. A job starts
 after a 2.5-second peek ("Starting … · Esc cancels").
 

@@ -12,12 +12,8 @@ and tested.
    wait for jobs; the browser in a real Chrome profile; a real run of each open-model provider with the
    owner's own key (`tools/model_smoke.py`). The [status table](status.md) only
    changes when one of these has been done and written down.
-2. **Browser reach, step 2: acting, with per-action classing.** Built and unit-tested, not tried in a real
-   browser: click, scroll, type, keys and uploads in a tab of the Benji group, classed in code from the page's
-   own element (free, quiet, asked, refused), with acting a separate grant from reading, shown on a card, never
-   inherited, and uploads always asked. What is left is the live check in a throwaway profile
-   (the by-hand checklist in the implementation note), a Web Store build (its own decision, with a second extension id),
-   and whether Arc and the other Chromium browsers behave.
+2. **Browser acting in a real browser.** Clicking, typing, keys and uploads are built and tested
+   offline and in headless Chrome, but not yet used in a real browser profile.
 3. **Notarised builds.** A Developer ID signed, notarised and stapled `Benji.app` on GitHub Releases, so
    you do not have to build from source. This needs the engine bundled inside the app and an entitlements
    file. The owner's checklist is [RELEASING.md](RELEASING.md).

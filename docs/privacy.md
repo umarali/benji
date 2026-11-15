@@ -13,7 +13,9 @@ With a hosted provider, these are sent to that company's servers, in the country
 
 - your messages;
 - what the tools return: file text, web pages, command output, browser page text;
-- screenshots, when Settings › Screen includes them (see [Your screen](#your-screen)).
+- screenshots, when Settings › Screen includes them (see [Your screen](#your-screen));
+- the earlier exchanges of the same conversation, as text, so it can follow up: as many as fit in
+  about 24,000 characters, and always the last 10. Earlier screenshots are not sent again.
 
 The gate, taint rules and audit log work the same for every provider, but they cannot make a
 hosted model forget what it was sent.
@@ -48,7 +50,7 @@ Settings › "Show Benji's folder" opens it. Log files are written readable by y
 |---|---|
 | `memory.jsonl` | Durable facts Benji was told to remember (never secrets) |
 | `usage.jsonl` | Token counts only |
-| saved conversations | Your conversations with Benji |
+| `conversations/` | Your saved conversations with Benji |
 | `answers.jsonl` | The model's raw answers and the events of each turn. On by default; `BENJI_ANSWER_LOG=0` turns it off |
 | job folders | Each background job's report and output |
 | `events.jsonl` | The audit log: metadata only |

@@ -1,4 +1,4 @@
-# Benji's browser extension (version 0.2.0: read, act with your yes, the page in front)
+# Benji's browser extension
 
 Lets a background job of Benji's read pages in your own browser, signed in as you, on the sites you
 approved for that job, and, for a site you allowed it to act on, click and type there. It opens pages in a

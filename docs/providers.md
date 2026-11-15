@@ -1,22 +1,15 @@
 # Model providers
 
-Benji speaks to Anthropic (Messages API) and to anything that speaks the OpenAI chat-completions
+Benji talks to Anthropic's Messages API and to any server that speaks the OpenAI chat-completions
 format. DeepSeek, GLM (Z.ai / Zhipu), Kimi (Moonshot) and Qwen (Alibaba Cloud Model Studio) are
-presets of the second: each sets an address, the key variable, a default model, which of its models
-read images, and how its thinking is switched. Ollama and LM Studio are presets for a server on your
-own computer. How to choose is in [Using and configuring Benji](configuration.md#choosing-a-model-provider); this page says
-what each provider's documentation told us, and, plainly, what has and has not been checked.
+presets of the second: each sets the address, the key variable, a default model, which models
+read images, and how thinking is switched. Ollama and LM Studio are presets for a server on your
+own computer. To choose one, see [Choosing a model provider](configuration.md#choosing-a-model-provider).
 
-**Read this first.** Everything below about a provider comes from that provider's own API documentation,
-read on **2026-11-05** (the pages carry no date of their own unless a date is shown). The reading was
-done through a fetcher that summarises pages, with the load-bearing DeepSeek pages re-read as raw HTML,
-so an exact parameter spelling is "as extracted". **Only Anthropic's API, Benji's default, has been
-used live; no other provider has been called live.** Benji's tests
-run against a fake server for each provider that reproduces what its documentation says (the reasoning
-field, the shape of streamed tool calls, where usage sits, the output-limit parameter, what the server
-refuses, its 429 shapes); passing them means Benji does what the documents say, not that the real
-servers agree. Model ids change quickly: every default below can be replaced with `BENJI_MODEL`, and
-an id that was not in a document read on that date is not in Benji.
+**Only Anthropic has been used live.** The others are tested against fake servers that follow
+each provider's API documentation as read on 2026-11-05. A passing test means Benji does what
+those documents describe, not that the live service still matches them. If a default model id is
+rejected, set `BENJI_MODEL`; `tools/model_smoke.py` (below) checks a provider live with your key.
 
 ## Defaults and which models read images
 
@@ -91,12 +84,18 @@ inputs are used for training; read their terms):
 | Qwen | The docs say a region sets where data is stored and the deployment scope sets where inference runs; they make no firmer statement for Singapore or Beijing. |
 | Ollama, LM Studio | Your own computer. Nothing leaves it unless you point `BENJI_BASE_URL` elsewhere. |
 
-## Compatibility table
+## A five-minute live check
 
-Cell codes: **D** the provider's documentation says it (read 2026-11-05); **F** a test in `tests/check_providers.py`
-reproduces it against a fake server and Benji behaves accordingly; **U** unconfirmed (the docs do not say, or
-contradict each other) and Benji does not build on it; **A** an assumption of ours that is not in a document.
-**Nothing here is live-verified.**
+`python3 tools/model_smoke.py <provider>` starts the real engine against your key in a throwaway folder
+and runs a typed question, one tool call, one background job and (for a model that reads images) one
+picture question, printing PASS or FAIL for each and `benji --diagnose` at the end. It prints no key and
+no message text. If something fails, the output of that script is what to open an issue with.
+
+## Notes for changing a provider
+
+For anyone editing `benji/presets.py`. **D**: the provider's documentation says it. **F**: a fake
+server in `tests/check_providers.py` checks it. **U**: the docs do not say, so Benji does not rely
+on it. **A**: an assumption of ours. None of it has been tried against the live services.
 
 | Capability | DeepSeek | GLM | Kimi | Qwen | Ollama / LM Studio |
 |---|---|---|---|---|---|
@@ -118,11 +117,3 @@ contradict each other) and Benji does not build on it; **A** an assumption of ou
 | Out of balance | 402 D F | 429 code 1113 D F | 429 `exceeded_current_quota_error` D F | 403 `Arrearage` D F | n/a |
 | A model that rejects tools / pictures | F | F | F | F | F |
 | Data location stated | PRC (general policy) D | Singapore / China D | Singapore (global policy) D | storage by region D | local |
-| **Live-verified** | **no** | **no** | **no** | **no** | **no** |
-
-## A five-minute live check
-
-`python3 tools/model_smoke.py <provider>` starts the real engine against your key in a throwaway folder
-and runs a typed question, one tool call, one background job and (for a model that reads images) one
-picture question, printing PASS or FAIL for each and `benji --diagnose` at the end. It prints no key and
-no message text. If something fails, the output of that script is what to open an issue with.
