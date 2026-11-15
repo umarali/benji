@@ -7,7 +7,7 @@ decision gets a new entry that supersedes it.
 
 Status values: **Active**, **Superseded by D-xx**, **Open** (needs a decision).
 
-> **Public trim.** This is the maintainer's decision log with 57 of 205 entries left out because they refer to private working material. Ids are kept, not renumbered, so gaps are expected. References to files that are not part of this repository read "(not in this export)".
+> **Public trim.** This is the maintainer's decision log with 57 of 206 entries left out because they refer to private working material. Ids are kept, not renumbered, so gaps are expected. References to files that are not part of this repository read "(not in this export)".
 
 ---
 ## Building pal: backend and CLI
@@ -1542,3 +1542,12 @@ D-198 adoption gate: validate ordinary figure-on and synthetic screen-context be
 - **Alternatives:** leave the chance failure (rejected: it is the third of its kind, and a red check on `main` is read as a broken project).
 - **Status:** see the pull request's checks.
 
+### D-207 · A setup guide for people who build from source: an offline check first, then one typed message (2026-11-15 15:22 PKT)
+
+- **Who:** the owner asked for documents that get people set up on their Macs quickly, with nothing made up and nothing unvalidated added. The owner chose the reader (developers comfortable with Terminal and building from source) and the order of the first try (an offline check, then a typed reply from the reader's own model). Codex wrote the guide and Claude re-ran the checks and recorded it.
+- **What:** `docs/setup.md` is the one place to start: check the Mac, get the code and run two offline engine commands, choose a model, build and open the app, send one typed message, add permissions when a feature needs them, and a table of what to check when something stops you. The README gains a short "Start here" and its build block points at the guide. The docs index lists it and the public export includes it.
+- **Only what exists today:** there is no download, so the guide says so and does not describe one. The two offline commands prove that Python can start the engine, and the guide says they do not prove that a model answered. The typed message is the reader's own live request and is labelled that way. Features that are not yet in the public source are left out.
+- **Corrected on the way:** the README named a menu item, **Set Up Permissions…**, that the app does not have (the path is **Settings → Permissions → Guided setup…**, and the menu shows **Finish Setup…** while a permission is missing). The README's quick start copied the key template over an existing `~/.benji.env`; the guide creates the file only when it is missing. The app starts its engine through a zsh login shell, so the guide checks Python in the same kind of shell.
+- **Why:** the build steps sat below the feature list, the status table and the safety model, and the first engine command in the quick start needed a key. A check that costs nothing and asks for nothing shows that the engine starts before any account, permission or charge is involved.
+- **Alternatives:** a guide for people who want an installable app (the other option put to the owner; there is also nothing to install yet); the offline check alone, with no typed message (the other option offered for the first try); a guided tour inside the app, which the request named as a model (not done here: it is a product change and needs its own proposal and tests).
+- **Status:** Active. Checked offline: the guide's engine and key-file commands in a throwaway home, its 15 local links and anchors, and the strict public export. **Not checked:** anything past the offline commands. No build, first reply, guided setup or Model step, permission step or live provider request was run through this guide on any Mac, and its links to other sites were not opened. The owner will follow the guide from a fresh clone.

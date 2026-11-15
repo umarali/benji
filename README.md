@@ -23,6 +23,16 @@ hands and work on it in the background.
 > There is **no signed or notarised download yet**: you build it yourself
 > ([Build from source](#build-from-source)).
 
+## Start here
+
+[Set up Benji on your Mac](docs/setup.md) walks through the source build, model configuration,
+a first typed message and optional permissions. Start with the offline check. It needs no key
+and makes no model request.
+
+The app currently needs Terminal and Xcode to build. If you need an installable download,
+there is not one yet. The [status table](#status) separates everyday use from features that
+have only been tested offline.
+
 ## What it does
 
 - **Talk or type.** Hold **Right ⌥**, speak, release (or tap once to start and again to send), or
@@ -225,19 +235,21 @@ See [docs/ROADMAP.md](docs/ROADMAP.md).
 There is no notarised download yet (see [docs/RELEASING.md](docs/RELEASING.md) for the owner's plan), so
 you build Benji.app yourself.
 
+For the complete walkthrough, including where to put a key and how to start without voice or
+screen permissions, follow [Set up Benji on your Mac](docs/setup.md).
+
 ```bash
-git clone https://github.com/umarali/benji.git && cd benji
-
-# 1. Give Benji a key (never commit this file).
-cp .benji.env.example ~/.benji.env && chmod 600 ~/.benji.env    # then edit it
-
-# 2. Try the engine from the command line.
-python3 -m benji "what's in my working folder?"
-
-# 3. Build and launch the notch app.
+git clone https://github.com/umarali/benji.git
+cd benji
+python3 tools/isolated_run.py -- python3 -m benji --version
 cd companion
-./build.sh run
+./build.sh
+open Benji.app
 ```
+
+The version check is offline. Building and opening the app does not configure a model for you.
+Keep the app inside this checkout: its Python engine is loaded from the repository, not bundled
+inside `Benji.app`. If you already run Benji, quit it yourself before opening another copy.
 
 Use **`xcrun swift`**, not plain `swift`, wherever you run Swift yourself: the `swift` first on a
 Mac's `PATH` can be an old standalone toolchain that cannot load this package, while `xcrun`
@@ -265,8 +277,8 @@ identity (list yours with `security find-identity -v -p codesigning`).
 | Screen Recording | Screen context and pointing, only when you use the viewfinder or ask a screen question |
 | Automation (per app) | AppleScript tasks you ask for; macOS asks the first time for each app, and Benji still asks you |
 
-The first launch opens a small setup window for these; **Set Up Permissions…** in the menu-bar icon
-reopens it.
+The first launch opens a small setup window for these. Reopen it from **Settings → Permissions →
+Guided setup…**. The menu also shows **Finish Setup…** while a permission is missing.
 
 **Gatekeeper.** An app you build on your own Mac carries no download quarantine mark, so it opens
 normally. A copy that is downloaded, AirDropped or unzipped from a download is quarantined, and
