@@ -437,6 +437,7 @@ def config_checks(check, C, PR, base: Path) -> None:
           "BENJI_PROVIDER" in str(_cfg(C, base, DEEPSEEK_API_KEY="a", MOONSHOT_API_KEY="b")))
     check("no key at all names every key variable",
           all(v in str(_cfg(C, base)) for v in ("DEEPSEEK_API_KEY", "ZAI_API_KEY", "MOONSHOT_API_KEY", "DASHSCOPE_API_KEY", "ollama")))
+    check("no key at all says where a key goes", "~/.benji.env" in str(_cfg(C, base)) and ".benji.env.example" in str(_cfg(C, base)))
     c = _cfg(C, base, ANTHROPIC_API_KEY="a", DEEPSEEK_API_KEY="d")
     check("Claude and OpenAI work as before: Anthropic still wins when both keys are there", ok(c) and c.provider == "claude"
           and c.preset is None and c.sends_to == "Anthropic (api.anthropic.com)" and c.vision)

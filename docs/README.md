@@ -12,6 +12,9 @@ explorations are not part of this repository.)
 | [providers.md](providers.md) | The model providers: defaults, which models read images, addresses and regions, what each provider's documentation said and what has and has not been checked. |
 | [RELEASING.md](RELEASING.md) | The owner's checklist for cutting a release: versioning, tagging, building, Developer ID signing and notarisation, release notes. |
 | [ROADMAP.md](ROADMAP.md) | Where the project may go. Intentions, not promises. |
+| [benji-rename.md](benji-rename.md) | The rename from Chilly to Benji: the identifiers, what moves on first launch and what was tested. |
+| [impl-notes/](impl-notes/) | Records of the 3D-figure evaluations: what was asked and what each model drew. |
+| [design-work/](design-work/) | Source files for the app icon and menu-bar glyph. |
 
 The [demo kit](../demo/README.md) explains how to record a real demo safely, in a separate macOS account.
 

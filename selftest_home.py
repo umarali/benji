@@ -17,6 +17,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 
@@ -48,9 +49,26 @@ class IsolatedHome:
             os.environ.pop(k, None)
         if self.workdir:
             os.environ[self.name] = str(self.home.parent / self.workdir)
+        # A process that is just starting or exiting shows no environment to `ps -E` for a moment, and the
+        # check rightly counts it as "maybe this home". That moment is chance, so here a sighting is looked
+        # at again: something really running is still there, a passing one is gone.
+        from benji import home as H
+        self.real_check = real = H.other_processes
+
+        def settled(home=None):
+            seen = real(home)
+            for _ in range(5):
+                if not seen:
+                    break
+                time.sleep(0.2)
+                seen = real(home)
+            return seen
+        H.other_processes = settled
         return self.home
 
     def __exit__(self, *exc) -> None:
+        from benji import home as H
+        H.other_processes = self.real_check
         for k, v in self.saved.items():
             if v is None:
                 os.environ.pop(k, None)

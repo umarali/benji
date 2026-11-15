@@ -223,7 +223,8 @@ def _detect_provider(base_url: str | None) -> str:
     raise SystemExit(
         "No API key found. Set ANTHROPIC_API_KEY or OPENAI_API_KEY, or the key of an open-model provider "
         "(DEEPSEEK_API_KEY, ZAI_API_KEY, MOONSHOT_API_KEY, DASHSCOPE_API_KEY) with BENJI_PROVIDER, "
-        "or run a local model (BENJI_PROVIDER=ollama or lmstudio)." + missing_key_hint()
+        "or run a local model (BENJI_PROVIDER=ollama or lmstudio)."
+        + (missing_key_hint() or " Put the key in ~/.benji.env (copy .benji.env.example to it), or export it in your shell.")
     )
 
 
