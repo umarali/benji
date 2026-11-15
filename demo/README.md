@@ -40,24 +40,21 @@ screen is being recorded.
    **Standard** (not Administrator). Full name "Benji Demo". Give it a password you will remember. Do not
    sign it in to iCloud or an Apple ID. Confirm it is Standard (checklist step 8).
 3. **Get Benji into the demo account.** Benji needs the repository and a built `Benji.app`.
-   - The simplest honest route: log in as the demo user and, there, `git clone` the public repository
-     into its home folder, then follow the README's *Build from source*. (This requires the Xcode
-     command-line tools, which are installed for the whole Mac, and that the Xcode licence has been
-     accepted once by an administrator.)
-   - Before the repository is public, hand over an export: run the export tool in the private repository on your own account, copy the resulting
-     folder (and nothing else) to `/Users/Shared`, clone from there inside the demo account, then remove
-     it from `/Users/Shared` (checklist steps 6 and 10).
+   - Log in as the demo user and follow [the setup guide](../docs/setup.md), steps 1, 2 and 4: check
+     Python and Xcode, `git clone` the public repository into the demo account's home folder, run the
+     offline check, then build. The build needs the full Xcode named in the guide, not only the
+     command-line tools, and the Xcode licence must have been accepted once by an administrator.
    - Build **once** in the demo account. That account has no "Benji Local Signing" certificate, so the
      build is signed ad hoc, and an ad-hoc app **loses its permission grants every time it is rebuilt**.
      Build, grant permissions (next step), and do not rebuild until after the take.
 4. **OWNER (admin): grant the permissions in the demo account.** Log in as the demo user, open
-   `Benji.app` (menu-bar icon › Set Up Permissions…) and allow Microphone, Speech Recognition,
+   `Benji.app` (menu-bar icon › **Finish Setup…**, shown while a permission is missing) and allow Microphone, Speech Recognition,
    Accessibility and Screen Recording. In a standard account macOS asks for an **administrator's**
    name and password for some of these (typically Accessibility and Screen Recording): enter it
    **before** you start recording, never during. The screen recorder (⇧⌘5) also needs Screen Recording
    permission for the demo user; that is the same kind of step.
-5. **Put the demo key in, by hand.** Inside the demo account:
-   `cp .benji.env.example ~/.benji.env && chmod 600 ~/.benji.env`, then edit the file and type the
+5. **Put the demo key in, by hand.** Inside the demo account, create and open `~/.benji.env` with the
+   commands in [step 3 of the setup guide](../docs/setup.md#3-choose-a-model), then type the
    spend-capped demo key you made in the checklist (step 5). Do not paste it from your own account.
 6. **Seed the invented files.** Inside the demo account, from this folder: `bash seed.sh`. It refuses
    to run as an administrator or outside the account's own home, and it writes only `~/BenjiDemo` (or, with `--in-benji-home`, `~/.benji/demo/BenjiDemo`).
