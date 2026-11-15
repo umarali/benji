@@ -2,13 +2,13 @@ import XCTest
 import CryptoKit
 @testable import BenjiCore
 
-/// Browser reach, step 1 (D-143): the app's side. Nothing here touches a real browser's folders:
+/// Browser reach, the app's side. Nothing here touches a real browser's folders:
 /// registration runs against a temporary home.
 final class BrowserTests: XCTestCase {
     private var home: URL!
 
     override func setUpWithError() throws {
-        home = FileManager.default.temporaryDirectory.appendingPathComponent("chilly-browser-\(UUID().uuidString)")
+        home = FileManager.default.temporaryDirectory.appendingPathComponent("benji-browser-\(UUID().uuidString)")
         try FileManager.default.createDirectory(at: home, withIntermediateDirectories: true)
     }
 
@@ -219,7 +219,7 @@ final class BrowserTests: XCTestCase {
     }
 }
 
-// MARK: steps 2 and 3 (D-171)
+// MARK: each browser on its own, and always-allowed sites
 
 extension BrowserTests {
     private func registration(_ browser: ChromiumBrowser) -> BrowserHostRegistration {

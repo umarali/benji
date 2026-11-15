@@ -3,7 +3,7 @@ import XCTest
 @testable import BenjiApp
 import BenjiCore
 
-/// Framing (D-108, after the spread eval): a figure fills the card at its own view and never runs
+/// Framing: a figure fills the card at its own view and never runs
 /// off the stage or into the label margins while it turns. A SceneKit scene is built and projected
 /// through its camera; nothing is rendered and no window is made.
 final class FigureFramingTests: XCTestCase {
@@ -47,13 +47,12 @@ final class FigureFramingTests: XCTestCase {
         check(try Self.figure("jet-engine"), minimumFill: 0.85)
     }
 
-    /// The three jet engines the real model wrote in the spread eval (committed in docs): long,
-    /// thin and viewed nearly end-on, they came out small. Measured: 1.27-1.35x larger than the
+    /// Three jet engines a real model wrote (kept in Tests/Fixtures): long, thin and viewed
+    /// nearly end-on, they come out small unless framed at their own view. Measured: 1.27-1.35x larger than the
     /// worst-angle framing, 59-64% of their room (the rest is the end-on view the model chose).
     func testTheModelsJetEnginesFillTheirRoom() throws {
         let dir = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
-            .deletingLastPathComponent().deletingLastPathComponent()
-            .appendingPathComponent("docs/impl-notes/chilly-figures/live-eval-spread/replies")
+            .appendingPathComponent("Fixtures/figure-replies/live-eval-spread/replies")
         for n in 1...3 {
             let text = try String(contentsOf: dir.appendingPathComponent("jet-engine-\(n).txt"), encoding: .utf8)
             let fs = check(try XCTUnwrap(FigureGrammar.parse(text).figure), minimumFill: 0.55)
@@ -65,7 +64,7 @@ final class FigureFramingTests: XCTestCase {
         for name in ["airliner", "house", "prompt-example"] { check(try Self.figure(name), minimumFill: 0.6) }
     }
 
-    /// A long, thin thing seen at three-quarters: framed for its side-on length (before), it came
+    /// A long, thin thing seen at three-quarters: framed for its side-on length, it would come
     /// out much smaller than its room.
     func testALongThinThingFillsTheCardAtItsOwnView() {
         let reply = "```figure\n{\"title\": \"Rod\", \"parts\": [{\"name\": \"rod\", \"kind\": \"capsule\", \"r\": 0.4, \"h\": 10, \"axis\": \"z\"}],"
@@ -77,8 +76,7 @@ final class FigureFramingTests: XCTestCase {
     /// scene from that on the main thread: the result is the scene built directly.
     func testAPreparedSceneIsTheDirectOne() throws {
         let url = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
-            .deletingLastPathComponent().deletingLastPathComponent()
-            .appendingPathComponent("docs/impl-notes/chilly-figures/live-eval-3/airliner.txt")
+            .appendingPathComponent("Fixtures/figure-replies/live-eval-3/airliner.txt")
         let figure = try XCTUnwrap(FigureGrammar.parse(try String(contentsOf: url, encoding: .utf8)).figure)
         var prepared: FigureScene.Prepared?
         let done = expectation(description: "prepared off the main thread")

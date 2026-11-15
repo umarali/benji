@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// Talking over Benji on speakers without echo cancelling (D-122): which path the mic takes, the
+/// Talking over Benji on speakers without echo cancelling: which path the mic takes, the
 /// playback envelope, the speech gate, the guarded interrupt and the settle window.
 final class TalkOverPathTests: XCTestCase {
     func testAlwaysOnSpeakersWithoutEchoCancellingListensGuarded() {
@@ -20,7 +20,7 @@ final class TalkOverPathTests: XCTestCase {
     }
 
     func testTheGuardedPathStillUsesThePlainEngineAndBenjisOwnOutput() {
-        // The engines follow the D-119 mode: no voice-processing engine where it failed.
+        // The engines follow the echo-cancelling fallback: no voice-processing engine where it failed.
         let acting = BargeInMode.always.effective(route: .speakers, echoUnavailable: true)
         XCTAssertEqual(MicEngine.choose(mode: acting, route: .speakers, handsFreeOn: true, handsFreeAvailable: true), .plain)
         XCTAssertFalse(acting.needsEchoCancellation(.speakers))
@@ -169,7 +169,7 @@ final class SettleWindowTests: XCTestCase {
 /// Levels are on the meter's scale (0 = -50 dBFS, 1 = 0 dBFS). Kokoro's audio peaks near 0.8
 /// (-10 dBFS); `coupling` -0.4 puts its echo in the built-in mic near 0.4 (-30 dBFS), a moderate
 /// volume; 0 is the speakers turned right up. A user at arm's length talks near 0.45, speaking up
-/// near 0.65. These are assumptions, not measurements on the user's Mac.
+/// near 0.65. These are assumptions, not measurements.
 final class TalkOverSimulationTests: XCTestCase {
     struct Rng {
         var state: UInt64

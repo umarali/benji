@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// D-98: the heard mark, the activity line, Retry for cut-off turns, the thinking dots, the
+/// The heard mark, the activity line, Retry for cut-off turns, the thinking dots, the
 /// read-aloud rule and the meter's smoothing.
 final class ActivityLineTests: XCTestCase {
     func testWordingAndOrder() {
@@ -133,7 +133,7 @@ final class TurnTrailTests: XCTestCase {
                        "Asked to overwrite existing file, you allowed it · Saved keep.txt · "
                        + "Asked to run a potentially destructive shell command, no answer, so no")
         XCTAssertFalse(rows[1].footer?.activity?.contains("rm -rf") ?? true)
-        // Without the turns (older callers) the rows are as before.
+        // Without the turns, the rows are the lines alone.
         XCTAssertEqual(PanelTranscript.rows(s.lines).map(\.line.role), [.user, .system, .system, .assistant])
     }
 
@@ -309,7 +309,7 @@ final class PanelLiveTests: XCTestCase {
     }
 }
 
-/// (6) Retry never repeats a side effect: a cut-off turn that had already changed something
+/// Retry never repeats a side effect: a cut-off turn that had already changed something
 /// says so and offers no Retry; one that only looked or read can be retried.
 final class RetrySideEffectTests: XCTestCase {
     private func cutOff(after activities: [TurnActivity]) -> CompanionState {

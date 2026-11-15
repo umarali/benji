@@ -16,28 +16,28 @@ stream() takes the same arguments plus on_text, cancelled and abort, asks the se
 (server-sent events), hands each piece of text to on_text as it arrives, and returns the same
 dict as complete(); a stream stopped by a cancel returns it with "cancelled": True. A server
 that answers a streaming request with plain JSON is read as complete() would read it.
-Streaming is off until BENJI_STREAM=1 (the user's rule of 2026-10-31: unverified against the
-real API, so opt-in); off, the agent calls complete(), exactly as before streaming. The app sets
-BENJI_STREAM=1 for its `--serve` engine by default (D-118); the CLI still needs it set.
+Streaming is controlled by BENJI_STREAM, which defaults to off in the engine; off, the agent calls
+complete(). The app sets BENJI_STREAM=1 for its `--serve` engine unless the user turns streaming
+off in its settings; the CLI streams only when BENJI_STREAM=1 is set.
 
 Prompt caching (Anthropic only), on unless BENJI_PROMPT_CACHE=0: up to four cache_control
 breakpoints, read in the API's order (tools, system, messages): the last tool definition; the
 stable base of the system prompt, sent as its own block, with this turn's rules after it in a
 block of their own (prompts.SystemPrompt); the last message of the earlier conversation, so
 the conversation is read from cache turn after turn; and, in a tool loop, the newest tool results,
-so each step reads the steps before it (D-177: a job is one user message and many steps). The live
-user message and any step that carries a screenshot are never marked. The 5-minute cache only. BENJI_PROMPT_CACHE=0 sends the request exactly as before
-caching.
+so each step reads the steps before it (a job is one user message and many steps). The live
+user message and any step that carries a screenshot are never marked. Only the 5-minute cache is
+used. BENJI_PROMPT_CACHE=0 sends the request with no cache_control at all.
 
-Web search (Anthropic only, D-154): the `web_search` tool goes to Anthropic's own search, which runs
+Web search (Anthropic only): the `web_search` tool goes to Anthropic's own search, which runs
 on their side inside the model call, unless BENJI_WEB_SEARCH=local (the engine's own search: a Brave
-or SerpAPI key, else DuckDuckGo, which now refuses automated requests). Billed per search on top of
+or SerpAPI key, else DuckDuckGo, which tends to refuse automated requests). Billed per search on top of
 tokens; at most WEB_SEARCH_MAX_USES a call. The searches it made come back in the result as
 `searches` (query, hosts, error) so the agent taints the turn and logs them as it does its own tool.
 Text written before a search is narration ("I'll look that up") and is not the answer.
 
 Effort (Anthropic only): output_config.effort, read from BENJI_EFFORT (low, medium, high, xhigh,
-max), default low (the user's rule of 2026-10-31). Sent only to models that accept it (effort_for);
+max), default low. Sent only to models that accept it (effort_for);
 no thinking field is ever sent, so Claude 5-family models think adaptively and effort sets how much.
 """
 
@@ -57,14 +57,15 @@ from typing import Any, Callable, Iterator
 from urllib.parse import urlparse
 
 from . import presets
+from .switches import switch
 from . import usage as usage_mod
 
 TIMEOUT = 180
 EPHEMERAL = {"type": "ephemeral"}
 # The most one Anthropic reply may be, thinking included. A rich 3D figure runs 3,000-4,000 tokens
-# of JSON; at 4,096 a guided microscope was cut off mid-block and nothing drew (D-150).
+# of JSON; at 4,096 a guided microscope figure was cut off mid-block and nothing was drawn.
 ANTHROPIC_MAX_TOKENS = 8192
-# Anthropic's own web search (D-154): the basic version, which every current model takes and calls
+# Anthropic's own web search: the basic version, which every current model takes and calls
 # directly (no code execution). $10 per 1,000 searches, so a turn costs at most this many cents.
 WEB_SEARCH_MAX_USES = 3
 SERVER_WEB_SEARCH = {"type": "web_search_20250305", "name": "web_search", "max_uses": WEB_SEARCH_MAX_USES}
@@ -76,7 +77,7 @@ class ProviderError(RuntimeError):
     pass
 
 
-# A safety-filter stop, told plainly (D-172). The model service ended the reply because its own
+# A safety-filter stop, told plainly. The model service ended the reply because its own
 # safety filter stepped in; nothing is wrong with the key or the network, and rewording often helps.
 SAFETY_STOP = ("The model's safety filter stopped this reply. Nothing is wrong with your key or connection; "
                "the service chose not to answer. Try rewording what you asked, or ask me to explain what I "
@@ -92,7 +93,7 @@ def is_safety_stop(err: Exception) -> bool:
 
 def foreground_message(err: Exception) -> str:
     """A foreground turn's error line: the provider's own words, except that a safety-filter stop
-    is told plainly (D-172)."""
+    is told plainly."""
     return SAFETY_STOP if is_safety_stop(err) else str(err)
 
 
@@ -108,7 +109,7 @@ def plain_message(err: Exception) -> str:
     return words[:300] if reason != "other" else (words[:240] or "The model service returned an error.")
 
 
-# OpenAI-format servers only (Anthropic's calls are unchanged): a 429 or a 5xx is tried again twice,
+# OpenAI-format servers only (Anthropic calls are not retried here): a 429 or a 5xx is tried again twice,
 # after the server's Retry-After (cut to MAX_WAIT) or 1 s then 2 s. A 429 that says the account is
 # out of balance or quota is not tried again: waiting will not fix it.
 RETRY_STATUS = (429, 500, 502, 503, 504)
@@ -187,25 +188,20 @@ def _open(req: urllib.request.Request, url: str, retry: bool, cancelled: Callabl
             raise ProviderError(f"network error calling {url}: {e.reason}") from None
 
 
-def _switch(name: str) -> bool:
-    """Off unless explicitly on (streaming stays opt-in, the user's rule of 2026-10-31)."""
-    return os.environ.get(name, "0").strip().lower() in ("1", "true", "yes", "on")
-
-
 def server_search_enabled() -> bool:
-    """Anthropic's own web search for the web_search tool, unless BENJI_WEB_SEARCH=local (D-154)."""
+    """Anthropic's own web search for the web_search tool, unless BENJI_WEB_SEARCH=local."""
     return os.environ.get("BENJI_WEB_SEARCH", "").strip().lower() != "local"
 
 
 def streaming_enabled() -> bool:
     """BENJI_STREAM=1 (or true/yes/on) streams; anything else keeps every call one blocking request."""
-    return _switch("BENJI_STREAM")
+    return switch("BENJI_STREAM", False)
 
 
 def caching_enabled() -> bool:
     """On by default (cache_control on Anthropic requests); BENJI_PROMPT_CACHE=0 (or false/no/off)
     turns it off."""
-    return os.environ.get("BENJI_PROMPT_CACHE", "1").strip().lower() not in ("0", "false", "no", "off")
+    return switch("BENJI_PROMPT_CACHE", True)
 
 
 EFFORT_LEVELS = ("low", "medium", "high", "xhigh", "max")
@@ -243,7 +239,7 @@ def effort_for(model: str, level: str) -> str | None:
 
 
 # What a connection that dies after it was made raises: urllib wraps only the failure to make one
-# (D-177: the Mac slept, the Wi-Fi changed, the read timed out). Named last, after urllib's own errors.
+# (the Mac slept, the Wi-Fi changed, the read timed out). Named last, after urllib's own errors.
 _DROPPED = (OSError, http.client.HTTPException)
 
 
@@ -434,7 +430,7 @@ class AnthropicProvider:
                 while i < len(neutral) and neutral[i]["role"] == "tool":
                     t = neutral[i]
                     content = t["content"]
-                    if t.get("images"):     # a screen step's fresh screenshot (D-123)
+                    if t.get("images"):     # a screen step's fresh screenshot
                         content = [{"type": "text", "text": content}] + [
                             {"type": "image",
                              "source": {"type": "base64", "media_type": im["media_type"], "data": im["data"]}}
@@ -476,7 +472,7 @@ class AnthropicProvider:
         """Breakpoints on the conversation. One on the last block of the last message before the live
         one (the newest neutral user message), so earlier turns are read from cache. One on the newest
         tool results, so a tool loop reads its own earlier steps: without it a job, which is a single
-        user message followed by steps, sends its whole history at full price on every call (D-177).
+        user message followed by steps, sends its whole history at full price on every call.
         A step with a screenshot isn't marked: the next step's picture replaces it, so it is never read."""
         live = next((i for i in range(len(neutral) - 1, -1, -1) if neutral[i]["role"] == "user"), None)
         if live:
@@ -543,7 +539,7 @@ class AnthropicProvider:
                 searches.append({"query": by_id[block["tool_use_id"]], "hosts": hosts, "error": error})
                 text_parts = []         # what came before the search was narration, not the answer
         if resp.get("stop_reason") == "refusal" and not tool_calls and not "".join(text_parts).strip():
-            raise ProviderError(SAFETY_STOP)       # D-172: the filter ended the reply (also after a search); say so
+            raise ProviderError(SAFETY_STOP)       # the filter ended the reply (also after a search); say so
         out = {"text": "".join(text_parts), "tool_calls": tool_calls, "usage": usage_mod.from_anthropic(resp)}
         if searches:
             out["searches"] = searches
@@ -692,10 +688,10 @@ class OpenAIProvider:
     models, Ollama, llama.cpp, LM Studio, MLX) via base_url.
 
     With a `preset` (benji/presets.py: DeepSeek, GLM, Kimi, Qwen, Ollama, LM Studio) it follows that
-    provider's documented quirks (D-147): the max-tokens parameter it names, its thinking switch,
+    provider's documented quirks: the max-tokens parameter it names, its thinking switch,
     stream_options only where documented, a short retry on 429 and 5xx, short error messages, a
     refusal to send a picture to a model that can't read one, and reasoning kept out of the answer.
-    Without one it is the provider it always was."""
+    Without one it sends plain Chat Completions requests with none of these adjustments."""
     name = "openai"
     API = "https://api.openai.com/v1/chat/completions"
     DEFAULT_MAX_TOKENS = 8192
@@ -720,7 +716,7 @@ class OpenAIProvider:
 
     def _messages(self, system: str, neutral: list[dict]) -> list[dict]:
         out: list[dict] = [{"role": "system", "content": system}]
-        # A tool message holds text only here, so a screen step's screenshot (D-123) follows the
+        # A tool message holds text only here, so a screen step's screenshot follows the
         # run of tool results as a user message of its own.
         screenshots: list[dict] = []
         for m in neutral:

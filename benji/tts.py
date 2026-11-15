@@ -1,4 +1,4 @@
-"""On-device speech with Kokoro, an optional extra (`./voice-setup.sh`).
+"""On-device speech with Kokoro, an optional extra (`tools/voice-setup.sh`).
 
 `python -m benji --tts` is a small speech service. It loads the model once, then reads
 JSON lines on stdin and streams audio back sentence by sentence, so speech starts while
@@ -221,12 +221,12 @@ def load_kokoro() -> tuple[Synth, list[str], dict]:
     d = voices_dir()
     model = model_path(d)
     if model is None or not (d / VOICES_FILE).is_file():
-        raise TTSError(f"Kokoro model files aren't in {d}. Run ./voice-setup.sh.")
+        raise TTSError(f"Kokoro model files aren't in {d}. Run tools/voice-setup.sh.")
     try:
         import numpy as np                 # optional extra: only in the voice venv
         from kokoro_onnx import Kokoro
     except ImportError:
-        raise TTSError("kokoro-onnx isn't installed in this Python. Run ./voice-setup.sh "
+        raise TTSError("kokoro-onnx isn't installed in this Python. Run tools/voice-setup.sh "
                        f"and start the service with {venv_python()}.") from None
     started = time.monotonic()
     kokoro = Kokoro(str(model), str(d / VOICES_FILE))
@@ -260,7 +260,7 @@ def speak_blocking(text: str, voice: str = DEFAULT_VOICE, engine_dir: Path | Non
     """Speak through the service in the voice venv, playing each sentence with `afplay`
     as it arrives. Raises TTSError when Kokoro isn't usable (the caller falls back)."""
     if not installed():
-        raise TTSError("Kokoro isn't installed (./voice-setup.sh).")
+        raise TTSError("Kokoro isn't installed (tools/voice-setup.sh).")
     root = engine_dir or Path(__file__).resolve().parent.parent
     proc = subprocess.Popen([str(venv_python()), "-m", "benji", "--tts"], cwd=root, text=True,
                             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)

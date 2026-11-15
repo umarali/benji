@@ -127,9 +127,9 @@ final class ModelSetupEngineTests: XCTestCase {
         assert os.environ["BENJI_WORKDIR"].startswith(os.environ["HOME"] + "/")
         assert not any(name.endswith("_API_KEY") and value for name,value in os.environ.items())
         sys.path.insert(0,os.environ["BENJI_DIR"])
-        from benji import providers,serve
+        from benji import providers,model_setup
         providers._post=lambda *a,**kw: {"choices":[{"message":{"content":"OK"},"finish_reason":"stop"}],"usage":{}}
-        serve.model_setup_main()
+        model_setup.model_setup_main()
         """
         let engine = ModelSetupEngine(assistantDir: root, environment: { .success([
             "BENJI_PROVIDER": "ollama", "BENJI_MODEL": "test-local", "BENJI_API_KEY": "",

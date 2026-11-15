@@ -1,11 +1,11 @@
-"""Browser reach (D-143, steps 1 to 3): what a background job may do in the user's Chrome, decided in code.
+"""Browser reach: what Benji may do in the user's Chrome, decided in code.
 
 A job can read pages in Chrome only if its record carries a `browser` grant: the `https` origins the
 user approved on a card when the job started. Acting (clicking, typing) needs a second, separate
-entry in the same record, `acts`, given by its own card and never implied by reading (D-171). This
+entry in the same record, `acts`, given by its own card and never implied by reading. This
 module is the grants and the read rules and nothing else (no sockets, no model): the acting rules are
 in benji/browser_act.py, the extension, the host and the link elsewhere (browser-extension/,
-benji/browser_host.py, benji/browser_link.py), and the tools are in benji/tools.py.
+benji/browser_host.py, benji/browser_link.py), and the tools are in benji/tools/browser_tabs.py.
 
   parse_url     a URL as (origin, path-and-query), or why it can't name a site we will use: only
                 `https`, no user name or password, no IP address, no local name, no internationalised
@@ -35,11 +35,11 @@ from .screen_class import ASKED, FREE, QUIET
 
 REFUSED = "refused"
 TOOL_NAMES = ("browser_open", "browser_tabs", "browser_read")
-# Step 2 (D-171): looking at a page's controls is a read; the rest act as the user.
+# Looking at a page's controls is a read; the rest act as the user.
 LOOK_TOOL = "browser_look"
 ACT_TOOL_NAMES = ("browser_scroll", "browser_click", "browser_type", "browser_key", "browser_upload")
 JOB_TOOL_NAMES = TOOL_NAMES + (LOOK_TOOL,) + ACT_TOOL_NAMES      # offered to a job that has a grant
-# Step 3: a foreground turn reads the page the user is looking at, on a card showing its site.
+# A foreground turn reads the page the user is looking at, on a card showing its site.
 ACTIVE_TOOL = "read_active_tab"
 MAX_ALWAYS = 50             # sites the user may mark "always allow reading" in Settings
 MAX_ORIGINS = 5             # sites a job may be granted at the start
@@ -250,7 +250,7 @@ def plan(grant: Grant | None, name: str, inp: dict, unasked: int = 0, opens: int
          always: tuple | list = ()) -> Plan:
     """The class of one browser tool call, before anything is asked or sent to the extension.
     free: listing Benji's own tab group. quiet: reading, or opening a page on an origin the user
-    approved for this job or set to "always allow reading" in Settings (step 3: reading only). asked:
+    approved for this job or set to "always allow reading" in Settings (that setting covers reading only). asked:
     opening a page on any other origin, a URL that carries data out, or the 41st quiet step.
     refused: no grant, or an argument that can't be right."""
     if grant is None or not grant.origins:
@@ -290,7 +290,7 @@ def plan(grant: Grant | None, name: str, inp: dict, unasked: int = 0, opens: int
 
 
 def plan_active(origin: str | None, always: tuple | list = ()) -> Plan:
-    """read_active_tab (step 3), once the extension has said which site the user's front tab is on:
+    """read_active_tab, once the extension has said which site the user's front tab is on:
     asked on a card that shows the site, every time, unless the user set that exact site to "always
     allow reading" in Settings. The origin is the extension's, parsed again here; a page that isn't
     one Benji can use is refused."""

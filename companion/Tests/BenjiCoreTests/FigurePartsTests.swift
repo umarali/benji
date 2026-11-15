@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// The higher-level parts (D-158): blobs, tapered tubes, scattered copies and spinning parts.
+/// The higher-level parts: blobs, tapered tubes, scattered copies and spinning parts.
 final class FigurePartsTests: XCTestCase {
     func testOneBallIsASphereFacingOut() {
         let m = FigureBlob.mesh(balls: [[0, 0, 0, 1]], smooth: 0.4, wobble: 0)

@@ -1,6 +1,6 @@
-"""Explanation-card lines in a reply (D-125, streamed: chilly-beats).
+"""Explanation-card lines in a reply, read as it streams.
 
-When the companion can show cards, the model writes the card as lines of their own between its
+When the app can show cards, the model writes the card as lines of their own between its
 spoken sentences, so the app can draw each part on the sentence that talks about it:
 
     card: {"title":"Sending a letter","heading":"Four hands, one envelope","layout":"flow"}
@@ -14,11 +14,11 @@ spoken sentences, so the app can draw each part on the sentence that talks about
 A line is a card line when, after any indent, it starts with one of the four words and a colon,
 and the rest is a JSON object (card, item), a JSON array (chips) or text (takeaway). The word may
 be in any case and wrapped in bold (`**Takeaway:**`). `takeaway:` and `chips:` also count later in
-a line, after a sentence's end ("That's the rule. Takeaway: …", chilly-whiteboard: a live reply
-said "Takeaway:" aloud and showed it twice): the words before it are spoken, the rest is the card
+a line, after a sentence's end ("That's the rule. Takeaway: …"; without this, a reply
+says "Takeaway:" aloud and shows it twice): the words before it are spoken, the rest is the card
 line. A card line is never spoken or shown; a card line whose JSON is broken is dropped too.
-Everything else is spoken text, newlines included. The companion's ExplainCard.swift reads the same lines out of a
-finished answer (one-shot mode).
+Everything else is spoken text, newlines included. The app's BenjiCore/Drawing/ExplainCard.swift reads the same lines out of a
+finished answer.
 """
 
 from __future__ import annotations

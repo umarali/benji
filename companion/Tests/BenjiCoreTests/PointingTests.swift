@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// The pointing protocol (D-66, D-67). selftest.py runs the same cases against benji/pointing.py.
+/// The pointing protocol. selftest.py runs the same cases against benji/pointing.py.
 final class PointingTests: XCTestCase {
     private func point(_ x: Int, _ y: Int, _ label: String = "") -> PointingTarget {
         PointingTarget(shape: .point(x: x, y: y), label: label)
@@ -189,7 +189,7 @@ final class PointingTests: XCTestCase {
         XCTAssertNotNil(item(t(.note(x: 50, y: 60), String(repeating: "é", count: 40))), "40 scalars")
     }
 
-    // MARK: pictures (D-97; the same cases run in selftest.py)
+    // MARK: pictures (the same cases run in selftest.py)
 
     func testPictureTagsParse() {
         let r = PointingTags.parse("A house. [SHAPE:10,50,90,50,50,10:roof] [LINE:20,90,20,60,40,60,40,90:door] "

@@ -1,6 +1,6 @@
-"""Log files only this user can read (D-144). Every file Benji appends a log to in the working
-folder is created mode 0600, and one that already exists with a wider mode (answers.jsonl from before
-this change was 0644) is tightened the first time it is written. The folder is never widened: a
+"""Log files only this user can read. Every file Benji appends a log to in the working
+folder is created mode 0600, and one that already exists with a wider mode (an answers.jsonl written by an
+older version of Benji may be 0644) is tightened the first time it is written. The folder is never widened: a
 folder this creates is 0700, one that exists is left as it is.
 
 Rotation keeps `keep` older copies (`name.1` is the newest), each 0600, so a log is bounded at about

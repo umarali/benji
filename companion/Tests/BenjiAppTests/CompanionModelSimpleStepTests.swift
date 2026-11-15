@@ -3,7 +3,7 @@ import XCTest
 @testable import BenjiApp
 import BenjiCore
 
-/// Simple screen steps without a card (D-126) through the real CompanionModel and a fake backend:
+/// Simple screen steps without a card through the real CompanionModel and a fake backend:
 /// a free scroll acts at once, a quiet click goes to the actuator with its beat, an asked step
 /// raises the card with its intent, "Ask before every step" sends every step back to be asked,
 /// and a take-over (a stopped step, Esc between steps, the talk key) stops the rest of the turn.

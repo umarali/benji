@@ -3,7 +3,7 @@ import XCTest
 @testable import BenjiApp
 import BenjiCore
 
-/// The figure hook (D-108): with the setting off the app's backend is used as it is; on, the
+/// The figure hook: with the setting off the app's backend is used as it is; on, the
 /// figure block is taken out of answers (so the panel and the voice never see it) and the figure
 /// goes to the stage. No window is made here: the stage is never shown.
 final class FigureStageBackendTests: XCTestCase {
@@ -14,7 +14,7 @@ final class FigureStageBackendTests: XCTestCase {
         unsetenv(FigureStageBackend.engineFlag)
     }
 
-    /// On by default since chilly-whiteboard (3D by sensing); off is an off switch for 3D.
+    /// On by default (the model draws in 3D when the question calls for it); off turns 3D off.
     func testOnByDefaultOffLeavesTheBackendUntouched() {
         UserDefaults.standard.removeObject(forKey: FigureStage.defaultsKey)
         let wrapped = FakeBackend()

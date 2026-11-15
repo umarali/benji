@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// Pictures Benji draws from parts (D-97): smoothing that keeps corners, straight and closed
+/// Pictures Benji draws from parts: smoothing that keeps corners, straight and closed
 /// outlines, ovals, dashed groups, callouts, and a picture's reveal and hold.
 final class PicturesTests: XCTestCase {
     private let pixel = CGSize(width: 1000, height: 500)
@@ -65,7 +65,7 @@ final class PicturesTests: XCTestCase {
     }
 
     func testTheOldAirplaneGetsNoNewLoops() {
-        // The live test's scribble came from smoothing every corner of a path like this one.
+        // Smoothing every corner of a path like this one turns it into a scribble.
         let plane = pts([100, 280, 160, 262, 112, 192, 250, 262, 200, 372, 320, 292, 466, 282, 100, 300])
         let out = PenGeometry.smooth(plane)
         let at = plane.map { c in out.firstIndex(of: c)! }

@@ -1,21 +1,20 @@
-"""The rules behind the approval gate that aren't about one tool's own work (chilly-gate, from
-the 2026-11-01 security review §(c)). Pure functions, so selftest.py checks each rule alone;
-benji/tools.py `needs_approval` and `dispatch` apply them.
+"""The rules behind the approval gate that aren't about one tool's own work. Pure functions, so
+selftest.py checks each rule alone; benji/tools/approval.py (`decide` and `dispatch`) applies them.
 
   shell_review     run_shell runs unasked only when every simple command in it is on a short
-                   read-only list and every path it names is inside the working folder (fix 1);
-                   joined by ; && || | is fine, and so is a redirect to /dev/null or 2>&1 (D-146)
-  shell_danger     what a command does that makes it asked first, in the card's words (D-146)
-  private_path     paths the read tools refuse outright, never asking (fix 3)
+                   read-only list and every path it names is inside the working folder;
+                   joined by ; && || | is fine, and so is a redirect to /dev/null or 2>&1
+  shell_danger     what a command does that makes it asked first, in the card's words
+  private_path     paths the read tools refuse outright, never asking
   url_review       web_fetch: hosts it refuses (private, loopback, link-local, .local) and URLs
-                   it asks about (a long or blob-carrying path or query) (fix 3)
-  taint_reason     once a turn has taken in outside text, what is asked that wasn't (fix 2); the
-                   sources a turn has are a small closed set (screen, web, browser, file: D-146)
-  said_by_user     whether a fact to remember is in the user's own message (fix 6)
-  tool_env         the environment tool processes get: no API keys, no BENJI_* (fix 1)
+                   it asks about (a long or blob-carrying path or query)
+  taint_reason     once a turn has taken in outside text, what is asked that wasn't; the
+                   sources a turn has are a small closed set (screen, web, browser, file)
+  said_by_user     whether a fact to remember is in the user's own message
+  tool_env         the environment tool processes get: no API keys, no BENJI_*
 
-The gate lives in code (D-57, D-123, D-128): the prompt's DATA rule is a second line, never the
-only one.
+The gate lives in code, so a model that ignores or is talked out of the prompt's DATA rule still
+can't act unasked: the prompt rule is a second line of defence, never the only one.
 """
 
 from __future__ import annotations
@@ -31,7 +30,7 @@ import urllib.parse
 from dataclasses import dataclass, field
 from pathlib import Path
 
-# --- fix 1: run_shell allowlist ------------------------------------------------------------
+# --- run_shell allowlist --------------------------------------------------------------------
 
 # Commands that only read. Each has its own idea of which arguments are paths (`_paths`).
 SHELL_READ_ONLY = frozenset({
@@ -226,15 +225,6 @@ def parse(command: str) -> Parsed:
             if r.harmless:
                 blank[r.start:r.end] = " " * (r.end - r.start)
     return Parsed(kept, "".join(blank), len(kept) > 1)
-
-
-def _split(command: str) -> list[list[str]]:
-    """The simple commands in `command` as their words; raises _Unclear (see `parse`) for a
-    redirect to anything but /dev/null or `2>&1`. Kept for callers that only want the words."""
-    parsed = parse(command)
-    if any(not r.harmless for c in parsed.commands for r in c.redirs):
-        raise _Unclear("redirection writes files")
-    return [c.argv for c in parsed.commands if c.argv]
 
 
 # These commands have no file-valued options in the subset accepted here. Unknown
@@ -657,8 +647,8 @@ class _OutsidePath(Exception):
 def _recursive_private(path: Path, workdir: Path, follow: bool = True, deadline: float | None = None,
                        names_only: bool = False) -> str | None:
     # Also cover private names anywhere (.ssh, .env, keys), including directory links a
-    # recursive reader may follow. Cache private roots once per traversal; resolving them
-    # per entry used to make ordinary repos exceed a 4096-entry cap. Do not prune .git,
+    # recursive reader may follow. Cache private roots once per traversal: resolving them
+    # per entry makes ordinary repos exceed a 4096-entry cap. Do not prune .git,
     # node_modules, hidden entries or ignored content: any can contain private names.
     deadline = deadline if deadline is not None else time.monotonic() + _SHELL_SCAN_SECONDS
     roots = [(Path.home() / rel, f"~/{rel}") for rel in _PRIVATE_UNDER_HOME] + _relocated_private()
@@ -714,7 +704,7 @@ def _recursive_private(path: Path, workdir: Path, follow: bool = True, deadline:
                             return why
                         if is_link and not _inside(p, workdir):
                             raise _OutsidePath(str(p))
-                        # A nested legacy home needs the same signature check as private_path.
+                        # A nested older Benji folder needs the same signature check as private_path.
                         if not names_only and entry.name.casefold() in LEGACY_HOME_NAMES:
                             why = private_path(p, workdir=workdir)
                             if why:
@@ -897,8 +887,8 @@ def shell_danger(command: str) -> tuple[str, str] | None:
     return None
 
 
-# Environment variables tool processes never see: the model's and search keys, Benji's own
-# settings (BENJI_*, and PAL_* from before the rename).
+# Environment variables tool processes never see: the model's and search keys, and Benji's own
+# settings (BENJI_*, plus CHILLY_* and PAL_*, older names for the same settings that may still be set).
 _KEY_VARS = frozenset({"ANTHROPIC_API_KEY", "OPENAI_API_KEY", "BRAVE_API_KEY", "SERPAPI_KEY",
                        "DEEPSEEK_API_KEY", "ZAI_API_KEY", "ZHIPUAI_API_KEY", "MOONSHOT_API_KEY",
                        "DASHSCOPE_API_KEY"})
@@ -911,9 +901,11 @@ def tool_env(environ: dict[str, str] | None = None) -> dict[str, str]:
             and not k.startswith(("BENJI_", "CHILLY_", "PAL_"))}
 
 
-# --- fix 3: private paths -------------------------------------------------------------------
+# --- private paths --------------------------------------------------------------------------
 
 # Under the home folder: never read by a tool, whatever the user or a page says.
+# `.chilly.env` and `.pal.env` are older names of Benji's key file, refused because they may still
+# hold keys.
 _PRIVATE_UNDER_HOME = (
     ".ssh", ".aws", ".gnupg", ".benji.env", ".chilly.env", ".pal.env",
     ".config/git/credentials", ".config/gh", ".docker/config.json", ".npmrc", ".pypirc",
@@ -929,8 +921,8 @@ _PRIVATE_UNDER_HOME = (
     "Library/Application Support/Microsoft Edge Canary", "Library/Application Support/gh",
     "Library/Application Support/Arc", "Library/Safari", "Library/Containers/com.apple.Safari",
     "Library/Containers/com.apple.SafariTechnologyPreview",
-    # Benji's own support folder: the browser link's token is kept here (D-143). The folder from before
-    # the rename can still hold an old token until the app has cleared it.
+    # Benji's own support folder: the browser link's token is kept here. `Chilly` is an older name of
+    # the same folder and can still hold an old token until the app has cleared it.
     "Library/Application Support/Benji", "Library/Application Support/Chilly",
     # A half-made copy of the store, while a move that couldn't be a rename is under way.
     ".benji.incoming",
@@ -964,11 +956,11 @@ _PRIVATE_NAMES = (".benji.env", ".chilly.env", ".pal.env", ".env", ".envrc", ".n
                   "id_ed25519*", "id_ecdsa*", "id_dsa*", *_env_private_globs())
 
 
-# Benji's older folders (`~/.chilly`, `~/chilly`, `~/pal`). After the move they are folders Benji no
-# longer uses, and they can still hold what it kept: answers, logs, policy, memory, jobs. So they are
-# refused like any private place, while they look like Benji's (a plain folder of someone's own that is
-# called ~/chilly, a clone of the code for one, is not touched), unless one is the working folder itself
-# (BENJI_WORKDIR=~/chilly still works as it always did).
+# Older names of Benji's data folder (`~/.chilly`, `~/chilly`, `~/pal`). Benji doesn't use them, but
+# one can still hold what it kept there: answers, logs, policy, memory, jobs. So each is refused like
+# any private place, but only while it looks like Benji's (it holds one of the files below; a plain
+# folder of someone's own that is called ~/chilly, such as a clone of the code, is not touched), and
+# not when it is the working folder itself (BENJI_WORKDIR=~/chilly is allowed).
 LEGACY_HOME_NAMES = (".chilly", "chilly", "pal")
 _LEGACY_SIGNS = ("answers.jsonl", "policy.json", "events.jsonl", "engine.log", "memory.jsonl", "jobs",
                  "conversations", "voice.log", "latency.jsonl", "usage.jsonl", "output")
@@ -981,7 +973,7 @@ def _legacy_home(folder: Path) -> bool:
         return False
 
 
-# A job's record and schedule, beside its folder (D-177): what it may do, so no tool reads or writes them.
+# A job's record and schedule, beside its folder: they say what the job may do, so no tool reads or writes them.
 _JOB_RECORD = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(\.[a-z]+)?\.json(\.tmp)?")
 
 
@@ -991,7 +983,7 @@ def _names_job_record(p: Path) -> bool:
 
 def is_job_record(path: Path) -> bool:
     """A job's record or schedule, as written or through a link. Writing one is refused outright, not
-    asked: what a job may do is changed only by the engine, on the user's cards (D-177)."""
+    asked: what a job may do is changed only by the engine, on the user's cards."""
     try:
         return _names_job_record(Path(path)) or _names_job_record(Path(path).resolve())
     except OSError:
@@ -1051,7 +1043,7 @@ def _relocated_private() -> list[tuple[Path, str]]:
 
 def private_path(path: Path, home: Path | None = None, workdir: Path | None = None) -> str | None:
     """What makes `path` private, checked as written and resolved so links cannot bypass it.
-    `workdir` leaves a legacy working folder alone, as before.
+    `workdir` exempts an older Benji folder that is the working folder (see LEGACY_HOME_NAMES).
     Known limits: ordinary-name hard links, secrets in .gitconfig URLs, and other accounts' homes.
     """
     home = home or Path.home()
@@ -1099,7 +1091,7 @@ def _private_ancestor(path: Path, roots: list[tuple[Path, str]]) -> str | None:
 SEARCH_EXCLUDES = _PRIVATE_NAMES
 
 
-# --- fix 3: web_fetch hosts and URLs ---------------------------------------------------------
+# --- web_fetch hosts and URLs ---------------------------------------------------------------
 
 MAX_URL_TAIL = 200
 _BASE64_RUN = re.compile(r"[A-Za-z0-9+/=_-]{32,}")
@@ -1170,17 +1162,15 @@ def host_named(host: str, named: set[str]) -> bool:
     return any(h == n or h.endswith("." + n) for n in named)
 
 
-# --- fix 2: the tainted turn ----------------------------------------------------------------
+# --- tainted turns --------------------------------------------------------------------------
 
-# What a turn has taken in from outside the user, as a small closed set (D-146). `screen`: it looked
+# What a turn has taken in from outside the user, as a small closed set. `screen`: it looked
 # at a screenshot. `web`: a page, a fetch or a search result. `browser`: a page in the user's
 # Chrome. `file`: anything else that comes from outside: a file outside the working folder, an
 # app's content (AppleScript output), the output of a command that isn't read-only, a skill that
 # isn't verified. Every rule below is decided from this set, never from text the model wrote.
 TAINT_SCREEN, TAINT_WEB, TAINT_BROWSER, TAINT_FILE = "screen", "web", "browser", "file"
 TAINT_KINDS = (TAINT_SCREEN, TAINT_WEB, TAINT_BROWSER, TAINT_FILE)
-# What taints a turn as much as a web page does. The screen alone is weaker (starting a job).
-STRONG_TAINTS = frozenset({TAINT_WEB, TAINT_BROWSER, TAINT_FILE})
 
 
 def taint_kind(source: str) -> str:
@@ -1250,7 +1240,7 @@ def taint_reason(name: str, tool_input: dict, *, user_text: str, search_hosts: s
     return None
 
 
-# --- fix 6: remember only what the user said -----------------------------------------------
+# --- remember only what the user said ----------------------------------------------------
 
 _FILLER = frozenset({
     "a", "an", "the", "is", "are", "was", "were", "be", "been", "am", "i", "me", "my", "mine",
@@ -1279,7 +1269,7 @@ def said_by_user(fact: str, user_text: str) -> bool:
     return bool(content) and all(any(_word_matches(w, s) for s in said) for w in content)
 
 
-# --- decline memory (D-172): "not now" is remembered for a while -------------------------------
+# --- decline memory: "not now" is remembered for a while -------------------------------------
 
 DECLINE_SECONDS = 30 * 60
 _DECLINE_CAP = 200
@@ -1327,7 +1317,7 @@ class DeclineMemory:
         self._until.pop(scope, None)
 
 
-# --- an answer-style preference, kept only when the user says so (D-172) -------------------------
+# --- an answer-style preference, kept only when the user says so -------------------------------
 
 # Three styles, each one fixed line of plain text in the user's memory (Settings › Memory shows and
 # deletes it like any other line). The model may only save exactly one of these lines, and only for a

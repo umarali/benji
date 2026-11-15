@@ -200,6 +200,3 @@ For a bug report, run `python3 -m benji --diagnose` from the repository folder, 
 Settings → General → Diagnostics. Review the report before sharing it. Include your macOS,
 Python and Xcode versions and the step that failed. Do not attach keys or private conversation
 text. [Open a bug report](https://github.com/umarali/benji/issues/new/choose).
-
-For a longer recorded demonstration with invented files, use the owner's
-[demo kit](../demo/README.md). It is separate from this first-message check.

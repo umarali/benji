@@ -1,4 +1,4 @@
-"""Benji's native-messaging host (D-143, step 1). Chrome starts this when the Benji extension
+"""Benji's native-messaging host. Chrome starts this when the Benji extension
 connects; it is a relay and nothing else. Run as a script, by the launcher the app writes when the
 user turns on Settings, Browser:  python3 -I benji/browser_host.py chrome-extension://<id>/
 
@@ -33,7 +33,7 @@ HELLO_TIMEOUT = 5.0
 
 
 def link_dir() -> Path:
-    override = os.environ.get("BENJI_BROWSER_DIR") or os.environ.get("CHILLY_BROWSER_DIR")
+    override = os.environ.get("BENJI_BROWSER_DIR")
     return Path(override) if override else Path.home() / "Library" / "Application Support" / "Benji" / "Browser"
 
 

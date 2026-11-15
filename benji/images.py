@@ -1,4 +1,4 @@
-"""Image attachments for vision turns (e.g. the companion's screen context).
+"""Image attachments for vision turns (e.g. the screenshot the app sends).
 
 An attachment is {"media_type": "image/png", "data": "<base64>"}; providers turn
 it into their own wire format. Validation happens here so a bad file fails

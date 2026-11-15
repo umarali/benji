@@ -50,7 +50,7 @@ final class ApprovalPolicyTests: XCTestCase {
     }
 
     /// A long command or a whole AppleScript is on the card in full: closed it shows three lines
-    /// and offers "Show all" (the 2026-11-01 security review §(c) 5 and 10).
+    /// and offers "Show all", so nothing the user approves is hidden.
     func testALongTargetCanBeOpenedOnTheCard() {
         XCTAssertFalse(ApprovalPolicy.targetNeedsOpening("rm -rf build"))
         XCTAssertTrue(ApprovalPolicy.targetNeedsOpening("tell application \"Notes\"\nset x to 1\nget x\nend tell"))

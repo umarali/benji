@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-"""Benji's own quiet cues, synthesised from plain sine tones (D-173, step 7).
+"""Benji's own quiet cues, synthesised from plain sine tones.
 
 Writes companion/Resources/Cues/*.wav (48 kHz, 16-bit, mono) and Cues/manifest.json. Standard
-library only. Nothing here is sampled, traced or copied from any recording or any other product
-(D-56): every sound is a few sine partials with a raised-cosine attack and an exponential
-decay, as the design work wrote it down (the sound notes, D-61, D-65). The
-notes, timings and levels are that document's; this script is the part that ships.
+library only. Nothing here is sampled, traced or copied from any recording or any other product:
+every sound is a few sine partials with a raised-cosine attack and an exponential decay, with the
+notes, timings and levels set below.
 
     python3 tools/make_cues.py            # write the files
     python3 tools/make_cues.py --check    # render again and say whether the files on disk are exactly these
@@ -18,7 +17,7 @@ The five cues, by meaning:
     error          two notes down, muted    something failed
 
 Every file starts and ends on a sample of exactly zero, peaks at or below -18 dBFS and has no DC
-offset (tests: selftest_quiet.py and CueFilesTests.swift measure them). Each variant of a cue is
+offset (tests: tests/check_policy.py and CueFilesTests.swift measure them). Each variant of a cue is
 gain-matched by momentary loudness (ITU-R BS.1770 K-weighting, 400 ms), so the variants differ only
 in pitch by a little, never in meaning. No drawing sounds, no loops, no speech.
 """

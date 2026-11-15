@@ -29,7 +29,7 @@ final class CompanionModelTurnTests: XCTestCase {
     private var answers: [String] { model.state.lines.filter { $0.role == .assistant }.map(\.text) }
     private var errors: [String] { model.state.lines.filter { $0.role == .error }.map(\.text) }
 
-    // (1) Ready → Listening → Processing → Speaking → Ready, from real-shaped events.
+    // Ready → Listening → Processing → Speaking → Ready, from real-shaped events.
     func testVoiceTurnRunsThroughEveryPhaseAndBackToReady() {
         XCTAssertEqual(model.state.phase, .idle)
         model.voiceListeningStarted()
@@ -54,7 +54,7 @@ final class CompanionModelTurnTests: XCTestCase {
         XCTAssertEqual(answers, ["It's noon."])
     }
 
-    // (3) Cancel during Processing, then the engine's late success: nothing comes back.
+    // Cancel during Processing, then the engine's late success: nothing comes back.
     func testLateAnswerAfterCancelIsDropped() {
         type("summarise my notes")
         let run = backend.lastRun
@@ -77,7 +77,7 @@ final class CompanionModelTurnTests: XCTestCase {
         XCTAssertTrue(backend.starts.last!.memoryEmpty)
     }
 
-    // (3) …and its late failure: no error row, no Error state.
+    // …and its late failure: no error row, no Error state.
     func testLateFailureAfterCancelIsDropped() {
         type("do something")
         let run = backend.lastRun
@@ -121,7 +121,7 @@ final class CompanionModelTurnTests: XCTestCase {
         XCTAssertEqual(model.state, after)
     }
 
-    // (2) Cancel while transcribing: the transcript that arrives afterwards never starts a turn.
+    // Cancel while transcribing: the transcript that arrives afterwards never starts a turn.
     func testTranscriptArrivingAfterCancelIsDiscarded() {
         model.voiceListeningStarted()
         model.voiceTranscribing()
@@ -134,7 +134,7 @@ final class CompanionModelTurnTests: XCTestCase {
         XCTAssertTrue(model.state.lines.isEmpty)
     }
 
-    // (2) Stop finalises: the transcript taken while Transcribing is sent once.
+    // Stop finalises: the transcript taken while Transcribing is sent once.
     func testStopFinalisesAndSendsOnce() {
         model.voiceListeningStarted()
         model.voiceTranscribing()

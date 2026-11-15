@@ -1,10 +1,13 @@
 # Feature status
 
-What has been tried live and what has only been tested offline, feature by feature. A label changes only after a live run that is written down.
+What has been tried live, and what has only been tested offline. Every feature carries one of
+three labels, and a label changes only after a live run that is written down.
 
-Labels, used honestly. **Stable** = used by the maintainer on one Mac over weeks; still early
-software. **Experimental** = unit-tested offline and run live once, briefly. **Not live-tested** =
-unit-tested against fakes (and, where noted, scripted headless checks); never run for real.
+| Label | What it means |
+|---|---|
+| **Stable** | Used by the maintainer on one Mac over weeks. Still early software. |
+| **Experimental** | Unit-tested offline and run live once, briefly. |
+| **Not live-tested** | Unit-tested against fakes (and, where noted, scripted headless checks). Never run for real. |
 
 | Feature | Label | What backs it |
 |---|---|---|
@@ -29,7 +32,10 @@ unit-tested against fakes (and, where noted, scripted headless checks); never ru
 | `--voice` and `--listen` (cloud transcription, wake word) | Not live-tested | |
 | Notarised download, other Macs and macOS versions | Not available / untested | See [Building from source](building.md#build-from-source) |
 
-Offline checks run in [GitHub Actions](https://github.com/umarali/benji/actions): engine selftests
-on macOS with Python 3.11 and 3.12 (through `tools/isolated_run.py`, as in the contribution guide),
-Swift tests and ServeCheck on `macos-26`, extension tests, and repository checks.
-Details per feature are in the [docs](README.md) and [providers.md](providers.md).
+## How it is checked
+
+Every pull request runs the offline checks in [GitHub Actions](https://github.com/umarali/benji/actions):
+the engine's tests on macOS with Python 3.11 and 3.12, the Swift tests and ServeCheck on `macos-26`,
+the extension's tests, and checks on the repository itself. None of them calls a live model.
+[How Benji works](architecture.md#tests) lists them and how to run each one. What has been checked
+for each model provider is in [providers.md](providers.md).

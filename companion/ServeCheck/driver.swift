@@ -2,13 +2,13 @@ import Foundation
 
 // Drives the app's real ServeBackend against a real `benji --serve` whose model is a localhost
 // fake (run.py). No API key is read and nothing leaves the Mac. Compiled by run.py together
-// with BenjiCore, ServeBackend.swift and OneShotBackend.swift.
+// with BenjiCore, ServeBackend.swift and AuditFile.swift.
 let args = CommandLine.arguments
 let assistantDir = args[1], outside = args[2]
 var failures = 0
 func check(_ name: String, _ ok: Bool) { print(ok ? "PASS" : "FAIL", name); if !ok { failures += 1 } }
 
-// D-173: the real app says what it can carry out in `hello`, as AppController sets it.
+// The real app says what it can carry out in `hello`, as AppController sets it.
 ServeBackend.capabilities = { AppCapabilities.list(screenActions: true, drive: true) }
 var b = ServeBackend(assistantDir: assistantDir)
 var events: [BackendEvent] = []
@@ -20,7 +20,7 @@ var approvalsSeen: [(action: String, target: String)] = []
 var runCount = 0
 /// Events and finishes tagged with a run other than the one just started (turn tokens).
 var foreignRuns = 0
-/// Plays the app's side of a screen step (D-123) when set.
+/// Plays the app's side of a screen step when set.
 var onScreenEvent: ((BackendEvent) -> Void)? = nil
 func listen() {
     b.onEvent = { run, e in
@@ -100,7 +100,7 @@ if case let .pointedAnswer(text, targets)? = r.events.last(where: { if case .poi
         PointingTarget(shape: .callout(x: 100, y: 50), label: "Front door")])
 } else { check("picture answer", false) }
 
-// D-118: the app streams by default. The deltas arrive before the answer and join to its text;
+// The app streams by default. The deltas arrive before the answer and join to its text;
 // with pointing, the tags never stream.
 func streamed(_ ev: [BackendEvent]) -> String {
     ev.reduce(into: "") { acc, e in
@@ -157,7 +157,7 @@ left.arguments = ["-P", "\(getpid())"]; let pipe = Pipe(); left.standardOutput =
 try! left.run(); left.waitUntilExit()
 check("shutdown ends the engine", pipe.fileHandleForReading.readDataToEndOfFile().isEmpty)
 
-// Explanation cards drawn on their sentences (chilly-beats): an engine started with the app's
+// Explanation cards drawn on their sentences: an engine started with the app's
 // BENJI_CARDS=1 sends each card line as it closes, never in the deltas or the answer.
 setenv("BENJI_CARDS", "1", 1)
 b = ServeBackend(assistantDir: assistantDir)
@@ -194,38 +194,9 @@ check("cards, streaming off: no deltas; the lines carry their places, which give
 b.shutdown()
 RunLoop.main.run(until: Date().addingTimeInterval(0.5))
 unsetenv("BENJI_CARDS")
-// The one-shot backend (the default) writes and removes its own --history file.
-let one = OneShotBackend(assistantDir: assistantDir)
-var oneEvents: [BackendEvent] = []
-var oneDone: Int32? = nil
-var oneRuns: Set<Int> = []
-one.onEvent = { run, e in oneRuns.insert(run); oneEvents.append(e) }
-one.onFinished = { run, code in oneRuns.insert(run); oneDone = code }
-func historyFiles() -> [String] {
-    ((try? FileManager.default.contentsOfDirectory(atPath: NSTemporaryDirectory())) ?? []).filter { $0.hasPrefix("chilly-history-") }
-}
-let before = historyFiles()
-one.start(run: 101, task: "one shot", imagePath: nil, memory: mem, allowPointing: false, spoken: false, screen: nil)
-let t1 = Date()
-while oneDone == nil && Date().timeIntervalSince(t1) < 30 { RunLoop.main.run(until: Date().addingTimeInterval(0.02)) }
-check("one-shot run sees the history it was given", oneEvents.contains(.answer("3 user turns")) && oneDone == 0)
-check("one-shot history file removed afterwards", historyFiles() == before)
-check("one-shot events and finish name their run", oneRuns == [101])
-oneEvents = []; oneDone = nil
-one.start(run: 102, task: "context", imagePath: nil, memory: ConversationMemory(), allowPointing: true, spoken: true, screen: geo)
-let t2 = Date()
-while oneDone == nil && Date().timeIntervalSince(t2) < 30 { RunLoop.main.run(until: Date().addingTimeInterval(0.02)) }
-check("one-shot: --spoken and --screen reach the model's prompt", oneEvents.contains(.answer("spoken=True notch=True")))
-
 // The memory budget: the app drops older exchanges itself and the engine tells the model they are gone.
 var long = ConversationMemory()
 for _ in 0..<12 { long.record(user: String(repeating: "q", count: 3000), assistant: "a") }
-oneEvents = []; oneDone = nil
-one.start(run: 103, task: "memory", imagePath: nil, memory: long, allowPointing: false, spoken: false, screen: nil)
-let t3 = Date()
-while oneDone == nil && Date().timeIntervalSince(t3) < 30 { RunLoop.main.run(until: Date().addingTimeInterval(0.02)) }
-check("one-shot: 10 exchanges sent, and the prompt says older ones are gone",
-      oneEvents.contains(.answer("dropped 11 user turns")))
 r = run("memory", memory: long)
 check("serve: the restore says older ones are gone, and the prompt says so",
       answers(r.events) == ["dropped 11 user turns"])
@@ -236,7 +207,7 @@ check("restartEngine: the next message starts a fresh engine with the app's memo
 r = run("memory")
 check("serve: the next prompt counts the exchanges the engine holds itself, none dropped",
       answers(r.events) == ["whole 4 user turns"])
-// Cut-offs (D-122): the engine keeps what was heard as the answer, for a finished or a running turn.
+// Cut-offs: the engine keeps what was heard as the answer, for a finished or a running turn.
 r = run("two sentences")
 let heardReply = "First sentence here. … " + CutOffReply.marker
 b.cutOff(reply: heardReply, running: false)
@@ -249,12 +220,12 @@ check("serve: cutting off a running turn ends it at once", r.code == 0 && Date()
 r = run("heard?")
 check("serve: the running turn's message stays, with what was heard as its answer", answers(r.events) == ["last: \(stopped)"])
 
-// Screen steps (D-123): the engine asks for the approval with the step, then for the step itself;
+// Screen steps: the engine asks for the approval with the step, then for the step itself;
 // the app's result and its fresh screenshot reach the model.
 let png = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGD4DwABBAEAwS2OUAAAAABJRU5ErkJggg==")!
 let shotPath = NSTemporaryDirectory() + "benji-servecheck-shot.png", afterPath = NSTemporaryDirectory() + "benji-servecheck-after.png"
 FileManager.default.createFile(atPath: shotPath, contents: png)
-// The screen after a step is a different picture: one that came back identical is not sent again (D-173).
+// The screen after a step is a different picture: one that came back identical is not sent again.
 let pngAfter = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC")!
 FileManager.default.createFile(atPath: afterPath, contents: pngAfter)
 func act(_ answer: @escaping (ScreenStep?) -> ScreenStepResult, image: String? = shotPath) -> [BackendEvent] {
@@ -293,7 +264,7 @@ check("screen step: a refusal reaches the model, with no screenshot and no activ
 acted = act({ _ in .refused(.unreadable) }, image: nil)
 check("screen step: a turn without a screenshot isn't offered the screen tools",
       answers(acted) == ["no screen tools"] && !acted.contains { if case .screenAction = $0 { return true }; return false })
-// Simple steps (D-126): the step's intent and confidence reach the app; a confident scroll goes
+// Simple steps: the step's intent and confidence reach the app; a confident scroll goes
 // unasked as free; a click goes as quiet and the app's "ask" brings the card; "Ask before every
 // step" (the registration domain, so nothing is written to disk) makes the engine ask for a scroll.
 func actSimply(_ task: String, answer: @escaping (ScreenStep?, ScreenStepClass?) -> ScreenStepResult) -> [BackendEvent] {
@@ -341,12 +312,12 @@ UserDefaults.standard.register(defaults: [ScreenAutonomy.defaultsKey: false])
 check("simple steps: with \"Ask before every step\" the engine asks for a confident scroll, then sends it approved",
       approvals(acted) == 1 && acted.contains(.screenAction(request: "s1", step: down, mode: nil, intent: readRest))
       && answers(acted) == ["[done] Scrolled down | screenshot=True"])
-// Space with a Send button in front (chilly-gate fix 4): asked even with simple steps on.
+// Space with a Send button in front: asked even with simple steps on.
 acted = actSimply("press space") { _, _ in ScreenStepResult(status: .done, text: "Pressed Space.", imagePath: afterPath) }
 check("gate: Space is asked on a card even with simple steps on, then done as approved",
       approvals(acted) == 1 && acted.contains { if case let .screenAction(_, _, mode, _, _) = $0 { return mode == nil }; return false }
       && !acted.contains { if case let .screenAction(_, _, mode, _, _) = $0 { return mode != nil }; return false })
-// Drive mode (D-170), through the real ServeBackend and engine: the model asks to start, the engine
+// Drive mode, through the real ServeBackend and engine: the model asks to start, the engine
 // raises the drive card (named goal, 45 s) and the app answers it as its own card (`via: card`);
 // the drive begins, a click goes to the app marked as a drive step, the model ends it with a line.
 func driveRun(_ task: String, answer: @escaping (ScreenStep?, ScreenStepClass?) -> ScreenStepResult) -> [BackendEvent] {
@@ -380,7 +351,7 @@ check("drive: it ends with the model's spoken and written line, one step done",
 try? FileManager.default.removeItem(atPath: shotPath)
 try? FileManager.default.removeItem(atPath: afterPath)
 
-// The gate for every tool (chilly-gate): a page outside the folder tells Benji to read a key and
+// The approval gate for every tool: a page outside the folder tells Benji to read a key and
 // send it out. The user lets it read the page; the key is refused with no card; the fetch to the
 // attacker and the memory are asked, each card saying the turn read outside content, and declined.
 approvalsSeen = []
@@ -411,7 +382,7 @@ r = run("my name is Umar")
 check("gate: remembering what the user said needs no card",
       approvalsSeen.isEmpty && r.events.contains(.activity(kind: "remembered", name: nil)))
 
-// The screen as a whiteboard (chilly-whiteboard): what Benji has on the screen goes with each
+// The screen as a whiteboard: what Benji has on the screen goes with each
 // send and reaches the prompt; tags between sentences come back placed, with edits; the answer
 // log keeps each turn.
 ServeBackend.canvasNow = {
@@ -446,7 +417,7 @@ check("serve: the answer log keeps each turn with its raw answer, events and run
       records.count >= 3 && (last["raw"] as? String)?.contains("[EDIT:p1:recolor red]") == true
       && (last["events"] as? [[String: Any]])?.contains { $0["type"] as? String == "answer" } == true
       && (last["run"] as? String)?.hasPrefix("t") == true)
-// A saved conversation reopened (D-121): the app resets the running engine, then the next message
+// A saved conversation reopened: the app resets the running engine, then the next message
 // restores that conversation's exchanges before it, without a new engine.
 let saved = SavedConversation(id: ConversationStore.newID(), title: "Trip", started: Date(), updated: Date(), lines: [
     SavedLine(role: .user, text: "plan a trip"), SavedLine(role: .assistant, text: "Hunza in September."),
@@ -462,7 +433,7 @@ check("serve: and the engine keeps it from there", answers(r.events) == ["4 user
 b.reset()
 r = run("fresh again")
 check("serve: a reset with no memory still starts empty", answers(r.events) == ["1 user turns"])
-// Background jobs (D-130 step 1): the foreground turn starts a job, the job runs as a second turn in
+// Background jobs: the foreground turn starts a job, the job runs as a second turn in
 // the same engine, parks on its approval until the app's own button answers, and ends with a turn_end.
 var jobSeen: [JobSnapshot] = []
 b.onJob = { jobSeen.append($0) }
@@ -508,7 +479,7 @@ let queued = waitJob { $0.state == .queued }
 if let queued { b.stopJob(queued.id) }
 check("jobs: stopping in the beat ends it as stopped before it ran", waitJob { $0.state == .stopped } != nil
       && !jobSeen.contains { $0.state == .working })
-// Second pass (D-172): the start row shows what the job was told; a stopped job can be continued.
+// Continuing a job: the start row shows what the job was told; a stopped job can be continued.
 check("jobs: the start row carries what the job was told (its goal first) and run 1",
       queued?.brief.hasPrefix("Goal (as Benji stated it): JOBMARK write the file.") == true && queued?.run == 1)
 let stoppedJob = jobSeen.last(where: { $0.state == .stopped })
@@ -519,7 +490,7 @@ let again = waitJob { $0.state == .queued && $0.run == 2 }
 check("jobs: Continue starts run 2 of the same job, in the same folder (same id)", again?.id == stoppedJob?.id && again != nil)
 if let again { b.stopJob(again.id) }
 check("jobs: and that run can be stopped in its beat too", waitJob { $0.state == .stopped && $0.run == 2 } != nil)
-// Browser reach (D-143): nothing listens until the app's switch says so; then the engine opens its
+// Browser reach: nothing listens until the app's switch says so; then the engine opens its
 // link (private file, loopback), the real host connects to it the way Chrome would start it, and
 // turning the switch off closes it. HOME is a temporary folder, so no real file is touched.
 var browserSeen: [BrowserStatus] = []
@@ -561,7 +532,7 @@ check("browser: the switch off closes the link, removes link.json and says off",
 b.shutdown()
 RunLoop.main.run(until: Date().addingTimeInterval(1.0))
 
-// The logs (D-144): the real ServeBackend with the real engine. The app's lines and the engine's lines
+// The logs: the real ServeBackend with the real engine. The app's lines and the engine's lines
 // are in one private events.jsonl; engine.log holds the engine's stderr, redacted, private; and
 // neither holds a word the fake page or the messages said.
 let workFolder = ProcessInfo.processInfo.environment["BENJI_WORKDIR"] ?? ""
@@ -593,15 +564,15 @@ check("logs: neither file holds what the fake page said, a secret path it asked 
 check("logs: answers.jsonl and usage.jsonl are private too",
       fileMode("answers.jsonl") == 0o600 && fileMode("usage.jsonl") == 0o600)
 
-// The talk key's prewarm (D-173): the real ServeBackend sends it only because the real engine said it can,
-// and the engine writes one audit line for it: a flag and a time, never text.
+// The talk key's prewarm: the real ServeBackend sends it to the ready engine, and the engine
+// writes one audit line for it: a flag and a time, never text.
 b.prewarm()
 check("prewarm: the real engine answers the app's prewarm with one audit line holding only a flag (and a time)",
       waitFor({ fileText("events.jsonl").contains("\"kind\":\"prewarm\"") }, seconds: 8)
       && fileText("events.jsonl").split(separator: "\n").filter { $0.contains("\"kind\":\"prewarm\"") }
         .allSatisfy { !$0.contains("text") && ($0.contains("\"skipped\":true") || $0.contains("\"skipped\":false")) })
 
-// Fail closed (D-173): when the Keychain can't be read the engine is not started, the run ends with the
+// Fail closed: when the Keychain can't be read the engine is not started, the run ends with the
 // plain words, and nothing falls back to a file.
 func engineStarts() -> Int {
     fileText("events.jsonl").split(separator: "\n").filter { $0.contains("\"kind\":\"engine_start\"") && $0.contains("\"src\":\"app\"") }.count
@@ -619,6 +590,35 @@ check("keys: a Keychain that can't be read ends the run with the plain words and
 Thread.sleep(forTimeInterval: 0.5)
 check("keys: and no engine process was launched for it", engineStarts() == startsBefore)
 ServeBackend.keyEnvironment = nil
+
+// An engine that speaks another protocol version (the app and the engine ship together, so one is out of
+// date) is refused: the turn ends with words saying so, nothing else is tried, and the next message asks again.
+let otherDir = NSTemporaryDirectory() + "benji-other-protocol-\(UUID().uuidString)"
+try! FileManager.default.createDirectory(atPath: otherDir + "/benji", withIntermediateDirectories: true)
+try! "".write(toFile: otherDir + "/benji/__init__.py", atomically: true, encoding: .utf8)
+try! """
+import json, sys
+sys.stdin.readline()
+print(json.dumps({"type": "error", "code": "protocol", "text": "this Benji speaks protocol 2"}), flush=True)
+sys.stdin.read()
+""".write(toFile: otherDir + "/benji/__main__.py", atomically: true, encoding: .utf8)
+let other = ServeBackend(assistantDir: otherDir)
+var otherEvents: [BackendEvent] = []
+var otherFinishes: [Int32] = []
+other.onEvent = { _, e in otherEvents.append(e) }
+other.onFinished = { _, code in otherFinishes.append(code) }
+func refused() -> Bool {
+    otherEvents.contains { if case let .error(text) = $0 { return text.contains("different protocol") && text.contains("protocol 2") }; return false }
+}
+other.start(run: 88, task: "hello", imagePath: nil, memory: ConversationMemory(), allowPointing: false, spoken: false, screen: nil)
+check("protocol: an engine that speaks another version ends the turn with an error that says so",
+      waitFor({ otherFinishes == [-1] }, seconds: 15) && refused() && otherEvents.count == 1)
+otherEvents = []
+other.start(run: 89, task: "again", imagePath: nil, memory: ConversationMemory(), allowPointing: false, spoken: false, screen: nil)
+check("protocol: the next message tries the engine again and is refused the same way",
+      waitFor({ otherFinishes == [-1, -1] }, seconds: 15) && refused())
+other.shutdown()
+try? FileManager.default.removeItem(atPath: otherDir)
 
 print(failures == 0 ? "ALL PASSED" : "\(failures) FAILED")
 exit(failures == 0 ? 0 : 1)

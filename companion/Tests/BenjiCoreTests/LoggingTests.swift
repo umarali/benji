@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// The logs Benji keeps (D-144): the app's side of events.jsonl, engine.log with its redaction, the
+/// The logs Benji keeps: the app's side of events.jsonl, engine.log with its redaction, the
 /// private-file rules every log shares, and the Copy diagnostics action's core. The Python side is
 /// checked in selftest.py against the same two fixtures (audit-cases.json, redaction-cases.json).
 final class LoggingTests: XCTestCase {
@@ -81,7 +81,6 @@ final class LoggingTests: XCTestCase {
             return .jobAction(action, job: spec["job"] as? String, approved: spec["approved"] as? Bool)
         case "browserSwitch": return .browserSwitch(enabled: spec["enabled"] as! Bool)
         case "diagnosticsCopied": return .diagnosticsCopied(ok: spec["ok"] as! Bool)
-        case "homeMoved": return .homeMoved(HomeMigration.Kind(rawValue: spec["kind"] as! String)!)
         case "error": return .error(AuditEvent.ErrorCode(rawValue: spec["code"] as! String)!)
         default: throw XCTSkip("unknown case")
         }
@@ -141,6 +140,47 @@ final class LoggingTests: XCTestCase {
         XCTAssertEqual(WorkingFolder.url(environment: [:], home: home).path, "/Users/someone/.benji")
         XCTAssertEqual(WorkingFolder.url(environment: ["BENJI_WORKDIR": "/tmp/w"], home: home).path, "/tmp/w")
         XCTAssertEqual(WorkingFolder.url(environment: ["BENJI_WORKDIR": ""], home: home).path, "/Users/someone/.benji")
+        XCTAssertEqual(WorkingFolder.url(environment: ["BENJI_WORKDIR": "   "], home: home).path, "/Users/someone/.benji")
+    }
+
+    func testTheWorkingFolderIsOneRuleEverywhere() {
+        let home = URL(fileURLWithPath: "/Users/someone")
+        XCTAssertEqual(ProfileMemory.standardURL(home: home, environment: [:]).path, "/Users/someone/.benji/memory.jsonl")
+        XCTAssertEqual(ProfileMemory.standardURL(home: home, environment: ["BENJI_WORKDIR": "/tmp/w"]).path, "/tmp/w/memory.jsonl")
+        XCTAssertEqual(ConversationStore.standard(home: home, environment: [:]).directory.path, "/Users/someone/.benji/conversations")
+        XCTAssertEqual(ConversationStore.standard(home: home, environment: ["BENJI_WORKDIR": "/tmp/w"]).directory.path, "/tmp/w/conversations")
+        XCTAssertEqual(KokoroInstall.dataDir(environment: ["BENJI_WORKDIR": "/tmp/w"]), "/tmp/w")
+        XCTAssertEqual(KokoroInstall(dataDir: KokoroInstall.dataDir(environment: [:])).voicesDir.hasSuffix("/.benji/voices"), true)
+    }
+
+    func testEnsureHomeMakesAPrivateFolderOnlyWhenNothingIsThere() throws {
+        let root = folder.resolvingSymlinksInPath()
+        let mode = { (url: URL) in ((try FileManager.default.attributesOfItem(atPath: url.path)[.posixPermissions] as? Int) ?? 0) & 0o777 }
+        let fresh = root.appendingPathComponent("fresh")
+        try FileManager.default.createDirectory(at: fresh, withIntermediateDirectories: true)
+        WorkingFolder.ensureHome(environment: [:], home: fresh)
+        XCTAssertEqual(try mode(fresh.appendingPathComponent(".benji")), 0o700)
+        // An override means no ~/.benji is made; an existing folder keeps its mode.
+        let other = root.appendingPathComponent("other")
+        try FileManager.default.createDirectory(at: other, withIntermediateDirectories: true)
+        WorkingFolder.ensureHome(environment: ["BENJI_WORKDIR": "/tmp/x"], home: other)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: other.appendingPathComponent(".benji").path))
+        let kept = root.appendingPathComponent("kept")
+        try FileManager.default.createDirectory(at: kept.appendingPathComponent(".benji"), withIntermediateDirectories: true,
+                                                attributes: [.posixPermissions: 0o755])
+        WorkingFolder.ensureHome(environment: [:], home: kept)
+        XCTAssertEqual(try mode(kept.appendingPathComponent(".benji")), 0o755)
+        XCTAssertEqual(BenjiFolderCopy.button, "Show Benji's folder")
+    }
+
+    func testJobFolderMakesAPathOnlyFromARealJobID() {
+        let jobs = URL(fileURLWithPath: "/Users/someone/.benji/jobs")
+        let id = "3f2a9c1e-5b7d-4e8f-9a0b-1c2d3e4f5a6b"
+        XCTAssertEqual(JobFolder.url(id: id, jobsFolder: jobs)?.path, "/Users/someone/.benji/jobs/\(id)")
+        for bad in ["", "..", "../x", "a/b", "/etc", "not-a-uuid", id + "/.."] {
+            XCTAssertNil(JobFolder.url(id: bad, jobsFolder: jobs), bad)
+        }
+        XCTAssertEqual(JobFolder.buttonTitle, "Show in Finder")
     }
 
     // MARK: engine.log

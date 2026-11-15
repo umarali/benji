@@ -40,7 +40,7 @@ final class ScreenContextTests: XCTestCase {
     }
 
     func testModeCaptionsNameTheProvider() {
-        // D-147: a provider by name (the engine sends its label), and a model that can't read images
+        // A provider by name (the engine sends its label), and a model that can't read images
         XCTAssertTrue(ScreenCapturePolicy.modeCaption(.on, provider: "DeepSeek").contains("DeepSeek"))
         let note = ScreenCapturePolicy.noVisionNote(model: "glm-5.3")
         XCTAssertTrue(note.contains("glm-5.3") && note.contains("can't read images") && note.contains("BENJI_MODEL"))
@@ -52,7 +52,7 @@ final class ScreenContextTests: XCTestCase {
         XCTAssertTrue(ScreenCapturePolicy.onIndicator(provider: "openrouter.ai").contains("openrouter.ai"))
     }
 
-    // MARK: screen mode (D-133: a fresh install starts On, a saved choice is kept, On never lapses)
+    // MARK: screen mode (a fresh install starts On, a saved choice is kept, On never lapses)
 
     func testAFreshInstallStartsOnAndASavedChoiceIsKept() {
         XCTAssertEqual(ScreenModeState(saved: nil).mode, .on)

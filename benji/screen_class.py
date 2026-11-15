@@ -1,6 +1,6 @@
-"""Which screen steps Benji does without a card (D-126, provisional number).
+"""Which screen steps Benji does without a card.
 
-Every screen step (benji/tools.py: click, scroll, type_text, press_key, drag) is one of three classes:
+Every screen step (benji/tools/screen_actions.py: click, scroll, type_text, press_key, drag) is one of three classes:
 
   free    done at once, after the usual 0.6 s ring: a scroll, a plain navigation key
   quiet   done after a visible 1.2 s beat ("Clicking Settings · Esc stops") that any input of
@@ -8,9 +8,10 @@ Every screen step (benji/tools.py: click, scroll, type_text, press_key, drag) is
           radio or pop-up whose title matches what the model named; typing the user asked for
           into a text field; a letter, digit or shortcut that isn't in the commit list, with no
           dialog up and no button holding the keyboard; at most 5 unasked steps a turn
-  asked   today's approval card: anything that may send, buy, delete, close or agree; every drag; Space; a
-          click on a plain button, with nothing readable under it or in a dialog; another app than the screenshot's; a
-          step the model isn't sure of; every step when the user chose "Ask before every step"
+  asked   the approval card: anything that may send, buy, delete, close or agree; every drag;
+          Space; a click on a plain button, with nothing readable under it or in a dialog; another
+          app than the screenshot's; a step the model isn't sure of; every step when the user chose
+          "Ask before every step"
 
 It is decided in two stages, both in code, never by the model alone:
 
@@ -20,14 +21,15 @@ It is decided in two stages, both in code, never by the model alone:
                (role, title, a sheet or dialog above it) and whether it is the screenshot's app.
                It never lowers the planned class.
 
-companion/Sources/BenjiCore/ScreenStepClass.swift mirrors this case for case; both run the
+companion/Sources/BenjiCore/Screen/ScreenStepClass.swift mirrors this case for case; both run the
 shared cases in companion/Tests/screen-class-cases.json.
 """
 
 from __future__ import annotations
 
-import os
 import re
+
+from .switches import switch
 
 FREE, QUIET, ASKED = "free", "quiet", "asked"
 CONFIDENCES = ("high", "medium", "low")
@@ -44,15 +46,9 @@ COMMIT_WORDS = (
 )
 _ENDINGS = ("", "e", "s", "es", "d", "ed", "ing", "ment")
 
-# The roles the app looks for in the leaf and its two parents to find the control a step is on
-# (the text inside a button names the button).
-CONTROL_ROLES = frozenset({
-    "AXButton", "AXLink", "AXDisclosureTriangle", "AXMenuItem", "AXMenuBarItem", "AXCheckBox",
-    "AXRadioButton", "AXPopUpButton", "AXMenuButton", "AXTab", "AXSwitch",
-})
 # A click is quiet only on one of these, and never on a window's close, minimise or zoom button:
 # a tab, menu item, disclosure, link, checkbox, radio or pop-up. A plain button is asked, whatever
-# its title (the 2026-11-01 security review §(c) 4): a page can call Pay "Read more". A text
+# its title: a page can call Pay "Read more". A text
 # field is here too: clicking one only puts the caret in it, the step before typing.
 QUIET_ROLES = frozenset({
     "AXLink", "AXDisclosureTriangle", "AXMenuItem", "AXMenuBarItem", "AXCheckBox",
@@ -84,7 +80,7 @@ _ENTRY_WORDS = frozenset({"type", "write", "enter", "fill", "input", "search", "
 
 def ask_forced() -> bool:
     """BENJI_SCREEN_ASK=1: the engine asks before every step, whatever the app says."""
-    return os.environ.get("BENJI_SCREEN_ASK", "").strip() == "1"
+    return switch("BENJI_SCREEN_ASK", False)
 
 
 def _words(text: str) -> list[str]:
@@ -131,7 +127,7 @@ def stricter(a: str, b: str) -> str:
 
 def plan_class(step: dict, ask_every_step: bool = False, asked_for_text: bool = False,
                unasked_so_far: int = 0) -> tuple[str, str]:
-    """The engine's class for a step (benji/tools.py's wire form with `confidence`), and why
+    """The engine's class for a step (benji/tools/screen_actions.py's wire form with `confidence`), and why
     it is asked when it is. A click planned quiet is quiet only if the app confirms it.
     `unasked_so_far`: free and quiet steps already done this turn; the sixth is asked."""
     if ask_every_step:

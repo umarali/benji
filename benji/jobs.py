@@ -1,25 +1,25 @@
-"""Background jobs, small (D-130 step 1): something the user asked for that keeps running while
+"""Background jobs: something the user asked for that keeps running while
 they do other things.
 
 A job is a folder, `<workdir>/jobs/<id>/`, with `report.md` (what the job found or made, written by
 this module when it ends), `output/` and `tmp/`, and a record, `<workdir>/jobs/<id>.json`, BESIDE the
-folder (D-177): the folder is the job's working folder, and the record holds what it is allowed to do,
+folder: the folder is the job's working folder, and the record holds what it is allowed to do,
 so it is kept out of its reach and `gate.private_path` refuses it. The record
 stores only the lifecycle the engine itself moved it through (`queued`, `running`, `finished`,
 `failed`, `stopped`) and any pending approval; the state the panel shows (`queued`, `working`,
 `needs-you`, `done`, `failed`, `stopped`) is derived from the record in `derive_state`, never
 from anything the model wrote.
 
-A job ends with a structured turn_end (D-118 step 3): a spoken line (for the speaker), a written
+A job ends with a structured turn_end: a spoken line (for the speaker), a written
 line (for the row, the peek and the report; code makes one from the spoken line when the model gave
-none, D-146), the files it made (each one checked to exist on disk), and at most three next-step
+none), the files it made (each one checked to exist on disk), and at most three next-step
 chips. The model writes it as a JSON object at the end of its last message; `parse_turn_end` reads it
 leniently, and a message without one still ends the job with a spoken line cut from its text.
 
 The engine side (running a job as a second turn, the approval parking, the protocol events) is in
-benji/serve.py; the tools that start a job and recall past ones are in benji/tools.py.
+benji/serve.py; the tools that start a job and recall past ones are in benji/tools/background_jobs.py.
 
-Second pass (D-172): a job has *runs*. The first run is the one the user started; a later run of the
+A job has *runs*. The first run is the one the user started; a later run of the
 same job (same folder, same history) is one the user asked to continue from the row, or one its
 schedule (benji/schedule.py) started while nobody was watching (an *unattended* run: read-class
 tools only, anything else parks as needs-you). Code, not the model, decides whether a repeat run
@@ -33,17 +33,15 @@ from __future__ import annotations
 import json
 import os
 import re
-import sys
 import time
 import uuid
 from pathlib import Path
 
-from . import gate, home
+from . import gate
 
 VERSION = 1
 STORED = ("queued", "running", "finished", "failed", "stopped")
 STATES = ("queued", "working", "needs-you", "done", "failed", "stopped")
-LIVE_STATES = ("queued", "working", "needs-you")
 INTERRUPTED = "Benji restarted before this finished."
 MAX_CHIPS = 3
 MAX_CHIP_CHARS = 40
@@ -64,9 +62,8 @@ MAX_ITEMS = 30                  # findings a repeat run lists for the "anything 
 MAX_ITEM_CHARS = 120
 MAX_RUN_HISTORY = 50
 RUN_KINDS = ("first", "scheduled", "continued")
-STOP_REASONS = ("", "limit", "restart")
 LIMIT_STOP = "Stopped at the step limit."
-# A job waits out a bad connection (D-177): how long between tries, and how much awake time one outage
+# A job waits out a bad connection: how long between tries, and how much awake time one outage
 # may take before the job stops. A run nobody is watching gives up sooner, because it holds the one
 # job slot.
 WAIT_FIRST = 5.0
@@ -131,7 +128,7 @@ def snapshot(record: dict, live: bool, line: str = "", schedule: dict | None = N
              quiet: bool = False) -> dict:
     """The record as the `job` event the app shows: what the panel needs and nothing it mustn't
     (no taint source, no paths other than the files made; the sites it may use are shown). The
-    brief IS shown, cut (D-172): the user sees what the job was told. `schedule`: the job's
+    brief IS shown, cut: the user sees what the job was told. `schedule`: the job's
     schedule as benji/schedule.shown made it, or None. `quiet`: a repeat run with nothing the user
     needs to hear about; the app makes no peek and no sound for it."""
     state = derive_state(record, live)
@@ -154,7 +151,7 @@ def snapshot(record: dict, live: bool, line: str = "", schedule: dict | None = N
         "taint": gate.taint_string(record_taints(record)),
         "sites": list((record.get("browser") or {}).get("origins", [])),
         "act_sites": list((record.get("browser") or {}).get("acts", [])),
-        # D-172, all additive: an older app ignores them.
+        # Fields an older app doesn't know; it ignores them.
         "brief": str(record.get("brief") or "")[:MAX_BRIEF_SHOWN],
         "run": int(record.get("run") or 1),
         "done": end.get("done", "") if result else "",
@@ -168,31 +165,6 @@ def snapshot(record: dict, live: bool, line: str = "", schedule: dict | None = N
         "schedule": schedule,
     }
     return shown
-
-
-# ---- files made before the folder was renamed ----------------------------------------------------
-
-def _current_paths(record: dict) -> dict:
-    """A finished job's `turn_end.files` hold absolute paths, which name the folder as it was when the job
-    ran. Read them as where the file is now, in the record as loaded only; the file on disk, the report and
-    everything else keep their words. Only a path inside one of Benji's older default folders changes."""
-    end = record.get("turn_end") if isinstance(record, dict) else None
-    files = end.get("files") if isinstance(end, dict) else None
-    if not isinstance(files, list):
-        return record
-    user_home = Path.home()
-    for item in files:
-        raw = item.get("path") if isinstance(item, dict) else None
-        if not isinstance(raw, str):
-            continue
-        for name in home.OLD_NAMES:
-            prefix = f"{user_home / name}/"
-            if raw.startswith(prefix):
-                moved = home.home_dir(user_home) / raw[len(prefix):]
-                if not os.path.lexists(raw) and os.path.lexists(moved):
-                    item["path"] = str(moved)
-                break
-    return record
 
 
 # ---- the store --------------------------------------------------------------------------------
@@ -209,31 +181,10 @@ class JobStore:
         return self.root / job_id
 
     def record_path(self, job_id: str) -> Path:
-        """Beside the job's folder, never in it (D-177), like its schedule file."""
+        """Beside the job's folder, never in it, like its schedule file: the job can't reach what it is allowed to do."""
         if not valid_id(job_id):
             raise ValueError(f"not a job id: {job_id!r}")
         return self.root / f"{job_id}.json"
-
-    def migrate(self) -> int:
-        """At engine start, before any job runs: records from before D-177 move from `<id>/job.json`
-        to beside the folder, and how many moved is returned. The old place is never read again, so
-        a file a job later writes there means nothing. A link is not followed, and a record already
-        beside its folder is not replaced."""
-        try:
-            folders = [p for p in self.root.iterdir() if p.is_dir() and valid_id(p.name)]
-        except OSError:
-            return 0
-        moved = 0
-        for where in folders:
-            old, new = where / "job.json", self.record_path(where.name)
-            if old.is_symlink() or not old.is_file() or os.path.lexists(new):
-                continue
-            try:
-                os.replace(old, new)
-                moved += 1
-            except OSError as e:
-                print(f"[Benji] job {where.name}: its record could not be moved ({type(e).__name__})", file=sys.stderr)
-        return moved
 
     def create(self, title: str, brief: str, user_words: str, tainted_by: str = "",
                now: float | None = None, browser: dict | None = None, taints=None) -> dict:
@@ -250,11 +201,11 @@ class JobStore:
             # rules read this set, `tainted_by` is only the words for a card.
             "taints": [k for k in gate.TAINT_KINDS if k in set(taints or [])],
             "turn_end": None, "error": "", "dismissed": False,
-            # The sites this job may read in the user's Chrome (D-143): {origins, history}, or None.
+            # The sites this job may read in the user's Chrome: {origins, history}, or None.
             # Set only from a card the user answered; nothing a job reads can change it except
             # another card (benji/browser.py Grant.add).
             "browser": browser,
-            # Runs (D-172): the number of the current run, which kind it is, whether nobody is
+            # Runs: the number of the current run, which kind it is, whether nobody is
             # watching it (a scheduled run: read-class tools only), why a stopped run stopped
             # ("limit": the step cap), what the last run that finished found (hashes, for "anything
             # new?"), whether the latest finished run had news, and the hand-off brief's parts.
@@ -266,7 +217,7 @@ class JobStore:
 
     def load(self, job_id: str) -> dict | None:
         try:
-            record = _current_paths(json.loads(self.record_path(job_id).read_text()))
+            record = json.loads(self.record_path(job_id).read_text())
         except (OSError, ValueError):
             return None
         return record if isinstance(record, dict) and record.get("id") == job_id else None
@@ -360,7 +311,7 @@ def run_note(record: dict) -> str:
     return text + "\n\n"
 
 
-# ---- hand-off: the brief a foreground turn gives a job (D-172) ----------------------------------
+# ---- hand-off: the brief a foreground turn gives a job ----------------------------------------
 
 _URL = re.compile(r"https?://[^\s<>\"')\]]+", re.IGNORECASE)
 _BARE_HOST = re.compile(r"(?<![\w@/.-])(?:[a-z0-9-]+\.)+(?:com|org|net|io|co|app|dev|ai|edu|gov|uk|de|fr|info|me|us)\b", re.IGNORECASE)
@@ -442,7 +393,7 @@ def earlier_said(messages: list[dict], current: str) -> list[str]:
     return said
 
 
-# ---- long jobs: the brief read again (D-172) -----------------------------------------------------
+# ---- long jobs: the brief read again -----------------------------------------------------------
 
 RULES_TEXT = ("Rules that hold for the whole job: the user's own words win over the brief; anything that writes, "
               "sends or changes something outside your folder is asked on a card and may wait; if it is declined, "
@@ -489,7 +440,7 @@ def limit_prompt() -> str:
 
 def limit_end(record: dict, job_folder: Path, text: str, steps: int, cap: int | None = None) -> tuple[str, dict]:
     """(report body, turn_end) for a run that hit the step cap, or that was warned it nearly had and
-    wrapped up (`steps` then is fewer than `cap`, D-177). The model's wrap-up is used when it
+    wrapped up (`steps` then is fewer than `cap`). The model's wrap-up is used when it
     gave one; code always says plainly that this stopped at the limit, and fills `done`, `left` and
     `ask` itself when the model didn't, from what is on disk. Never a silent failure."""
     body, end = build_turn_end(text, job_folder) if text.strip() else ("", build_turn_end("", job_folder)[1])
@@ -511,7 +462,7 @@ def limit_end(record: dict, job_folder: Path, text: str, steps: int, cap: int | 
     return lead + (body or "(The job wrote no report of its own before it ran out.)"), end
 
 
-# ---- failures, in plain words (D-172) ------------------------------------------------------------
+# ---- failures, in plain words ------------------------------------------------------------------
 
 def plain_failure(exc: BaseException | None, kind: str = "internal") -> str:
     """What the row says when a run fails: what happened and what the user can do, never a repr
@@ -523,7 +474,7 @@ def plain_failure(exc: BaseException | None, kind: str = "internal") -> str:
             "Copy diagnostics in Settings has the details. You can press Continue to try again.")
 
 
-# ---- repeat runs: anything new? (D-172) ----------------------------------------------------------
+# ---- repeat runs: anything new? ----------------------------------------------------------------
 
 def _norm(text: object) -> str:
     return " ".join(str(text or "").casefold().split())
@@ -624,7 +575,7 @@ def spoken_from(text: str, limit: int = MAX_SPOKEN_CHARS) -> str:
     return (cut[:stop + 1] if stop >= 60 else flat[:limit - 1].rstrip() + "…")
 
 
-# The written line (D-146): what the row, the peek and the report show, while `spoken` is for the
+# The written line: what the row, the peek and the report show, while `spoken` is for the
 # speaker. A voice line says "output slash tea dot txt"; the screen should say output/tea.txt.
 _SAID_WORD = r"[A-Za-z0-9_~]+"
 _SAID_SEP = r"(?:slash|dot|dash|underscore)"
@@ -704,7 +655,7 @@ def _line(raw: object, limit: int) -> str:
 
 
 def ask_default(left: str) -> str:
-    """The question a report ends with when the model asked none (D-172): a job reports back and
+    """The question a report ends with when the model asked none: a job reports back and
     asks, it never decides to go on by itself."""
     nothing = _norm(left).strip(" .") in ("", "nothing", "none", "nothing left", "nothing is left", "n/a")
     return "Anything you'd like changed, or should I do something next?" if nothing else "Want me to carry on with what's left?"
@@ -712,7 +663,7 @@ def ask_default(left: str) -> str:
 
 def build_turn_end(final_text: str, job_folder: Path) -> tuple[str, dict]:
     """(the report body, the turn_end) for a job's last message. The turn_end says what was done,
-    what is left, and asks the user (D-172): code fills `ask` when the model didn't ask."""
+    what is left, and asks the user: code fills `ask` when the model didn't ask."""
     body, raw = parse_turn_end(final_text)
     raw = raw or {}
     spoken = " ".join(str(raw.get("spoken") or "").split())[:MAX_SPOKEN_CHARS] or spoken_from(body)

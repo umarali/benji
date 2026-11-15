@@ -6,7 +6,7 @@
 
 <!-- Tick what you ran, and say what you could NOT check (a real microphone, a permission prompt, a live model, a real Chrome profile). -->
 
-- [ ] `python3 tools/isolated_run.py -- python3 selftest.py`
+- [ ] `python3 tools/isolated_run.py -- python3 tests/selftest.py`
 - [ ] `python3 tools/isolated_run.py -- sh -c 'cd companion && xcrun swift test'` (not plain `swift`)
 - [ ] `node --test browser-extension/test/*.test.mjs` (if the extension changed)
 - [ ] `python3 -I companion/ServeCheck/run.py` (if the app/engine protocol changed)

@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// Saved conversations (D-121): what is kept of the panel, titles, what a reopened conversation
+/// Saved conversations: what is kept of the panel, titles, what a reopened conversation
 /// sends to the engine, and the folder itself (order, permissions, real deletion).
 final class ConversationStoreTests: XCTestCase {
     var folder: URL!
@@ -40,7 +40,7 @@ final class ConversationStoreTests: XCTestCase {
             TranscriptLine(role: .error, text: "Cut off before it finished."),
             TranscriptLine(role: .assistant, text: "   "),
         ]
-        // Each saved line keeps its time (D-133, for the date lines).
+        // Each saved line keeps its time, for the date lines.
         XCTAssertEqual(SavedConversation.lines(from: lines), [
             SavedLine(role: .user, text: "tidy my desktop", at: lines[0].at),
             SavedLine(role: .system, text: "Approved: move files", at: lines[3].at),
@@ -84,10 +84,10 @@ final class ConversationStoreTests: XCTestCase {
         XCTAssertEqual(ConversationTitle.shorten(word).count, ConversationTitle.maxLength, "one long word is cut too")
         XCTAssertTrue(ConversationTitle.isGreeting("Good morning, Benji!"))
         XCTAssertFalse(ConversationTitle.isGreeting("hi can you check my mail"))
-        // "Hey Benji" as speech recognition hears it is still a greeting.
-        XCTAssertTrue(ConversationTitle.isGreeting("Hey clicky"))
-        XCTAssertTrue(ConversationTitle.isGreeting("Hey chili."))
-        XCTAssertEqual(ConversationTitle.make([.init(role: .user, text: "Hey clicky"),
+        // "Hey Benji", as typed or as speech recognition spells it, is a greeting.
+        XCTAssertTrue(ConversationTitle.isGreeting("Hey Benji"))
+        XCTAssertTrue(ConversationTitle.isGreeting("Hey benjy."))
+        XCTAssertEqual(ConversationTitle.make([.init(role: .user, text: "Hey Benji"),
                                                .init(role: .user, text: "How does Tesla's new Roadster fly?")]),
                        "How does Tesla's new Roadster fly?")
     }
@@ -212,7 +212,7 @@ final class ConversationStoreTests: XCTestCase {
 }
 
 /// Two conversations saved within one millisecond still order newest first after a round trip
-/// through disk (the merge found `testNewConversationStartsANewOne` flaky without this).
+/// through disk (without this, `testNewConversationStartsANewOne` is flaky).
 final class ConversationSaveTimeTests: XCTestCase {
     func testTheConversationJustUsedIsNewerEvenWithinOneMillisecond() throws {
         let t = Date(timeIntervalSince1970: 1_761_930_000.123_456)

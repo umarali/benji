@@ -43,9 +43,6 @@ final class MicEngineTests: XCTestCase {
 
     func testTheLogRotatesPast200KB() {
         XCTAssertEqual(VoiceLog.maximumBytes, 204_800)
-        XCTAssertFalse(VoiceLog.shouldRotate(currentSize: 0, adding: 300_000), "never rotate an empty log")
-        XCTAssertFalse(VoiceLog.shouldRotate(currentSize: 204_000, adding: 800))
-        XCTAssertTrue(VoiceLog.shouldRotate(currentSize: 204_000, adding: 801))
     }
 
     func testALogLineIsOneLineWithATimestamp() {

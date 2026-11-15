@@ -7,7 +7,7 @@ import BenjiCore
 /// sets them (the panel's display; the talk key's display). No screen, permission API or engine is used.
 /// The symptom: the user starts a message about the external display, then moves the pointer to the
 /// laptop's notch panel to answer the Ask card; the screenshot must still be of the external display.
-/// This reproduces that sequence offline; it does not prove what failed on the owner's installed app.
+/// This reproduces that sequence offline, without real displays.
 final class CaptureTargetTests: XCTestCase {
     private let laptop = DisplayDescriptor(id: 1, frame: CGRect(x: 0, y: 0, width: 1512, height: 982),
                                            notch: CGRect(x: 661, y: 950, width: 190, height: 32),

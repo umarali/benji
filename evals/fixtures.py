@@ -9,7 +9,7 @@ optionally, a person's answers to the rubric questions (to measure the judge).
      "request": {"text": "...", "screen": "document" | null, "spoken": false},
      "expect":  {"card": true, "layout": "compare"},
      "reply":   {"model": "claude-haiku-5-5", "effort": "low", "recorded": "2026-11-01",
-                 "source": "docs/impl-notes/...", "raw": "...", "events": [...], "usage": {...}},
+                 "source": "companion/Tests/Fixtures/...", "raw": "...", "events": [...], "usage": {...}},
      "baseline": {"pass": true, "why": []},
      "human":   null | {"by": "user", "date": "2026-11-08", "answers": {"<question id>": true}}}
 """

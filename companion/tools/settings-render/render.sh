@@ -10,7 +10,7 @@ xcrun swift build --target BenjiCore >/dev/null
 BIN="$(xcrun swift build --show-bin-path)"
 xcrun swiftc -O -module-name SettingsRender \
     -I "$BIN/Modules" \
-    tools/settings-render/main.swift Sources/BenjiApp/SettingsView.swift Sources/BenjiApp/MemorySettingsView.swift Sources/BenjiApp/NotchStyle.swift \
+    tools/settings-render/main.swift Sources/BenjiApp/Views/SettingsView.swift Sources/BenjiApp/Views/MemorySettingsView.swift Sources/BenjiApp/Notch/NotchStyle.swift \
     "$BIN"/BenjiCore.build/*.o \
     -o "$OUT/settings-render"
 "$OUT/settings-render" "$OUT"

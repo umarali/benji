@@ -1,15 +1,13 @@
 import XCTest
 @testable import BenjiCore
 
-/// The `benji --serve` protocol (D-72). Event lines are the proposal's example and lines the engine
-/// sent in the live run of 2026-10-31.
+/// The `benji --serve` protocol. Event lines are ones the engine sends.
 final class ServeProtocolTests: XCTestCase {
     private func text(_ r: ServeRequest) -> String { String(decoding: r.line(), as: UTF8.self) }
 
     // MARK: requests
 
     func testRequestLines() {
-        XCTAssertEqual(text(.hello), #"{"protocol":1,"type":"hello"}"# + "\n")
         XCTAssertEqual(text(.send(id: "t1", text: "tidy my Downloads", imagePath: nil, allowPointing: false)),
                        #"{"id":"t1","text":"tidy my Downloads","type":"send"}"# + "\n")
         XCTAssertEqual(text(.send(id: "t2", text: "where?", imagePath: "/tmp/s.png", allowPointing: true)),
@@ -64,7 +62,7 @@ final class ServeProtocolTests: XCTestCase {
     }
 
     func testReadyNamesTheHostAndWhetherTheModelReadsImages() {
-        // D-147: an open-model provider says which host gets the data and whether Screen can work
+        // An open-model provider says which host gets the data and whether Screen can work
         let e = ServeEvent.decode(#"{"type":"ready","protocol":1,"version":"0.1.0","provider":"deepseek","model":"deepseek-v4-pro","destination":"DeepSeek","host":"api.deepseek.com","vision":false}"#)
         XCTAssertEqual(e, .ready(ServeReady(protocolVersion: 1, version: "0.1.0", provider: "deepseek",
                                             model: "deepseek-v4-pro", destination: "DeepSeek", approvalTimeout: nil,
@@ -143,7 +141,7 @@ final class ServeProtocolTests: XCTestCase {
         XCTAssertEqual(ServeEvent.decode(#"{"type":"progress","id":"t1"}"#), .unknown(type: "progress"))
     }
 
-    /// D-98: lines benji/serve.py sends (selftest checks the engine side).
+    /// Lines benji/serve.py sends (selftest checks the engine side).
     func testAcceptedAndActivity() {
         XCTAssertEqual(ServeEvent.decode(#"{"type": "accepted", "id": "t1"}"#), .accepted(id: "t1"))
         XCTAssertEqual(ServeEvent.decode(#"{"type": "activity", "id": "t1", "kind": "command"}"#),
@@ -177,9 +175,8 @@ final class ServeProtocolTests: XCTestCase {
 final class ServeProtocolQuietTests: XCTestCase {
     private func text(_ r: ServeRequest) -> String { String(decoding: r.line(), as: UTF8.self) }
 
-    func testHelloWithCapabilitiesIsTheOldHelloPlusAList() {
-        XCTAssertEqual(text(.hello), #"{"protocol":1,"type":"hello"}"# + "\n", "the old shape is unchanged")
-        XCTAssertEqual(text(.helloWith(capabilities: ["pointing", "jobs"])),
+    func testHelloCarriesTheProtocolAndTheAppsCapabilities() {
+        XCTAssertEqual(text(.hello(capabilities: ["pointing", "jobs"])),
                        #"{"capabilities":["pointing","jobs"],"protocol":1,"type":"hello"}"# + "\n")
     }
 

@@ -37,10 +37,6 @@
    "fields": {"kind": "diagnostics_copied", "src": "app", "ok": true}},
   {"event": {"case": "diagnosticsCopied", "ok": false},
    "fields": {"kind": "diagnostics_copied", "src": "app", "ok": false}},
-  {"event": {"case": "homeMoved", "kind": "renamed"},
-   "fields": {"kind": "home_moved", "src": "app", "how": "renamed"}},
-  {"event": {"case": "homeMoved", "kind": "left_old"},
-   "fields": {"kind": "home_moved", "src": "app", "how": "left_old"}},
   {"event": {"case": "error", "code": "engine_launch"},
    "fields": {"kind": "error", "src": "app", "where": "app", "code": "engine_launch"}}
  ]

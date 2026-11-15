@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// Simple screen steps (D-126). The shared cases in Tests/screen-class-cases.json are also run by
+/// Simple screen steps. The shared cases in Tests/screen-class-cases.json are also run by
 /// selftest.py against benji/screen_class.py: both sides give every step the same class.
 final class ScreenStepClassTests: XCTestCase {
     struct Shared {
@@ -63,8 +63,8 @@ final class ScreenStepClassTests: XCTestCase {
         XCTAssertEqual(ScreenStepClassifier.commitWords.sorted(), try Self.file()["commit_words"] as? [String])
     }
 
-    /// the 2026-11-01 security review §(c) 4: Space, keys on a button or in a dialog, buttons
-    /// in a web page, and the sixth unasked step of a turn are asked.
+    /// Steps that could commit something are asked: Space, keys on a button or in a dialog,
+    /// buttons in a web page, and the sixth unasked step of a turn.
     func testTheReviewsScreenHolesAreAsked() {
         let high = ScreenStepIntent(intent: "x", confidence: .high)
         let space = ScreenStep.pressKey(key: "space", modifiers: [])

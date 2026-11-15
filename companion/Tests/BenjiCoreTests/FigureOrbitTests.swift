@@ -2,7 +2,7 @@ import Foundation
 import XCTest
 @testable import BenjiCore
 
-/// Turning the figure by hand (D-108, after the stage went live): drag, scroll, pinch, reset, and
+/// Turning the figure by hand: drag, scroll, pinch, reset, and
 /// the idle turn pausing while the user handles it.
 final class FigureOrbitTests: XCTestCase {
     func testDraggingTurnsAndTiltsLikeGrabbingTheObject() {

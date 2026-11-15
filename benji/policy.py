@@ -1,4 +1,4 @@
-"""A local policy file that can only restrict (D-173, step 6).
+"""A local policy file that can only restrict.
 
 `policy.json` in Benji's working folder (`~/.benji/policy.json`) lists tool families to switch off:
 
@@ -33,7 +33,7 @@ FAMILIES: dict[str, tuple[str, ...]] = {
     "apps": ("run_applescript", "run_shortcut", "list_shortcuts"),
     "screen": ("click", "scroll", "type_text", "press_key", "drag"),
     "drive": ("offer_drive", "start_drive", "end_drive"),
-    # Reading and acting are separate switches (D-171): "browser" is open, tabs, read and the front-tab read;
+    # Reading and acting are separate switches: "browser" is open, tabs, read and the front-tab read;
     # "browser_act" is looking at controls, scrolling, clicking, typing and keys; "browser_upload" is the one
     # tool that gives a page a file. Acting and uploading also go when "browser" goes (they need it).
     "browser": ("browser_open", "browser_tabs", "browser_read", "read_active_tab"),
@@ -79,13 +79,13 @@ class Policy:
         changes = {}
         if self.blocks_family("screen") and info.screen_actions:
             changes.update(screen_actions=False, screen_simple_steps=False)
-        # A drive goes when the screen goes, or when the drive tools are switched off (D-170).
+        # A drive goes when the screen goes, or when the drive tools are switched off.
         if info.drive and (self.blocks_family("screen") or self.blocks_family("drive")
                            or any(self.blocks(t) for t in FAMILIES["drive"])):
             changes.update(drive=False)
         if self.blocks_family("jobs") and info.jobs:
             changes.update(jobs=False)
-        # Schedules go when jobs go, or when start_job or schedule_job alone is switched off (D-172).
+        # Schedules go when jobs go, or when start_job or schedule_job alone is switched off.
         if info.schedules and (self.blocks_family("jobs") or self.blocks("schedule_job") or self.blocks("start_job")):
             changes.update(schedules=False)
         if self.blocks_family("browser") and info.browser:

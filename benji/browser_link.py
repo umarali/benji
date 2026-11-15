@@ -1,4 +1,4 @@
-"""The local link between Benji's engine and the browser extension (D-143, step 1).
+"""The local link between Benji's engine and the browser extension.
 
 The engine is the server: a TCP listener on 127.0.0.1 only, on a port the system picks, behind a
 token made fresh for each run. The native-messaging host (benji/browser_host.py, started by
@@ -16,7 +16,7 @@ engine and the extension.
     of a request it sent. Anything else the host or a page sends is dropped.
 
 Nothing in this module reads or decides anything about pages: that is benji/browser.py (rules) and
-benji/tools.py (the tools).
+benji/tools/browser_tabs.py (the tools).
 """
 
 from __future__ import annotations
@@ -52,7 +52,7 @@ class LinkError(Exception):
 
 
 def default_dir() -> Path:
-    override = os.environ.get("BENJI_BROWSER_DIR") or os.environ.get("CHILLY_BROWSER_DIR")
+    override = os.environ.get("BENJI_BROWSER_DIR")
     return Path(override) if override else Path.home() / "Library" / "Application Support" / "Benji" / "Browser"
 
 

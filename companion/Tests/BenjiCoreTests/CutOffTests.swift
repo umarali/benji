@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// Cut-offs (D-122): what had been said when the user cut in, the reply the conversation keeps,
+/// Cut-offs: what had been said when the user cut in, the reply the conversation keeps,
 /// the panel line, and the engine request.
 final class SpokenProgressTests: XCTestCase {
     let text = "Planes fly because the wings push air down. The engines push them forward."

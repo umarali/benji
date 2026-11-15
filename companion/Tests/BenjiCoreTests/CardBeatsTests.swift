@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// Explanation cards drawn as Benji speaks (chilly-beats): the card lines, which sentence owns
+/// Explanation cards drawn as Benji speaks: the card lines, which sentence owns
 /// each part, the planner that spreads parts over their sentence, the sentences' clock (voice or
 /// estimate), and a whole reply played against scripted voice milestones.
 final class CardBeatsTests: XCTestCase {
@@ -348,7 +348,7 @@ final class CardBeatsTests: XCTestCase {
         XCTAssertEqual(t[2].start, 2.5, "the one after it is still timed by its own words")
     }
 
-    // MARK: a whole reply against a scripted voice (the eval's unit test)
+    // MARK: a whole reply against a scripted voice
 
     /// The reply streams (card line, sentence, item, ...), then Kokoro-style milestones say when
     /// each sentence's words are heard. Each item must be drawn inside its own sentence: after it

@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// Benji beside the pointer (D-180).
+/// Benji beside the pointer.
 final class PointerCompanionTests: XCTestCase {
     private let screen = CGRect(x: 0, y: 0, width: 1000, height: 800)
 

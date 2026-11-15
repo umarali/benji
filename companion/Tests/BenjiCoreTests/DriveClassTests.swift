@@ -1,9 +1,9 @@
 import XCTest
 @testable import BenjiCore
 
-/// Drive mode (D-170): the rules the app applies at the point, the hand-back of the screen to the
+/// Drive mode: the rules the app applies at the point, the hand-back of the screen to the
 /// user, the card's words and the wire. The shared cases in Tests/drive-cases.json are also run by
-/// selftest_drive.py against benji/drive.py: both sides give every text and step the same class.
+/// check_drive_mode.py against benji/drive.py: both sides give every text and step the same class.
 final class DriveClassTests: XCTestCase {
     static func file() throws -> [String: Any] {
         let url = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()

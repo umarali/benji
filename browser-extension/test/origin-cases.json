@@ -1,5 +1,5 @@
 {
-  "_about": "Shared by benji/browser.py (selftest.py) and browser-extension/core.js (test/core.test.mjs): the same inputs must give the same answers in both.",
+  "_about": "Shared by benji/browser.py (tests/selftest.py) and browser-extension/core.js (test/core.test.mjs): the same inputs must give the same answers in both.",
   "parse": [
     {"url": "https://example.com", "origin": "https://example.com"},
     {"url": "https://Example.COM/Path?q=1#frag", "origin": "https://example.com"},

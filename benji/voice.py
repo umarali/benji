@@ -1,6 +1,6 @@
-"""Voice I/O for M4, standard library only.
+"""Voice input and output, standard library only.
 
-- speak(): macOS `say` text-to-speech (no key, works today).
+- speak(): on-device speech with Kokoro when installed (benji/tts.py), else macOS `say`; no key.
 - record(): capture mic audio via ffmpeg (if installed).
 - transcribe(): speech-to-text via OpenAI Whisper or Deepgram (needs a key).
 

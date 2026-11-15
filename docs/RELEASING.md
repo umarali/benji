@@ -23,7 +23,7 @@ compare it); until then it equals the short version.
 
 - [ ] Working tree clean on the release commit; `CHANGELOG.md` has a dated section for the version
   (format below) and an empty `Unreleased` section above it.
-- [ ] `python3 selftest.py` passes.
+- [ ] `python3 tests/selftest.py` passes.
 - [ ] `(cd companion && xcrun swift test)` passes (use `xcrun swift`, not plain `swift`).
 - [ ] `python3 -I companion/ServeCheck/run.py` passes.
 - [ ] `node --test browser-extension/test/core.test.mjs browser-extension/test/page-text.test.mjs` passes.

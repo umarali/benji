@@ -220,24 +220,22 @@ final class OverlayMotionTests: XCTestCase {
         XCTAssertTrue(seq.isFinished)
     }
 
-    /// Both backends end in the same plan: one-shot `--allow-pointing` sends the raw answer with
-    /// its tags (parsed in the app), `benji --serve` sends the targets already parsed.
-    func testBothBackendsGiveEveryTarget() {
+    /// A plain answer's tags parsed in the app (`BackendEvent.answer`) and the targets the engine
+    /// parsed itself (`answer` with `targets`) end in the same plan.
+    func testTagsParsedInTheAppAndByTheEngineGiveTheSamePlan() {
         let pixel = CGSize(width: 1000, height: 500), frame = CGRect(x: 0, y: 0, width: 1000, height: 500)
         let tags = "Tick Sync files, then the Photos list, then Done. [POINT:100,100:Sync files] [BOX:200,200,600,400:Photos list] [POINT:710,110:Done]"
-        let line = "\u{01}BENJI-EVENT\u{01}" + String(data: try! JSONSerialization.data(withJSONObject: ["type": "answer", "text": tags]), encoding: .utf8)! + "\u{01}"
-        guard case let .answer(raw) = EngineEventParser.parse(line) else { return XCTFail("not an answer") }
-        let parsed = PointingTags.parse(raw)
-        let oneShot = PointingPlan(targets: parsed.targets, text: parsed.text, speaking: false,
-                                   pixelSize: pixel, screenFrame: frame, displayID: 1)!
+        let parsed = PointingTags.parse(tags)
+        let inApp = PointingPlan(targets: parsed.targets, text: parsed.text, speaking: false,
+                                 pixelSize: pixel, screenFrame: frame, displayID: 1)!
 
         let json = #"{"type":"answer","id":"t1","text":"Tick Sync files, then the Photos list, then Done.","targets":[{"kind":"point","coords":[100,100],"label":"Sync files"},{"kind":"box","coords":[200,200,600,400],"label":"Photos list"},{"kind":"point","coords":[710,110],"label":"Done"}]}"#
         guard case let .answer(_, text, targets)? = ServeEvent.decode(json) else { return XCTFail("not an answer") }
         let serve = PointingPlan(targets: targets, text: text, speaking: false, pixelSize: pixel, screenFrame: frame, displayID: 1)!
 
-        XCTAssertEqual(oneShot.marks.count, 3)
-        XCTAssertEqual(oneShot, serve)
-        XCTAssertEqual(oneShot.marks.map(\.kind), [.ring, .region, .ring])
+        XCTAssertEqual(inApp.marks.count, 3)
+        XCTAssertEqual(inApp, serve)
+        XCTAssertEqual(inApp.marks.map(\.kind), [.ring, .region, .ring])
     }
 
     func testSpokenPlanUsesOffsetsInTheSpokenText() {

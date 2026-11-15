@@ -1,10 +1,10 @@
-"""Open-model providers (D-147): DeepSeek, GLM (Z.ai / Zhipu), Kimi (Moonshot), Qwen (Alibaba Cloud
+"""Open-model providers: DeepSeek, GLM (Z.ai / Zhipu), Kimi (Moonshot), Qwen (Alibaba Cloud
 Model Studio), and Ollama / LM Studio on this computer.
 
 Each speaks the OpenAI chat-completions format, so each is a preset for OpenAIProvider: where it
 lives, which environment variable holds its key, which model to use when none is named, which of its
 models read images, how its thinking is switched, and what it wants sent back. Everything here comes
-from the provider's own current API documentation, read on 2026-11-05 (docs/providers.md
+from the provider's own API documentation as read on 2026-11-05 (docs/providers.md
 holds the sources and says which facts are unconfirmed). Model ids change fast: every id here can be
 replaced with BENJI_MODEL, and an id that is not in a doc read on that date is not in this file.
 
@@ -215,8 +215,8 @@ def thinking_mode() -> str:
 def reads_images(preset: Preset | None, model: str) -> bool:
     """Whether Benji may send this model a picture (the screen features need it). BENJI_VISION=1
     or 0 decides when set. Otherwise: Claude, OpenAI and a custom OpenAI-format server are taken to
-    (as before this change); a preset says so for the ids its docs name as vision-capable, and an
-    id it doesn't name is taken not to be."""
+    read images; a preset says so for the ids its docs name as vision-capable, and an id it doesn't
+    name is taken not to be."""
     raw = os.environ.get("BENJI_VISION", "").strip().lower()
     if raw in ("1", "true", "yes", "on"):
         return True

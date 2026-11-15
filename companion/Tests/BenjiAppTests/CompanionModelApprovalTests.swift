@@ -2,7 +2,7 @@ import XCTest
 @testable import BenjiApp
 import BenjiCore
 
-/// (5) Approval lifecycle: every way an approval ends other than an explicit Yes is a No, and the
+/// Approval lifecycle: every way an approval ends other than an explicit Yes is a No, and the
 /// engine is answered exactly once per request.
 final class CompanionModelApprovalTests: XCTestCase {
     var backend: FakeBackend!

@@ -1,8 +1,8 @@
 import XCTest
 @testable import BenjiCore
 
-/// D-168: marks that land on Benji's own picture add to it. The user's live round: three Urdu
-/// lines written with TEXT, then "highlight them" erased the lines and left only the highlights.
+/// Marks that land on Benji's own picture add to it instead of replacing it: after three Urdu
+/// lines written with TEXT, "highlight them" keeps the lines under the highlights.
 final class DrawingMarkUpTests: XCTestCase {
     private func lines() -> DrawingParts {
         var d = DrawingParts()

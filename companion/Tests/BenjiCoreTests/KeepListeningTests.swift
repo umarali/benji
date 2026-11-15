@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// "Keep listening when the panel closes" (D-122): a running conversation carries on in the notch
+/// "Keep listening when the panel closes": a running conversation carries on in the notch
 /// after the panel closes; closing never starts one, and the mic never comes on by itself while closed.
 final class KeepListeningWhenClosedTests: XCTestCase {
     func testStoredSettingIsOnUnlessTurnedOff() {

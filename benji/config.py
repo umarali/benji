@@ -8,25 +8,25 @@ from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlparse
 
-from . import aliases, home, presets
+from . import home, presets
 from .usage import enabled as usage_enabled
 
 # Sensible defaults. If the API rejects the model id, override with BENJI_MODEL.
-# Claude: Haiku 5.5 at low effort (the user's choice, 2026-10-31); BENJI_MODEL=claude-sonnet-5-5
-# is the documented secondary, for better figures (the effort implementation note).
+# Claude: Haiku 5.5 at low effort by default; BENJI_MODEL=claude-sonnet-5-5 is the documented
+# alternative, for better figures.
 DEFAULT_MODELS = {
     "claude": "claude-haiku-5-5",
     "openai": "gpt-4o",
 }
 
 
-KEY_SOURCE_VAR = aliases.KEY_SOURCE_NAMES[0]        # "keychain": the app keeps the keys and hands them over (D-173)
+KEY_SOURCE_VAR = "BENJI_KEY_SOURCE"        # "keychain": the app keeps the keys and hands them over
 _SECRET_NAMES = frozenset({"SERPAPI_KEY"})
 
 
 def is_secret_name(name: str) -> bool:
     """A variable that holds a key: `*_API_KEY` and the few other key names Benji reads. The app's
-    Keychain code (BenjiCore/KeyStore.swift) uses the same rule; both are tested against one table."""
+    Keychain code (BenjiCore/Safety/KeyStore.swift) uses the same rule; both are tested against one table."""
     upper = name.strip().upper()
     return upper.endswith("_API_KEY") or upper in _SECRET_NAMES
 
@@ -35,9 +35,8 @@ def keys_from_keychain() -> bool:
     """The app started this engine in Keychain mode (BENJI_KEY_SOURCE=keychain, set by the app).
     Then a key is read from the environment the app handed over and from nowhere else: the key
     lines of the home env files are not read even if they are still there, so there is no silent
-    fallback to a plaintext file once the user has moved the key. Any of the variable's names saying
-    "keychain" is enough, whatever the others say: a conflict fails closed."""
-    return any(os.environ.get(name, "").strip().lower() == "keychain" for name in aliases.KEY_SOURCE_NAMES)
+    fallback to a plaintext file once the user has moved the key."""
+    return os.environ.get(KEY_SOURCE_VAR, "").strip().lower() == "keychain"
 
 
 def missing_key_hint() -> str:
@@ -47,29 +46,23 @@ def missing_key_hint() -> str:
 
 
 def load_dotenv() -> None:
-    """Load KEY=VALUE lines from the home env files into the environment, as canonical BENJI_* names.
+    """Load KEY=VALUE lines from ~/.benji.env into the environment.
 
-    In order of strength: a real environment variable under any of its names (BENJI_* over CHILLY_* over
-    PAL_*), then ~/.benji.env, ~/.chilly.env, ~/.pal.env, and within one file BENJI_* over CHILLY_* over
-    PAL_*. No file overrides a real variable. Never from the current folder (chilly-gate fix 12): a folder
+    A real environment variable always wins over the file. Never from the current folder: a folder
     Benji is started in could otherwise point it at another server.
 
-    Keychain mode, set under any name in the environment or in any of these files, keeps every key line
-    of every file out. There is no silent fallback to a plaintext file.
+    Keychain mode, set in the environment or in the file, keeps every key line of the file out. There
+    is no silent fallback to a plaintext file.
     """
-    aliases.adopt()
-    home.migrate_key_file()
     parsed = [_read_env_file(path) for path in home_env_files()]
     keychain = keys_from_keychain() or any(
-        key in aliases.KEY_SOURCE_NAMES and value.strip().lower() == "keychain"
+        key == KEY_SOURCE_VAR and value.strip().lower() == "keychain"
         for lines in parsed for key, value in lines)
     for lines in parsed:
-        chosen: dict[str, tuple[int, str]] = {}
-        for key, value in lines:            # the newest name wins in a file; then the first line of it
-            name, strength = aliases.canonical_name(key), aliases.rank(key)
-            if name not in chosen or strength < chosen[name][0]:
-                chosen[name] = (strength, value)
-        for name, (_, value) in chosen.items():
+        chosen: dict[str, str] = {}
+        for key, value in lines:            # the first line of a name wins
+            chosen.setdefault(key, value)
+        for name, value in chosen.items():
             if keychain and is_secret_name(name):
                 continue                    # fail closed: the key comes from the Keychain, never from a file
             os.environ.setdefault(name, value)
@@ -78,7 +71,7 @@ def load_dotenv() -> None:
 
 
 def home_env_files() -> tuple[Path, ...]:
-    return tuple(Path.home() / name for name in (".benji.env", ".chilly.env", ".pal.env"))
+    return (Path.home() / ".benji.env",)
 
 
 def _read_env_file(path: Path) -> list[tuple[str, str]]:
@@ -109,7 +102,7 @@ class Config:
     usage_path: Path | None = None  # token-usage log; None when BENJI_USAGE_LOG=0
     auto_approve: bool = False
     base_url: str | None = None  # an OpenAI-compatible server other than OpenAI
-    preset: presets.Preset | None = None    # DeepSeek, GLM, Kimi, Qwen, Ollama, LM Studio (D-147)
+    preset: presets.Preset | None = None    # DeepSeek, GLM, Kimi, Qwen, Ollama, LM Studio
     region: str = "intl"
     thinking: str = "off"
     vision: bool = True             # the model can read pictures; if not, Screen stays off
@@ -135,14 +128,6 @@ class Config:
     def sends_to(self) -> str:
         """The startup line's words: who, and which host ("DeepSeek (api.deepseek.com)")."""
         return self.destination if self.destination == self.host else f"{self.destination} ({self.host})"
-
-    @property
-    def output_dir(self) -> Path:
-        return self.workdir / "output"
-
-    @property
-    def tmp_dir(self) -> Path:
-        return self.workdir / "tmp"
 
 
 def _is_private_host(host: str) -> bool:
@@ -266,16 +251,11 @@ def _max_tokens() -> int | None:
 
 
 def workdir_path(workdir: str | None = None) -> Path:
-    """The working folder: --workdir, else $BENJI_WORKDIR (or an older name of it), else ~/.benji.
-    Needs no API key. The default is Benji's one hidden home folder; the first call moves an older
-    ~/.chilly, ~/chilly or ~/pal into it, once (benji/home.py). An explicit folder is used as
-    given and nothing is moved."""
+    """The working folder: --workdir, else $BENJI_WORKDIR, else ~/.benji. Needs no API key. An
+    explicit folder is used as given; the default one is made, mode 0700, if it is not there."""
     chosen = workdir or home.workdir_override()
     if chosen:
         return Path(chosen).expanduser()
-    found = home.migrate()
-    if found.kind in ("failed", "busy") and found.folder is not None:
-        return found.folder             # the move was impossible or Benji is running: keep using the old folder, move nothing
     folder = home.home_dir()
     home.ensure(folder)
     return folder

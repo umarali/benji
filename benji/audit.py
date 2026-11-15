@@ -1,4 +1,4 @@
-"""The audit log (D-144): what happened and why it was allowed, with none of what was said.
+"""The audit log: what happened and why it was allowed, with none of what was said.
 
 One JSON object per line in the working folder's `events.jsonl` (mode 0600, rotated, stdlib only).
 Each line has a time, a `kind` from the closed list `KINDS` below, who wrote it (`src`: the engine
@@ -13,7 +13,7 @@ path. The same holds for `--diagnose`'s report, which is built only from lines t
 
 A failed write is reported on stderr (the kind of failure, nothing more) and never stops a turn.
 `BENJI_AUDIT=0` turns the log off. The app appends to the same file for the things only it sees
-(job-row buttons, the engine's exit, the browser switch); its writer is BenjiCore/AuditLog.swift,
+(job-row buttons, the engine's exit, the browser switch); its writer is BenjiCore/Safety/AuditLog.swift,
 and companion/Tests/audit-cases.json holds lines both sides must agree on.
 """
 
@@ -30,6 +30,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 from . import private_file
+from .switches import switch
 
 FILE_NAME = "events.jsonl"
 MAX_BYTES = 1_000_000           # one generation: about 5000 events
@@ -45,7 +46,7 @@ APPROVAL_WHO = ("row", "card", "timeout", "stop")      # never by voice or a key
 DECISIONS = ("yes", "no")
 JOB_STATES = ("queued", "running", "needs-you", "finished", "failed", "stopped", "interrupted")
 JOB_CODES = ("provider_error", "internal_error", "out_of_steps", "interrupted", "step_limit")
-# Second pass (D-172): a job's runs, its schedule, the brief read again. Kinds and ids only.
+# Jobs: a job's runs, its schedule, the brief read again. Kinds and ids only.
 RUN_KINDS = ("first", "scheduled", "continued")
 RUN_OUTCOMES = ("news", "nothing_new", "failed", "stopped", "limit", "parked")
 SCHEDULE_ACTIONS = ("set", "changed", "removed", "paused", "resumed", "auto_paused", "switch_on", "switch_off",
@@ -60,20 +61,19 @@ MATCHES = ("granted", "not_listed", "invalid", "no_grant", "always")
 GRANT_HOW = ("start", "card", "act_card", "always")
 PATH_CLASSES = ("inside", "private", "outside")
 ENGINE_MODES = ("serve", "oneshot", "repl")
-HOME_MOVES = ("renamed", "copied", "left_old", "failed", "busy")      # benji/home.py: the one-time move to ~/.benji (D-175)
 PROVIDERS = ("claude", "openai", "deepseek", "glm", "kimi", "qwen", "ollama", "lmstudio")   # presets.NAMES
 _MODEL = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/@+-]{0,79}$")
 SOURCES = ("engine", "app")
 JOB_ACTIONS = ("answer", "stop", "steer", "dismiss", "continue", "schedule_pause", "schedule_resume",
                "schedule_delete", "schedules_off", "schedules_on")
-DRIVE_STATES = ("granted", "declined", "timeout", "started", "ended")     # benji/drive.py (D-170)
+DRIVE_STATES = ("granted", "declined", "timeout", "started", "ended")     # benji/drive.py
 DRIVE_WHY = ("finished", "user_stop", "mouse", "typing", "click", "scroll", "limit", "time", "tainted",
              "turn_over", "app_stop", "error")                                  # drive.END_REASONS
 ERROR_WHERE = ("turn", "job", "serve", "browser", "startup", "audit", "app")
 ERROR_CODES = ("provider", "internal", "bad_request", "protocol", "startup", "browser", "image",
                "job_report", "audit_write", "engine_exit", "engine_launch", "out_of_steps")
 
-# Why the gate decided as it did: one code per rule in benji/tools.py (`decide`) and
+# Why the gate decided as it did: one code per rule in benji/tools/approval.py (`decide`) and
 # benji/browser.py (`plan`). Closed: a tool event with another code is refused.
 GATE_CODES = frozenset({
     # free
@@ -97,7 +97,7 @@ GATE_CODES = frozenset({
     "browser_bad_tab", "browser_bad_url", "browser_open_cap", "browser_not_listed", "job_sites_invalid",
     "screen_one_at_a_time", "policy_blocked", "tool_cap", "browser_act_refused", "browser_bad_args", "browser_bad_ref",
     "drive_unusable", "drive_tainted", "drive_declined", "drive_stopped", "drive_secret", "drive_limit",
-    # second pass of jobs (D-172): a repeat is always asked; a job can't start jobs; a scheduled run
+    # jobs: a repeat is always asked; a job can't start jobs; a scheduled run
     # only reads; a "not now" is not asked again for a while
     "job_schedule", "unattended_change", "job_schedule_invalid", "job_cannot_start", "recent_decline",
 })
@@ -149,13 +149,11 @@ _HOSTCHECK = lambda v: isinstance(v, str) and len(v) <= 253 and _HOST.match(v) i
 
 # kind -> (required fields, {field: check}). The one place the list of kinds is defined.
 KINDS: dict[str, tuple[tuple[str, ...], dict[str, Callable[[Any], bool]]]] = {
-    # provider, host and model say where the data goes (D-147); the host is left out for localhost,
+    # provider, host and model say where the data goes; the host is left out for localhost,
     # which is not a dotted name, and a key or a message can never be in any of them.
     "engine_start": (("mode",), {
         "mode": _enum(*ENGINE_MODES), "version": _rx(_VERSION), "jobs": _BOOL, "browser": _BOOL,
         "provider": _enum(*PROVIDERS), "host": _HOSTCHECK, "model": _rx(_MODEL)}),
-    "home_moved": (("how",), {"how": _enum(*HOME_MOVES)}),
-    "voice_checked": (("status",), {"status": _enum("absent", "ok", "repaired", "broken")}),
     "engine_exit": (("clean",), {
         "clean": _BOOL, "code": _int(-255, 255), "error_type": _rx(_PYNAME)}),
     "turn_start": (("scope",), {
@@ -195,7 +193,7 @@ KINDS: dict[str, tuple[tuple[str, ...], dict[str, Callable[[Any], bool]]]] = {
                                     "reason": _enum("network", "rate_limit", "provider")}),
     "browser_switch": (("enabled",), {"enabled": _BOOL}),
     "diagnostics_copied": ((), {"ok": _BOOL}),
-    # The measured warm-up on the talk key's key-down (D-173): how long it took and whether it was
+    # The measured warm-up on the talk key's key-down: how long it took and whether it was
     # skipped (the last call was recent, or the host is on this Mac). Times and flags only.
     "prewarm": (("skipped",), {"skipped": _BOOL, "ms": _MS, "ok": _BOOL}),
     "error": (("where", "code"), {
@@ -249,7 +247,7 @@ _reported: set[str] = set()
 
 
 def enabled() -> bool:
-    return os.environ.get("BENJI_AUDIT", "").strip() != "0"
+    return switch("BENJI_AUDIT", True)
 
 
 def configure(path: str | Path | None, src: str = "engine") -> None:
@@ -353,7 +351,7 @@ _KEYS = [
     re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
     re.compile(r"\bxox[abprs]-[A-Za-z0-9-]{10,}"),
     re.compile(r"\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]*"),
-    re.compile(r"\b[0-9a-fA-F]{32}\.[A-Za-z0-9_-]{8,}"),      # an id.secret key, the shape Zhipu's older keys had (D-147)
+    re.compile(r"\b[0-9a-fA-F]{32}\.[A-Za-z0-9_-]{8,}"),      # an id.secret key, the shape Zhipu's older keys had
 ]
 _BEARER = re.compile(r"\b[Bb]earer\s+[A-Za-z0-9._~+/=-]{8,}")
 _ASSIGNED = re.compile(
@@ -373,7 +371,7 @@ def _url_to_host(m: re.Match) -> str:
 def redact(text: str) -> str:
     """`text` with what must not be kept in a log taken out: a URL is cut to its host, key-shaped
     strings, bearer tokens, `KEY=value` assignments and long opaque runs become placeholders, and
-    the home folder becomes `~`. engine.log's lines go through this (BenjiCore/LogRedaction.swift
+    the home folder becomes `~`. engine.log's lines go through this (BenjiCore/Safety/LogRedaction.swift
     does the same; companion/Tests/redaction-cases.json holds the cases both must agree on)."""
     out = _URL.sub(_url_to_host, text)
     for rx in _KEYS:

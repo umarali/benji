@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "Benji",
-    platforms: [.macOS(.v14)],   // ScreenCaptureKit one-shot screenshots need 14+
+    platforms: [.macOS(.v14)],   // ScreenCaptureKit's single-frame screenshots need macOS 14+
     targets: [
         // Pure logic — no AppKit — so it is unit-testable headlessly.
         .target(name: "BenjiCore"),

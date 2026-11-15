@@ -2,7 +2,7 @@ import XCTest
 @testable import BenjiApp
 import BenjiCore
 
-/// Background jobs through the coordinator (D-130 step 1): the row's state is the engine's, a
+/// Background jobs through the coordinator: the row's state is the engine's, a
 /// parked approval is answered by the app's button once, Esc cancels only in the beat, the peek
 /// speaks for unseen news, the thread opens in the history view, and a lost engine ends the job.
 final class CompanionModelJobTests: XCTestCase {
@@ -197,7 +197,7 @@ final class CompanionModelJobTests: XCTestCase {
         XCTAssertEqual(history.summaries, before)
     }
 
-    // MARK: second pass (D-172)
+    // MARK: quiet runs, continuing and schedules
 
     private let otherId = "9d3c1f6e-7a52-4b83-8c11-2e4f5a6b7c8d"
 
@@ -283,8 +283,7 @@ final class CompanionModelJobTests: XCTestCase {
         XCTAssertEqual(model.job?.schedule?.text, "Every day at 09:00")
     }
 
-    /// Follow-ups sent while the user is looking at something new carry a fresh screenshot (the changelog
-    /// check of D-172): with Screen on, every message takes its own capture, a job's chip included.
+    /// Follow-ups sent while the user is looking at something new carry a fresh screenshot: with Screen on, every message takes its own capture, a job's chip included.
     func testEveryFollowUpTakesAFreshScreenshotWhenScreenIsOn() {
         model.setScreenMode(.on)
         var captures = 0

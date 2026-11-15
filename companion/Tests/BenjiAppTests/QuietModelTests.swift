@@ -2,7 +2,7 @@ import XCTest
 @testable import BenjiApp
 import BenjiCore
 
-/// D-173 through the model, on the exact wrapper chain the app builds
+/// Quiet behaviour through the model, on the exact wrapper chain the app builds
 /// (`FigureStageBackend(ExplainCardBackend(backend))`): a muted Mac gets text instead of speech, the
 /// talk key's prewarm reaches the engine through both wrappers, a call holds the job peek, and a
 /// permission is asked for once. No windows, no microphone, no audio, no clipboard.
@@ -82,7 +82,7 @@ final class QuietModelTests: XCTestCase {
         spokenTurn()
         XCTAssertEqual(spoken, ["It's noon."])
         XCTAssertNil(model.silentAnswer)
-        model.outputState = nil     // the Mac can't say: speak as before
+        model.outputState = nil     // the Mac can't say whether it is muted: speak
         spokenTurn("and now?", answer: "Still noon.")
         XCTAssertEqual(spoken.last, "Still noon.")
         XCTAssertNil(model.silentAnswer)

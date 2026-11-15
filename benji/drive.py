@@ -1,4 +1,4 @@
-"""Drive mode: the user lets Benji take over the screen for one stated goal (D-170).
+"""Drive mode: the user lets Benji take over the screen for one stated goal.
 
 A drive is not a mode the model can switch on. It is a consent the user gives on a card, for one
 goal, inside one foreground turn they started, and it ends with that turn, with `end_drive`, with
@@ -8,11 +8,11 @@ is here, as plain functions and one small state object, so every rule is tested 
   who may drive      only a foreground turn the user started, with a screenshot the app can act
                      on and "Act on simple steps" on (never a background job; never a turn that
                      has read a web page, the browser or a file outside the working folder: the
-                     screen alone is allowed, as in D-146). Checked when the tool is offered AND
-                     on every call, because a turn can pick up outside content half-way, and the
-                     drive then ends ("tainted").
+                     screen alone is allowed). Checked when the tool is offered AND on every
+                     call, because a turn can pick up outside content half-way, and the drive
+                     then ends ("tainted").
   the consent        ONE card per drive, naming the goal, granted only by the app's own button or
-                     key (the answer must say `via: card`; a spoken yes never grants, D-130), and
+                     key (the answer must say `via: card`; a spoken yes never grants), and
                      declined by itself after 45 s. `start_drive` without an `offer_drive` raises
                      the same card instead of failing. No "always approve": the consent is for
                      this goal and is gone when the drive ends.
@@ -26,8 +26,6 @@ is here, as plain functions and one small state object, so every rule is tested 
   what widens it     nothing. The class is decided from the step, the Accessibility element and the
                      consent, never from text the model read on the screen: screen text can claim
                      any permission, and none of it reaches a function here as an input.
-
-The wording of the classes is in docs/decisions.md (D-170).
 """
 
 from __future__ import annotations
@@ -49,9 +47,9 @@ MAX_SECONDS = 600.0         # one drive's wall-clock length
 MAX_GOAL_CHARS = 140
 # A drive needs more model steps than a spoken turn's 20 (agent.MAX_STEPS); each screen step is one.
 TURN_STEPS = 90
-TURN_TOOL_CALLS = 100        # and the turn's cap on tool calls (agent.MAX_TOOL_CALLS is 30, D-173)
+TURN_TOOL_CALLS = 100        # and the turn's cap on tool calls (agent.MAX_TOOL_CALLS is 30)
 
-# Kinds of outside content that end a drive (or stop one starting). The screen alone does not (D-146).
+# Kinds of outside content that end a drive (or stop one starting). The screen alone does not.
 HOSTILE_TAINTS = frozenset({"web", "browser", "file"})
 
 # ---- why a drive ended --------------------------------------------------------------------------
@@ -119,7 +117,7 @@ def words(text: str) -> list[str]:
 
 
 # What may commit something outside the user's own screen or lose something: the words of
-# screen_class.COMMIT_WORDS (D-128) and the ones a drive adds, because a drive clicks more.
+# screen_class.COMMIT_WORDS and the ones a drive adds, because a drive clicks more.
 EXTRA_OUTBOUND = (
     "reply", "comment", "share", "tweet", "retweet", "forward", "invite", "book", "reserve", "order",
     "donate", "withdraw", "apply", "enroll", "register", "subscribe", "upload", "merge", "deploy",

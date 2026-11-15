@@ -10,7 +10,7 @@ mkdir -p "$OUT"
 
 xcrun swift build --target BenjiCore >/dev/null
 BIN="$(xcrun swift build --show-bin-path)"
-APP=$(ls Sources/BenjiApp/*.swift | grep -v '/main.swift$')
+APP=$(find Sources/BenjiApp -name '*.swift' ! -name main.swift | sort)
 xcrun swiftc -O -module-name DisplaySetupRender \
     -I "$BIN/Modules" \
     tools/display-setup-render/main.swift $APP \

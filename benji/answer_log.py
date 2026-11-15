@@ -1,28 +1,28 @@
-"""The answer log (chilly-whiteboard): one JSON line per `--serve` turn in the working folder's
-`answers.jsonl`, for diagnosing a live round. Each record holds the model's raw answer (tags and
+"""The answer log: one JSON line per `--serve` turn in the working folder's
+`answers.jsonl`, for diagnosing a turn afterwards. Each record holds the model's raw answer (tags and
 card lines included), the events the app was sent for that turn (consecutive deltas joined), what
 the app said about the screen it drew on, and the turn id. Never the screenshot or its path, never
 a key: only text the model wrote and the engine's own events. Off with BENJI_ANSWER_LOG=0.
-Rotated to `answers.jsonl.1` past MAX_BYTES. Both files are mode 0600 (an older, wider one is
-tightened on the first write): the raw answers are the user's. Turns of background jobs are not
+Rotated to `answers.jsonl.1` past MAX_BYTES. Both files are mode 0600 (a file left with wider
+permissions is tightened on the first write): the raw answers are the user's. Turns of background jobs are not
 here (their metadata is in events.jsonl, benji/audit.py)."""
 
 from __future__ import annotations
 
 import json
-import os
 import sys
 import time
 from pathlib import Path
 
 from . import private_file
+from .switches import switch
 
 FILE_NAME = "answers.jsonl"
 MAX_BYTES = 2_000_000
 
 
 def enabled() -> bool:
-    return os.environ.get("BENJI_ANSWER_LOG", "").strip() != "0"
+    return switch("BENJI_ANSWER_LOG", True)
 
 
 def compact(events: list[dict]) -> list[dict]:

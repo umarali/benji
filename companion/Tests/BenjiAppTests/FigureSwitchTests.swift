@@ -3,7 +3,7 @@ import XCTest
 @testable import BenjiApp
 import BenjiCore
 
-/// The menu's "Draw Things in 3D": flipping it changes the backend from the next message,
+/// The "Draw things in 3D" setting: flipping it changes the backend from the next message,
 /// without relaunching. No window is made here: the stage is never shown.
 final class FigureSwitchTests: XCTestCase {
     /// A backend that counts engine restarts.

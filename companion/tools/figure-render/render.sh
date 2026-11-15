@@ -12,7 +12,7 @@ BIN="$(xcrun swift build --show-bin-path)"
 xcrun swiftc -O -module-name FigureRender \
     -I "$BIN/Modules" \
     tools/figure-render/main.swift tools/shared/SyntheticScreen.swift \
-    Sources/BenjiApp/FigureStage.swift Sources/BenjiApp/FigureStageDrawing.swift Sources/BenjiApp/FigureReality.swift \
+    Sources/BenjiApp/Drawing/FigureStage.swift Sources/BenjiApp/Drawing/FigureStageDrawing.swift tools/figure-render/FigureReality.swift \
     "$BIN"/BenjiCore.build/*.o \
     -o "$OUT/figure-render"
 REPLIES="${2:-tools/figure-render/replies}"

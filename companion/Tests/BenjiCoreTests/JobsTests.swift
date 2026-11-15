@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// Background jobs, the app's side (D-130 step 1): the `job` event, the shown state it carries (derived
+/// Background jobs, the app's side: the `job` event, the shown state it carries (derived
 /// by the engine in code), the row's and the peek's words, the cue mapping, the thread, and the
 /// protocol lines.
 final class JobsTests: XCTestCase {
@@ -99,7 +99,7 @@ final class JobsTests: XCTestCase {
         XCTAssertNil(peek(.stopped), "a job the user stopped says nothing")
     }
 
-    // MARK: the written line (D-146)
+    // MARK: the written line
 
     func testTheRowPeekAndThreadShowTheWrittenLineNotTheSpokenOne() throws {
         let job = JobSnapshot(id: id, title: "Tea", state: .done, spoken: "I saved output slash tea dot txt.",
@@ -132,7 +132,7 @@ final class JobsTests: XCTestCase {
         XCTAssertEqual(old.taint, "")
     }
 
-    // MARK: the label under a tainted job (D-146)
+    // MARK: the label under a tainted job
 
     func testTheLabelSaysWhatActuallyApplies() {
         func line(_ tainted: Bool, _ taint: String) -> String? {
@@ -250,7 +250,7 @@ final class JobsTests: XCTestCase {
         XCTAssertEqual(try object(.send(id: "t1", text: "x", imagePath: nil, allowPointing: false, jobs: true))["jobs"] as? Bool, true)
     }
 
-    // MARK: second pass (D-172)
+    // MARK: quiet runs, continue and schedules
 
     func testTheSecondPassFieldsDecodeAndAnOlderEngineSendsNone() {
         guard case let .job(job)? = event(#"""

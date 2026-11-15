@@ -36,9 +36,10 @@ body:
         Run `python3 -m benji --diagnose --hours 24` in the repository folder (or use Settings > General >
         Diagnostics > Copy in the app) and paste the result. It lists what ran, how the gate classed it,
         approvals, job states and errors, and holds no message or file text. Read it before pasting.
+        If the build itself failed, leave this empty.
       render: text
     validations:
-      required: true
+      required: false
   - type: dropdown
     id: area
     attributes:

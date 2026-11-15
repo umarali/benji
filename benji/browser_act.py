@@ -1,13 +1,13 @@
-"""Browser reach, step 2 (acting): what a click, a typed word or a key press in the user's Chrome is
+"""Browser reach, acting: what a click, a typed word or a key press in the user's Chrome is
 classed as, decided in code from what the page's element is, never from what the model called it.
 
-Only rules and small helpers live here (no sockets, no model): the tools are in benji/tools.py, the
+Only rules and small helpers live here (no sockets, no model): the tools are in benji/tools/browser_tabs.py, the
 link to the extension in benji/browser_link.py, the grants in benji/browser.py. The extension holds
 the same floor rules in JavaScript (browser-extension/core.js `floor`); both run the cases in
 browser-extension/test/act-cases.json.
 
-How a step is decided (D-171):
-  1. The extension looks at the element (no debugger yet) and returns a *descriptor*: kind, accessible
+How a step is decided:
+  1. The extension looks at the element (before Chrome's debugger is attached) and returns a *descriptor*: kind, accessible
      name, link target, form method, and whether it is a password, card number or one-time-code field.
   2. `floor` turns the descriptor into a class that depends only on the element and the page:
      free, quiet, asked or refused. `classify` raises it with what only the engine knows: the user's
@@ -42,7 +42,6 @@ MAX_ACT_UNASKED = 12        # quiet acting steps one job takes before the next i
 MAX_TYPED = 2000            # characters one browser_type may enter
 MAX_UPLOAD_BYTES = 50 * 1024 * 1024
 MAX_LOOK = 120              # controls browser_look lists
-SIG_CHARS = 16
 
 SCROLL_TO = ("down", "up", "top", "bottom")
 FREE_KEYS = ("PageUp", "PageDown", "Home", "End")

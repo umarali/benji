@@ -152,7 +152,7 @@ final class LifecycleTests: XCTestCase {
         XCTAssertEqual(args[0], "-c")
     }
 
-    // MARK: the settings page starts with everything of this change off
+    // MARK: open at login, cues and the key move start off
 
     func testTheSettingsSnapshotStartsWithLoginCuesAndTheKeyMoveOff() {
         let s = SettingsSnapshot()

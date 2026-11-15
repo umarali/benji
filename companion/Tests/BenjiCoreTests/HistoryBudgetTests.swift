@@ -59,7 +59,7 @@ final class HistoryBudgetTests: XCTestCase {
             for e in all { m.record(user: e.user, assistant: e.assistant) }
             XCTAssertEqual(m.exchanges, Array(all.suffix(c.keepOneAtATime)), c.name)
             XCTAssertEqual(m.droppedEarlier, c.keepOneAtATime < all.count, c.name)
-            // What the app keeps, the engine keeps as it is (one-shot `--history`, serve `restore`).
+            // What the app keeps, the engine keeps as it is (serve `restore`).
             XCTAssertEqual(ConversationMemory.keptCount(sizes: m.exchanges.map(ConversationMemory.size)),
                            m.exchanges.count, c.name)
         }

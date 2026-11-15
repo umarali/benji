@@ -1,47 +1,53 @@
 # Using and configuring Benji
 
-Everyday use, the settings Benji reads, choosing a model provider, and the optional command-line extras.
+How to use Benji in the app and on the command line, the settings it reads, how to choose a model
+provider, and the optional extras.
 
-## What it does, in detail
+- [Using Benji](#using-benji)
+- [Settings](#settings) and [choosing a model provider](#choosing-a-model-provider)
+- [Command-line voice](#command-line-voice-optional)
+- [macOS automation, skills and memory](#macos-automation-skills-and-memory)
 
-- **Talk or type.** Hold **Right ⌥**, speak, release (or tap once to start and again to send), or
-  type in the panel. Speech is transcribed on your Mac with Apple's on-device recognition.
-  Spoken answers are read aloud.
-  In the panel, **Esc** stops an answer in progress, then folds it; otherwise it folds or closes the
-  panel. On a foreground approval it means **No**; in Settings it goes back; in the conversation
-  list it goes home.
-- **Do things.** Shell commands, files in a working folder (`~/.benji` by default), web search and
-  fetch, AppleScript and Shortcuts, skills (folders of instructions you can add) and a small
+## Using Benji
+
+### In the app
+
+- **Talk:** hold **Right ⌥**, speak and release, or tap it once to start and again to send.
+  Speech is transcribed on your Mac with Apple's on-device recognition. Spoken questions are
+  answered aloud, and typed ones too if you turn on **Read answers aloud**. The key needs Accessibility; the mic button in the panel works without it.
+  `defaults write com.emerssive.heybenji.app talkKey off` turns the key off.
+- **Type:** open the panel from the notch or the menu-bar icon and use the message box.
+- **Esc:** stops an answer in progress, then folds the panel; otherwise it folds or closes it. On
+  an approval card it means **No**; in Settings it goes back; in the conversation list it goes home.
+- **Show your screen:** the viewfinder button sends one screenshot with the **next message only**.
+  The answer may point at a control with a ring or outline a region. There is no continuous
+  capture. If Screen Recording is off, your message waits on a confirmation card: choose **Send
+  without screen** to send it alone, or Cancel to put it back in an empty message box. A draft
+  already in the box is kept.
+
+### What Benji can do
+
+- **Do things:** shell commands, files in its working folder (`~/.benji` by default), web search
+  and fetch, AppleScript and Shortcuts, skills (folders of instructions you can add) and a small
   memory of durable facts.
-- **See your screen when you ask.** The viewfinder button sends one screenshot with the **next
-  message only**; the answer may point at a control with a ring or outline a region. No continuous
-  capture.
-  If Screen Recording is off, your message stays pending on the screen-confirmation card. Choose
-  **Send without screen** to send your message alone, or Cancel to put it back in an empty
-  composer. A draft already in the composer is kept.
-- **Background jobs.** "In the background, find three options and write a comparison to a file."
-  The job runs in its own folder while you keep talking to Benji, behind the same safety rules as
+- **Work in the background:** "In the background, find three options and write a comparison to a
+  file." The job runs in its own folder while you keep talking, behind the same safety rules as
   everything else. See [Background jobs](safety.md#background-jobs).
-- **Use your own browser** (optional). A job can open pages you approved in your signed-in browser,
-  read their text and, once you allow it for that site, click and type, with a card for anything that
-  sends, pays, posts, deletes or uploads. "Summarise this page" reads the page in front of you after a
-  card. See [Browser reach](safety.md#browser-reach).
-- **Your choice of model.** See [Choosing a model provider](#choosing-a-model-provider) and, for
-  what each provider is sent, [Privacy](privacy.md).
+- **Use your own browser** (optional): a job can open pages you approved in your signed-in
+  browser, read their text and, once you allow it for that site, click and type, with a card for
+  anything that sends, pays, posts, deletes or uploads. "Summarise this page" reads the page in
+  front of you after a card. See [Browser reach](safety.md#browser-reach).
+- **Use your choice of model:** see [Choosing a model provider](#choosing-a-model-provider) and,
+  for what each provider is sent, [Privacy](privacy.md).
 
-## Using it
+### On the command line
 
-- **Talk:** hold **Right ⌥**, speak, release; or tap it once to start and again to send. The key needs
-  Accessibility; the mic button in the panel works without it. `defaults write com.emerssive.heybenji.app talkKey
-  off` turns the key off.
-- **Type:** open the panel and use the composer.
-- **Screen context:** the viewfinder button includes the screen with the **next message only**.
-- **Command line:** `python3 -m benji "…"` for one task, `python3 -m benji` for a REPL,
-  `./benji.sh "…"` through the launcher, `--image shot.png` to attach an image.
-- **Persistent mode:** `python3 -m benji --serve` stays running and speaks JSON lines over
-  stdin/stdout; the app uses it. The protocol is in [proposal-serve.md](proposal-serve.md).
+- `python3 -m benji "…"` runs one task; `python3 -m benji` starts an interactive prompt.
+- `--image shot.png` attaches an image.
+- `python3 -m benji --serve` stays running and speaks JSON lines over stdin and stdout. The app
+  uses it; [How Benji works](architecture.md#how-the-app-and-the-engine-talk) describes it.
 
-## Configuration
+## Settings
 
 ```bash
 export BENJI_PROVIDER=claude   # or openai, deepseek, glm, kimi, qwen, ollama, lmstudio (else detected from the key present)
@@ -133,7 +139,7 @@ API call.
 python3 -m benji --speak "what's on my calendar today?"   # speak the answer (macOS `say`)
 python3 -m benji --voice                                  # speak one task (needs ffmpeg + a transcription key)
 python3 -m benji --listen                                 # always-listening loop with a wake word
-./voice-setup.sh                                           # optional on-device voice (Kokoro), downloads ~400 MB
+tools/voice-setup.sh                                           # optional on-device voice (Kokoro), downloads ~400 MB
 ```
 
 The app does not need these: it transcribes on-device. `--voice` and `--listen` need `ffmpeg` and

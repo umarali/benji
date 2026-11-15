@@ -9,7 +9,7 @@ import BenjiCore
 final class WrappedJobBackendTests: XCTestCase {
     let id = "5b0f3a52-2c61-4f0e-9d0a-0f5a1c1a7e11"
 
-    /// A backend that is not a JobBackend (one-shot).
+    /// A backend that is not a JobBackend.
     final class Plain: CompanionBackend {
         var onEvent: ((_ run: Int, BackendEvent) -> Void)?
         var onFinished: ((_ run: Int, Int32) -> Void)?
@@ -76,7 +76,7 @@ final class WrappedJobBackendTests: XCTestCase {
         XCTAssertEqual(model.job?.state, .failed)
     }
 
-    func testOneShotStaysWorkingWithNoJobsToForward() {
+    func testABackendWithoutJobsStaysWorkingWithNoJobsToForward() {
         let plain = Plain()
         let wrapped = chain(plain)
         let model = model(wrapped)
@@ -103,7 +103,7 @@ final class WrappedJobBackendTests: XCTestCase {
         XCTAssertEqual(fake.engineStartsForSchedules, 1)
     }
 
-    func testTheSwitchAndTheButtonsAreHarmlessOnOneShotThroughBothWrappers() {
+    func testTheSwitchAndTheButtonsAreHarmlessOnABackendWithoutJobsThroughBothWrappers() {
         let wrapped = chain(Plain())
         let model = model(wrapped)
         model.setSchedules(true)
