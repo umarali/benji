@@ -2,7 +2,7 @@ import XCTest
 @testable import BenjiApp
 import BenjiCore
 
-/// D-133 in the app's coordinator: Screen starts On and stays as chosen, Expand is remembered.
+/// The panel's defaults in the app's coordinator: Screen starts On and stays as chosen, Expand is remembered.
 final class PanelV2Tests: XCTestCase {
     func suite() -> UserDefaults { UserDefaults(suiteName: "benji-panel-v2-\(UUID().uuidString)")! }
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""A five-minute live check of one model provider, for the person who has its key (D-147).
+"""A five-minute live check of one model provider, for the person who has its key.
 
     python3 tools/model_smoke.py deepseek        # or glm, kimi, qwen, ollama, lmstudio, claude, openai
 

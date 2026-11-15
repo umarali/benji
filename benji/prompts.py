@@ -6,16 +6,17 @@ import os
 from dataclasses import dataclass, field
 
 from . import figure_examples
+from .switches import switch
 from .canvas import Canvas, canvas_info
 from .pointing import ScreenInfo, screen_info
 from .screen_class import ask_forced as screen_ask_forced
 
-# Where the reply is shown. The companion app sets BENJI_SURFACE=panel for every run (one-shot
-# and --serve); anything else, or nothing, is the terminal CLI.
+# Where the reply is shown. The app sets BENJI_SURFACE=panel for every engine it starts;
+# anything else, or nothing, is the terminal CLI.
 SURFACES = ("terminal", "panel")
 
-# The current name, said once for every surface. Saved chats, memories and summaries can be older than the
-# name: they stay exactly as written, and this is what keeps them from renaming the assistant.
+# The assistant's name, said once for every surface. Saved chats, memories and summaries written under
+# the assistant's older name stay exactly as written; this line keeps them from renaming the assistant.
 IDENTITY = ("Your name is Benji; \"Hey Benji\" is how people call you. Benji was once called Chilly, so an older "
             "chat, memory or note may use that name for you: read it as meaning you, and never call yourself that.")
 
@@ -47,8 +48,8 @@ Don't use emoji or emoticons: replies may be read aloud.
 }
 
 
-# Talking with the user as a person would, and teaching (D-122). In the stable base of the system
-# prompt, so it is read from cache. The cut-off mark is the app's (companion CutOffReply.marker).
+# Talking with the user as a person would, and teaching. In the stable base of the system
+# prompt, so it is read from cache. The cut-off mark is the start of the app's CutOffReply.marker.
 CUT_OFF_MARK = "[cut off"
 
 _CONVERSATION = {
@@ -68,9 +69,9 @@ Talk the way a thoughtful person does in a conversation, not like a document.
 """,
 }
 
-# What Benji is, for questions about itself (D-125's eval: "Show me Benji's three states" got
-# "which states?"). Facts from the companion: NotchPresence's status words, the talk keys
-# (D-124), Screen Off/Ask/On (D-92), the approval card, on-device voice (D-90). Stable base.
+# What Benji is, for questions about itself (without it, "Show me Benji's three states" got
+# "which states?"). Facts from the app: NotchPresence's status words, the talk keys,
+# Screen Off/Ask/On, the approval card, on-device voice. Stable base.
 _ABOUT = {
     "terminal": "",
     "panel": """
@@ -123,13 +124,13 @@ class SystemPrompt(str):
 
 
 def figures_from_env() -> bool:
-    """The companion sets BENJI_FIGURES=1 for the engine when its 3D figures setting is on (D-108)."""
-    return os.environ.get("BENJI_FIGURES", "").strip() == "1"
+    """The app sets BENJI_FIGURES=1 for the engine when its 3D figures setting is on."""
+    return switch("BENJI_FIGURES", False)
 
 
 def cards_from_env() -> bool:
-    """The companion sets BENJI_CARDS=1 for the engine when it can show explanation cards (D-125)."""
-    return os.environ.get("BENJI_CARDS", "").strip() == "1"
+    """The app sets BENJI_CARDS=1 for the engine when it can show explanation cards."""
+    return switch("BENJI_CARDS", False)
 
 
 @dataclass(frozen=True)
@@ -145,24 +146,24 @@ class TurnInfo:
     figures: bool = field(default_factory=figures_from_env)
     history: int | None = None
     history_dropped: bool = False
-    # The front-end can act on this turn's screenshot: click, scroll, type, press keys (D-123).
+    # The front-end can act on this turn's screenshot: click, scroll, type, press keys.
     screen_actions: bool = False
-    # ... and does simple steps without a card (D-126): the user hasn't chosen "Ask before every
+    # ... and does simple steps without a card: the user hasn't chosen "Ask before every
     # step" and BENJI_SCREEN_ASK isn't set.
     screen_simple_steps: bool = False
-    # The front-end shows explanation cards (D-125); read from the environment unless given.
+    # The front-end shows explanation cards; read from the environment unless given.
     cards: bool = field(default_factory=cards_from_env)
-    # What Benji has on the screen now (chilly-whiteboard), from the app's `canvas`.
+    # What Benji has on the screen now (its drawing, figure and card), from the app's `canvas`.
     canvas: Canvas | None = None
-    # The front-end shows background jobs (D-130 step 1): `send` said `jobs`.
+    # The front-end shows background jobs: `send` said `jobs`.
     jobs: bool = False
-    # The front-end can carry a drive (D-170): `send` said `drive`, the screen can be acted on and
+    # The front-end can carry a drive: `send` said `drive`, the screen can be acted on and
     # simple steps are on (a user who chose "Ask before every step" is never offered a drive).
     drive: bool = False
-    # The user turned on browser access for jobs (D-143): a job may be started with sites. Set by
+    # The user turned on browser access for jobs: a job may be started with sites. Set by
     # the engine from its own state, never read from the request.
     browser: bool = False
-    # The front-end can show and carry out schedules (D-172): a job may be told to repeat. Set by
+    # The front-end can show and carry out schedules: a job may be told to repeat. Set by
     # the engine from the request and its own state.
     schedules: bool = False
     # The user's message, read only to pick a worked figure example (figure_examples.guide_for).
@@ -194,7 +195,7 @@ def surface_from_env() -> str:
 
 
 def profile_section(memory: str = "", past: str = "") -> str:
-    """What Benji knows about the user, as background (D-121): the facts it was asked to keep
+    """What Benji knows about the user, as background: the facts it was asked to keep
     (memory.digest) and the titles of recent saved conversations (conversations.digest), framed
     as data, never instructions; plus how to keep facts and how to greet. Part of the stable base:
     it changes only when a fact is kept or a new conversation starts."""
@@ -269,11 +270,10 @@ Lead with the result, then only what helps, at the length the task deserves. Be 
 
 def pointing_rule(screen: ScreenInfo | None = None, cards: bool = False) -> str:
     """Added when the attached image is a screenshot of the user's screen and the
-    front-end can point and draw (the companion's screen context). The tags are parsed by
-    benji/pointing.py and the companion's Pointing.swift. `screen` is what the companion says
-    about that screenshot: its size, the notch and the menu bar. `cards` is kept for callers: since
-    chilly-whiteboard a diagram the user asks for is drawn on the screen whether or not cards are on
-    (D-125 had left it to the card)."""
+    front-end can point and draw (the app's screen context). The tags are parsed by
+    benji/pointing.py and the app's Pointing.swift. `screen` is what the app says about that
+    screenshot: its size, the notch and the menu bar. `cards` is accepted but unused: a diagram the
+    user asks for is drawn on the screen whether or not cards are on."""
     return """
 ## Drawing on the user's screen
 The attached image is a screenshot of the user's screen, and Benji can point at and draw on
@@ -412,7 +412,7 @@ def _screen_geometry(screen: ScreenInfo | None) -> str:
 
 
 def no_screen_rule() -> str:
-    """Added for the companion's panel when no screenshot is attached: Screen is Off, or the
+    """Added for the app's panel when no screenshot is attached: Screen is Off, or the
     user sent this message without the screen."""
     return """
 ## The user's screen
@@ -438,7 +438,7 @@ def screen_rule(with_screen: bool, surface: str, screen: ScreenInfo | None = Non
 
 
 def voice_rule(spoken: bool, surface: str) -> str:
-    """Whether this turn was spoken (and its reply will be read aloud) or typed. The companion
+    """Whether this turn was spoken (and its reply will be read aloud) or typed. The app
     says which for every turn; the terminal CLI is told only about a spoken one."""
     if spoken:
         return """
@@ -480,8 +480,8 @@ FIGURE_EXAMPLE = """```figure
 
 
 def figure_rule() -> str:
-    """Added when the companion can show 3D figures (D-108): the figure block, parsed by
-    benji/figures.py and the companion's FigureGrammar.swift."""
+    """Added when the app can show 3D figures: the figure block, parsed by
+    benji/figures.py and the app's FigureGrammar.swift."""
     return """
 ## Drawing a thing in 3D
 Benji can also build a thing as a lit 3D model that it labels on its board. Use it only when the
@@ -514,10 +514,9 @@ marked figure holding JSON. Never mention the block or JSON.
 
 
 def figure_over_drawing_rule() -> str:
-    """Added when the screen is attached and 3D figures are on: which of the two to use. The
-    user's live rounds: "I need a 3-D" got a flat drawing; "draw an airplane" came out flat; and
-    (chilly-whiteboard) "it should not be defaulting to 3D, but for certain things it should
-    intercept if 3D is what's expected"."""
+    """Added when the screen is attached and 3D figures are on: which of the two to use. Without
+    it, "I need a 3-D" got a flat drawing and "draw an airplane" came out flat. The rule is 2D by
+    default, and 3D only for a thing the user expects to see built or asks to see in 3D."""
     return """
 ## A 3D figure or a drawing on the screen
 Both are on for this message. A thing the user wants to see as it is built (an airliner, a jet
@@ -542,11 +541,10 @@ chips: ["Why postcodes?","How long does it take?"]"""
 
 
 def card_rule(with_screen: bool = False) -> str:
-    """Added when the companion can show explanation cards (D-125): the card's lines, written
-    between the spoken sentences so the app draws each part as its sentence is said
-    (chilly-beats; benji/cards.py and the companion's ExplainCard.swift read them). With the
-    screen attached, also which of a card and drawing on the screen to use (the user's 2026-11-01
-    round: three states drawn as boxes over a page of text)."""
+    """Added when the app can show explanation cards: the card's lines, written between the
+    spoken sentences so the app draws each part as its sentence is said (benji/cards.py and the
+    app's ExplainCard.swift read them). With the screen attached, also which of a card and drawing
+    on the screen to use (without it, three states were drawn as boxes over a page of text)."""
     screen = """
 - With the screen attached: a list, a comparison, steps or stages go on the card when the user
   didn't ask you to draw. When they ask you to draw, sketch, use the screen as a whiteboard or
@@ -587,7 +585,7 @@ means a card, about Benji itself too). Not for a plain fact, a yes or no, or cha
 
 
 def conversation_rule(dropped: bool) -> str:
-    """What the model has of this conversation (the companion keeps it bounded, history.py): the
+    """What the model has of this conversation (the app keeps it bounded, history.py): the
     exchanges above it, and whether older ones were dropped. No count: this sits in the turn's
     system block, before the conversation, so it must stay the same from turn to turn for the
     conversation to be read from cache (providers.py); the model counts the exchanges it sees."""
@@ -605,8 +603,8 @@ Never claim you see only the user's messages.
 
 
 def screen_action_rule(simple: bool = False) -> str:
-    """Added when the front-end can act on the attached screenshot (D-123): the click, scroll,
-    type_text, press_key and drag tools, when to use them rather than point, and (D-126) acting on
+    """Added when the front-end can act on the attached screenshot: the click, scroll,
+    type_text, press_key and drag tools, when to use them rather than point, and acting on
     what the user plainly needs, with an honest confidence. `simple`: simple steps happen without
     a card; otherwise every step is asked."""
     asking = ("Simple steps (scrolling, a plain arrow or Page Down, a tab, a link, a menu, a field) "
@@ -646,7 +644,7 @@ one way you click or type in an app; never fake input with AppleScript or the sh
 
 
 def drive_rule() -> str:
-    """Added when the front-end can carry a drive (D-170): when to ask for the screen, what a drive
+    """Added when the front-end can carry a drive: when to ask for the screen, what a drive
     allows and what it never does. The rules themselves are in code (benji/drive.py); this is so the
     model uses them well and tells the user the truth."""
     return """
@@ -671,7 +669,7 @@ when the user asked for the task and doing it takes several clicks or keys; for 
 
 
 def canvas_rule(canvas: Canvas | None, with_screen: bool) -> str:
-    """What Benji has on the screen now (chilly-whiteboard): the model's own drawing by part, its
+    """What Benji has on the screen now: the model's own drawing by part, its
     3D figure and its card. Benji's windows are left out of its screenshots, so without this the
     model disowned its own drawing ("I don't see a diagram in this screenshot"). With the screen
     attached, also the edit tags. Nothing when nothing is up."""
@@ -717,8 +715,8 @@ def canvas_rule(canvas: Canvas | None, with_screen: bool) -> str:
 
 
 def jobs_rule(sites: bool = False, schedules: bool = False) -> str:
-    """When the front-end shows background jobs (D-130 step 1): when to start one, and what a job is.
-    `sites`: the user turned on browser access for jobs (D-143). `schedules`: a job may repeat (D-172)."""
+    """When the front-end shows background jobs: when to start one, and what a job is.
+    `sites`: the user turned on browser access for jobs. `schedules`: a job may repeat."""
     return """
 ## Background jobs
 - `start_job` runs something in the background while the user does other things: research that
@@ -752,7 +750,7 @@ def jobs_rule(sites: bool = False, schedules: bool = False) -> str:
 def job_rules(job_folder: str, sites: list[str] | None = None, unattended: bool = False,
               repeating: bool = False) -> str:
     """The job's own turn: what it is, where it works, and how it ends (the turn_end). `unattended`:
-    a scheduled run nobody watches (D-172). `repeating`: the job repeats, so the end lists `items`."""
+    a scheduled run nobody watches. `repeating`: the job repeats, so the end lists `items`."""
     return f"""
 ## You are running a background job
 You are working on a job the user started and then went on with other things. They are not
@@ -796,7 +794,7 @@ watching; the notch shows only a one-line status, and a card if you need an appr
 
 
 def style_rule() -> str:
-    """The answer-style preference (D-172): kept only when the user asks, as one of three fixed lines."""
+    """The answer-style preference: kept only when the user asks, as one of three fixed lines."""
     from . import gate
     return f"""
 ## Answer style
@@ -833,7 +831,7 @@ def turn_rules(surface: str, with_screen: bool = False, spoken: bool = False,
                task: str = "", notes: bool = False, note: str = "", schedules: bool = False,
                drive: bool = False) -> str:
     """Everything the system prompt adds for one turn: the screen, how the user spoke, (when the
-    companion can show them) 3D figures and explanation cards, and (when a front-end keeps the
+    app can show them) 3D figures and explanation cards, and (when a front-end keeps the
     conversation) how much of it the model has."""
     return (screen_rule(with_screen, surface, screen, cards)
             + (screen_action_rule(screen_simple_steps) if with_screen and screen_actions else "")

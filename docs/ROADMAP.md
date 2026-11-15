@@ -39,4 +39,4 @@ and tested.
 - **Acting without asking where it matters.** No "approve everything" mode beyond the existing `--yes`
   for the command line, and no way for a web page or a model to widen its own access.
 
-Ideas are welcome as [issues](https://github.com/umarali/benji/issues); see [CONTRIBUTING.md](../CONTRIBUTING.md).
+Ideas are welcome as [issues](https://github.com/umarali/benji/issues); see [CONTRIBUTING.md](../.github/CONTRIBUTING.md).

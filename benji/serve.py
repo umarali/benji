@@ -1,21 +1,21 @@
-"""`benji --serve`: one long-lived Benji that speaks JSON lines over stdio (D-34, D-72).
+"""`benji --serve`: one long-lived Benji that speaks JSON lines over stdio.
 
-The design is in docs/proposal-serve.md. In short: the front-end writes requests to
+docs/architecture.md shows where it fits. In short: the front-end writes requests to
 stdin (hello, send, approve, cancel, cut_off, restore, reset, shutdown) and reads events from stdout
 (ready, tool, approval, delta, answer, usage, error, done), one JSON object per line. When the
 app shows explanation cards, the card lines of a reply come as `card`, `card_item`,
 `card_takeaway` and `card_chips` events as each line closes, then `card_end`, and are never in
 the deltas or the answer's text (benji/cards.py).
-A screen step (click, scroll, type_text, press_key, drag; D-123) is acted on by the app, not here: after
+A screen step (click, scroll, type_text, press_key, drag) is acted on by the app, not here: after
 its approval the engine sends `screen_action` and waits for the app's `screen_result`. A simple
-step (D-126: `mode` free or quiet, only when the app's `send` said `screen_simple_steps`) goes
+step (`mode` free or quiet, only when the app's `send` said `screen_simple_steps`) goes
 unasked, and the app may answer "ask", after which the engine asks as usual. Nothing else
 goes to stdout; logs go to stderr. One foreground turn runs at a time, in a worker thread, on a copy of
 the conversation that is committed only when the turn ends ok, so a cancelled turn leaves no
 trace. Approvals wait for the matching `approve`; no answer in time means deny, and every
 approval ends with an `approval_result`. Benji's own approval timeout is longer than the
-companion's, so the companion's decision (or its timeout) always arrives first.
-A background job (D-130 step 1, benji/jobs.py) is a second turn in the same process, started by
+app's, so the app's decision (or its timeout) always arrives first.
+A background job (benji/jobs.py) is a second turn in the same process, started by
 the foreground turn's `start_job` tool when the app's `send` said `jobs`. It has its own Agent
 (so its own taint, folder and context) and its own _Turn, found by `approve` under the job's id. Its
 progress is one event, `job`, a snapshot of the job as the panel shows it (state derived in
@@ -56,36 +56,36 @@ from . import providers as providers_mod
 from .providers import ProviderError
 
 PROTOCOL = 1
-# What the engine can do beyond protocol 1, said in `ready` (D-173). An app that does not know a name
+# What the engine can do beyond protocol 1, said in `ready`. An app that does not know a name
 # ignores it; an engine that does not send the list is an older one.
 ENGINE_CAPS = ("hello_caps", "prewarm", "policy", "tool_cap", "image_hash", "error_reasons")
 # What an app may say it can carry out, in `hello`. The engine offers a tool only if the app can do
 # it; an app that sends no list (an older one) is taken to be able to do what its `send` says.
 # "browser_act": the app can show and answer the acting cards of a job (a second grant per site, a send, a
-# debugging bar's Cancel) and "browser_upload": the upload card; the engine offers those tools only if said (D-171).
+# debugging bar's Cancel) and "browser_upload": the upload card; the engine offers those tools only if said.
 APP_CAPS = ("pointing", "screen_actions", "cards", "figures", "jobs", "browser", "prewarm", "schedules", "drive",
             "browser_act", "browser_upload")
 PREWARM_QUIET_SECONDS = 240.0   # a warm-up is skipped when the last call was more recent than this
 PREWARM_MIN_GAP = 30.0
-APPROVAL_TIMEOUT = 90.0         # seconds; longer than the companion's own 60 s on purpose
+APPROVAL_TIMEOUT = 90.0         # seconds; longer than the app's own 60 s on purpose
 OLD_TOOL_RESULT_CHARS = 2000    # tool results from earlier turns are cut to this
 SCREEN_STEP_TIMEOUT = 30.0      # seconds the app has to act on one approved step and look again
-# "ask": the app looked at an unasked step (free or quiet, D-126) and found it must be asked first.
+# "ask": the app looked at an unasked step (free or quiet) and found it must be asked first.
 SCREEN_STATUSES = ("done", "refused", "stopped", "failed", "ask")
 
 JOB_BEAT = 2.5                  # seconds a job waits, visibly, before it starts: Esc cancels it
-SCHEDULE_TICK = 30.0            # seconds between looks at the schedules, while the engine runs (D-172)
-# What the panel says while a job waits out a bad connection (D-177), by errors.WORTH_WAITING.
+SCHEDULE_TICK = 30.0            # seconds between looks at the schedules, while the engine runs
+# What the panel says while a job waits out a bad connection, by errors.WORTH_WAITING.
 JOB_WAIT_LINES = {"network": "Waiting for a connection", "rate_limit": "Waiting for the model service",
                   "provider": "Waiting for the model service"}
-# What the panel says a job is doing, by tool: never a command, a path or a query (D-98).
+# What the panel says a job is doing, by tool: never a command, a path or a query.
 JOB_LINES = {
     "web_search": "Searching the web", "web_fetch": "Reading a page", "run_shell": "Running a command",
     "write_file": "Writing a file", "read_file": "Reading a file", "list_dir": "Looking through files",
     "search_files": "Looking through files", "run_applescript": "Using an app", "run_shortcut": "Running a Shortcut",
     "remember": "Noting something", "recall": "Checking notes", "find_jobs": "Checking past jobs",
     "read_job": "Reading a past job", "read_skill": "Checking a skill", "list_skills": "Checking a skill",
-    # Never the address (D-98): a page is named by what the job is doing, not where.
+    # Never the address: a page is named by what the job is doing, not where.
     "browser_open": "Opening a page in Chrome", "browser_read": "Reading a page in Chrome",
     "browser_tabs": "Looking at its Chrome tabs",
     "browser_look": "Looking at a page in Chrome", "browser_scroll": "Scrolling a page in Chrome",
@@ -118,8 +118,8 @@ class _Turn:
         self.screen: dict | None = None     # what the app said about the screen and its canvas
         self.canvas: dict | None = None
         self.jobs = False                   # the app shows background jobs: start_job is offered
-        self.drive_cards: set[str] = set()  # approval requests that only the app's own card may answer (D-170)
-        self.schedules = False              # the app can show and carry out schedules (D-172)
+        self.drive_cards: set[str] = set()  # approval requests that only the app's own card may answer
+        self.schedules = False              # the app can show and carry out schedules
         self.last_why = ""                  # how the last approval was answered: yes, no, timeout, cancelled
         self.note: str | None = None        # the note this turn asked to keep; kept once the turn commits
 
@@ -133,14 +133,14 @@ class _JobRun:
         self.turn = _Turn(record["id"])
         self.live = True            # a worker is on it
         self.line = ""              # what it is doing, from JOB_LINES
-        self.waiting = ""           # why it is waiting out a bad connection, or "" (D-177)
+        self.waiting = ""           # why it is waiting out a bad connection, or ""
         self.step = 0               # the last tool step it finished
-        self.warned = False         # code told it the steps are nearly out (D-177)
+        self.warned = False         # code told it the steps are nearly out
         self.steers: list[str] = []
         self.agent: Agent | None = None
         self.audited = ""           # the last state written to the audit log
         self.beat = beat            # seconds of beat before it starts; None: the server's
-        self.resumed = False        # it came back from a park: its brief is read to it again (D-172)
+        self.resumed = False        # it came back from a park: its brief is read to it again
         self.switch_off = False     # stopped because the user turned all schedules off
         self.auto_paused = False    # this run's failure paused the schedule
 
@@ -161,10 +161,10 @@ class Server:
         self.job_store = job_store
         self.job_beat = job_beat
         # The drive card declines itself after drive.CARD_SECONDS in the app; the engine waits a
-        # little longer so the app's own No always arrives first (D-170).
+        # little longer so the app's own No always arrives first.
         self.drive_wait = drive_wait
         self.job_run: _JobRun | None = None     # the one job, queued, working or parked
-        # Schedules (D-172): off until the app says `schedules_set` true (an app that doesn't know
+        # Schedules: off until the app says `schedules_set` true (an app that doesn't know
         # them never turns them on). The clock and the time zone are passed in for the tests.
         self.clock = clock
         self.tz = tz
@@ -172,17 +172,17 @@ class Server:
         self.schedules_on = False
         self._tick_thread: threading.Thread | None = None
         self._tick_stop = threading.Event()
-        # "Not now" is remembered for 30 minutes (D-172): in memory, per job, "fg" for the conversation.
+        # "Not now" is remembered for 30 minutes: in memory, per job, "fg" for the conversation.
         self.declines = gate_mod.DeclineMemory(clock)
         # The link to the browser extension (benji/browser_link.py), or None: off until the app
-        # says `browser_set` (D-143). Its state goes to the app as `browser` events.
+        # says `browser_set`. Its state goes to the app as `browser` events.
         self.browser_link = browser_link
-        self.browser_always: list[str] = []     # sites the user set to always allow reading (Settings; D-171)
+        self.browser_always: list[str] = []     # sites the user set to always allow reading (Settings)
         if browser_link is not None:
             browser_link.on_state = lambda state: self._emit({"type": "browser", "state": state})
         self.exiting = False
         # The user's policy.json, read again at each turn (it can only restrict); and the warm-up
-        # itself, replaceable in tests (D-173).
+        # itself, replaceable in tests.
         self.policy_for = policy_for or (lambda: policy_mod.NONE)
         self.warm = warm or _resolve_host
         self.app_caps: frozenset | None = None   # what the app said it can do in `hello`; None: nothing said
@@ -280,7 +280,7 @@ class Server:
         return True
 
 
-    # ---- background jobs (D-130 step 1) ---------------------------------------
+    # ---- background jobs ------------------------------------------------------
 
     def _jobs_on(self) -> bool:
         return self.job_store is not None and self.make_job_agent is not None
@@ -298,8 +298,6 @@ class Server:
         run = self.job_run
         return run.turn if run is not None and run.turn.id == turn_id else None
 
-    def _job_folder(self, record: dict):
-        return self.job_store.path(record["id"])
 
     def _sched_file(self, record: dict):
         """Where the job's schedule is kept: beside its folder, never in it (schedule.file_for)."""
@@ -314,7 +312,7 @@ class Server:
         return schedule_mod.shown(state, self.schedules_on)
 
     def _quiet(self, run: _JobRun, state: str) -> bool:
-        """A repeat run that nothing needs the user for: no peek, no sound (D-172). Needs-you is
+        """A repeat run that nothing needs the user for: no peek, no sound. Needs-you is
         never quiet; a finished run is quiet only if it found nothing new; a failure is quiet unless
         it just paused the schedule."""
         record = run.record
@@ -372,7 +370,7 @@ class Server:
         `sites`: origins the user approved on the card for this job to read in their Chrome (tools.py
         asked before calling here); only if the browser switch is still on. `repeat`: a schedule the
         user approved on the card. The brief is built here, in code, from the model's stated goal and
-        a bounded slice of what the user said in this conversation (D-172)."""
+        a bounded slice of what the user said in this conversation."""
         with self.lock:
             if sites and not self.browser_on:
                 return "[error] Browser access for jobs was turned off; start the job without sites."
@@ -461,7 +459,7 @@ class Server:
                 self._finish_job(run, "stopped", answer=wrap, agent=agent, folder=folder, code="step_limit", limit=True)
             elif run.warned:
                 # Code told it the steps were nearly out and it did as told, so the run ended before the
-                # cap: still the limit, not "done" (D-177). Decided from the warning, never from its words.
+                # cap: still the limit, not "done". Decided from the warning, never from its words.
                 self._finish_job(run, "stopped", answer=answer, agent=agent, folder=folder, code="step_limit", limit=True)
             else:
                 self._finish_job(run, "finished", answer=answer, agent=agent, folder=folder)
@@ -480,7 +478,7 @@ class Server:
                         reason=reason or was)
 
     def _job_step_note(self, run: _JobRun, step: int) -> str:
-        """What goes in front of a running job after step `step` (D-172): its brief, rules and grants
+        """What goes in front of a running job after step `step`: its brief, rules and grants
         read to it again at fixed intervals and whenever it comes back from a park, and a warning when
         the steps are nearly out. Decided in code from the step count and the park."""
         with self.lock:
@@ -619,7 +617,7 @@ class Server:
         turn.last_why = why                 # decline memory reads this: only the user's own No counts
         with self.lock:
             record["pending"] = None
-            run.resumed = True              # back from a park: the brief is read to it again (D-172)
+            run.resumed = True              # back from a park: the brief is read to it again
             self._job_changed(run)
         # The card's words hold commands and paths: the engine's log gets the tool and the rule, never them.
         print(f"[Benji] job approval {request} ({why}): {tool}/{code}", file=sys.stderr)
@@ -633,7 +631,7 @@ class Server:
             said, run.steers = run.steers, []
         return said
 
-    # ---- continue, schedules (D-172) ------------------------------------------------
+    # ---- continue, schedules ------------------------------------------------------
 
     def _write_schedule(self, record: dict, spec: dict) -> bool:
         """Create or change the job's schedule from a spec the user approved on a card. True when
@@ -739,7 +737,7 @@ class Server:
 
     def _schedules_blocked(self) -> bool:
         """The user's policy.json switches off jobs or schedule_job, or the app said (in `hello`) that
-        it cannot carry schedules out: nothing repeats. Both only ever remove (D-173)."""
+        it cannot carry schedules out: nothing repeats. Both only ever remove."""
         policy = self.policy_for()
         if policy.blocks_family("jobs") or policy.blocks("schedule_job") or policy.blocks("start_job"):
             return True
@@ -803,7 +801,7 @@ class Server:
         if run is None:
             return
         said = " ".join(text.split())[:jobs_mod.MAX_STEER_CHARS]
-        self.declines.clear(run.record["id"])       # the user steered it on: a "not now" no longer holds (D-172)
+        self.declines.clear(run.record["id"])       # the user steered it on: a "not now" no longer holds
         with self.lock:
             run.steers.append(said)
             run.record["steers"].append({"at": time.time(), "text": said})
@@ -840,7 +838,7 @@ class Server:
         record["dismissed"] = True
         self.job_store.save(record)
 
-    # ---- browser reach (D-143) ---------------------------------------------------
+    # ---- browser reach ---------------------------------------------------------
 
     @property
     def browser_on(self) -> bool:
@@ -877,7 +875,7 @@ class Server:
         self.browser_always = browser_mod.normalize_always(raw)
         self._emit({"type": "browser_always", "sites": list(self.browser_always)})
 
-    # ---- what the app can do, the user's policy, the warm-up (D-173) ------------------------------
+    # ---- what the app can do, the user's policy, the warm-up ------------------------------------
 
     def _limited(self, info: TurnInfo) -> TurnInfo:
         """The turn's info with what the app said it cannot do (in `hello`) and what the user's
@@ -892,9 +890,9 @@ class Server:
                 changes.update(jobs=False)
             if info.browser and "browser" not in caps:
                 changes.update(browser=False)
-            if info.schedules and "schedules" not in caps:      # D-172: the app must say it can carry schedules out
+            if info.schedules and "schedules" not in caps:      # the app must say it can carry schedules out
                 changes.update(schedules=False)
-            if info.drive and "drive" not in caps:              # D-170: and that it can carry a drive out
+            if info.drive and "drive" not in caps:              # and that it can carry a drive out
                 changes.update(drive=False)
             if info.allow_pointing and "pointing" not in caps:
                 changes.update(allow_pointing=False, screen=None, screen_actions=False, screen_simple_steps=False)
@@ -1007,7 +1005,7 @@ class Server:
                     lambda step, mode=None, drive=False: self._screen_step(turn, step, mode, drive), size,
                     simple=info.screen_simple_steps)
             if info.drive and info.screen_actions and info.screen_simple_steps:
-                # A drive (D-170): a foreground turn only (a job's agent never gets this), asked on its own card.
+                # A drive: a foreground turn only (a job's agent never gets this), asked on its own card.
                 agent.allow_drive(lambda goal: self._ask(turn, f"take over your screen: {goal}", drive_goal=goal),
                                   lambda event: self.emit({"type": "drive", "id": turn.id, **event}, turn))
             if turn.jobs:
@@ -1017,7 +1015,7 @@ class Server:
                                      turn, agent, title, brief, sites, repeat, done_when),
                                  sites=self.browser_on,
                                  schedule=(lambda ident, spec: self._set_schedule(ident, spec)) if turn.schedules else None)
-                if self.browser_on and info.browser and self._app_can("browser_act"):    # "summarise this page": the front tab, after a card (D-171, step 3)
+                if self.browser_on and info.browser and self._app_can("browser_act"):    # "summarise this page": the front tab, after a card
                     agent.allow_active_tab(self.browser_link, self.browser_always)
             agent.allow_notes(lambda text: self._keep_note(turn, text))
             agent.messages = prior
@@ -1032,7 +1030,7 @@ class Server:
             answer = agent.send(text, images=images or None)
         except ProviderError as e:
             audit.error("turn", "provider", e, turn.id)
-            if providers_mod.is_safety_stop(e):         # the filter's stop is told as that, plainly (D-172)
+            if providers_mod.is_safety_stop(e):         # the filter's stop is told as that, plainly
                 reason, words = "safety", providers_mod.SAFETY_STOP
             else:
                 reason, words = errors_mod.explain(str(e))      # a refused key, no connection, a limit, a region... in plain words
@@ -1085,7 +1083,7 @@ class Server:
 
     def _ask(self, turn: _Turn, reason: str, drive_goal: str | None = None) -> bool:
         """The agent's approve callback: emit an approval and wait for the answer. The drive card
-        (`drive_goal`, D-170) says so, names the goal, declines itself after drive.CARD_SECONDS, and
+        (`drive_goal`) says so, names the goal, declines itself after drive.CARD_SECONDS, and
         only an answer that says it came from the app's own card (`via: card`) counts."""
         if turn.cancelled.is_set():
             return False
@@ -1134,7 +1132,7 @@ class Server:
     def _screen_step(self, turn: _Turn, step: dict, mode: str | None = None, drive: bool = False) -> dict:
         """Ask the app to act on one step and wait for its result: {status, text, image} with
         `image` loaded (the screen after the step), or a failure. `mode` "free" or "quiet": the
-        step wasn't asked about (D-126); the app checks it again and may answer "ask"."""
+        step wasn't asked about; the app checks it again and may answer "ask"."""
         if turn.cancelled.is_set():
             return {"status": "cancelled"}
         with turn.lock:
@@ -1208,7 +1206,7 @@ class Server:
                 return
             if request in t.drive_cards and yes and req.get("via") != "card":
                 # A drive is agreed on the app's own card, by its button or key; nothing else (a spoken
-                # yes, a script, a page) grants it (D-130, D-170). The card stays up and keeps waiting.
+                # yes, a script, a page) grants it. The card stays up and keeps waiting.
                 self.error("bad_request", "a drive can only be agreed on the card", turn_id)
                 return
             try:
@@ -1265,7 +1263,7 @@ class Server:
                     pass
 
     def _cut_off(self, req: dict) -> None:
-        """The user cut the spoken answer of turn `id` off (D-122): the conversation keeps `reply`
+        """The user cut the spoken answer of turn `id` off: the conversation keeps `reply`
         (what was said aloud, marked by the app) as that turn's answer, so the next turn doesn't
         assume the user heard the rest. A turn still running stops as for `cancel`, and its message
         stays with `reply` as the answer (its tool calls and results so far are not kept). A
@@ -1315,7 +1313,7 @@ class Server:
 
 
 class Deltas:
-    """The `delta` events of one turn (D-104). Text streams as the model writes it; when it turns
+    """The `delta` events of one turn. Text streams as the model writes it; when it turns
     out to come before a tool call, `delta_reset` takes it back. finish() makes the deltas after
     the last `delta_reset` join to exactly the answer's text: it sends what is missing, or a
     reset and the whole answer. With pointing, text that could still turn out to be trailing
@@ -1416,9 +1414,10 @@ class Deltas:
 
 def answer_marks(text: str) -> dict:
     """The answer's text and marks for the `answer` event, with pointing on: every tag taken out
-    wherever it stands. `targets` as before; in the beats form (any tag before the end of the
-    words) each target also has `at`, the characters of text before it, and edits of the drawing
-    already up come as `edits` (chilly-whiteboard). Tags only at the end give the event as before."""
+    wherever it stands, and the pointing targets as `targets`. In the beats form (any tag before the
+    end of the words) each target also has `at`, the characters of text before it, and edits of the
+    drawing already up come as `edits` with their `at` too. With tags only at the end there is no
+    `at`."""
     shown, targets, edits = pointing.split_tags(text)
     beats = any(at < len(shown) for _, at in targets + edits)
     out: dict = {"text": shown, "targets": []}
@@ -1464,7 +1463,7 @@ def _settled(m: dict) -> dict:
     if m.get("role") == "user" and m.get("images"):
         m = {k: v for k, v in m.items() if k != "images"}
         m["text"] = m.get("text", "") + "\n[screenshot omitted]"
-    elif m.get("role") == "tool" and m.get("images"):     # a screen step's screenshot (D-123)
+    elif m.get("role") == "tool" and m.get("images"):     # a screen step's screenshot
         m = {k: v for k, v in m.items() if k != "images"}
         m["content"] = m.get("content", "") + "\n[screenshot omitted]"
     elif m.get("role") == "tool" and len(m.get("content", "")) > OLD_TOOL_RESULT_CHARS:
@@ -1491,7 +1490,7 @@ def trimmed(messages: list[dict]) -> list[dict]:
     return [dict(_settled(m)) for m in keep]
 
 
-# What the panel may say a tool did (D-98): a kind, and for a saved file its name only. Never a
+# What the panel may say a tool did: a kind, and for a saved file its name only. Never a
 # command, a path, contents or a query: those stay in the approval card and the engine's logs.
 _ACTIVITY_KINDS = {
     "run_shell": "command", "write_file": "file_saved", "read_file": "file_read",
@@ -1586,101 +1585,3 @@ def stream_emitter(out=None) -> Callable[[dict], None]:
             except (OSError, ValueError):
                 dead = True
     return emit
-
-
-# First-run model setup uses the same configuration and provider path as a conversation, but
-# never builds an Agent: no history, memory, tools, screenshot, audit log or answer log is read.
-MODEL_SETUP_SYSTEM = "This is a connection test. Reply OK."
-MODEL_SETUP_MESSAGE = "Reply OK."
-
-
-def model_setup(expected: dict | None = None) -> dict:
-    """None probes only. Metadata from that probe explicitly authorizes one provider completion.
-
-    Refuse changed configuration before sending anything, so the destination on the setup button
-    is the destination actually tested. Only metadata and redacted errors return to the app.
-    """
-    from .config import load_config, is_secret_name
-    from . import aliases
-    from . import presets
-    from urllib.parse import urlparse
-
-    def safe(text):
-        text = str(text)
-        for name, value in os.environ.items():
-            if is_secret_name(name) and value:
-                text = text.replace(value, "[key]")
-        return audit.redact(text)
-
-    inherited = {aliases.canonical_name(name): os.environ[name]
-                 for name in sorted(os.environ, key=aliases.rank, reverse=True)}
-    keychain_names = set(os.getenv("BENJI_SETUP_KEYCHAIN_KEYS", "").split(","))
-    try:
-        cfg = load_config()
-        local = bool(cfg.preset and cfg.preset.local and presets.is_local_host(urlparse(cfg.base_url).hostname))
-        key_name = None
-        if cfg.api_key:
-            if cfg.preset and not cfg.preset.local and cfg.preset.is_own_host(urlparse(cfg.base_url).hostname or ""):
-                key_name = next((name for name in cfg.preset.key_envs if os.getenv(name, "").strip()), None)
-            elif cfg.base_url:
-                key_name = "BENJI_API_KEY"
-            else:
-                key_name = "ANTHROPIC_API_KEY" if cfg.provider == "claude" else "OPENAI_API_KEY"
-        origin = "local model settings" if local and not cfg.api_key else "server settings"
-        if key_name:
-            handed = inherited.get(key_name, "").strip() == cfg.api_key
-            origin = "Keychain" if handed and key_name in keychain_names else ("engine environment" if handed else "key file")
-        source = {
-            "provider": cfg.provider, "model": safe(cfg.model),
-            "destination": safe(cfg.destination), "host": safe(cfg.host),
-            "origin": origin, "local": local,
-            "usesKey": bool(cfg.api_key),
-        }
-        if key_name:
-            source["keyVariable"] = key_name
-        if expected is not None:
-            if expected != source:
-                return {"ok": False, "error": "Model settings changed. Check the source again before testing."}
-            provider = providers_mod.make_provider(cfg.provider, cfg.api_key, cfg.model, cfg.base_url,
-                                                   thinking=cfg.thinking, max_tokens=cfg.max_tokens, vision=cfg.vision)
-            if isinstance(provider, providers_mod.OpenAIProvider):
-                provider.max_tokens = min(provider.max_tokens, 256 if local else 64)
-            answer = provider.complete(MODEL_SETUP_SYSTEM, [{"role": "user", "text": MODEL_SETUP_MESSAGE}], [])
-            if not answer.get("text", "").strip() or answer.get("tool_calls"):
-                return {"ok": False, "error": "The server connected but returned no text within the test limit. Try again; a reasoning model may need more output tokens."}
-        return {"ok": True, "source": source}
-    except (SystemExit, ProviderError, OSError, ValueError) as error:
-        _, words = errors_mod.explain(str(error))
-        if isinstance(error, SystemExit) and str(error).startswith("No API key found."):
-            words = "No model key found. Add an Anthropic API key or use a local model."
-        elif isinstance(error, SystemExit) and "BENJI_BASE_URL" in str(error) and "%" in os.getenv("BENJI_BASE_URL", ""):
-            words = "Use a plain http or https server address. For a local model, use localhost, 127.0.0.1 or ::1 without percent encoding."
-        elif isinstance(error, TimeoutError) or "timed out" in str(error).lower():
-            words = "The test timed out. The request may have reached the model."
-        return {"ok": False, "error": safe(words)[:300]}
-
-
-def model_setup_main() -> None:
-    """Private app entry point. A JSON null probes; the source object from a probe requests Test.
-    The key is inherited through the usual key environment, never stdin or command arguments.
-    """
-    # One attempt, no continuation, 64 hosted / 256 local output tokens and a 60 s request
-    # timeout, shorter than the app's 90 s deadline. Restore globals for in-process tests.
-    limits = (providers_mod.RETRIES, providers_mod.MAX_CONTINUATIONS, providers_mod.ANTHROPIC_MAX_TOKENS,
-              providers_mod.TIMEOUT)
-    try:
-        providers_mod.RETRIES = 0
-        providers_mod.MAX_CONTINUATIONS = 0
-        providers_mod.ANTHROPIC_MAX_TOKENS = 64
-        providers_mod.TIMEOUT = 60
-        expected = json.loads(sys.stdin.read(16384))
-        if expected is not None and not isinstance(expected, dict):
-            raise ValueError("invalid setup request")
-        reply = model_setup(expected)
-    except Exception:
-        reply = {"ok": False, "error": "Benji couldn't finish the model check. Check the engine configuration and try again."}
-    finally:
-        (providers_mod.RETRIES, providers_mod.MAX_CONTINUATIONS, providers_mod.ANTHROPIC_MAX_TOKENS,
-         providers_mod.TIMEOUT) = limits
-    # A leading newline also separates the reply from a login profile that printed no newline.
-    print("\n" + json.dumps(reply), flush=True)

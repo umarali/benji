@@ -1,7 +1,7 @@
-"""The figure block (D-107, D-108): a fenced JSON block at the end of a reply that describes a 3D
-figure as named parts. Parsed case for case like the companion's BenjiCore/FigureGrammar.swift;
+"""The figure block: a fenced JSON block at the end of a reply that describes a 3D
+figure as named parts. Parsed case for case like the app's BenjiCore/Figures/FigureGrammar.swift;
 both reduce a block to the same canonical summary, checked on the shared cases in
-companion/Tests/figure-cases.json. The grammar is written out in the figure-grammar implementation note."""
+companion/Tests/figure-cases.json. The grammar the model is taught is in benji/prompts.py (figure_rule)."""
 
 from __future__ import annotations
 
@@ -74,7 +74,7 @@ class Part:
     parent: str | None = None
     scatter: dict | None = None     # copies at seeded random places and turns (organelles, rivets)
     spin: dict | None = None        # keeps turning once built (fans, wheels, rotors)
-    cut_mark: bool = False      # the part said "cut": true or {...} itself (live eval wide)
+    cut_mark: bool = False      # the part said "cut": true or {...} itself
     instances: int = 1
     budget: int = 0
 

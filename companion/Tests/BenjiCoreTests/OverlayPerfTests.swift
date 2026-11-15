@@ -2,7 +2,7 @@ import XCTest
 @testable import BenjiCore
 
 /// The overlay's window-list work, once per plan and off the main thread, and spoken pictures
-/// fitted to their sentence (D-106).
+/// fitted to their sentence.
 final class OverlayPerfTests: XCTestCase {
     private let pixel = CGSize(width: 1000, height: 500)
     private let frame = CGRect(x: 0, y: 0, width: 1000, height: 500)

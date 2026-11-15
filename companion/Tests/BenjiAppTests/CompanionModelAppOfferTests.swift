@@ -2,7 +2,7 @@ import XCTest
 @testable import BenjiApp
 import BenjiCore
 
-/// App offers (D-187) through the real CompanionModel and a fake backend: the card answers,
+/// App offers through the real CompanionModel and a fake backend: the card answers,
 /// Try it only fills the message box, and anything else wanting the notch withdraws the offer.
 final class CompanionModelAppOfferTests: XCTestCase {
     typealias StepBackend = CompanionModelScreenStepTests.StepBackend

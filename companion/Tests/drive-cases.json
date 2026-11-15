@@ -1,5 +1,5 @@
 {
-  "_about": "Shared by benji/drive.py (selftest_drive.py) and BenjiCore/DriveClass.swift (DriveClassTests.swift): what a drive may do. outbound: text -> the first outbound word or null. skeleton: text -> its folded form. field: element -> secret|search|message|other. card: text -> looks like a payment card number. plan: step -> [class, asked?]. final: step + planned + element + same_app -> class. final_drag: the same for a drag, with what is at its far end and whether it stays on the control it pressed. Classes: free, quiet, asked, denied.",
+  "_about": "Shared by benji/drive.py (check_drive_mode.py) and BenjiCore/DriveClass.swift (DriveClassTests.swift): what a drive may do. outbound: text -> the first outbound word or null. skeleton: text -> its folded form. field: element -> secret|search|message|other. card: text -> looks like a payment card number. plan: step -> [class, asked?]. final: step + planned + element + same_app -> class. final_drag: the same for a drag, with what is at its far end and whether it stays on the control it pressed. Classes: free, quiet, asked, denied.",
   "outbound": [
     ["Send", "send"],
     ["Send message", "send"],

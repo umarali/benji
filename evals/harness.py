@@ -1,7 +1,7 @@
 """The eval harness's commands. Run them through tools/eval.py (see evals/README.md).
 
-Nothing here calls a paid API unless a command is given --live, and every --live run is the user's call
-(the privacy rule). `check`, `compare`, `list`, `agree` and `label` never touch the network; `record
+Nothing here calls a paid API unless a command is given --live, and every --live run is started by
+hand, never by a script or the selftest. `check`, `compare`, `list`, `agree` and `label` never touch the network; `record
 --fake` and the selftest use a localhost model.
 """
 
@@ -98,7 +98,7 @@ def summary(results: list[dict]) -> str:
         per = (f"{sum(costs) / passed:.4f}" if passed and all(c is not None for c in costs) else "-")
         rows.append([kind, model, f"{passed}/{len(group)}", f"{passed / len(group):.0%}", per])
     out = _table(rows)
-    for (kind, model), group in sorted(groups.items()):       # a metric, not part of the pass rate (D-176)
+    for (kind, model), group in sorted(groups.items()):       # a metric, not part of the pass rate
         if kind == "figure":
             n = sum(bool(r["metrics"].get("narration")) for r in group)
             out += f"\nfigure words about the model, {model}: {n}/{len(group)}"

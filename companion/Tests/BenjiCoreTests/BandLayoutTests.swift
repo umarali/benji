@@ -33,9 +33,9 @@ final class BandLayoutTests: XCTestCase {
         }
     }
 
-    /// D-133: the left group (Home, New conversation, Settings) starts at the panel's edge and
-    /// never reaches the Screen On dot by the notch. (Was "fits listening with Screen On": the
-    /// mic and its meter left the band for the composer, so listening no longer widens it.)
+    /// The left group (Home, New conversation, Settings) starts at the panel's edge and never
+    /// reaches the Screen On dot by the notch. Listening doesn't widen the band: the mic and its
+    /// meter are in the composer.
     func testTheLeftGroupFromTheEdgeClearsTheScreenOnDot() {
         XCTAssertEqual(BandLayout.leftGroupWidth(), 12 + 22 * 3 + 4 * 2)
         for size in [PanelGeometry.openSize, PanelGeometry.settingsSize, PanelGeometry.expandedSize] {

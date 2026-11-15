@@ -1,4 +1,4 @@
-// Benji's browser extension (steps 1 to 3). The service worker keeps one connection to Benji's
+// Benji's browser extension. The service worker keeps one connection to Benji's
 // native-messaging host (com.emerssive.heybenji.browser) and answers its requests with core.js. It never opens a
 // page, reads a tab, clicks or types on its own: it only answers Benji, and core.js holds the rules.
 import { Browser } from "./core.js";

@@ -1,4 +1,4 @@
-"""The pointing and drawing tags Benji may end a screen-context answer with (D-66, D-67).
+"""The pointing and drawing tags Benji may end a screen-context answer with.
 
   [POINT:x,y:label]              something about the size of a control: a ring
   [BOX:x1,y1,x2,y2:label]        something larger, top-left and bottom-right corners: a region
@@ -9,14 +9,14 @@
   [GROUP:x1,y1,x2,y2:label]      a dashed rounded box around a whole region
   [NOTE:x,y:text]                a short note (at most 40 characters) beside x,y
   [CALLOUT:x,y:text]             a label pill (at most 40 characters) beside x,y, pointing to it
-and the parts of a picture (D-97):
+and the parts of a picture:
   [PATH:x1,y1,x2,y2,...:label]   a freehand line through 2 to 40 points, sharp turns kept sharp
   [LINE:x1,y1,x2,y2,...:label]   straight segments through 2 to 40 points
   [SHAPE:x1,y1,x2,y2,...:label]  a closed outline through 3 to 40 points
   [OVAL:x1,y1,x2,y2:label]       an ellipse filling that box
   [TEXT:x,y:size:words]          handwriting (at most 80 characters) from x,y; size small,
-                                 medium or large, optional (chilly-whiteboard)
-and edits of the drawing already up, by part id (chilly-whiteboard):
+                                 medium or large, optional
+and edits of the drawing already up, by part id:
   [EDIT:p3:move dx,dy] [EDIT:p3:scale f] [EDIT:p3:relabel text] [EDIT:p3:erase]
   [EDIT:p3:recolor name] [EDIT:all:erase] [EDIT:all:keep] (add to it without changing a part)
 
@@ -25,7 +25,7 @@ the very end of the answer, in the order the user should look at them: at most s
 when the answer draws a picture with PATH, LINE, SHAPE or OVAL), of which at most three are
 POINT or BOX. A tag that doesn't parse ends the trailing run and stays in
 the text; one that parses but can't be drawn (outside the image, too big, too small) is
-removed and dropped. The companion parses these in companion/Sources/BenjiCore/Pointing.swift;
+removed and dropped. The app parses these in companion/Sources/BenjiCore/Drawing/Pointing.swift;
 this module mirrors it case for case, and selftest.py runs the same cases as the Core unit tests.
 """
 
@@ -248,9 +248,8 @@ def marks_for(targets: list[Target], pixel_size: tuple[float, float],
 
 @dataclass(frozen=True)
 class ScreenInfo:
-    """What the companion says about the screenshot it sent (`screen` in a send request, or
-    --screen one-shot), worked out in companion/Sources/BenjiCore/ScreenshotGeometry.swift.
-    All lengths are pixels in that screenshot, 0,0 top-left."""
+    """What the app says about the screenshot it sent (`screen` in a send request), worked out in
+    companion/Sources/BenjiCore/Screen/ScreenshotGeometry.swift. All lengths are pixels in that screenshot, 0,0 top-left."""
     width: int
     height: int
     notch: tuple[int, int, int, int] | None = None  # x1, y1, x2, y2; None: no hardware notch
@@ -260,7 +259,7 @@ class ScreenInfo:
 
 
 def screen_info(obj) -> ScreenInfo | None:
-    """A ScreenInfo from the companion's JSON object, or None when it isn't usable. A part that
+    """A ScreenInfo from the app's JSON object, or None when it isn't usable. A part that
     doesn't fit the image (a notch outside it, a menu bar taller than it) is left out."""
     if not isinstance(obj, dict):
         return None
@@ -286,7 +285,7 @@ def screen_info(obj) -> ScreenInfo | None:
     return ScreenInfo(w, h, notch, menu_bar, built_in, max(displays, 0))
 
 
-# ---- edits and tags between sentences (chilly-whiteboard) ---------------------------------------
+# ---- edits and tags between sentences -------------------------------------------------------
 
 EDIT_OPS = ("move", "scale", "relabel", "erase", "recolor", "keep")
 COLORS = ("mint", "red", "orange", "yellow", "green", "blue", "purple", "pink", "white")

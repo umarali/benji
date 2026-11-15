@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// D-133: date lines between turns from different days, and the scroll-to-latest button.
+/// Date lines between turns from different days, and the scroll-to-latest button.
 final class TranscriptDaysTests: XCTestCase {
     var calendar: Calendar = {
         var c = Calendar(identifier: .gregorian)

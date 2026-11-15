@@ -3,20 +3,16 @@ import XCTest
 @testable import BenjiApp
 import BenjiCore
 
-/// D-164 through the real CompanionModel: an answer about the screen speaks its first sentence
-/// while the rest is being written, its marks say the voice went first, and the setting puts the
-/// old way back.
+/// Early speech through the real CompanionModel: an answer about the screen speaks its first sentence
+/// while the rest is being written, and its marks say the voice went first.
 final class CompanionModelEarlySpeechTests: XCTestCase {
     var backend: FakeBackend!
     var model: CompanionModel!
     var sentences: [String] = []
     var whole: [String] = []
     var plans: [PointingPlan] = []
-    var saved: Any?
 
     override func setUp() {
-        saved = UserDefaults.standard.object(forKey: FastPath.earlyScreenSpeechKey)
-        UserDefaults.standard.removeObject(forKey: FastPath.earlyScreenSpeechKey)
         backend = FakeBackend()
         let suite = UserDefaults(suiteName: "benji-early-speech-tests-\(UUID().uuidString)")!
         model = CompanionModel(backend: backend, screenMode: ScreenModeStore(defaults: suite))
@@ -31,11 +27,6 @@ final class CompanionModelEarlySpeechTests: XCTestCase {
         model.onSpeakSentence = { [unowned self] in self.sentences.append($0) }
         model.onSpeakStreamEnd = { _ in }
         model.onPoint = { [unowned self] in self.plans.append($0) }
-    }
-
-    override func tearDown() {
-        if let saved { UserDefaults.standard.set(saved, forKey: FastPath.earlyScreenSpeechKey) }
-        else { UserDefaults.standard.removeObject(forKey: FastPath.earlyScreenSpeechKey) }
     }
 
     private func ask(_ text: String) {
@@ -59,18 +50,7 @@ final class CompanionModelEarlySpeechTests: XCTestCase {
         XCTAssertTrue(whole.isEmpty, "nothing is said twice")
     }
 
-    func testTheSettingPutsTheOldWayBack() throws {
-        UserDefaults.standard.set(false, forKey: FastPath.earlyScreenSpeechKey)
-        ask("where do I save?")
-        backend.say(.accepted)
-        backend.say(.delta("Click Save at the top right. "))
-        XCTAssertTrue(sentences.isEmpty, "the answer waits to be whole")
-        backend.say(.pointedAnswer(text: "Click Save at the top right.", targets: [target]))
-        XCTAssertEqual(whole, ["Click Save at the top right."])
-        XCTAssertFalse(try XCTUnwrap(plans.last).spokenFirst)
-    }
-
-    // D-173 meets D-164: a muted Mac and an answer about the screen.
+    // Early speech on a muted Mac: an answer about the screen.
 
     func testAMutedMacStopsEarlySpeechForAScreenAnswerButTheMarksAndTheTextStay() throws {
         model.outputState = { OutputState(muted: true, volume: 0.5) }
@@ -97,8 +77,7 @@ final class CompanionModelEarlySpeechTests: XCTestCase {
         XCTAssertNil(model.silentAnswer)
     }
 
-    func testAMutedMacWithEarlySpeechOffGivesTheSameTextNote() {
-        UserDefaults.standard.set(false, forKey: FastPath.earlyScreenSpeechKey)
+    func testAZeroVolumeMacGivesTheTextNote() {
         model.outputState = { OutputState(muted: false, volume: 0) }
         ask("where do I save?")
         backend.say(.accepted)

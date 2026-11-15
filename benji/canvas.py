@@ -1,4 +1,4 @@
-"""What Benji has on the user's screen now (chilly-whiteboard): the app sends it as `canvas` in
+"""What Benji has on the user's screen at the moment: the app sends it as `canvas` in
 each `send` over --serve, and the turn's rules list it for the model, so the model knows the
 drawing is its own even though Benji's windows can be left out of its screenshots.
 
@@ -8,8 +8,8 @@ drawing is its own even though Benji's windows can be left out of its screenshot
      "card": {"title": "Sending a letter", "items": ["Post box", ...]}}
 
 Boxes are pixels in this turn's screenshot (0,0 top-left), mapped by the app from where the parts
-are now; a part with no `box` is up on another display. Anything malformed is left out; an empty
-canvas is None, so the prompt is then exactly as before.
+are at the time of the turn; a part with no `box` is up on another display. Anything malformed is left out; an empty
+canvas is None, and the prompt then says nothing about a drawing.
 """
 
 from __future__ import annotations

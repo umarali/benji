@@ -104,7 +104,7 @@ final class CompanionStateTests: XCTestCase {
         XCTAssertFalse(s.isBusy)
     }
 
-    // MARK: voice states (Increment 2)
+    // MARK: voice states
 
     func testMicStartedEntersListening() {
         let s = apply([.micStarted])

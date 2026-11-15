@@ -1,4 +1,4 @@
-// Renders explanation cards offscreen (D-125): each reply in tools/card-render/replies is parsed
+// Renders explanation cards offscreen: each reply in tools/card-render/replies is parsed
 // with the app's own parser, laid out by BenjiCore, drawn by the app's own ExplainCardDrawing and
 // placed by ExplainCardPlacement on a synthetic screen (a page full of text, never a capture of
 // the real screen), with the busy map measured from that screen's pixels the way the app measures

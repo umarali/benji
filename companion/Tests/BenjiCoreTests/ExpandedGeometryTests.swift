@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// D-133: Expand grows the open object to 720 × 560, still hanging from the notch; Shrink returns
+/// Expand grows the open object to 720 × 560, still hanging from the notch; Shrink returns
 /// to 460 × 380; closed and peek never change.
 final class ExpandedGeometryTests: XCTestCase {
     let screen = CGRect(x: 0, y: 0, width: 1512, height: 982)

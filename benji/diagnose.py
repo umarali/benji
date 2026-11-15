@@ -1,4 +1,4 @@
-"""`benji --diagnose [--hours N]` (D-144): a short report of what Benji did lately, to read or to
+"""`benji --diagnose [--hours N]`: a short report of what Benji did lately, to read or to
 paste into a bug report. It says what happened and why it was allowed, and holds no content.
 
 Everything printed comes from lines of `events.jsonl` that pass `audit.validate` (so only enums,
@@ -338,7 +338,7 @@ def _engine(events: list[dict]) -> list[str]:
     out = ["Engine", f"  Started {launched}× ({restarts} restart{'s' if restarts != 1 else ''})"
            f" · exits that weren't a clean quit: {len(exits)}"]
     named = [e for e in starts if e.get("provider")]
-    if named:       # where the data goes (D-147): the provider and host the engine last started with
+    if named:       # where the data goes: the provider and host the engine last started with
         e = named[-1]
         out.append(f"  Sending to {e['provider']}" + (f" ({e['host']})" if e.get("host") else " (this computer)"
                    if e["provider"] in ("ollama", "lmstudio") else "") + (f", model {e['model']}" if e.get("model") else ""))

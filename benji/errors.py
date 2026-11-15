@@ -1,4 +1,4 @@
-"""Provider failures told apart in plain words (D-173, step 6): a key the provider refused, no
+"""Provider failures told apart in plain words: a key the provider refused, no
 connection, too many requests, an account out of credit, a region the provider does not serve, and
 a provider that is itself in trouble.
 
@@ -13,7 +13,7 @@ from __future__ import annotations
 import re
 
 REASONS = ("auth", "network", "rate_limit", "quota", "region", "provider", "bad_request", "other", "safety")
-WORTH_WAITING = ("network", "rate_limit", "provider")     # these pass by themselves; a job waits (D-177)
+WORTH_WAITING = ("network", "rate_limit", "provider")     # these pass by themselves, so a job waits them out
 
 _STATUS = re.compile(r"\bHTTP (\d{3}) from (\S+?):?(?:\s|$)")
 _NETWORK = re.compile(r"network error calling (\S+)|stream from (\S+) broke off")

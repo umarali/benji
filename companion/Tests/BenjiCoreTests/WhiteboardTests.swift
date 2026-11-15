@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// The screen as Benji's whiteboard (chilly-whiteboard). The shared cases in
+/// The screen as Benji's whiteboard. The shared cases in
 /// Tests/whiteboard-cases.json are also run by selftest.py against benji/pointing.py and
 /// benji/cards.py: both sides read tags between sentences, edits and card lines the same way.
 final class WhiteboardTests: XCTestCase {
@@ -96,7 +96,7 @@ final class WhiteboardTests: XCTestCase {
     }
 
     func testTheLiveLeakIsNeverSpoken() {
-        // The live round: "Takeaway:" was read aloud and shown twice.
+        // "Takeaway:" is never read aloud, and the takeaway shows once, on the card.
         let reply = "card: {\"title\":\"Pythagoras\"}\nThe legs are a and b.\nitem: {\"label\":\"Legs\"}\nThe long side is c. Takeaway: a² + b² = c².\n"
         let (spoken, script) = CardScript.whole(reply, at: 0)
         XCTAssertFalse(spoken.lowercased().contains("takeaway"))
@@ -146,7 +146,7 @@ final class WhiteboardTests: XCTestCase {
         XCTAssertEqual(plan.owners, [0, 0, 1, 1])
         XCTAssertNil(plan.fit, "the beats form doesn't fit the picture to one sentence")
         XCTAssertNotNil(plan.beats(reduceMotion: false, now: 0))
-        // The old form: tags only at the end keep the anchor-word pacing.
+        // Tags only at the end, the other form an answer may take, keep the anchor-word pacing.
         let old = PointingTags.split("An L. [LINE:400,200,400,500:a] [LINE:400,500,800,500:b]")
         let oldPlan = PointingPlan(targets: old.targets, text: old.text, speaking: true, pixelSize: screen.size,
                                    screenFrame: screen, displayID: nil)!

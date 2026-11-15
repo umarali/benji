@@ -2,7 +2,7 @@ import XCTest
 @testable import BenjiApp
 import BenjiCore
 
-/// Cutting Benji off (D-122) with a fake engine: the conversation keeps only what was said aloud,
+/// Cutting Benji off with a fake engine: the conversation keeps only what was said aloud,
 /// whether the answer was still being written or had arrived.
 final class CompanionModelCutOffTests: XCTestCase {
     var backend: FakeBackend!
@@ -37,7 +37,7 @@ final class CompanionModelCutOffTests: XCTestCase {
         model.voiceSpeaking(true)
 
         model.speechCutOff(heard: "Planes fly because the")
-        XCTAssertEqual(backend.cancels, 1, "the one-shot way to stop a running turn")
+        XCTAssertEqual(backend.cancels, 1, "a backend with no cut-off of its own stops the running turn")
         XCTAssertEqual(model.conversationMemory.exchanges.last,
                        .init(user: "how do planes fly?", assistant: "Planes fly because the … \(CutOffReply.marker)"))
         XCTAssertEqual(lines.map(\.1), ["how do planes fly?", "Planes fly because the —", CutOffReply.notice])

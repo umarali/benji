@@ -6,7 +6,7 @@ final class HandsFreeSettingsTests: XCTestCase {
         let s = HandsFreeSettings.from(handsFree: nil, endSilence: nil, idleTimeout: nil)
         XCTAssertTrue(s.startsOnTap)
         XCTAssertEqual(s.endSilence, 1.0)
-        XCTAssertEqual(s.idleTimeout, 120)   // D-134: two quiet minutes
+        XCTAssertEqual(s.idleTimeout, 120)   // two quiet minutes
         XCTAssertTrue(HandsFreeSettings.idleTimeoutChoices.contains(120))
         XCTAssertTrue(HandsFreeSettings.idleTimeoutChoices.contains(300), "a saved 5 minutes is still a choice")
     }
@@ -598,8 +598,8 @@ final class ConversationStateTests: XCTestCase {
     }
 }
 
-/// The user's live test: while the conversation listened, another app's spoken answer was
-/// transcribed and sent as the user's words. Words heard while another app played out loud are
+/// While the conversation listens, another app's spoken audio could be transcribed and sent
+/// as the user's words. Words heard while another app played out loud are
 /// held back; push-to-talk (an explicit hold) is not affected.
 final class OtherAppAudioTests: XCTestCase {
     private func listeningSession() -> HandsFreeSession {

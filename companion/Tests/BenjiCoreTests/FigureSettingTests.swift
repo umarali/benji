@@ -16,18 +16,8 @@ final class FigureSettingTests: XCTestCase {
         XCTAssertFalse(FigureSetting.isOn(from: "0"))
     }
 
-    func testTheKeysStay() {
+    func testTheKeyStays() {
         XCTAssertEqual(FigureSetting.defaultsKey, "figureStage")
-        XCTAssertEqual(FigureSetting.migrationKey, "figureStageSensing")
-    }
-
-    /// An "off" stored under the old meaning (off by default, the figure left out of the prompt) is
-    /// cleared once; nothing else is.
-    func testMigrationClearsOnlyAnOldOff() {
-        XCTAssertTrue(FigureSetting.clearsOnMigration(stored: false))
-        XCTAssertTrue(FigureSetting.clearsOnMigration(stored: "NO"))
-        XCTAssertFalse(FigureSetting.clearsOnMigration(stored: nil))
-        XCTAssertFalse(FigureSetting.clearsOnMigration(stored: true))
     }
 
     func testNotices() {

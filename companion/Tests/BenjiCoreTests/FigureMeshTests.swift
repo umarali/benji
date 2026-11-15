@@ -2,7 +2,7 @@ import Foundation
 import XCTest
 @testable import BenjiCore
 
-/// Mesh generators, placements, the reveal clock and label placement for figures (D-108).
+/// Mesh generators, placements, the reveal clock and label placement for figures.
 final class FigureMeshTests: XCTestCase {
     static func figure(_ name: String) throws -> Figure {
         let reply = try FigureGrammarTests.cases().first { $0.name == name }!.reply
@@ -111,7 +111,7 @@ final class FigureMeshTests: XCTestCase {
         XCTAssertEqual(shared.count, 1)
     }
 
-    /// Mesh build time for each hand-written figure, cold (no cache). The brief: an airliner of
+    /// Mesh build time for each hand-written figure, cold (no cache). The target: an airliner of
     /// about a dozen parts well under 100 ms.
     func testBuildTimes() throws {
         for name in ["airliner", "house", "jet engine with a cut"] {

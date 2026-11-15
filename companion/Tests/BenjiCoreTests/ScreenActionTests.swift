@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// Acting on the screen (D-123): the step's wire form, the card's words, the mapping to the
+/// Acting on the screen: the step's wire form, the card's words, the mapping to the
 /// display, the refusals, the one-approval-one-step gate, the take-over watch and settling.
 final class ScreenActionTests: XCTestCase {
     private func step(_ json: String) -> ScreenStep? {
@@ -11,7 +11,7 @@ final class ScreenActionTests: XCTestCase {
 
     // MARK: the step
 
-    /// Lines as benji/tools.py `screen_step` writes them (selftest.py checks that side).
+    /// Lines as benji/tools/screen_actions.py writes them (selftest.py checks that side).
     func testDecodesWhatTheEngineSends() {
         XCTAssertEqual(step(#"{"kind":"click","x":412,"y":300,"button":"left","count":1,"label":"Save button"}"#),
                        .click(x: 412, y: 300, button: .left, count: 1, label: "Save button"))
@@ -579,7 +579,7 @@ final class ScreenActionTests: XCTestCase {
     }
 }
 
-/// The screen-step lines of the `benji --serve` protocol (D-123), as benji/serve.py writes and reads them.
+/// The screen-step lines of the `benji --serve` protocol, as benji/serve.py writes and reads them.
 final class ScreenActionProtocolTests: XCTestCase {
     private func text(_ r: ServeRequest) -> String { String(decoding: r.line(), as: UTF8.self) }
 

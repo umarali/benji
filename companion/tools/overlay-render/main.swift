@@ -2,7 +2,7 @@
 // the real screen), at exact moments of the reveal, glide and erase, for every display variant.
 // Build and run with tools/overlay-render/render.sh <output dir> [drawing]; with "drawing" it
 // renders Benji's pen marks instead (circle, arrow, underline, highlight, path, note); with
-// "pictures", whole answers that draw (D-97): tags parsed and mapped as the app does, each part
+// "pictures", whole answers that draw: tags parsed and mapped as the app does, each part
 // revealed when the sequence says.
 import AppKit
 import BenjiCore
@@ -251,7 +251,8 @@ let sidebar = answer("""
 Your folders are in the sidebar, and the customer name goes here. [GROUP:160,146,320,282:sidebar] \
 [CALLOUT:326,250:Your folders] [CIRCLE:\(Int(nameField.minX) - 4),\(Int(screen.height - nameField.maxY) - 2),\(Int(nameField.maxX) + 4),\(Int(screen.height - nameField.minY) + 2):Customer name]
 """)
-/// The old way (D-67): every path smoothed through its corners, at most eight points a path.
+/// The plain smoothing, for comparison: every path smoothed through its corners, at most eight
+/// points a path.
 let oldAirplane = [sketched(.path(points: [g(1100, 280), g(1160, 262), g(1112, 192), g(1250, 262), g(1200, 372),
                                            g(1320, 292), g(1466, 282), g(1100, 300)], label: "airplane"))]
 
@@ -271,7 +272,7 @@ let pictureShots: [Shot] = [
          marks: [], sketches: oldAirplane, now: 5, crop: pictureCrop),
 ]
 
-// MARK: whiteboard (chilly-whiteboard)
+// MARK: whiteboard
 
 /// A beats-form answer as the app reads it: tags between sentences, each part released on its
 /// sentence by `OverlayBeats` on the estimate clock (no voice), optionally moved onto a board.
@@ -344,7 +345,7 @@ func whiteboard(_ reply: String, busy: BusyMap?) -> Board {
     return Board(sketches: out, board: boardRect, drawing: drawing, end: (out.map { $0.start + SketchTimeline.drawDuration($0.sketch) * $0.pace }.max() ?? 0) + 1)
 }
 
-/// The Pythagoras ask of the live round, as the beats form: each part right after its sentence.
+/// A question about Pythagoras, in the beats form: each part right after its sentence.
 func pythagoras(x: Int, y: Int) -> String {
     func p(_ dx: Int, _ dy: Int) -> String { "\(x + dx),\(y + dy)" }
     return """

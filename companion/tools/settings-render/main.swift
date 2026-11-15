@@ -98,7 +98,7 @@ MainActor.assumeIsolated {
     let noKokoro = SettingsModel(load: { sample() })
     noKokoro.section = .voice
     render(Frame(model: noKokoro, height: 760), "11-voice-no-kokoro")
-    // Settings › Memory (D-121): saved conversations and what Benji remembers.
+    // Settings › Memory: saved conversations and what Benji remembers.
     var memory = sample()
     memory.savedConversations = 12
     memory.facts = ["the user's name is Umar", "prefers short answers, no bullet lists",

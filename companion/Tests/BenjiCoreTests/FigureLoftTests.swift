@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// Lofts (D-167): one smooth skin through cross-sections along z.
+/// Lofts: one smooth skin through cross-sections along z.
 final class FigureLoftTests: XCTestCase {
     private let cols = FigureGrammar.round + 1
 

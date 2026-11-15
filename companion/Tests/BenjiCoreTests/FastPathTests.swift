@@ -1,19 +1,11 @@
 import XCTest
 @testable import BenjiCore
 
-/// D-118 step 1: serve and streaming by default, what a streaming reply may show and say, the
+/// Streaming by default, what a streaming reply may show and say, the
 /// sentences the voice starts on early, and the local latency record.
 final class FastPathTests: XCTestCase {
 
     // MARK: defaults
-
-    func testServeIsTheDefaultAndOneShotIsTheWayBack() {
-        XCTAssertTrue(FastPath.usesServe(nil))
-        XCTAssertTrue(FastPath.usesServe("serve"))       // set by hand before D-118: still serve
-        XCTAssertTrue(FastPath.usesServe("anything"))
-        XCTAssertFalse(FastPath.usesServe("oneshot"))
-        XCTAssertFalse(FastPath.usesServe(" OneShot "))
-    }
 
     func testStreamingIsOnUnlessTurnedOff() {
         XCTAssertTrue(FastPath.streams(nil))
@@ -98,8 +90,8 @@ final class FastPathTests: XCTestCase {
     }
 
     func testALineEndingBeforeAFigureIsNotSaidAgain() {
-        // The user's live round (D-164): "Here's a kettle." ends at a line break, the figure block
-        // follows, and the finished answer is trimmed: the last word used to be said again.
+        // "Here's a kettle." ends at a line break, the figure block follows, and the finished
+        // answer is trimmed: the last word must not be said again.
         let r = stream(["Here's a kettle.\n", "```figure\n{\"title\":\"A kettle\"}\n```"], finish: "Here's a kettle.")
         XCTAssertEqual(r.said, ["Here's a kettle."])
         XCTAssertNil(r.rest)

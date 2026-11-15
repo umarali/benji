@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// The settings window and the slim menu-bar menu.
+/// The settings sections and the slim menu-bar menu.
 final class SettingsTests: XCTestCase {
     func testTheMenuBarMenuIsShort() {
         XCTAssertEqual(StatusMenuItem.menu(setupComplete: true), [.showHide, .separator, .settings, .separator, .quit])

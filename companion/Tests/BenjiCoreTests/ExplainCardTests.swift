@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// Explanation cards (D-125): the card block, its layout from a measured style, where the card
+/// Explanation cards: the card block, its layout from a measured style, where the card
 /// goes on a busy or calm screen, and the reveal.
 final class ExplainCardTests: XCTestCase {
     static let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
@@ -55,7 +55,7 @@ final class ExplainCardTests: XCTestCase {
     }
 
     /// The prompt's own example (benji/prompts.py CARD_EXAMPLE) reads as the card it shows, each
-    /// part on the sentence before it (chilly-beats: the card's lines between the sentences).
+    /// part on the sentence before it (the card's lines go between the sentences).
     func testPromptExampleParses() throws {
         let prompts = try String(contentsOf: Self.root.deletingLastPathComponent().appendingPathComponent("benji/prompts.py"),
                                  encoding: .utf8)

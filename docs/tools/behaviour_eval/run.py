@@ -223,7 +223,7 @@ def make_screens(out: Path) -> dict:
     src = out / "src"
     src.mkdir(parents=True, exist_ok=True)
     shutil.copy(HERE / "screens.swift", src / "main.swift")
-    shutil.copy(ROOT / "companion/Sources/BenjiCore/ScreenshotGeometry.swift", src)
+    shutil.copy(ROOT / "companion/Sources/BenjiCore/Screen/ScreenshotGeometry.swift", src)
     exe = out / "screens"
     subprocess.run(["xcrun", "swiftc", "-o", str(exe), *map(str, sorted(src.glob("*.swift")))], check=True,
                    stderr=subprocess.DEVNULL)

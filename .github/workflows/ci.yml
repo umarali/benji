@@ -35,12 +35,12 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: "22"
-      - name: Run selftest.py
+      - name: Run the engine selftest
         shell: bash
         run: |
           set -o pipefail
           # The same command contributors run: a throwaway home, so no test touches the runner's own.
-          python3 tools/isolated_run.py -- python3 selftest.py 2>&1 | tee selftest.log
+          python3 tools/isolated_run.py -- python3 tests/selftest.py 2>&1 | tee selftest.log
       - name: Show what failed
         if: failure()
         shell: bash
@@ -128,7 +128,7 @@ jobs:
       - name: Unfilled owner placeholders (a warning, not a failure)
         shell: bash
         run: |
-          if grep -rIn "OWNER-""TODO" --exclude-dir=.git --exclude=ci.yml --exclude=RELEASING.md --exclude=selftest_oss.py . > todo.txt; then
+          if grep -rIn "OWNER-""TODO" --exclude-dir=.git --exclude=ci.yml --exclude=RELEASING.md --exclude=check_repository.py . > todo.txt; then
             while IFS= read -r line; do echo "::warning title=placeholder::${line}"; done < todo.txt
           else
             echo "No owner placeholders left."

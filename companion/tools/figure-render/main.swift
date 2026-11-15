@@ -1,4 +1,4 @@
-// Renders figure blocks offscreen (D-108): each reply in tools/figure-render/replies is parsed with
+// Renders figure blocks offscreen: each reply in tools/figure-render/replies is parsed with
 // the app's own parser, its meshes built, and the app's own FigureScene drawn with SCNRenderer
 // (no window, no permission) into Benji's card at 1200×800 px, then placed over the synthetic
 // screen of tools/overlay-render. Also measures build time, time to the first part, frame time

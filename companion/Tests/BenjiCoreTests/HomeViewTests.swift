@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// The open panel's home (D-121): greeting, recent rows, which page shows, and the switch; plus
+/// The open panel's home: greeting, recent rows, which page shows, and the switch; plus
 /// the profile file Settings › Memory edits.
 final class HomeViewTests: XCTestCase {
     var calendar: Calendar = {
@@ -51,7 +51,7 @@ final class HomeViewTests: XCTestCase {
         XCTAssertEqual(HomeView.recents([], current: nil, now: now), HomeRecents(rows: [], more: 0))
     }
 
-    // MARK: jobs in Recent (D-146)
+    // MARK: jobs in Recent
 
     func jobThread(_ title: String, hoursAgo: Double) -> ConversationSummary {
         summary(JobThread.titlePrefix + title, hoursAgo: hoursAgo)

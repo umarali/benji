@@ -2,8 +2,8 @@
 reply with Benji's own parsers (`benji.figures`, `benji.pointing`) and returns a Verdict: the
 failures (`why`), things worth seeing that don't fail a turn (`notes`) and numbers to track (`metrics`).
 
-The rules are the ones the feature evals (figures, cards, beats) used when their recorded replies
-were judged (figures D-108, cards D-125, beats D-127), gathered here so every kind is scored in one place.
+The rules are the ones the first evals of figures, cards and beats used when their recorded replies
+were judged, gathered here so every kind is scored in one place.
 """
 
 from __future__ import annotations
@@ -33,7 +33,7 @@ def sentences(text: str) -> int:
 # --- figures ------------------------------------------------------------------------------------
 
 FIGURE_LEAKS = re.compile(r"\bJSON\b|\bfigure block\b|\bthe block\b|```", re.I)
-# Words about the model instead of the thing (D-176): a metric, never a failure. Only precise phrases:
+# Words about the model instead of the thing: a metric, never a failure. Only precise phrases:
 # "the model", "on the board", "you can turn the handlebar" and "each fuse is labelled with" are ordinary
 # things to say about a device, so they don't count. English only.
 FIGURE_NARRATION = re.compile(r"""
@@ -76,12 +76,12 @@ def check_figure(fx: dict) -> Verdict:
     if fx["request"].get("spoken") and sentences(text) > 3:
         v.why.append(f"spoken reply of {sentences(text)} sentences")
     boxes = [p.name for p in fig.parts if p.kind == "box"]
-    if len(boxes) * 2 > len(fig.parts):        # the "box on a box" look the user complained of (D-158)
+    if len(boxes) * 2 > len(fig.parts):        # the "box on a box" look: a figure built mostly of plain boxes
         v.notes.append(f"{len(boxes)} of {len(fig.parts)} parts are plain boxes")
     return v
 
 
-# --- cards (the fenced `card` block, D-125) -----------------------------------------------------
+# --- cards (the fenced `card` block) ----------------------------------------------------------
 
 FENCE = re.compile(r"^[ \t]*```[ \t]*([A-Za-z]*)[ \t]*\n(.*?)\n[ \t]*```[ \t]*$", re.M | re.S)
 CARD_LEAKS = re.compile(r"\bJSON\b|\bcard block\b|\bthe block\b|\blayout\b|```", re.I)
@@ -151,7 +151,7 @@ def check_card(fx: dict) -> Verdict:
     return v
 
 
-# --- beats (card lines streamed between spoken sentences, D-127) --------------------------------
+# --- beats (card lines streamed between spoken sentences) -------------------------------------
 
 BEATS_LEAKS = re.compile(r"\bJSON\b|\bthe card line\b|\bitem:|\bcard:|\bchips:|\btakeaway:|```", re.I)
 

@@ -19,7 +19,7 @@ final class FakeBackend: CompanionBackend, JobBackend {
     func say(_ event: BackendEvent) { onEvent?(run, event) }
     func finish(_ code: Int32) { onFinished?(run, code) }
     func resolveApproval(_ approved: Bool) {}
-    // Background jobs (D-130 step 1): the engine's side is `job`; nothing is asked of a fake engine.
+    // Background jobs: the engine's side is `job`; nothing is asked of a fake engine.
     var onJob: ((JobSnapshot) -> Void)?
     var onEngineExit: (() -> Void)?
     func job(_ snapshot: JobSnapshot) { onJob?(snapshot) }
@@ -59,12 +59,12 @@ struct Scene {
     var notchWidth: CGFloat = 190
     /// Saved conversations (title, hours ago), in a throwaway folder; none: no store at all.
     var saved: [(String, Double)] = []
-    /// The panel at its expanded size with the sidebar (D-133).
+    /// The panel at its expanded size with the sidebar.
     var expanded = false
     let setUp: (CompanionModel, FakeBackend) -> Void
 }
 
-/// A throwaway folder of saved conversations for the home and list scenes (D-121).
+/// A throwaway folder of saved conversations for the home and list scenes.
 let savedRoot = FileManager.default.temporaryDirectory.appendingPathComponent("benji-panel-render-\(UUID().uuidString)")
 
 func savedHistory(_ saved: [(String, Double)]) -> ConversationHistory {
@@ -422,7 +422,7 @@ func renderSwap(reduceMotion: Bool) -> [CGImage] {
     }
     spin(0.3)
     var frames = [frame()]
-    model.voiceSpeaking(true)   // Done → Speaking, as in the live screenshot
+    model.voiceSpeaking(true)   // Done → Speaking
     let start = Date()
     for t in [0.03, 0.06, 0.09, 0.12, 0.18, 0.30] {
         RunLoop.main.run(until: start.addingTimeInterval(t))
@@ -433,7 +433,7 @@ func renderSwap(reduceMotion: Bool) -> [CGImage] {
 }
 
 /// The band's glyphs side by side in their slots on black: the real views, drawn at 4x by the
-/// renderer, with the 22 pt slot and the centre lines faint behind them (D-135).
+/// renderer, with the 22 pt slot and the centre lines faint behind them.
 struct GlyphRow: View {
     let a = NotchAccessibility(reduceMotion: true)
     let symbols = ["house", "square.and.pencil", "stop.fill", "gearshape",

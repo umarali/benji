@@ -3,7 +3,7 @@ import XCTest
 @testable import BenjiApp
 import BenjiCore
 
-/// Screen steps (D-123) through the real CompanionModel: the card is worded from the step and
+/// Screen steps through the real CompanionModel: the card is worded from the step and
 /// names the app, only the step the user approved is done, once, the screen after it becomes the
 /// turn's screenshot, and a cancelled turn's late result is dropped. No windows, no events posted.
 final class CompanionModelScreenStepTests: XCTestCase {

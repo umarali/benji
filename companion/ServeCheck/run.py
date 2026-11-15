@@ -3,7 +3,7 @@
 
 Benji talks to a fake OpenAI-compatible model on 127.0.0.1, with HOME and the working folder in
 a temp directory, so ~/.benji.env is never read and nothing leaves the Mac. The Swift side is
-the app's own ServeBackend.swift and OneShotBackend.swift plus BenjiCore, compiled with
+the app's own ServeBackend.swift and AuditFile.swift plus BenjiCore, compiled with
 driver.swift into one throwaway binary (the `import BenjiCore` lines are dropped for that).
 
     python3 -I companion/ServeCheck/run.py
@@ -22,10 +22,9 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 COMPANION = HERE.parent
 ASSISTANT = COMPANION.parent
-SOURCES = [*sorted((COMPANION / "Sources/BenjiCore").glob("*.swift")),
-           COMPANION / "Sources/BenjiApp/ServeBackend.swift",
-           COMPANION / "Sources/BenjiApp/AuditFile.swift",
-           COMPANION / "Sources/BenjiApp/OneShotBackend.swift",
+SOURCES = [*sorted((COMPANION / "Sources/BenjiCore").rglob("*.swift")),
+           COMPANION / "Sources/BenjiApp/Engine/ServeBackend.swift",
+           COMPANION / "Sources/BenjiApp/Diagnostics/AuditFile.swift",
            HERE / "driver.swift"]
 
 

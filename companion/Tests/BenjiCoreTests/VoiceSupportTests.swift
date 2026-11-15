@@ -40,7 +40,7 @@ final class VoiceSupportTests: XCTestCase {
 
     func testTranscriberSelection() {
         XCTAssertEqual(TranscriberKind.from(setting: nil), .onDevice)
-        XCTAssertEqual(TranscriberKind.from(setting: "pal"), .engine)
+        XCTAssertEqual(TranscriberKind.from(setting: "engine"), .engine)
         XCTAssertEqual(TranscriberKind.from(setting: "Cloud"), .engine)
         XCTAssertEqual(TranscriberKind.from(setting: "nonsense"), .onDevice)
     }

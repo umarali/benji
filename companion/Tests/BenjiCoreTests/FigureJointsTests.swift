@@ -2,12 +2,12 @@ import Foundation
 import XCTest
 @testable import BenjiCore
 
-/// Parts that touch nothing (D-108, after the live evals).
+/// Parts that touch nothing.
 final class FigureJointsTests: XCTestCase {
     static let docs = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
-        .deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("docs/impl-notes/chilly-figures")
+        .appendingPathComponent("Fixtures/figure-replies")
 
-    /// Every reply the real model wrote in the live evals (committed in docs), by name.
+    /// Every reply a real model wrote for these cases (kept in Tests/Fixtures), by name.
     static func liveReplies() throws -> [(String, String)] {
         var out: [(String, String)] = []
         let fm = FileManager.default

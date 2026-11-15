@@ -3,7 +3,7 @@ import XCTest
 @testable import BenjiApp
 import BenjiCore
 
-/// Turning the figure by hand, through the scene (D-108, after the stage went live): what the card's
+/// Turning the figure by hand, through the scene: what the card's
 /// input panel writes (FigureHandling) reaches the camera on the next frame, the idle turn holds
 /// still while handled, reset returns to the model's view. A scene is built and projected; nothing
 /// is rendered and no window is made.

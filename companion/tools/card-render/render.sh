@@ -10,7 +10,7 @@ xcrun swift build --target BenjiCore >/dev/null
 BIN="$(xcrun swift build --show-bin-path)"
 xcrun swiftc -O -module-name CardRender \
     -I "$BIN/Modules" \
-    tools/card-render/main.swift Sources/BenjiApp/ExplainCardDrawing.swift \
+    tools/card-render/main.swift Sources/BenjiApp/Drawing/ExplainCardDrawing.swift \
     "$BIN"/BenjiCore.build/*.o \
     -o "$OUT/card-render"
 "$OUT/card-render" "$OUT" "${2:-tools/card-render/replies}" "Resources/Fonts"

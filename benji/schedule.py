@@ -1,4 +1,4 @@
-"""Schedules inside a job (D-172, D-130 step 2, narrowly): a job the user told to repeat runs again,
+"""Schedules inside a job: a job the user told to repeat runs again,
 as the SAME job (a new run, the same folder, the report history kept).
 
 What this module is: the rules, in plain functions with the clock passed in, so every one can be

@@ -101,7 +101,7 @@ final class OpenListeningTests: XCTestCase {
     /// an approval in the middle, then the quiet spell; no key at any point.
     func testOpenPanelConversationWithReadingTimeAndAnApproval() {
         var open = OpenListening()
-        // A saved five-minute choice (the default is two, D-134), so four minutes of reading fits.
+        // A saved five-minute choice (the default is two), so four minutes of reading fits.
         var s = HandsFreeSession(settings: HandsFreeSettings(idleTimeout: 300))
         XCTAssertEqual(open.update(panelOpen: true, conversationOn: s.isOn, canListen: true), .start)
         XCTAssertEqual(s.start(at: 0), [.openMic])
@@ -253,7 +253,7 @@ final class StatusWordSwapTests: XCTestCase {
 }
 
 final class QuietTimeoutTests: XCTestCase {
-    /// D-134: with the defaults, two quiet minutes end listening, and it stays off while the panel is open.
+    /// With the defaults, two quiet minutes end listening, and it stays off while the panel is open.
     func testDefaultTwoMinutesEndsListeningAndItDoesNotComeBack() {
         var open = OpenListening()
         var s = HandsFreeSession(settings: HandsFreeSettings())

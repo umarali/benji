@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// D-119: where the Mac's echo cancelling fails to start, Always acts like Headphones instead of
+/// Where the Mac's echo cancelling fails to start, Always acts like Headphones instead of
 /// failing (or hearing nothing) on every turn.
 final class EchoFallbackTests: XCTestCase {
     let speakers = EchoVerdicts.key(route: .speakers, input: "MacBook Pro Microphone")

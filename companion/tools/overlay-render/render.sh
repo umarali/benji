@@ -10,7 +10,7 @@ xcrun swift build --target BenjiCore >/dev/null
 BIN="$(xcrun swift build --show-bin-path)"
 xcrun swiftc -O -module-name OverlayRender \
     -I "$BIN/Modules" \
-    tools/overlay-render/main.swift tools/shared/SyntheticScreen.swift Sources/BenjiApp/OverlayViews.swift \
+    tools/overlay-render/main.swift tools/shared/SyntheticScreen.swift Sources/BenjiApp/Drawing/OverlayViews.swift \
     "$BIN"/BenjiCore.build/*.o \
     -o "$OUT/overlay-render"
 "$OUT/overlay-render" "$OUT" "${2:-}"

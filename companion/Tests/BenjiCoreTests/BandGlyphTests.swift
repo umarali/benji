@@ -35,7 +35,7 @@ final class BandGlyphTests: XCTestCase {
         XCTAssertEqual(BandGlyph.scale(for: "chevron.backward"), BandGlyph.scale(for: "chevron.up"))
     }
 
-    /// The boxed expand and shrink arrows, the pebble and the bubble are no longer in the band.
+    /// The band does not draw the boxed expand and shrink arrows, the pebble or the bubble.
     func testRetiredGlyphsHaveNoScale() {
         XCTAssertNil(BandGlyph.scales["arrow.up.left.and.arrow.down.right.square"])
         XCTAssertNil(BandGlyph.scales["arrow.down.right.and.arrow.up.left.square"])

@@ -1,14 +1,14 @@
 """Recent conversation passed in by a front-end, so follow-up questions have context.
 
-The companion runs one Benji process per message. It keeps the recent exchanges in
-memory and hands them over as a JSON file: [{"user": "...", "assistant": "..."}, ...].
-They become plain prior turns (no tool calls, no images) before the new message.
+The app keeps the recent exchanges in memory and sends them with each message (`exchanges` in a
+`send` over --serve); load_history reads the same list from a JSON file:
+[{"user": "...", "assistant": "..."}, ...]. They become plain prior turns (no tool calls, no images) before the new message.
 
 How much is kept: everything while the user+assistant text fits in HISTORY_BUDGET_CHARS; once it
 is over, whole exchanges are dropped, oldest first, until the rest fits in HISTORY_TRIM_TO_CHARS
 (three quarters of the budget), never below the last MIN_EXCHANGES. Dropping in a chunk means
 the start of the conversation changes once every several turns, not every turn, so it stays
-cacheable (providers.py). The companion's ConversationMemory keeps the same ones (shared cases in
+cacheable (providers.py). The app's ConversationMemory keeps the same ones (shared cases in
 companion/Tests/history-cases.json). Lengths are Unicode code points (Swift: unicodeScalars).
 """
 
@@ -19,8 +19,8 @@ from pathlib import Path
 
 HISTORY_BUDGET_CHARS = 24_000   # user+assistant text of the kept exchanges, about 6,000 tokens
 HISTORY_TRIM_TO_CHARS = HISTORY_BUDGET_CHARS * 3 // 4   # where a drop stops: 18,000
-MIN_EXCHANGES = 10              # the old fixed window, kept even when long
-MAX_EXCHANGES = MIN_EXCHANGES   # the old window's name
+MIN_EXCHANGES = 10              # always kept, even when long
+MAX_EXCHANGES = MIN_EXCHANGES   # an older name for MIN_EXCHANGES, still imported by callers
 MAX_CHARS_PER_TURN = 4000  # keep a long earlier answer from crowding out the new turn
 
 
@@ -56,11 +56,6 @@ def read_history(path: str) -> tuple[list[dict], bool]:
     except (OSError, ValueError) as e:
         raise HistoryError(f"couldn't read conversation history {path}: {e}") from e
     return history_from_exchanges(raw)
-
-
-def messages_from_exchanges(raw) -> list[dict]:
-    """Neutral messages for the recent exchanges of [{"user", "assistant"}, ...] (see kept_count)."""
-    return history_from_exchanges(raw)[0]
 
 
 def history_from_exchanges(raw) -> tuple[list[dict], bool]:

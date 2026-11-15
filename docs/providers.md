@@ -92,7 +92,7 @@ inputs are used for training; read their terms):
 
 ## Compatibility table
 
-Cell codes: **D** the provider's documentation says it (read 2026-11-05); **F** a test in `selftest_models.py`
+Cell codes: **D** the provider's documentation says it (read 2026-11-05); **F** a test in `tests/check_providers.py`
 reproduces it against a fake server and Benji behaves accordingly; **U** unconfirmed (the docs do not say, or
 contradict each other) and Benji does not build on it; **A** an assumption of ours that is not in a document.
 **Nothing here is live-verified.**

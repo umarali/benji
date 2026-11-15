@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// D-133/D-134: the composer's talk control, the New conversation rule and the sidebar.
+/// The composer's talk control, the New conversation rule and the sidebar.
 final class ComposerTests: XCTestCase {
     func testTheCapsuleWhileEmptyTheMicOnceTyping() {
         XCTAssertEqual(ComposerTalk.shape(text: ""), .capsule)
@@ -24,7 +24,7 @@ final class ComposerTests: XCTestCase {
         XCTAssertEqual(ComposerTalk.accessibilityLabel(listening: false), "Talk")
     }
 
-    /// D-139: Right ⌥ is the only talk key. When it is on but not ready the capsule and the tooltip
+    /// Right ⌥ is the only talk key. When it is on but not ready the capsule and the tooltip
     /// say why and point to Finish Setup, and never name another key.
     func testAKeyThatIsNotReadySaysWhyAndNamesNoOtherKey() {
         XCTAssertEqual(ComposerTalk.title(key: nil, needsSetup: "Right ⌥", listening: false), "Right ⌥ needs Accessibility")

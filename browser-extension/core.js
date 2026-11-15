@@ -6,7 +6,7 @@
 //   - a tab outside that group is never touched, whatever number it is asked about;
 //   - every request carries the origins the job may use (`allow`); a page on any other origin is
 //     neither opened nor read, and a page that moves to another origin while it is read returns nothing;
-//   - reading runs one function in a page, `extract`, which returns visible text. Acting (D-171) runs
+//   - reading runs one function in a page, `extract`, which returns visible text. Acting runs
 //     `pageAct`, which lists and describes controls and only scrolls or focuses; a click, typed word
 //     or key goes through Chrome's debugger, attached only for that step, on a tab in the group, on a
 //     site the engine named for acting, and only if the extension's own class for the element
@@ -241,7 +241,7 @@ export class Browser {
     return { closed };
   }
 
-  // ---- step 2: looking and acting (D-171) ------------------------------------------------------
+  // ---- looking and acting ---------------------------------------------------------------------
 
   /** Run pageAct in the tab's main frame. */
   async page(tabId, op, args) {
@@ -459,7 +459,7 @@ export class Browser {
     }
   }
 
-  // ---- step 3: the page the user is looking at -------------------------------------------------
+  // ---- the page the user is looking at ---------------------------------------------------------
 
   /** Which site the tab in front is on: its number and origin only, never its address or title. */
   async active() {

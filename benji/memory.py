@@ -2,7 +2,7 @@
 
 One fact per line: {"ts": <unix>, "text": "...", "tags": [...]}. Kept small and
 human-readable, readable by this user only (0600). The app's Settings › Memory lists, changes and
-forgets lines (BenjiCore/ProfileMemory.swift). `add` refuses what must never be kept: secrets,
+forgets lines (BenjiCore/Conversation/ProfileMemory.swift). `add` refuses what must never be kept: secrets,
 and guesses about the user (only what they said themselves).
 """
 
@@ -98,7 +98,7 @@ def add(path: str | Path, text: str, tags: list[str] | None = None) -> dict:
     fd = os.open(p, os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o600)
     with os.fdopen(fd, "a") as f:
         f.write(json.dumps(entry, ensure_ascii=False) + "\n")
-    os.chmod(p, 0o600)   # a file from before this rule, too
+    os.chmod(p, 0o600)   # also tightens a file created earlier with a wider mode
     return entry
 
 

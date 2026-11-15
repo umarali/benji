@@ -73,7 +73,7 @@ first message and grant permissions only when you need them, follow the
 - **Logs hold metadata only.** Never message text, file contents or keys.
 
 Details: [safety, background jobs and browser reach](docs/safety.md) · [privacy](docs/privacy.md)
-· [reporting a vulnerability](SECURITY.md)
+· [reporting a vulnerability](.github/SECURITY.md)
 
 ## Documentation
 
@@ -81,6 +81,7 @@ Details: [safety, background jobs and browser reach](docs/safety.md) · [privacy
 |---|---|
 | [Setup guide](docs/setup.md) | From a fresh clone to a first message, with troubleshooting |
 | [Feature status](docs/status.md) | What is stable, experimental or not yet tried live |
+| [How Benji works](docs/architecture.md) | The app, the engine and how they talk; where the code and tests are |
 | [Using and configuring](docs/configuration.md) | Features in detail, settings, model providers, voice, skills |
 | [Safety, jobs and browser reach](docs/safety.md) | The approval gate, background jobs, the browser extension |
 | [Privacy](docs/privacy.md) | What each provider receives and what stays on your Mac |
@@ -90,9 +91,9 @@ Details: [safety, background jobs and browser reach](docs/safety.md) · [privacy
 
 ## Contributing
 
-Issues and pull requests are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md) and the
-[code of conduct](CODE_OF_CONDUCT.md). Report security problems privately, as
-[SECURITY.md](SECURITY.md) describes.
+Issues and pull requests are welcome: see [CONTRIBUTING.md](.github/CONTRIBUTING.md) and the
+[code of conduct](.github/CODE_OF_CONDUCT.md). Report security problems privately, as
+[SECURITY.md](.github/SECURITY.md) describes.
 
 Benji is released under the [MIT licence](LICENSE). Third-party credits are in
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+[THIRD_PARTY_NOTICES.md](docs/THIRD_PARTY_NOTICES.md).

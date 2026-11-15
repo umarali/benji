@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""A real-Chrome check of the whole read and act path, run by hand (it is not part of selftest.py):
+"""A real-Chrome check of the whole read and act path, run by hand (it is not part of tests/selftest.py):
 
     python3 browser-extension/test/e2e-headless.py            # CHROME=/path/to/chrome to choose a binary
 
@@ -12,8 +12,8 @@ Two made-up hosts, example.test and other.test, resolve to a local HTTPS server 
 certificate, so nothing leaves this Mac. It never touches your Chrome, its profile or its folders, and
 needs no window. A click that starts a download is NOT tried (a refused download could land in a real
 Downloads folder if the block failed), and Cancel on the debugging bar can't be pressed headless; both
-are on the by-hand checklist in the implementation note (development repository). The one difference from the real extension: the copy it loads declares its site access
-up front (the real one holds it as an optional permission, which Chrome asks the user for in the popup).
+have to be checked by hand. The one difference from the real extension: the copy it loads declares its
+site access up front (the real one holds it as an optional permission, which Chrome asks the user for in the popup).
 """
 
 import fcntl
@@ -234,7 +234,7 @@ try:
     far = link.call("read", {"tab": jump, "allow": [A, O]})
     check("read: with both sites allowed it reads the new page", far.get("ok") is True and "Text on the other site" in far["text"])
 
-    # ---- step 2: looking and acting (D-171) ----------------------------------------------------------
+    # ---- looking and acting -------------------------------------------------------------------------
     def tab_at(tab_id, prefix):
         return until(lambda: any(t["id"] == tab_id and t["url"].startswith(prefix) for t in link.call("tabs", {"allow": [A, O]})["tabs"]))
 
@@ -305,7 +305,7 @@ try:
     scrolled = link.call("scroll", {"tab": form, "to": "bottom", "allow": [A]})
     check("scroll: free, no debugger", scrolled.get("ok") is True and "atBottom" in scrolled)
 
-    # ---- step 3: the page in front, and closing the job's tabs -----------------------------------------
+    # ---- the page in front, and closing the job's tabs -----------------------------------------------
     front = cdp("Target.createTarget", {"url": A + "/next"}).get("result", {}).get("targetId")
     cdp("Target.activateTarget", {"targetId": front})
     time.sleep(1.5)

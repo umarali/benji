@@ -2,7 +2,7 @@ import Foundation
 import XCTest
 @testable import BenjiCore
 
-/// The figure block (D-108). The shared cases in Tests/figure-cases.json are also run by
+/// The figure block. The shared cases in Tests/figure-cases.json are also run by
 /// selftest.py against benji/figures.py: both must give the same summary, byte for byte.
 final class FigureGrammarTests: XCTestCase {
     struct Case: Decodable { let name: String; let reply: String; let summary: String }

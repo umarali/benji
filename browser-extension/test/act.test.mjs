@@ -1,5 +1,5 @@
 // Run with: node --test browser-extension/test/act.test.mjs   (no packages; Node 20 or newer)
-// Acting and the front-tab read (D-171) against a fake `chrome`: the debugger is a recorder, the page is
+// Acting and the front-tab read against a fake `chrome`: the debugger is a recorder, the page is
 // a script. The real page function is tried in a real headless Chrome in page-actions.test.mjs.
 import { test } from "node:test";
 import assert from "node:assert/strict";

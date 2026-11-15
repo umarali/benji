@@ -16,7 +16,7 @@ final class FakeBackend: CompanionBackend, JobBackend {
 
     var lastRun: Int { starts.last!.run }
 
-    // Background jobs (D-130 step 1): what the model asked of the engine, and the engine's side.
+    // Background jobs: what the model asked of the engine, and the engine's side.
     var onJob: ((JobSnapshot) -> Void)?
     var onEngineExit: (() -> Void)?
     private(set) var jobAnswers: [(job: String, request: String, approved: Bool)] = []
@@ -28,7 +28,7 @@ final class FakeBackend: CompanionBackend, JobBackend {
     func steerJob(_ job: String, text: String) { jobSteers.append((job, text)) }
     func dismissJob(_ job: String) { jobDismissals.append(job) }
     func job(_ snapshot: JobSnapshot) { onJob?(snapshot) }
-    // Second pass (D-172).
+    // Continuing a job, and its schedules.
     private(set) var jobContinues: [String] = []
     private(set) var scheduleActions: [(job: String, action: JobScheduleAction)] = []
     private(set) var schedulesSwitch: [Bool] = []

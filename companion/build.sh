@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build Benji.app (the notch-centered companion and its Python engine, `benji`).
+# Build Benji.app (the notch app and its Python engine, `benji`).
 # Usage: ./build.sh        then  open Benji.app
 #        ./build.sh run    builds and launches it
 set -e
@@ -19,9 +19,9 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BIN" "$APP/Contents/MacOS/Benji"
 # App icon and menu-bar glyph, generated from docs/design-work/icon by ./make_icon.sh.
 cp Resources/Assets.car Resources/AppIcon.icns Resources/MenuBarGlyph.svg Resources/MenuBarGlyphWorking.svg "$APP/Contents/Resources/"
-# The explanation card's handwriting face (D-125), when bundled; the card falls back to Noteworthy.
+# The explanation card's handwriting face, when bundled; the card falls back to Noteworthy.
 if [ -d Resources/Fonts ]; then cp -R Resources/Fonts "$APP/Contents/Resources/"; fi
-# Benji's own quiet cues (D-173), made by ../tools/make_cues.py; off until the user turns them on.
+# Benji's own quiet cues, made by ../tools/make_cues.py; off until the user turns them on.
 if [ -d Resources/Cues ]; then cp -R Resources/Cues "$APP/Contents/Resources/"; fi
 
 cat > "$APP/Contents/Info.plist" <<PLIST
@@ -52,11 +52,11 @@ PLIST
 # permissions survive rebuilds (macOS matches "this bundle id + this certificate");
 # an ad-hoc signature changes every build, so every grant has to be redone.
 # Default: a local "Benji Local Signing" certificate in the login keychain (self-signed, code signing
-# only). A Mac that only has the older "Chilly Local Signing" keeps using that one: another certificate
-# would make macOS ask for every permission again. Override with BENJI_SIGN_IDENTITY (or the older
-# CHILLY_SIGN_IDENTITY or PAL_SIGN_IDENTITY), e.g. an "Apple Development: …" identity from
+# only). A Mac that only has a certificate under an older name ("Chilly Local Signing") keeps using
+# that one: another certificate would make macOS ask for every permission again. Override with
+# BENJI_SIGN_IDENTITY, e.g. an "Apple Development: …" identity from
 # `security find-identity -v -p codesigning`.
-SIGN_ID="${BENJI_SIGN_IDENTITY:-${CHILLY_SIGN_IDENTITY:-${PAL_SIGN_IDENTITY:-}}}"
+SIGN_ID="${BENJI_SIGN_IDENTITY:-}"
 if [ -z "$SIGN_ID" ]; then
     SIGN_ID="Benji Local Signing"
     if ! security find-certificate -c "$SIGN_ID" >/dev/null 2>&1 \

@@ -1,19 +1,12 @@
 import XCTest
 @testable import BenjiCore
 
-/// D-164: an answer about the screen is spoken from its first sentence; its marks arrive with the
+/// An answer about the screen is spoken from its first sentence; its marks arrive with the
 /// whole answer and catch up with what the voice has already said.
 final class EarlyScreenSpeechTests: XCTestCase {
     private let pixel = CGSize(width: 1000, height: 500)
     private let frame = CGRect(x: 0, y: 0, width: 1000, height: 500)
     private func t(_ shape: PointingShape, _ label: String) -> PointingTarget { PointingTarget(shape: shape, label: label) }
-
-    func testOnByDefaultWithAWayBack() {
-        XCTAssertTrue(FastPath.speaksScreenAnswersEarly(nil))
-        XCTAssertTrue(FastPath.speaksScreenAnswersEarly(true))
-        XCTAssertFalse(FastPath.speaksScreenAnswersEarly(false))
-        XCTAssertEqual(FastPath.earlyScreenSpeechKey, "speakScreenAnswersEarly")
-    }
 
     func testAlignmentIgnoresOnlyWhiteSpace() {
         // The voice says sentences joined by single spaces; the cues index the answer cleaned whole.
@@ -50,7 +43,7 @@ final class EarlyScreenSpeechTests: XCTestCase {
     }
 
     func testWithoutTheReplayTheMarksWouldLag() {
-        // The old behaviour this replaces: a sequence that never hears the start waits for the voice.
+        // Without the replay, a sequence that never hears the start waits for the voice.
         let text = "Here is the Total. Now look at Pay."
         let plan = PointingPlan(targets: [t(.circle(x1: 100, y1: 100, x2: 200, y2: 140), "Total")],
                                 text: text, speaking: true, pixelSize: pixel, screenFrame: frame, displayID: nil)!

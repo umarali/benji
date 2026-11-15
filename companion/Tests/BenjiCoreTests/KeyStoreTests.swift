@@ -168,6 +168,16 @@ final class KeyStoreTests: XCTestCase {
         XCTAssertTrue(try String(contentsOf: file, encoding: .utf8).contains(fakeKey))
     }
 
+    func testNothingStartsTheMoveFromAPlainFileByItself() throws {
+        let sources = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("Sources")
+        var callers: [String] = []
+        for case let url as URL in FileManager.default.enumerator(at: sources, includingPropertiesForKeys: nil)! where url.pathExtension == "swift" {
+            if url.lastPathComponent != "KeyStore.swift", try String(contentsOf: url, encoding: .utf8).contains("KeyMigration.migrate(") { callers.append(url.lastPathComponent) }
+        }
+        XCTAssertEqual(callers.sorted(), ["ModelSetup.swift", "QuietServices.swift"], "only the explicit setup Save and Settings Move handlers may migrate file keys")
+    }
+
     func testFileModeHandsTheEngineNothing() {
         let store = FakeKeyStore()
         store.items["ANTHROPIC_API_KEY"] = fakeKey

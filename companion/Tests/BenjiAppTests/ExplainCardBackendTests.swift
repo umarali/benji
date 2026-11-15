@@ -3,7 +3,7 @@ import XCTest
 @testable import BenjiApp
 import BenjiCore
 
-/// The explanation card hook (D-125): on by default it tells the engine, takes the card block out
+/// The explanation card hook: on by default it tells the engine, takes the card block out
 /// of answers (the panel and the voice never see it) and hands the card, with what the reply
 /// points at, to the stage; a chip's words go out as a typed message. No window is made here.
 final class ExplainCardBackendTests: XCTestCase {
@@ -94,7 +94,7 @@ final class ExplainCardBackendTests: XCTestCase {
         XCTAssertEqual(stage.opened.count, 1)
     }
 
-    /// One-shot mode: the answer still holds its card lines; they are read as if streamed.
+    /// An answer that still holds its card lines: they are read as if streamed.
     func testAnAnswerWithCardLinesIsReadWhole() {
         let stage = FakeStage()
         let (fake, _, seen) = hook(stage)
@@ -121,7 +121,8 @@ final class ExplainCardBackendTests: XCTestCase {
         XCTAssertEqual(seen(), [.pointedAnswer(text: "You drop it in.\nA van takes it.\n", targets: [])])
     }
 
-    /// An older reply's fenced block still makes a card, with what the reply points at.
+    /// A card written as a fenced block, the form saved replies may hold, still makes a card, with
+    /// what the reply points at.
     func testAFencedBlockIsStillACard() {
         let stage = FakeStage()
         let (fake, _, seen) = hook(stage)

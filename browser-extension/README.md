@@ -46,7 +46,7 @@ install. Only `https` pages with no user name, IP address, local name or interna
   as), `page-text.js` and `page-actions.js` (the two functions run in a page), `popup.*` (status and the Allow button).
 - `test/*.test.mjs`, `test/origin-cases.json`, `test/act-cases.json`: `node --test browser-extension/test/*.test.mjs`
   (`page-text` and `page-actions` need Chrome and run it headless with a throwaway profile; all run from
-  `selftest.py`). The two case files are shared with the Python engine, which must give the same answers.
+  `tests/selftest.py`). The two case files are shared with the Python engine, which must give the same answers.
 - `test/e2e-headless.py`: a by-hand check of read, look, click, type, upload, keys, the front tab and close in
   a headless Chrome with a throwaway profile.
 
@@ -55,5 +55,5 @@ install. Only `https` pages with no user name, IP address, local name or interna
 Today one id is trusted: the one the browser derives from the `key` in `manifest.json`. A Web Store build would
 have another id, and choosing it is a decision of its own. When it is made, add the id in three places that
 a test keeps in step: `EXTENSION_IDS` in `benji/browser_link.py`, `ALLOWED_EXTENSION_IDS` in
-`benji/browser_host.py` and `BrowserExtension.ids` in `companion/Sources/BenjiCore/Browser.swift`. The
+`benji/browser_host.py` and `BrowserExtension.ids` in `companion/Sources/BenjiCore/Jobs/Browser.swift`. The
 registration then names every id in `allowed_origins`. Nothing else in the rules depends on the id.

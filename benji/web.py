@@ -27,7 +27,7 @@ class WebError(RuntimeError):
 
 
 def _check_url(url: str) -> None:
-    """Refuse what isn't http(s), and any host on this Mac or its network (chilly-gate fix 3):
+    """Refuse what isn't http(s), and any host on this Mac or its network:
     private, loopback and link-local addresses, by name or by what the name resolves to now."""
     parsed = urllib.parse.urlparse(url)
     if parsed.scheme not in ("http", "https"):

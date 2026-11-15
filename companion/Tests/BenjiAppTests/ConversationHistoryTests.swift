@@ -2,7 +2,7 @@ import XCTest
 @testable import BenjiApp
 import BenjiCore
 
-/// Saved conversations through the coordinator (D-121): saved as they go, a new conversation
+/// Saved conversations through the coordinator: saved as they go, a new conversation
 /// starts a new one, a reopened one is continued with its exchanges, the home page shows when it
 /// should, and deletion is real.
 final class ConversationHistoryTests: XCTestCase {

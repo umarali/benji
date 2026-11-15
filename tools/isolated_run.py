@@ -1,24 +1,22 @@
 #!/usr/bin/env python3
 """Run a test command so it cannot reach the owner's real Benji data.
 
-    python3 tools/isolated_run.py -- python3 selftest.py
+    python3 tools/isolated_run.py -- python3 tests/selftest.py
     python3 tools/isolated_run.py --home /tmp/fake -- xcrun swift test --skip-build
 
 Why this exists: on macOS `HOME` alone is not enough. Python's `Path.home()` follows it, but Foundation's
 `homeDirectoryForCurrentUser` ignores it and answers from the account record unless `CFFIXED_USER_HOME`
 is set too. `UserDefaults` is not redirected by either: it still reaches the user's real preferences,
-so settings migration is only ever tested through an injected store, never against a real domain.
+so the tests use injected settings stores, never a real domain.
 
 What it does:
   * finds the owner's real home from the account record (never from an overridable `HOME`);
   * makes a throwaway home outside it, and sets `HOME` and `CFFIXED_USER_HOME` to that folder;
-  * removes every Benji/Benji/Pal variable and every key variable from the environment;
-  * sets `BENJI_MIGRATION_GUARD=abort`, which makes the migration code in this tree refuse any source or
-    destination under the real home;
+  * removes every Benji variable (and the older Chilly and Pal names) and every key variable from the environment;
   * proves the Python path resolves to the throwaway home before it runs anything (and the Foundation
     path too, with --probe-swift);
   * takes a metadata fingerprint of the real stores (lstat only, nothing is opened) and fails with exit
-    97 if the command changed any of them. This is also what protects a build too old to hold the guard.
+    97 if the command changed any of them.
   * removes only the throwaway `UserDefaults` suites this run's tests created in the real Preferences
     folder (random-UUID names, and never a real settings file). They can't be redirected; see above.
 """
@@ -36,7 +34,6 @@ import tempfile
 import time
 from pathlib import Path
 
-GUARD_VARIABLE = "BENJI_MIGRATION_GUARD"
 EXIT_REAL_HOME_CHANGED = 97
 EXIT_NOT_ISOLATED = 98
 
@@ -106,7 +103,6 @@ def clean_environment(fake: Path) -> dict[str, str]:
         env[key] = value
     env["HOME"] = str(fake)
     env["CFFIXED_USER_HOME"] = str(fake)
-    env[GUARD_VARIABLE] = "abort"
     return env
 
 

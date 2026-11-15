@@ -1,10 +1,10 @@
 """Saved conversations, as background: the titles of the user's recent conversations with Benji.
 
-The companion saves each conversation's panel lines in `<workdir>/conversations/<id>.json`
-(BenjiCore/ConversationStore.swift; sample in companion/Tests/conversation-sample.json):
+The app saves each conversation's panel lines in `<workdir>/conversations/<id>.json`
+(BenjiCore/Conversation/ConversationStore.swift; sample in companion/Tests/conversation-sample.json):
 {"version": 1, "id": "<uuid>", "title": "...", "started": "<ISO 8601>", "updated": "<ISO 8601>",
  "lines": [{"role": "user" | "assistant" | "error" | "system", "text": "...", "at": "<ISO 8601>"}]}
-(each line's "at" is optional: files from before D-133 have none).
+(each line's "at" is optional: files saved by older versions of the app have none).
 Only the titles and dates reach the model, never the lines; the conversation being continued is
 already in the history it is given.
 """

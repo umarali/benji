@@ -20,37 +20,11 @@ from . import policy as policy_mod
 from .agent import Agent
 from .browser_link import Link
 from .config import load_config, load_dotenv, workdir_path
-from .history import HistoryError, read_history
 from .images import ImageError, load_image
-from .pointing import screen_info
 from .prompts import SystemPrompt, TurnInfo, job_rules, surface_from_env, system_prompt
 from .providers import ProviderError, effort_for, effort_level, make_provider
 
-# A front-end (e.g. the menu-bar app) sets BENJI_APPROVAL_IO=1 and handles approval
-# over stdio: Benji writes a sentinel-tagged request on stdout and reads y/n on stdin.
-APPROVE_SENTINEL = "\x01BENJI-APPROVE\x01"
-# With BENJI_EVENTS=1, Benji also emits structured UI events on stdout as one JSON
-# object per line, sentinel-wrapped so they never collide with normal text.
-EVENT_SENTINEL = "\x01BENJI-EVENT\x01"
-
-
-def _emit_event(obj: dict) -> None:
-    if os.environ.get("BENJI_EVENTS") == "1":
-        sys.stdout.write(f"{EVENT_SENTINEL}{json.dumps(obj, ensure_ascii=False)}\x01\n")
-        sys.stdout.flush()
-
-
 def _approve(reason: str) -> bool:
-    if os.environ.get("BENJI_APPROVAL_IO") == "1":
-        # Front-end handles the prompt. Emit the request, then block on the reply.
-        # One line on the wire: a whole AppleScript on the card keeps its line breaks as ⏎.
-        sys.stdout.write(f"{APPROVE_SENTINEL}{' ⏎ '.join(reason.splitlines())}\x01\n")
-        sys.stdout.flush()
-        try:
-            ans = sys.stdin.readline().strip().lower()
-        except (EOFError, OSError):
-            return False
-        return ans in ("y", "yes")
     if not sys.stdin.isatty():
         print(f"\n[Benji] approval needed to {reason}\n      non-interactive; denying.", file=sys.stderr)
         return False
@@ -61,39 +35,26 @@ def _approve(reason: str) -> bool:
 def _on_tool(name: str, inp: dict) -> None:
     detail = inp.get("command") or inp.get("path") or inp.get("query") or inp.get("url") or ""
     print(f"  · {name} {detail}".rstrip(), file=sys.stderr)
-    _emit_event({"type": "tool", "name": name, "detail": str(detail)})
 
 
-def one_shot_turn(args, remembered: tuple[int, bool] | None = None) -> TurnInfo:
-    """--allow-pointing, --screen and --spoken for a one-shot run (the companion's one-shot backend).
-    `remembered`: how many earlier exchanges the run was given and whether older ones were dropped,
-    when a front-end keeps the conversation (None in the terminal's own loop)."""
-    pointing = getattr(args, "allow_pointing", False)
-    screen = None
-    if pointing and getattr(args, "screen", None):
-        try:
-            screen = screen_info(json.loads(args.screen))
-        except ValueError:
-            screen = None
-    kept, dropped = remembered if remembered is not None else (None, False)
+def one_shot_turn(args) -> TurnInfo:
+    """The turn rules for a command-line run: no screen, and spoken when the task came from the mic."""
     task = " ".join(args.task) if getattr(args, "task", None) else ""
-    return TurnInfo(pointing, getattr(args, "spoken", False), screen, history=kept, history_dropped=dropped, task=task)
+    return TurnInfo(False, getattr(args, "spoken", False), None, task=task)
 
 
-def build_agent(args, remembered: tuple[int, bool] | None = None) -> Agent:
+def build_agent(args) -> Agent:
     cfg = load_config(workdir=args.workdir, model=args.model, auto_approve=args.yes)
     provider = make_provider(cfg.provider, cfg.api_key, cfg.model, cfg.base_url, **_provider_options(cfg))
     print(startup_line(cfg), file=sys.stderr)
     audit.configure(cfg.workdir / audit.FILE_NAME)
-    announce_home()
     audit.event("engine_start", mode="oneshot" if args.task else "repl", version=__version__, **_where(cfg))
     agent = Agent(
         provider=provider,
         system_prompt=SystemPrompt(system_prompt(str(cfg.workdir), memory=memory.digest(cfg.memory_path),
                                                  surface=surface_from_env(),
-                                                 past=conversations.digest(conversations.folder(cfg.workdir),
-                                                                           drop_newest=bool(remembered and remembered[0]))),
-                                   one_shot_turn(args, remembered).rules(surface_from_env())),
+                                                 past=conversations.digest(conversations.folder(cfg.workdir))),
+                                   one_shot_turn(args).rules(surface_from_env())),
         workdir=cfg.workdir,
         approve=_approve,
         auto_approve=cfg.auto_approve,
@@ -113,10 +74,9 @@ def serve_main(args) -> int:
     requests, events = serve.isolate_stdio()
     emit = serve.stream_emitter(events)
     audit.configure(workdir_path(args.workdir) / audit.FILE_NAME)
-    home_notice = announce_home()
 
     def startup_error(text: str) -> int:
-        # The engine's stderr is kept in engine.log (D-144): a setting's value in the text can be a
+        # The engine's stderr is kept in engine.log, so it is redacted first: a setting's value in the text can be a
         # URL with a key in it.
         print(audit.redact(text), file=sys.stderr)
         audit.error("startup", "startup")
@@ -124,8 +84,8 @@ def serve_main(args) -> int:
         emit({"type": "error", "code": "startup", "text": text})
         return 2
 
-    if args.yes or args.task or args.image or args.history or args.screen or args.spoken:
-        return startup_error("[Benji] --serve takes no task, --image, --history, --screen, --spoken or --yes; "
+    if args.yes or args.task or args.image:
+        return startup_error("[Benji] --serve takes no task, --image or --yes; "
                              "send them as requests instead.")
     try:
         cfg = load_config(workdir=args.workdir, model=args.model)
@@ -143,7 +103,7 @@ def serve_main(args) -> int:
 
     def recent_titles(turn_info) -> str:
         # Read again only when a conversation starts (or the engine does), so the prompt's base
-        # stays the same through a conversation and is read from cache (D-111, D-121).
+        # stays the same through a conversation and is read from cache.
         if not past or not turn_info.history:
             past[:] = [conversations.digest(conversations.folder(cfg.workdir), drop_newest=bool(turn_info.history))]
         return past[0]
@@ -160,7 +120,7 @@ def serve_main(args) -> int:
                      cancelled=cancelled, policy=policy_mod.load(cfg.workdir))
 
     def make_job_agent(record, approve, on_tool, cancelled):
-        # A job works in its own folder (D-130 step 1): that is its working folder, so anything
+        # A job works in its own folder: that is its working folder, so anything
         # outside it is asked about as it is for any turn. No screen, no pointing.
         where = job_store.path(record["id"])
         prompt = system_prompt(str(where), memory=memory.digest(cfg.memory_path), surface=surface_from_env())
@@ -172,15 +132,12 @@ def serve_main(args) -> int:
                      skills_dir=cfg.skills_dir, memory_path=cfg.memory_path, usage_path=cfg.usage_path,
                      cancelled=cancelled, policy=policy_mod.load(cfg.workdir))
 
-    browser_link = Link()       # off until the app's switch says so (D-143); its folder is private
+    browser_link = Link()       # off until the app's switch says so; its folder is private
     info = {"version": __version__, "provider": cfg.provider, "model": cfg.model,
             "destination": cfg.destination, "host": cfg.host, "vision": cfg.vision, "effort": _effort(cfg)}
-    if home_notice:
-        info["home_notice"] = home_notice       # the one line about the move to ~/.benji, in the first run only
     serve.stop_on_signals()
     answers = cfg.workdir / answer_log.FILE_NAME if answer_log.enabled() else None
     job_store = jobs.JobStore(jobs.folder(cfg.workdir))
-    job_store.migrate()         # before any job runs: records move out of the jobs' own folders (D-177)
     audit.event("engine_start", mode="serve", version=__version__, jobs=True, browser=True, **_where(cfg))
     try:
         code = serve.run(serve.Server(make_agent, emit, info, answer_log_path=answers,
@@ -196,26 +153,9 @@ def serve_main(args) -> int:
     return code
 
 
-def announce_home() -> str:
-    """The one-time move to ~/.benji, reported once: the audit log gets the kind, stderr (and so
-    engine.log) the plain line, and the line is returned for the app's `ready`. Then the check that the
-    on-device voice still works from the new place, once."""
-    from . import home, runtime_check
-    found = home.announce()
-    notice = found.notice
-    voice = runtime_check.after_move()
-    if voice == "broken":
-        notice = f"{notice} {runtime_check.NOTICE_BROKEN}".strip()
-    if voice:
-        audit.event("voice_checked", status=voice)
-    if notice:
-        print(f"[Benji] {notice}", file=sys.stderr)
-    return notice
-
-
 def startup_line(cfg, serving: bool = False) -> str:
     """The first line on stderr: which provider and model, which HOST the data goes to (never a key),
-    whether the model reads images and how it thinks, and the working folder (D-147)."""
+    whether the model reads images and how it thinks, and the working folder."""
     extra = ""
     if cfg.preset is not None:
         extra = f"  thinking={cfg.thinking}"
@@ -321,22 +261,9 @@ def main(argv: list[str] | None = None) -> int:
                              "Used by the companion app's push-to-talk; needs no model key.")
     parser.add_argument("--image", metavar="PATH", action="append", default=[],
                         help="Attach an image (png/jpeg/gif/webp) to a one-shot task. Repeatable.")
-    parser.add_argument("--history", metavar="JSON",
-                        help="Earlier exchanges for context: a JSON list of {user, assistant}. One-shot only.")
-    parser.add_argument("--history-dropped", action="store_true",
-                        help="With --history: the front-end has already dropped older exchanges of this "
-                             "conversation, so the model is told they are gone.")
-    parser.add_argument("--allow-pointing", action="store_true",
-                        help="The attached image is the user's screen; the answer may end with pointing and drawing "
-                             "tags (benji/pointing.py).")
-    parser.add_argument("--screen", metavar="JSON",
-                        help="With --allow-pointing: what the screenshot holds, as the companion works it out "
-                             "(size, notch, menu bar, display; ScreenshotGeometry.swift).")
-    parser.add_argument("--spoken", action="store_true",
-                        help="The user spoke this task (the companion's voice input); the answer will be read aloud.")
     parser.add_argument("--serve", action="store_true",
                         help="Stay running and speak JSON lines over stdio for a front-end "
-                             "(docs/proposal-serve.md).")
+                             "(docs/architecture.md).")
     parser.add_argument("--usage", action="store_true",
                         help="Summarise Benji's logged token usage (workdir/usage.jsonl) and exit (no API call).")
     parser.add_argument("--diagnose", action="store_true",
@@ -348,7 +275,7 @@ def main(argv: list[str] | None = None) -> int:
                         help="Print the configured provider and model as JSON and exit (no API call).")
     parser.add_argument("--tts", action="store_true",
                         help="Run the on-device Kokoro speech service: JSON lines on stdio "
-                             "(benji/tts.py). Needs ./voice-setup.sh and its venv's Python; no key.")
+                             "(benji/tts.py). Needs tools/voice-setup.sh and its venv's Python; no key.")
     parser.add_argument("--version", action="version", version=f"Benji {__version__}")
     args = parser.parse_args(argv)
 
@@ -386,20 +313,6 @@ def main(argv: list[str] | None = None) -> int:
             images.append(load_image(path))
         except ImageError as e:
             print(f"[Benji] {e}", file=sys.stderr)
-            _emit_event({"type": "error", "text": str(e)})
-            return 2
-    history: list[dict] = []
-    dropped = getattr(args, "history_dropped", False)
-    if args.history:
-        try:
-            history, dropped_here = read_history(args.history)
-            dropped = dropped or dropped_here
-        except HistoryError as e:
-            print(f"[Benji] {e}", file=sys.stderr)
-            _emit_event({"type": "error", "text": str(e)})
-            return 2
-        if not args.task:
-            print("[Benji] --history needs a one-shot task", file=sys.stderr)
             return 2
     if images and not args.task:
         print("[Benji] --image needs a one-shot task, e.g. benji --image shot.png \"what's this?\"",
@@ -416,20 +329,15 @@ def main(argv: list[str] | None = None) -> int:
         print(text)
         return 0
 
-    if args.voice or args.listen:
-        args.spoken = True      # the task comes from the mic and the answer is spoken
+    args.spoken = bool(args.voice or args.listen)      # the task comes from the mic and the answer is spoken
     try:
-        # The companion keeps the conversation: the model is told how much of it this run has.
-        kept_by_front_end = bool(args.task) and (bool(args.history) or surface_from_env() == "panel")
-        agent = build_agent(args, (len(history) // 2, dropped) if kept_by_front_end else None)
+        agent = build_agent(args)
     except (SystemExit, ProviderError) as e:
         print(str(e), file=sys.stderr)
         return 2
-    agent.messages.extend(history)
 
     def run_one(text: str, attachments: list[dict] | None = None) -> None:
-        # Only a terminal sees the answer as it streams; a pipe (the companion's one-shot backend)
-        # gets the same single print as before streaming existed.
+        # A terminal sees the answer as it streams; a pipe gets it once, at the end.
         shown: list[str] = []
         if sys.stdout.isatty():
             def show(piece: str) -> None:
@@ -450,7 +358,6 @@ def main(argv: list[str] | None = None) -> int:
             print(f"\n[Benji] provider error:\n{e}\n"
                   f"[Benji] if this is a model-not-found error, set BENJI_MODEL to a valid id.",
                   file=sys.stderr)
-            _emit_event({"type": "error", "text": str(e)})
             return
         if shown and "".join(shown) == answer:
             print()                 # already on screen
@@ -458,9 +365,8 @@ def main(argv: list[str] | None = None) -> int:
             if shown:
                 print()
             print(answer)
-        _emit_event({"type": "answer", "text": answer})
         u = agent.last_usage
-        if u.get("calls") and os.environ.get("BENJI_EVENTS") != "1":
+        if u.get("calls"):
             print(f"[Benji] tokens: {u['input_tokens']:,} in, {u['output_tokens']:,} out "
                   f"({u['calls']} call{'s' if u['calls'] != 1 else ''})", file=sys.stderr)
         if args.speak:

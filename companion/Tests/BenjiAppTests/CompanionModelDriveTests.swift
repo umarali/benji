@@ -3,7 +3,7 @@ import XCTest
 @testable import BenjiApp
 import BenjiCore
 
-/// Drive mode (D-170) through the real CompanionModel and a fake backend: the consent card (named
+/// Drive mode through the real CompanionModel and a fake backend: the consent card (named
 /// goal, 45 s, only its own answer begins a drive), the notch's state with the Esc hint, the drive's
 /// steps checked again by the app, and the user's input handing the screen back. No windows, no
 /// events posted: the actuator is a fake.

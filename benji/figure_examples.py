@@ -1,4 +1,4 @@
-"""Worked figure examples (D-108 follow-up): a small hand-built, rendered-and-checked figure for each
+"""Worked figure examples: a small hand-built, rendered-and-checked figure for each
 family of thing, and a short recipe, added to a turn's rules only when the user's message looks
 like a request to draw something (`guide_for`). A small model copies an example more faithfully
 than it follows a rule, so the example is of the nearest family; it is always told to build the

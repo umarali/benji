@@ -4,17 +4,17 @@ Each line: {"ts": <unix>, "provider": "claude", "model": "...", "input_tokens": 
 "output_tokens": n, "cache_read_tokens": n, "cache_write_tokens": n}. The numbers come from
 the usage block of the response Benji already received; nothing extra is sent anywhere.
 Set BENJI_USAGE_LOG=0 to turn it off. No prompts, answers or file contents are stored. The file
-is mode 0600 (an older, wider one is tightened on the first write).
+is mode 0600 (a file with a wider mode is tightened on the first write).
 """
 
 from __future__ import annotations
 
 import json
-import os
 import time
 from pathlib import Path
 
 from . import private_file
+from .switches import switch
 
 FIELDS = ("input_tokens", "output_tokens", "cache_read_tokens", "cache_write_tokens")
 
@@ -53,7 +53,7 @@ def _int(v) -> int:
 
 
 def enabled() -> bool:
-    return os.environ.get("BENJI_USAGE_LOG", "1").strip() not in ("0", "false", "no", "off")
+    return switch("BENJI_USAGE_LOG", True)
 
 
 def record(path: str | Path, provider: str, model: str, usage: dict) -> dict | None:

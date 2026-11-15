@@ -1,7 +1,7 @@
 import XCTest
 @testable import BenjiCore
 
-/// Turn-taking that feels like talking to a person (D-122): a question ends a turn a little
+/// Turn-taking that feels like talking to a person: a question ends a turn a little
 /// sooner, an answer to Benji's own question gets time to think, and a press while Benji speaks
 /// listens at once.
 final class AdaptiveEndOfTurnTests: XCTestCase {
