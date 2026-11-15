@@ -3,6 +3,11 @@
 [![ci](https://github.com/umarali/benji/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/umarali/benji/actions/workflows/ci.yml)
 [Project page](https://umarali.github.io/benji/)
 
+[![Benji in the notch of a Mac: a typed request opens a cut-away jet engine in 3D with its fan, compressor, combustion chamber, turbine and exhaust labelled, while Benji explains it aloud](site/assets/benji-demo-jet-engine.jpg)](https://umarali.github.io/benji/#demo)
+
+*One unedited take on a Mac, made smaller for the web. A script moved the cursor and typed the request;
+the answer, the voice and the 3D drawing are Benji's own. [Watch it with sound](https://umarali.github.io/benji/#demo).*
+
 **Benji** is a voice-first assistant for the Mac that lives in the notch. Hold a key and say what
 you want, or type it. Benji runs an LLM tool-use loop that can run commands, read and write files,
 search the web, script your apps and, when you ask, look at your screen and point at what you should
