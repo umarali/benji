@@ -7,7 +7,7 @@ decision gets a new entry that supersedes it.
 
 Status values: **Active**, **Superseded by D-xx**, **Open** (needs a decision).
 
-> **Public trim.** This is the maintainer's decision log with 57 of 204 entries left out because they refer to private working material. Ids are kept, not renumbered, so gaps are expected. References to files that are not part of this repository read "(not in this export)".
+> **Public trim.** This is the maintainer's decision log with 57 of 205 entries left out because they refer to private working material. Ids are kept, not renumbered, so gaps are expected. References to files that are not part of this repository read "(not in this export)".
 
 ---
 ## Building pal: backend and CLI
@@ -1530,3 +1530,15 @@ D-198 adoption gate: validate ordinary figure-on and synthetic screen-context be
 - **Why:** a required check that fails by chance teaches everyone to ignore it. A speed claim about a user's Mac cannot be judged on someone else's shared machine.
 - **Alternatives:** raise the product's budget (rejected: it would make every user wait longer to hide a test problem); retry failed jobs (rejected: hides real failures).
 - **Status:** see the pull request's checks.
+
+### D-205 · Second review of the public repository: a third chance failure, link previews, newer CI actions (2026-11-15 11:15 PKT)
+
+- **Who:** the owner asked for a second pass over anything the first review left; Claude carried it out.
+- **Found by building from a fresh clone:** every link in the documents resolves except the two `v0.1.0` release links in the changelog, which wait for the tag. The app builds from a fresh clone on the maintainer's Mac. A new user with no key was told which variables to set but not where to put them, and `.benji.env.example` offered a key file in the current folder, which Benji never reads.
+- **Home-folder tests:** `selftest_home.py` used the real "is another Benji running?" check. A process that is starting or exiting shows no environment to `ps -E` for a moment and is rightly counted as "maybe this home", so a test's folder move was skipped by chance and the run crashed. Inside these tests a sighting is now looked at again for up to a second: something really running is still there, a passing one is gone. The product's check is unchanged.
+- **Project page:** link-preview tags and a 1200 by 630 preview image made from the existing wordmark and icon.
+- **CI:** the GitHub actions move to their current major versions (the old ones ran on a retired Node version) and the extension tests run on Node 22.
+- **Why:** each of these is something a first visitor or first contributor meets.
+- **Alternatives:** leave the chance failure (rejected: it is the third of its kind, and a red check on `main` is read as a broken project).
+- **Status:** see the pull request's checks.
+

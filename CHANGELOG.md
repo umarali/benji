@@ -12,6 +12,8 @@ over weeks), **experimental** (unit-tested, run live once and briefly) or **not 
 ## [Unreleased]
 
 ### Changed
+- **With no key set, Benji now says where one goes**: `~/.benji.env`, copied from `.benji.env.example`, or your shell. The
+  example file no longer suggests a key file in the current folder, which Benji never reads.
 - **Chilly is now Benji.** The app is `Benji.app`, the bundle id `com.emerssive.heybenji.app`, the engine `python3 -m benji`, the data
   folder `~/.benji`, the key file `~/.benji.env` and the settings `BENJI_*`. Your data moves on first launch with one atomic
   rename, from `~/.chilly` (or `~/chilly`, or `~/pal`), and your settings come across. `~/.chilly.env` is renamed to `~/.benji.env`. `CHILLY_*` and `PAL_*` variables and
