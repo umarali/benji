@@ -41,12 +41,10 @@ verdict and, optionally, a person's rubric answers. The format is at the top of 
 | `card` | the fenced `card` block and the pointing tags | a card when one belongs and none when it doesn't, no diagram drawn over the screen, labels ≤ 28 characters, chips ≤ 48, short spoken replies |
 | `beats` | the turn's events (card lines streamed between sentences) | the card line first, items spread over sentences, no card-line text spoken, sentences per part |
 
-The first 43, with their human labels, come from the real model's replies in earlier evals of each
-feature: 10 card and 11 beats turns by Haiku 5.5 low, and 11 figures each by Haiku 5.5 low and Sonnet
-5.5 low. The questions are typed and the screens synthetic; nothing
-came from the user's own turns.
+The recorded fixtures are real model replies to typed questions on synthetic screens, each with a
+human label.
 
-**The user's own turns** go in `evals/fixtures/private/`, which git and the public export leave out:
+**Your own turns** go in `evals/fixtures/private/`, which git ignores:
 
 ```bash
 python3 -I tools/eval.py capture --answers ~/.benji/answers.jsonl --run t26 --request "what you said" --kind card

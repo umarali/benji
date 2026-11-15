@@ -5,7 +5,7 @@
 <h1 align="center">Benji</h1>
 
 <p align="center">
-  A Mac assistant in your notch that sees your screen, talks, and asks before it acts.<br>
+  A Mac assistant in your notch that sees your screen, talks, and asks before anything risky.<br>
   Bring your own model.
 </p>
 
@@ -37,12 +37,12 @@
   listening, which you can turn off in Settings › Voice. Speech is transcribed on your Mac.
 - **Get things done.** Run commands, read and write files, search the web, and script your apps
   with AppleScript and Shortcuts.
-- **See your screen.** A screenshot goes with each message (Settings › Screen: Off, Ask or On),
-  and Benji can point at the control you need.
+- **See your screen.** A screenshot goes with each message (Settings › Screen: Off, Ask or On).
+  Benji can point at the control you need, or click, scroll and type there while you watch.
 - **Draw it in 3D.** Ask how something works and Benji builds a labelled model you can turn.
 - **Work in the background.** Hand off a longer task; it runs in its own folder while you carry on.
-- **Ask before acting.** Anything destructive or outward-facing waits for your yes. The rules are
-  in code, not only in the prompt.
+- **Ask before anything risky.** Deleting, sending, buying or writing outside its folder waits for
+  your yes. The rules are in code, not only in the prompt.
 - **Use your own model.** Claude by default; OpenAI, DeepSeek, GLM, Kimi or Qwen, or a model on
   your own Mac through Ollama or LM Studio.
 
@@ -60,20 +60,20 @@ python3 tools/isolated_run.py -- python3 -m benji --version   # offline, no key 
 cd companion && ./build.sh && open Benji.app
 ```
 
-Keep the app inside the checkout: it loads its engine from there. To add a model key, send a
-first message and grant permissions only when you need them, follow the
-[setup guide](docs/setup.md).
+Keep the app inside the checkout: it loads its engine from there. The [setup guide](docs/setup.md)
+covers the model key, a first message, and permissions.
 
 ## Safety and privacy
 
-- **A gate in code.** Every tool call is classed before it runs. Destructive commands, sends and
-  writes outside Benji's folder ask first. File tools refuse keys, mail, messages and browser
-  data; a shell command that reads them asks.
+- **Rules in code.** Every tool call is checked before it runs. On screen, scrolling, tabs, links
+  and menus go ahead while you watch; any step that could send, buy, delete or close something
+  asks. After Benji reads a web page, every change it makes asks. Keys, mail, messages and
+  browser data are never read without your yes.
 - **Nothing of its own leaves your Mac.** No telemetry, no account, no hosted backend. Your
   requests go to the model provider you choose. A model you run yourself keeps the model's work
   on your Mac; web search and fetch still go out.
-- **Benji's folder stays on your Mac.** The audit log holds metadata only. Saved conversations
-  and the answer log (`BENJI_ANSWER_LOG=0` turns it off) hold what was said. Keys are never logged.
+- **Your history stays on your Mac.** Conversations and the model's answers are saved in Benji's
+  folder; the audit log records what ran, never what was said. Keys are never logged.
 
 Details: [safety, background jobs and browser reach](docs/safety.md) · [privacy](docs/privacy.md)
 · [reporting a vulnerability](.github/SECURITY.md)
@@ -90,7 +90,7 @@ Details: [safety, background jobs and browser reach](docs/safety.md) · [privacy
 | [Privacy](docs/privacy.md) | What each provider receives and what stays on your Mac |
 | [Building from source](docs/building.md) | Requirements, signing, permissions, offline checks, layout |
 | [Model providers](docs/providers.md) | Defaults, regions and what has been checked for each |
-| [Roadmap](docs/ROADMAP.md) · [Changelog](CHANGELOG.md) | Where the project may go, and what changed |
+| [Roadmap](docs/ROADMAP.md) · [Changelog](CHANGELOG.md) | What may come next, and what changed |
 
 ## Contributing
 

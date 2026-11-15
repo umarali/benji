@@ -52,7 +52,7 @@ def run(check, here: Path) -> None:
     front = readme + "".join(pages.values())
     check("the README and its reference pages hold no decision ids", not re.search(r"\bD-\d+\b", front))
     check("the README links each reference page", all(f"docs/{n}.md" in readme for n in pages))
-    rows = {m.group(1).strip(): m.group(2).strip() for m in re.finditer(r"^\| ([^|]+) \| (Stable|Experimental|Not live-tested|Not available / untested) \|", pages["status"], re.M)}
+    rows = {m.group(1).strip(): m.group(2).strip() for m in re.finditer(r"^\| ([^|]+) \| (Stable|Experimental|Not live-tested|Not available) \|", pages["status"], re.M)}
 
     def label(sub: str) -> str:
         for k, v in rows.items():
@@ -62,17 +62,18 @@ def run(check, here: Path) -> None:
     check("the status table labels jobs and logging 'Experimental'", label("Background jobs") == "Experimental"
           and label("audit log") == "Experimental")
     check("the status table labels the browser and every provider but Claude 'Not live-tested'",
-          label("Browser reach") == "Not live-tested" and label("OpenAI provider") == "Not live-tested"
-          and label("DeepSeek, GLM, Kimi") == "Not live-tested" and label("Ollama and LM Studio") == "Not live-tested")
+          label("Browser reach") == "Not live-tested" and label("OpenAI, DeepSeek, GLM, Kimi") == "Not live-tested"
+          and label("Ollama and LM Studio") == "Not live-tested")
     check("the status table never marks jobs, browser or the new providers 'Stable'",
-          not any(v == "Stable" and re.search(r"job|browser|deepseek|glm|kimi|qwen|ollama|openai|audit", k, re.I) for k, v in rows.items()))
+          not any(v == "Stable" and re.search(r"job|browser|deepseek|glm|kimi|qwen|ollama|openai|audit|clicking", k, re.I) for k, v in rows.items()))
     check("the build page says how to build from source: xcrun swift, build.sh, the local certificate, ad-hoc resets, Gatekeeper, RELEASING",
           all(s in pages["building"] for s in ("xcrun swift", "./build.sh", "Benji Local Signing", "ad hoc", "Gatekeeper", "RELEASING.md", "no notarised download")))
     check("the README and its pages never send a new user to the old certificate name or an upgrade they can't have",
           "Chilly" not in front and "~/.chilly" not in front)
     _check_sign_identity(check, here)
-    check("the reference pages explain the safety model, jobs, browser reach, and what each provider sees",
-          all(s in pages["safety"] for s in ("## Safety model", "## Background jobs", "## Browser reach", "benji --diagnose"))
+    check("the reference pages explain the rules, acting on the screen, jobs, browser reach, and what each provider sees",
+          all(s in pages["safety"] for s in ("## What runs, what asks, what is refused", "## Acting on your screen",
+                                             "## Background jobs", "## Browser reach", "benji --diagnose"))
           and "What the provider sees" in pages["privacy"])
     releasing = (here / "docs" / "RELEASING.md").read_text()
     risky = [l for l in releasing.splitlines() if re.search(r"^(codesign|xcrun notarytool|xcrun stapler|git tag|git push|ditto|security find|spctl)", l.strip())]
@@ -94,8 +95,8 @@ def run(check, here: Path) -> None:
     check("CHANGELOG.md is Keep a Changelog: an Unreleased section and a 0.1.0 entry that names what is not live-tested",
           "keepachangelog.com" in cl and "## [Unreleased]" in cl and "## [0.1.0]" in cl and "Not live-tested" in cl.replace("not live-tested", "Not live-tested"))
     rm = (here / "docs" / "ROADMAP.md").read_text()
-    check("ROADMAP.md says it is intentions, lists per-action classing in the browser, live verification and notarised builds, and says Windows is not planned",
-          "intentions, not promises" in rm and "per-action classing" in rm and "Live verification" in rm and "Notarised builds" in rm and "Windows" in rm and "Not planned" in rm)
+    check("ROADMAP.md says it is intentions, lists browser acting in a real browser, live verification and notarised builds, and says Windows is not planned",
+          "intentions, not promises" in rm and "Browser acting in a real browser" in rm and "Live verification" in rm and "Notarised builds" in rm and "Windows" in rm and "Not planned" in rm)
     sec = (here / ".github" / "SECURITY.md").read_text()
     check("the private contacts are filled in: no placeholder, a real address in both files",
           "OWNER-" "TODO" not in sec + coc and re.search(r"[\w.+-]+@(?!example\.)[\w-]+\.[a-z]{2,}", sec) and re.search(r"[\w.+-]+@(?!example\.)[\w-]+\.[a-z]{2,}", coc))

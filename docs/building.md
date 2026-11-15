@@ -64,7 +64,7 @@ Benji works without the ones you decline.
 | Screen Recording | Screenshots with your messages, as Settings › Screen sets, and pointing |
 | Automation (per app) | AppleScript tasks you ask for; macOS asks the first time for each app, and Benji still asks you |
 
-The first launch opens a small setup window for these. Reopen it from **Settings → Permissions →
+The first launch opens a small setup window for these. Reopen it from **Settings › Permissions ›
 Guided setup…**. The menu-bar icon also shows **Finish Setup…** while a permission is missing, and
 **Show / Hide Benji** opens the panel.
 
@@ -111,5 +111,4 @@ docs/                these pages, the design system and the decision log
 
 [How Benji works](architecture.md) explains how the parts fit together. The design system (name,
 icon, colour and type tokens, the notch, motion, sound and the pointing overlay) is in
-[design-system/](design-system/), and the decision log, trimmed for this repository, is
-[decisions.md](decisions.md).
+[design-system/](design-system/), and the decision log is [decisions.md](decisions.md).

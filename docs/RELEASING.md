@@ -1,6 +1,6 @@
 # Releasing Benji
 
-For the owner. **Nothing here has been run.** A release needs an Apple Developer ID certificate and
+For the owner. A release needs an Apple Developer ID certificate and
 an Apple ID, which a coding session cannot and should not use. Every command marked **(owner)** signs,
 uploads or publishes something and is yours to run on your own Mac. Replace `<…>` placeholders; keep
 passwords and the app-specific password out of shell history, scripts and the repository.
@@ -29,10 +29,7 @@ compare it); until then it equals the short version.
 - [ ] `python3 -I companion/ServeCheck/run.py` passes.
 - [ ] `node --test browser-extension/test/core.test.mjs browser-extension/test/page-text.test.mjs` passes.
 - [ ] CI is green on the release commit on GitHub.
-- [ ] In the maintainer's private repository, the export tool run on the release commit with
-  `--require-filled` passes. (The tool is not in the public repository. Skip this if you publish ordinary history.)
-- [ ] `SECURITY.md` and `CODE_OF_CONDUCT.md` have a real contact and no placeholder is left
-  (the export tool's `--require-filled` run above passes).
+- [ ] `SECURITY.md` and `CODE_OF_CONDUCT.md` have a real contact and no placeholder is left.
 - [ ] Live checks owed for any feature the release notes call more than "experimental" are done and
   written down (the maintainer's readiness notes list them under "Live verification still owed"). Do not upgrade a label in
   the status table (`docs/status.md`) without one.
@@ -93,8 +90,8 @@ Open points the first release must settle (not decided here):
   `BENJI_DIR`). A downloaded app has no repo beside it, so a distributable build must either bundle the
   `benji/` folder inside `Benji.app/Contents/Resources` (and `AssistantLocator` must look there) or
   document a separate install. This is not built yet and is the largest piece of work before a download
-  exists. Python itself is not bundled: the engine uses the system `python3` (the Xcode command-line
-  tools provide one).
+  exists. Python is not bundled either: the app runs `python3 -m benji --serve` through a zsh
+  login shell, so a downloaded build still needs Python 3.11 or later on that shell's `PATH`.
 
 ### 5. Notarise (owner)
 

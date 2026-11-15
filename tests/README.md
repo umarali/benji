@@ -33,5 +33,4 @@ environment, so nothing touches your own Benji folder or keys. The run ends with
 To add a check, put it in the file for its subject, next to the closest existing one, using the
 fakes already there.
 
-The maintainer's repository has a few more checks, for parts of the project that are not
-published; `selftest.py` runs them only where they exist.
+A check file that is not in your checkout is skipped.

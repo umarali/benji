@@ -7,7 +7,7 @@ decision gets a new entry that supersedes it.
 
 Status values: **Active**, **Superseded by D-xx**, **Open** (needs a decision).
 
-> **Public trim.** This is the maintainer's decision log with 58 of 212 entries left out because they refer to private working material. Ids are kept, not renumbered, so gaps are expected. References to files that are not part of this repository read "(not in this export)".
+> **Public trim.** This is the maintainer's decision log with 58 of 213 entries left out because they refer to private working material. Ids are kept, not renumbered, so gaps are expected. References to files that are not part of this repository read "(not in this export)".
 
 ---
 ## Building pal: backend and CLI
@@ -1603,4 +1603,12 @@ D-198 adoption gate: validate ordinary figure-on and synthetic screen-context be
 - **App bugs fixed:** an engine started before the first message (by the talk key, or the browser or schedules switch) was not given the conversation the app was showing; a message queued before the engine was ready did not say whether that engine runs schedules.
 - **Docs corrected:** the screen modes (Off, Ask, On; new installs start in On) replace "one screenshot with the next message only"; listening starts when the panel opens and can continue after it closes; `answers.jsonl` and saved conversations hold content (the audit log is metadata only); file tools refuse private locations, while a shell command that reads them asks; cloud transcription is available in the app by a setting; a local model keeps the model's work local, while web tools still go out; plain `http://` is allowed for custom servers on private addresses; keys can move to the Keychain; the CI runners; the release steps and both version numbers; providers: Anthropic's API has been used live; an uninstall section in the setup guide. One finding was not taken: it asked to drop links to the decision log and the design system, which are public.
 - **Alternatives:** the browser hardening findings (checking a page did not change between the read and the act, DNS rebinding, closing only a job's own tabs): not chosen now. Carrying a screenshot's taint: rejected, because the picture is gone from the conversation.
+- **Status:** Active.
+
+### D-214 · Plain docs, from a Grok review; no notes on how the demo was made (2026-11-16 00:23 PKT)
+
+- **Who:** the owner, on the demo caption ("One unedited take, made smaller for the web. A script moved the cursor and typed the request"): "Since this is real and it happened on a real Mac, why not just leave it natural?", and: "go through the whole documentation ... with Grok and identify what is really wrong there and how we could improve that." Grok 4.7 (extra-high reasoning requested) reviewed every public page, read-only; Claude (Opus 5.5) checked each finding against the code and rewrote the pages.
+- **What:** the demo caption is the request and a link, nothing about how it was recorded. The README no longer says Benji "asks before it acts": by default it scrolls, opens tabs, links and menus on screen without a card, so the line is now "asks before anything risky", and the safety page gains a section on acting on the screen and drive. Other corrections: the audit log can hold host names; Sonnet is about 20 times Haiku's price, not twelve; Esc and Return mean No on a conversation card, ⌘Return Yes, and a job's card is answered only by its row; Read answers aloud is in Settings › General; the hold-back switch is in Settings › Voice; history is as many exchanges as fit in about 24,000 characters, at least the last 10; the app's Python is whatever its zsh login shell finds. Notes about how the docs were written, review rounds, dates of readings, decision ids and private tooling are gone from the public pages; the status table's cells are one line each; the setup guide is shorter and gains Update; the provider matrix moves to the end as notes for changing a provider.
+- **Why:** the docs read like lab notes and, in places, promised more than the defaults do.
+- **Alternatives:** the review's longer proposed text in places (kept shorter); merging safety and privacy, or setup and building (the review advised against both, and so did Claude).
 - **Status:** Active.

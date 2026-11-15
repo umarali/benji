@@ -17,21 +17,25 @@ provider, and the optional extras.
   starts listening too, and listening can go on after the panel closes; Settings › Voice has
   **Listen while Benji is open** and **Keep listening when the panel closes** to turn these off.
   Speech is transcribed on your Mac with Apple's on-device recognition. Spoken questions are
-  answered aloud, and typed ones too if you turn on **Read answers aloud**. The key needs Accessibility; the mic button in the panel works without it.
+  answered aloud; typed ones are too if you turn on Settings › General › **Read answers aloud**.
+  The talk key needs Accessibility; the mic button in the panel works without it, and
   `defaults write com.emerssive.heybenji.app talkKey off` turns the key off.
 - **Type:** open the panel from the notch or the menu-bar icon and use the message box.
-- **Esc:** stops an answer in progress, then folds the panel; otherwise it folds or closes it. On
-  an approval card it means **No**; in Settings it goes back; in the conversation list it goes home.
-- **Show your screen:** Settings › Screen decides. **Off** never sends it; **Ask** shows a card
+- **Keys:** Esc stops an answer in progress, then folds the panel. On an approval card in the
+  conversation, Esc and Return mean **No** and ⌘Return means **Yes**. In Settings, Esc goes back;
+  in the conversation list, it goes home. A background job's card is answered only by its own
+  buttons.
+- **Show your screen:** Settings › Screen › Let Benji see your screen. **Off** never sends it; **Ask** shows a card
   before each message; **On** sends a screenshot with every message, and new installs start in
   On. Each capture goes with one message; there is no continuous recording. The answer may point
   at a control with a ring or outline a region. If Screen Recording is not granted, the message
   waits on the card: choose **Send without screen** to send it alone, or Cancel to put it back in
-  the message box.
+  the message box. Benji can also click, scroll and type for you: see
+  [Acting on your screen](safety.md#acting-on-your-screen).
 
 ### What Benji can do
 
-- **Do things:** shell commands, files in its working folder (`~/.benji` by default), web search
+- **Do things:** shell commands, files in Benji's folder (`~/.benji` by default), web search
   and fetch, AppleScript and Shortcuts, skills (folders of instructions you can add) and a small
   memory of durable facts.
 - **Work in the background:** "In the background, find three options and write a comparison to a
@@ -57,19 +61,20 @@ provider, and the optional extras.
 export BENJI_PROVIDER=claude   # or openai, deepseek, glm, kimi, qwen, ollama, lmstudio (else detected from the key present)
 export BENJI_MODEL=...         # exact model id, if the default is rejected
 export BENJI_EFFORT=low        # Claude only: low (default), medium, high, xhigh, max
-export BENJI_WORKDIR=~/.benji  # working folder (default ~/.benji)
+export BENJI_WORKDIR=~/.benji  # Benji's folder (default ~/.benji)
+export BENJI_THINKING=off      # off (default), on, or default (the provider's own setting); thinking is never shown or logged
+export BENJI_MAX_TOKENS=8192   # the answer length limit (default 8192; 16000 for Kimi)
 ```
 
-Defaults are `claude-haiku-5-5` and `gpt-4o`, at effort `low`. `BENJI_MODEL=claude-sonnet-5-5`
-gives better-assembled 3D figures at roughly twelve times the cost. If your account uses
-different ids, set `BENJI_MODEL`.
+The default model is `claude-haiku-5-5` at effort `low`. `BENJI_MODEL=claude-sonnet-5-5` draws
+better 3D figures at about 20 times the price (Settings › General › Model offers the same
+choice).
 
 ### Choosing a model provider
 
-Benji's other providers are presets: each sets the address, the key variable and a default model,
-and `BENJI_MODEL` and `BENJI_BASE_URL` still override them. Model ids change quickly, so every
-default below is just what the provider's own documentation named on 2026-11-05; if one is rejected,
-set `BENJI_MODEL` to a current id from the provider's model list.
+Each provider is a preset: it sets the address, the key variable and a default model, and
+`BENJI_MODEL` and `BENJI_BASE_URL` still override them. Model ids change quickly; if a default is
+rejected, set `BENJI_MODEL` to a current id from the provider's model list.
 
 | `BENJI_PROVIDER` | Key variable | Default model | Data goes to | Reads images (Screen) |
 |---|---|---|---|---|
@@ -88,34 +93,20 @@ export DEEPSEEK_API_KEY=...        # in ~/.benji.env is better than your shell h
 python3 -m benji --print-provider # shows the provider, model, host and whether Screen can work, no API call
 ```
 
-- **Hosted providers are always https.** Plain `http://` is accepted only for `ollama` and
-  `lmstudio` on `localhost` or `127.0.0.1` (a custom server may also be a private address, `.local`
-  or `.ts.net`). GLM and Kimi also sell "coding plan" subscriptions on separate endpoints that their
-  terms limit to their listed coding tools; Benji refuses those endpoints.
-- **Regions.** GLM, Kimi and Qwen run an international and a China platform, with separate accounts
-  and keys that do not work on the other. `BENJI_REGION=intl` (default) or `cn` picks the platform.
-  Alibaba's documentation now prefers workspace-specific hosts
-  (`https://<workspace-id>.<region>.maas.aliyuncs.com/compatible-mode/v1`); set that as
-  `BENJI_BASE_URL` and the same `DASHSCOPE_API_KEY` is used for it.
-- **Thinking.** Several of these models think before answering, which is slow for a voice
-  assistant, so Benji asks them not to (`BENJI_THINKING=off`, the default). GLM-5.3 and Kimi K3
-  cannot switch thinking off; Benji asks for the lowest effort there instead. `BENJI_THINKING=on`
-  asks for more, and `default` leaves the provider's own setting. What a model thinks is never
-  shown, spoken or logged.
-- **Screen and images.** A model that cannot read images cannot be sent your screen. Benji decides
-  from the table above (and a name check for local models); if it says the model cannot, Screen
-  stays off for the session and Settings › Screen says why. `BENJI_VISION=1` or `0` overrides the
-  table when you know better.
-- **Output length.** `BENJI_MAX_TOKENS` (default 8192; 16000 for Kimi) sets the limit sent as the
-  provider's own parameter; models that count their thinking against it need room.
-- **Rate limits.** A 429 or a 5xx is retried twice with a short wait; a refused balance or quota is
-  not, and the message says what the provider said.
-- **Pricing and quality differ.** Benji's prompts were written and tried against Claude; other models
-  may handle tools, the approval wording or pointing less well. Expect to try a stronger model if
-  one misbehaves.
-- **Not live-tested by the maintainer.** See [feature status](status.md) and
-  [providers.md](providers.md); `tools/model_smoke.py <provider>` is a five-minute live check
-  you can run with your own key.
+- **https only for hosted providers.** Plain `http://` is accepted for Ollama and LM Studio on
+  your own computer, and for a custom server on a private address or a `.local` or `.ts.net`
+  host. GLM's and Kimi's "coding plan" endpoints are refused: their terms limit them to listed
+  coding tools.
+- **Regions.** GLM, Kimi and Qwen each run an international and a China platform, with separate
+  accounts and keys. `BENJI_REGION=intl` (default) or `cn` picks one.
+- **Thinking** is off by default (`BENJI_THINKING=off`), because a spoken answer should come back
+  quickly. GLM-5.3 and Kimi K3 cannot turn it off, so Benji asks them for the lowest effort.
+- **Screen.** A model that cannot read images is never sent your screen, and Settings › Screen
+  says why. `BENJI_VISION=1` or `0` overrides the table.
+- **Only Claude has been used live.** Benji's prompts were written against it, and other models
+  may handle tools, approval wording or pointing less well. `tools/model_smoke.py <provider>`
+  is a five-minute live check with your own key. [Model providers](providers.md) has the details
+  for each provider.
 
 Open-weight or other models, on any server that speaks the OpenAI Chat Completions format
 (OpenRouter, Together, Groq, llama.cpp, MLX, or Ollama / LM Studio at another address):
