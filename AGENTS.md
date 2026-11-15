@@ -1,7 +1,7 @@
 # Benji: rules for every coding agent
 
 - Code: `benji/` (Python engine), `companion/` (SwiftPM macOS app), `browser-extension/`.
-  What has run live is in the README's status table. Decisions: `docs/decisions.md` (append-only; never renumber).
+  What has run live is in the status table, `docs/status.md`. Decisions: `docs/decisions.md` (append-only; never renumber).
 - Work only inside your assigned checkout or git worktree. Never read or write `~/.benji`, `~/.benji.env`,
   any key file, or anything else in the home folder. Your brief may name more private paths; treat them the same.
 - No API keys on command lines, in logs or in commits. No live model or paid API calls unless the brief says so.

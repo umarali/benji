@@ -336,8 +336,12 @@ def run(check, here: Path) -> None:
     # ---- the README, release and community files -------------------------------------------------------------
     print("release and community files:")
     readme = (here / "README.md").read_text()
-    check("the README holds no decision ids", not re.search(r"\bD-\d+\b", readme))
-    rows = {m.group(1).strip(): m.group(2).strip() for m in re.finditer(r"^\| ([^|]+) \| (Stable|Experimental|Not live-tested|Not available / untested) \|", readme, re.M)}
+    # The README is the short front page; the reference text it links to lives in these pages.
+    pages = {n: (here / "docs" / f"{n}.md").read_text() for n in ("status", "safety", "privacy", "configuration", "building")}
+    front = readme + "".join(pages.values())
+    check("the README and its reference pages hold no decision ids", not re.search(r"\bD-\d+\b", front))
+    check("the README links each reference page", all(f"docs/{n}.md" in readme for n in pages))
+    rows = {m.group(1).strip(): m.group(2).strip() for m in re.finditer(r"^\| ([^|]+) \| (Stable|Experimental|Not live-tested|Not available / untested) \|", pages["status"], re.M)}
 
     def label(sub: str) -> str:
         for k, v in rows.items():
@@ -351,13 +355,14 @@ def run(check, here: Path) -> None:
           and label("DeepSeek, GLM, Kimi") == "Not live-tested" and label("Ollama and LM Studio") == "Not live-tested")
     check("the status table never marks jobs, browser or the new providers 'Stable'",
           not any(v == "Stable" and re.search(r"job|browser|deepseek|glm|kimi|qwen|ollama|openai|audit", k, re.I) for k, v in rows.items()))
-    check("the README says how to build from source: xcrun swift, build.sh, the local certificate, ad-hoc resets, Gatekeeper, RELEASING",
-          all(s in readme for s in ("xcrun swift", "./build.sh", "Benji Local Signing", "ad hoc", "Gatekeeper", "docs/RELEASING.md", "no notarised download")))
-    check("the README never sends a new user to the old certificate name or an upgrade they can't have",
-          "Chilly" not in readme and "~/.chilly" not in readme)
+    check("the build page says how to build from source: xcrun swift, build.sh, the local certificate, ad-hoc resets, Gatekeeper, RELEASING",
+          all(s in pages["building"] for s in ("xcrun swift", "./build.sh", "Benji Local Signing", "ad hoc", "Gatekeeper", "RELEASING.md", "no notarised download")))
+    check("the README and its pages never send a new user to the old certificate name or an upgrade they can't have",
+          "Chilly" not in front and "~/.chilly" not in front)
     _check_sign_identity(check, here)
-    check("the README explains the safety model, jobs, browser reach, and what each provider sees",
-          all(s in readme for s in ("## Safety model", "## Background jobs", "## Browser reach", "What the provider sees", "benji --diagnose")))
+    check("the reference pages explain the safety model, jobs, browser reach, and what each provider sees",
+          all(s in pages["safety"] for s in ("## Safety model", "## Background jobs", "## Browser reach", "benji --diagnose"))
+          and "What the provider sees" in pages["privacy"])
     releasing = (here / "docs" / "RELEASING.md").read_text()
     risky = [l for l in releasing.splitlines() if re.search(r"^(codesign|xcrun notarytool|xcrun stapler|git tag|git push|ditto|security find|spctl)", l.strip())]
     check("every signing, notarising, tagging and pushing command in RELEASING.md is marked as the owner's",
