@@ -41,6 +41,9 @@
   Benji can point at the control you need, or click, scroll and type there while you watch.
 - **Draw it in 3D.** Ask how something works and Benji builds a labelled model you can turn.
 - **Work in the background.** Hand off a longer task; it runs in its own folder while you carry on.
+- **From your phone.** Send it a task from your phone's browser over your own Tailscale network,
+  follow along, stop it, or answer its approvals there. Experimental:
+  [how to set it up](docs/remote-control.md).
 - **Ask before anything risky.** Deleting, sending, buying or writing outside its folder waits for
   your yes. The rules are in code, not only in the prompt.
 - **Use your own model.** Claude by default; OpenAI, DeepSeek, GLM, Kimi or Qwen, or a model on
