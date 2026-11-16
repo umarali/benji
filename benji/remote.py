@@ -15,6 +15,7 @@ import json
 import re
 import secrets
 import socket
+import socketserver
 import sys
 import threading
 import time
@@ -156,6 +157,12 @@ class Server(ThreadingHTTPServer):
         except Exception:
             self.server_close()
             raise
+
+    def server_bind(self):
+        # HTTPServer.server_bind asks DNS for the host's full name, which can stall for many seconds
+        # on some networks. The listener is always 127.0.0.1 and never uses that name.
+        socketserver.TCPServer.server_bind(self)
+        self.server_name, self.server_port = self.server_address[:2]
 
     def process_request(self, request, client_address):
         if not self.slots.acquire(blocking=False):

@@ -16,6 +16,7 @@ import http.client
 import json
 import os
 import queue
+import signal
 import socket
 import subprocess
 import sys
@@ -297,8 +298,19 @@ class Transport(unittest.TestCase):
             s.close()
         self.assertEqual(self.request()[0], 200)
 
+    def test_binding_never_asks_dns_for_the_host_name(self):
+        def stalls(*args):
+            raise AssertionError("getfqdn called")
+        with patch.object(socket, "getfqdn", side_effect=stalls):
+            server = self.remote.Server(0, "http://127.0.0.1:0", self.remote.Relay(lambda value: None))
+        try:
+            self.assertEqual(server.server_name, "127.0.0.1")
+        finally:
+            server.server_close()
+
     def test_the_child_process_closes_its_listener_when_the_app_closes_its_pipe(self):
-        child = subprocess.Popen([sys.executable, "-m", "benji.remote", "--port", "0", "--origin", "http://127.0.0.1:0"],
+        child = subprocess.Popen([sys.executable, "-X", "faulthandler", "-m", "benji.remote", "--port", "0",
+                                  "--origin", "http://127.0.0.1:0"],
                                  stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=HERE)
         try:
             lines = queue.Queue()
@@ -307,9 +319,14 @@ class Transport(unittest.TestCase):
                 # A cold start on a busy CI runner can take several seconds.
                 first = json.loads(lines.get(timeout=30))
             except queue.Empty:
-                child.kill()
+                # faulthandler prints every thread's stack on SIGABRT: where the child is stuck.
+                child.send_signal(signal.SIGABRT)
+                try:
+                    child.wait(5)
+                except subprocess.TimeoutExpired:
+                    child.kill()
                 self.fail("the listener never said it was ready; its stderr: "
-                          + child.stderr.read().decode(errors="replace")[-2000:])
+                          + child.stderr.read().decode(errors="replace")[-4000:])
             self.assertEqual(first["type"], "ready")
             self.assertGreater(len(first["token"]), 32)
             port = urlsplit(first["origin"]).port
