@@ -303,7 +303,13 @@ class Transport(unittest.TestCase):
         try:
             lines = queue.Queue()
             threading.Thread(target=lambda: lines.put(child.stdout.readline()), daemon=True).start()
-            first = json.loads(lines.get(timeout=5))
+            try:
+                # A cold start on a busy CI runner can take several seconds.
+                first = json.loads(lines.get(timeout=30))
+            except queue.Empty:
+                child.kill()
+                self.fail("the listener never said it was ready; its stderr: "
+                          + child.stderr.read().decode(errors="replace")[-2000:])
             self.assertEqual(first["type"], "ready")
             self.assertGreater(len(first["token"]), 32)
             port = urlsplit(first["origin"]).port
