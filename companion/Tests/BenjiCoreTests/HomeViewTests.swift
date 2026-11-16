@@ -142,8 +142,8 @@ final class HomeViewTests: XCTestCase {
 
     // MARK: Settings › Memory
 
-    func testTheMemoryPaneSitsBetweenScreenAndShortcuts() {
-        XCTAssertEqual(SettingsPane.all.map(\.title), ["General", "Voice", "Screen", "Browser", "Memory", "Shortcuts", "Permissions"])
+    func testTheMemoryPaneSitsBetweenBrowserAndPhone() {
+        XCTAssertEqual(SettingsPane.all.map(\.title), ["General", "Voice", "Screen", "Browser", "Memory", "Phone", "Shortcuts", "Permissions"])
         XCTAssertEqual(Set(SettingsPane.all.map(\.symbol)).count, SettingsPane.all.count)
         XCTAssertEqual(Set(SettingsPane.all.map(\.id)).count, SettingsPane.all.count)
         XCTAssertTrue(SettingsPane.memory.subtitle.hasSuffix("."))

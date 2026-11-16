@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light dark"><title>Benji · Phone control</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
+<body><main><header><span class="wordmark">Benji</span><span id="connection" role="status">Not connected</span></header>
+<h1>Send a task to Benji</h1><p class="intro">Send a task to the conversation open on your Mac. Benji uses the model you chose and asks before actions that need your approval.</p>
+<section id="pair"><label for="key">Access key from Benji on your Mac</label><div class="pairrow"><input id="key" type="password" autocomplete="off" autocapitalize="none" spellcheck="false"><button id="connect">Connect</button></div><p class="hint">It is in Settings › Phone, in Benji on your Mac. The key stays in this page's memory. Reloading asks for it again.</p></section>
+<section id="controls" hidden><div class="tools"><span>Text tasks · Screen control off</span><button id="disconnect" class="quiet">Disconnect</button></div>
+<div id="task" hidden><h2 id="task-title"></h2><p id="task-status" role="status"></p><div id="lines" aria-live="polite" aria-relevant="additions text"></div><p id="stream" class="reply"></p>
+<section id="approval" hidden><h2>Benji needs your decision</h2><p id="action"></p><pre id="target"></pre><p id="approval-hint" class="hint">This request expires on the Mac. Read the full action before approving.</p><div id="approval-actions" class="actions"><button id="deny" class="quiet">Decline</button><button id="approve">Approve this action</button></div></section>
+<button id="stop" class="quiet" hidden>Stop this task</button></div>
+<p id="availability" class="hint" role="status"></p>
+<label for="prompt">What would you like Benji to do?</label><textarea id="prompt" rows="3" maxlength="6000" placeholder="Prepare a summary of my project notes…"></textarea><div class="actions"><button id="send">Send task</button><button id="retry" class="quiet" hidden>Retry the same request</button></div>
+<p class="hint">Your Mac must stay awake with Benji running. Closing this page does not stop a task. Existing Mac conversation context may be used; only phone tasks appear here.</p></section>
+<p id="message" role="status"></p><footer>Benji runs on your Mac. Your chosen model handles the task.</footer></main></body></html>

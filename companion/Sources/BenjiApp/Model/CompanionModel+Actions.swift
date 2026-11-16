@@ -6,6 +6,7 @@ extension CompanionModel {
     // MARK: user actions
 
     func submit() {
+        guard !phoneTaskRunning else { return }
         let text = composerText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty, canSendTyped else { return }
         if state.phase == .listening { onTypedWhileListening?() }
@@ -33,7 +34,7 @@ extension CompanionModel {
     /// Resends the cut-off message as a new attempt, through the screen rules like any message:
     /// Ask asks again and On takes a fresh picture; an earlier screenshot is never reused.
     func retry() {
-        guard canRetry, let turn = state.retryableTurn,
+        guard !phoneTaskRunning, canRetry, let turn = state.retryableTurn,
               let text = state.lines.first(where: { $0.id == turn.userLineID })?.text else { return }
         if state.phase == .listening { onTypedWhileListening?() }
         guard !state.isBusy else { return }
@@ -61,7 +62,7 @@ extension CompanionModel {
         if driveGoal != nil { backend.stopDrive(reason: "user_stop") }   // the Stop button ends a drive at once
         turnSerial += 1   // drops a capture that is still in flight
         captureTarget = nil
-        includeOnce = nil
+        if !phoneTaskRunning { includeOnce = nil }   // the Mac's one-message choice was not the phone's to use
         let wasRunning = runs.isLive
         runs.end()
         if wasRunning { backend.cancel() }
@@ -79,11 +80,12 @@ extension CompanionModel {
         onCancel?()
         voiceTurn = false
         apply(.cancel)
+        phoneTaskStopped()
     }
 
     /// Forget the recent exchanges and clear the panel (not while a turn is running).
     func newConversation() {
-        guard NewConversationRule.allows(phase: state.phase) else { return }
+        guard !phoneTaskRunning, NewConversationRule.allows(phase: state.phase) else { return }
         if NewConversationRule.dropsHeardWords(phase: state.phase) {
             // Half-heard words belong to the old conversation; a hands-free mic reopens by itself.
             onDropHeardWords?()
@@ -131,14 +133,18 @@ extension CompanionModel {
         clearStream()
         endSpeechStream(nil)
         silentAnswer = nil
-        let wouldSpeak = ReadAloud.speaks(setting: readAloud, spoken: voiceTurn)
+        let wouldSpeak = !phoneTaskRunning && ReadAloud.speaks(setting: readAloud, spoken: voiceTurn)
         let mayStream = SilentSpeech.shouldSpeak(wouldSpeak: wouldSpeak, state: outputState?())   // a muted Mac: nothing starts speaking
         // An answer about the screen speaks early too; its marks catch up when they arrive.
         // On a muted Mac neither kind starts.
         speaksWhileStreaming = mayStream
         onTurnStarts?(mayStream)
-        backend.start(run: runs.begin(), task: task, imagePath: shot?.url.path, memory: memory, allowPointing: shot != nil,
-                      spoken: voiceTurn, screen: shot?.geometry)
+        if phoneTaskRunning {
+            backend.startRemote(run: runs.begin(), task: task, memory: memory)
+        } else {
+            backend.start(run: runs.begin(), task: task, imagePath: shot?.url.path, memory: memory, allowPointing: shot != nil,
+                          spoken: voiceTurn, screen: shot?.geometry)
+        }
         step("sent to the engine")
     }
 

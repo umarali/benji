@@ -258,11 +258,10 @@ public enum KeyStorageStatus: Equatable, Sendable {
     public static func current(defaults: UserDefaults, store: KeyStore?, files: [URL]) -> KeyStorageStatus {
         if KeyMigration.isUsingKeychain(defaults) {
             guard let store else { return .keychainProblem }
+            // Names only: Settings refreshes often, and reading a value can make macOS ask for the
+            // keychain password each time. The engine's start reads the values and reports a failure.
             do {
-                var held = 0
-                for name in try store.accounts() where KeyNames.isSecret(name) {
-                    if let value = try store.read(name), !value.isEmpty { held += 1 }
-                }
+                let held = try store.accounts().filter(KeyNames.isSecret).count
                 return held > 0 ? .inKeychain(count: held) : .keychainProblem
             } catch { return .keychainProblem }
         }

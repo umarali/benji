@@ -30,6 +30,19 @@ final class ExplainCardBackendTests: XCTestCase {
     }
 
     /// Records what the hook asks of the stage.
+    func testAPhoneAnswerOpensNoCardAndKeepsItsText() {
+        let fake = FakeBackend(), stage = FakeStage()
+        let wrapped = ExplainCardBackend(fake, stage: stage)
+        var seen: [BackendEvent] = []
+        wrapped.onEvent = { _, e in seen.append(e) }
+        wrapped.startRemote(run: 1, task: "Hello", memory: ConversationMemory())
+        fake.say(.answer(reply))
+        RunLoop.main.run(until: Date().addingTimeInterval(0.01))
+        XCTAssertEqual(seen, [.answer(reply)])
+        XCTAssertTrue(stage.opened.isEmpty)
+        XCTAssertEqual(fake.remoteStarts, 1)
+    }
+
     final class FakeStage: ExplainCardShowing {
         var opened: [(script: CardScript, targets: [PointingTarget])] = []
         var updates: [CardScript] = []

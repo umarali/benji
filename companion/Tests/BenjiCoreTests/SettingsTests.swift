@@ -22,7 +22,7 @@ final class SettingsTests: XCTestCase {
     }
 
     func testSectionsInOrderWithSymbols() {
-        XCTAssertEqual(SettingsSection.allCases.map(\.title), ["General", "Voice", "Screen", "Browser", "Shortcuts", "Permissions"])
+        XCTAssertEqual(SettingsSection.allCases.map(\.title), ["General", "Voice", "Screen", "Browser", "Phone", "Shortcuts", "Permissions"])
         XCTAssertTrue(SettingsSection.allCases.allSatisfy { !$0.symbol.isEmpty && $0.subtitle.hasSuffix(".") })
         XCTAssertEqual(Set(SettingsSection.allCases.map(\.symbol)).count, SettingsSection.allCases.count)
     }

@@ -23,6 +23,7 @@ three labels, and a label changes only after a live run that is written down.
 | Audit log, `engine.log`, `benji --diagnose` | Experimental | One short live run; a test fails if message text reaches a log |
 | Browser reach: the extension, site grants, acting, the page in front | Not live-tested | Unit-tested and scripted in headless Chrome; never in a real browser profile |
 | App offers (Settings › Voice › Offer help in apps, off by default) and their five skills | Not live-tested | Unit-tested |
+| Phone control (Settings › Phone, off by default) | Experimental | One live run on an iPhone over Tailscale: tasks, approvals from the phone and the Mac, stop, turning it off |
 | More than one display, full-screen apps | Not live-tested | Offline tests with fake displays |
 | Holding back words heard over other apps' sound (Settings › Voice, off by default) | Not live-tested | Unit-tested |
 | OpenAI, DeepSeek, GLM, Kimi and Qwen | Not live-tested | Fake servers built from each provider's API docs; `tools/model_smoke.py` checks one live with your key |

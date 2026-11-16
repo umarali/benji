@@ -19,6 +19,12 @@ public enum ServeProtocol {
     }
 }
 
+/// Where the answer to an approval came from, for the engine's audit log. Only `card` (the Mac's own
+/// card: its buttons or keys) can grant a drive.
+public enum ApprovalSource: String, Sendable, Equatable {
+    case card, phone, timeout
+}
+
 /// What the row's schedule buttons ask for; the raw values are the engine's.
 public enum JobScheduleAction: String, Sendable, Equatable { case pause, resume, delete }
 
@@ -30,6 +36,10 @@ public enum ServeRequest: Equatable, Sendable {
     /// The talk key went down: the engine may warm the connection to its provider if it has been
     /// idle. No answer; the engine writes the time it took to its audit log.
     case prewarm
+    /// A task from the phone (docs/remote-control.md): the words only. The engine runs it as text,
+    /// with no screen, jobs, cards or figures, whatever else a request says; sent only to an engine
+    /// that lists `remote_text`.
+    case remoteSend(id: String, text: String)
     /// `spoken`: the user said it (the reply is read aloud). `screen`: what the attached
     /// screenshot holds, sent only with `allowPointing`. `screenActions`: the app can act on that
     /// screenshot, sent only with it. `screenSimpleSteps`: and simple steps may go without
@@ -43,7 +53,8 @@ public enum ServeRequest: Equatable, Sendable {
               schedules: Bool = false, drive: Bool = false)
     /// `viaCard`: the answer came from the app's own card (its button or ⌘Return). The engine grants a
     /// drive only to a yes that says so; a spoken yes, or anything else, never does.
-    case approve(id: String, request: String, approved: Bool, viaCard: Bool = false)
+    /// `source`: who answered, said to the engine when it is not the card (`from`).
+    case approve(id: String, request: String, approved: Bool, viaCard: Bool = false, source: ApprovalSource = .card)
     /// The user ended the drive: `reason` is one of `user_stop`, `mouse`, `typing`, `click`, `scroll`.
     case driveStop(id: String, reason: String)
     /// How a `screen_action` step ended.
@@ -72,7 +83,8 @@ public enum ServeRequest: Equatable, Sendable {
     /// `reply` (what was heard, marked). A turn still running is stopped, keeping the message.
     case cutOff(id: String, reply: String)
     /// `droppedEarlier`: the app has already dropped older exchanges of this conversation.
-    case restore([ConversationMemory.Exchange], droppedEarlier: Bool = false)
+    /// `taint`: what the engine said, in an earlier `answer`, this conversation holds from outside.
+    case restore([ConversationMemory.Exchange], droppedEarlier: Bool = false, taint: CarriedTaint? = nil)
     case reset
     case shutdown
 
@@ -82,6 +94,8 @@ public enum ServeRequest: Equatable, Sendable {
             return ["type": "hello", "protocol": ServeProtocol.version, "capabilities": capabilities]
         case .prewarm:
             return ["type": "prewarm"]
+        case let .remoteSend(id, text):
+            return ["type": "send", "id": id, "text": text, "remote_text": true]
         case let .send(id, text, imagePath, allowPointing, spoken, screen, screenActions, screenSimpleSteps, canvas, jobs, schedules, drive):
             var o: [String: Any] = ["type": "send", "id": id, "text": text]
             if let imagePath { o["image"] = imagePath }
@@ -101,10 +115,11 @@ public enum ServeRequest: Equatable, Sendable {
             if jobs { o["jobs"] = true }
             if jobs && schedules { o["schedules"] = true }
             return o
-        case let .approve(id, request, approved, viaCard):
+        case let .approve(id, request, approved, viaCard, source):
             // The engine approves only the string "yes"; anything else is a No.
             var o: [String: Any] = ["type": "approve", "id": id, "request": request, "decision": approved ? "yes" : "no"]
             if viaCard { o["via"] = "card" }
+            if source != .card { o["from"] = source.rawValue }
             return o
         case let .driveStop(id, reason):
             return ["type": "drive_stop", "id": id, "reason": reason]
@@ -133,10 +148,14 @@ public enum ServeRequest: Equatable, Sendable {
             return ["type": "browser_always", "sites": sites]
         case let .cutOff(id, reply):
             return ["type": "cut_off", "id": id, "reply": reply]
-        case let .restore(exchanges, droppedEarlier):
+        case let .restore(exchanges, droppedEarlier, taint):
             var o: [String: Any] = ["type": "restore",
                                     "exchanges": exchanges.map { ["user": $0.user, "assistant": $0.assistant] }]
             if droppedEarlier { o["dropped"] = true }
+            if let taint, !taint.kinds.isEmpty {
+                o["taints"] = taint.kinds
+                o["taint_note"] = taint.note
+            }
             return o
         case .reset:
             return ["type": "reset"]
@@ -175,7 +194,7 @@ public struct ServeReady: Equatable, Sendable {
     /// The model can read images. True when `ready` leaves it out.
     public let vision: Bool
     /// What the engine can do beyond protocol 1: "hello_caps", "prewarm", "policy", "tool_cap",
-    /// "image_hash", "error_reasons". Empty when `ready` leaves it out.
+    /// "image_hash", "error_reasons", "remote_text". Empty when `ready` leaves it out.
     public let capabilities: [String]
 
     public init(protocolVersion: Int, version: String, provider: String, model: String, destination: String,
@@ -227,7 +246,8 @@ public enum ServeEvent: Equatable, Sendable {
     /// With `allow_pointing`, the engine strips the tags itself and sends the targets. In the beats
     /// form each target has its `at`, and edits of what is already drawn come after the marks as
     /// `.edit` targets.
-    case answer(id: String, text: String, targets: [PointingTarget])
+    /// `taint`: outside content the conversation holds once this turn is committed; nil when none.
+    case answer(id: String, text: String, targets: [PointingTarget], taint: CarriedTaint? = nil)
     /// A piece of the reply as the model writes it (the engine streams only with
     /// BENJI_STREAM=1). The deltas after the last `deltaReset` join to the answer's text.
     case delta(id: String, text: String)
@@ -241,6 +261,9 @@ public enum ServeEvent: Equatable, Sendable {
     /// The reply's last card line has been sent (just before its `answer`).
     case cardEnd(id: String)
     case usage(id: String, calls: Int, inputTokens: Int, outputTokens: Int)
+    /// Outside content the conversation holds, told when no answer carries it: turn `id` was cut
+    /// off while it was still being written, and the words heard stay in the conversation.
+    case taint(id: String, taint: CarriedTaint)
     case error(id: String?, code: String, text: String)
     /// `status` is "ok", "cancelled" or "error". Always the last event of a turn.
     case done(id: String, status: String)
@@ -305,8 +328,10 @@ public enum ServeEvent: Equatable, Sendable {
         case "answer":
             let raw = o["targets"] as? [[String: Any]] ?? []
             let edits = (o["edits"] as? [[String: Any]] ?? []).compactMap(edit)
+            let kinds = (o["taints"] as? [Any])?.compactMap { $0 as? String } ?? []
             return .answer(id: str("id"), text: str("text"),
-                           targets: PointingTags.capped(raw.compactMap(target) + edits))
+                           targets: PointingTags.capped(raw.compactMap(target) + edits),
+                           taint: kinds.isEmpty ? nil : CarriedTaint(kinds: kinds, note: str("taint_note")))
         case "delta":
             return .delta(id: str("id"), text: str("text"))
         case "delta_reset":
@@ -319,6 +344,10 @@ public enum ServeEvent: Equatable, Sendable {
             return .cardLine(id: str("id"), line: line, at: (o["at"] as? NSNumber)?.intValue)
         case "card_end":
             return .cardEnd(id: str("id"))
+        case "taint":
+            let kinds = (o["taints"] as? [Any])?.compactMap { $0 as? String } ?? []
+            guard !kinds.isEmpty else { return .unknown(type: type) }
+            return .taint(id: str("id"), taint: CarriedTaint(kinds: kinds, note: str("taint_note")))
         case "usage":
             return .usage(id: str("id"), calls: int("calls"),
                           inputTokens: int("input_tokens"), outputTokens: int("output_tokens"))

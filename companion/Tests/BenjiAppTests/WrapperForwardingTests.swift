@@ -13,7 +13,8 @@ final class WrapperForwardingTests: XCTestCase {
         var approvalTimeout: TimeInterval = 60
         func start(run: Int, task: String, imagePath: String?, memory: ConversationMemory, allowPointing: Bool,
                    spoken: Bool, screen: ScreenshotGeometry?) { calls.append("start") }
-        func resolveApproval(_ approved: Bool) { calls.append("resolveApproval") }
+        func startRemote(run: Int, task: String, memory: ConversationMemory) { calls.append("startRemote") }
+        func resolveApproval(_ approved: Bool, from source: ApprovalSource) { calls.append("resolveApproval:\(source)") }
         func cancel() { calls.append("cancel") }
         func cutOff(reply: String, running: Bool) { calls.append("cutOff") }
         func reset() { calls.append("reset") }
@@ -34,7 +35,9 @@ final class WrapperForwardingTests: XCTestCase {
             ExplainCardBackend(bare, stage: ExplainCardBackendTests.FakeStage()), stage: { nil })
         chain.start(run: 1, task: "hi", imagePath: nil, memory: ConversationMemory(), allowPointing: false,
                     spoken: false, screen: nil)
+        chain.startRemote(run: 2, task: "from the phone", memory: ConversationMemory())
         chain.resolveApproval(true)
+        chain.resolveApproval(true, from: .phone)
         chain.cancel()
         chain.cutOff(reply: "heard so far", running: true)
         chain.reset()
@@ -47,7 +50,7 @@ final class WrapperForwardingTests: XCTestCase {
         chain.startEngineForSchedules()
         chain.prewarm()
         chain.shutdown()
-        XCTAssertEqual(bare.calls, ["start", "resolveApproval", "cancel", "cutOff", "reset", "restartEngine",
+        XCTAssertEqual(bare.calls, ["start", "startRemote", "resolveApproval:card", "resolveApproval:phone", "cancel", "cutOff", "reset", "restartEngine",
                                     "finishScreenStep", "setBrowser", "setBrowserAlways", "stopDrive",
                                     "setSchedules", "startEngineForSchedules", "prewarm", "shutdown"])
     }

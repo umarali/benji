@@ -90,6 +90,7 @@ Details: [safety, background jobs and browser reach](docs/safety.md) · [privacy
 | [Privacy](docs/privacy.md) | What each provider receives and what stays on your Mac |
 | [Building from source](docs/building.md) | Requirements, signing, permissions, offline checks, layout |
 | [Model providers](docs/providers.md) | Defaults, regions and what has been checked for each |
+| [Control Benji from your phone](docs/remote-control.md) | Send tasks from your phone over Tailscale, and answer approvals there |
 | [Roadmap](docs/ROADMAP.md) · [Changelog](CHANGELOG.md) | What may come next, and what changed |
 
 ## Contributing

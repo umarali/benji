@@ -19,6 +19,7 @@ final class ConversationHistory: ObservableObject {
     private let queue = DispatchQueue(label: "benji.conversations", qos: .utility)
     /// What was last written for the current conversation (nothing is written twice).
     private var lastSaved: [SavedLine] = []
+    private var lastTaint: CarriedTaint?
     private var started: Date?
 
     init(store: ConversationStore?, defaults: UserDefaults = .standard) {
@@ -38,11 +39,11 @@ final class ConversationHistory: ObservableObject {
     }
 
     /// The panel's lines changed: save the current conversation when it has something new and an
-    /// answer, under its id (a new one the first time).
-    func record(_ transcript: [TranscriptLine], now: Date = Date()) {
+    /// answer, under its id (a new one the first time), with the outside content it holds.
+    func record(_ transcript: [TranscriptLine], taint: CarriedTaint? = nil, now: Date = Date()) {
         guard saving, let store else { return }
         let lines = SavedConversation.lines(from: transcript)
-        guard lines != lastSaved, SavedConversation.worthSaving(lines) else { return }
+        guard lines != lastSaved || taint != lastTaint, SavedConversation.worthSaving(lines) else { return }
         let id = currentID ?? ConversationStore.newID()
         if currentID != id { currentID = id }
         // The one just used is always the newest, even within a millisecond of another.
@@ -51,8 +52,9 @@ final class ConversationHistory: ObservableObject {
         let start = started ?? now
         started = start
         lastSaved = lines
+        lastTaint = taint
         let record = SavedConversation(id: id, title: ConversationTitle.make(lines), started: start, updated: now,
-                                       lines: lines)
+                                       lines: lines, taint: taint)
         summaries = ([record.summary] + summaries.filter { $0.id != id }).sorted(by: ConversationSummary.newestFirst)
         queue.async { try? store.save(record) }
     }
@@ -71,6 +73,7 @@ final class ConversationHistory: ObservableObject {
     func startNew() {
         currentID = nil
         lastSaved = []
+        lastTaint = nil
         started = nil
     }
 
@@ -84,6 +87,7 @@ final class ConversationHistory: ObservableObject {
         }
         currentID = id
         lastSaved = saved.lines
+        lastTaint = saved.taint
         started = saved.started
         return saved
     }

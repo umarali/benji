@@ -9,7 +9,7 @@ final class FakeBackend: CompanionBackend, JobBackend {
     var onFinished: ((_ run: Int, Int32) -> Void)?
     var approvalTimeout: TimeInterval = 60
 
-    struct Start: Equatable { let run: Int; let task: String; let spoken: Bool; let memoryEmpty: Bool; var imagePath: String? = nil }
+    struct Start: Equatable { let run: Int; let task: String; let spoken: Bool; let memoryEmpty: Bool; var imagePath: String? = nil; var taint: CarriedTaint? = nil }
     private(set) var starts: [Start] = []
     private(set) var approvals: [Bool] = []
     private(set) var cancels = 0
@@ -40,11 +40,23 @@ final class FakeBackend: CompanionBackend, JobBackend {
 
     func start(run: Int, task: String, imagePath: String?, memory: ConversationMemory, allowPointing: Bool,
                spoken: Bool, screen: ScreenshotGeometry?) {
-        starts.append(Start(run: run, task: task, spoken: spoken, memoryEmpty: memory.isEmpty, imagePath: imagePath))
+        starts.append(Start(run: run, task: task, spoken: spoken, memoryEmpty: memory.isEmpty, imagePath: imagePath,
+                            taint: memory.taint))
+    }
+    /// Phone tasks: counted here, and recorded in `starts` as a text run with no image.
+    private(set) var remoteStarts = 0
+    func startRemote(run: Int, task: String, memory: ConversationMemory) {
+        remoteStarts += 1
+        start(run: run, task: task, imagePath: nil, memory: memory, allowPointing: false, spoken: false, screen: nil)
     }
     private(set) var prewarms = 0
     func prewarm() { prewarms += 1 }
-    func resolveApproval(_ approved: Bool) { approvals.append(approved) }
+    /// Who answered each approval, in order, beside `approvals`.
+    private(set) var approvalSources: [ApprovalSource] = []
+    func resolveApproval(_ approved: Bool, from source: ApprovalSource) {
+        approvals.append(approved)
+        approvalSources.append(source)
+    }
     func cancel() { cancels += 1 }
     func reset() {}
     func shutdown() {}

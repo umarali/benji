@@ -340,6 +340,25 @@ final class CompanionModel: ObservableObject {
         driveCardID != nil && driveCardID == state.pendingApproval?.id ? DriveCopy.cardSeconds : approvalTimeout
     }
 
+    // MARK: phone control (CompanionModel+Phone.swift)
+
+    /// The phone's task this session: the command id it was sent with, and what the phone is shown of it.
+    /// Nil before the first one, and after phone control is turned off.
+    var phoneTaskID: String?
+    var phoneTaskText = ""
+    /// The phone's task is the run in progress: the Mac's own messages wait for it, and nothing is spoken.
+    var phoneTaskRunning = false
+    var phoneTaskStatus = ""
+    /// Where the phone's task starts in `state.lines`: earlier lines are never shown on the phone.
+    var phoneLineStart = 0
+    var phoneLines: [[String: String]] = []
+    var phoneStream = ""
+    /// Settings › Phone › "Answer approvals from the phone", read at each answer and each snapshot,
+    /// so a change applies to the next approval at once.
+    var phoneAnswersApprovals: () -> Bool = {
+        PhoneApprovals.isOn(UserDefaults.standard.object(forKey: PhoneApprovals.defaultsKey))
+    }
+
     private var screenModeWatch: AnyCancellable?
     /// Saved conversations and the home view's page (none written without a store).
     let history: ConversationHistory
@@ -360,7 +379,12 @@ final class CompanionModel: ObservableObject {
         // Only the live run's events reach the state: a cancelled or replaced run's late answer,
         // error, approval or finish is dropped here, so it can't revive or end a newer turn.
         backend.onEvent = { [weak self] run, event in
-            guard let self, self.runs.admits(run) else { return }
+            guard let self else { return }
+            // The conversation's taint is kept even when its run is over (an answer cut off while it
+            // was written): it only ever makes a change ask, and the backend sends one only for the
+            // conversation open now.
+            if case let .carriedTaint(taint) = event { self.keepTaint(taint); return }
+            guard self.runs.admits(run) else { return }
             self.handle(event)
         }
         if let jobs = backend as? JobBackend {
@@ -393,7 +417,20 @@ final class CompanionModel: ObservableObject {
             }
             self.producedOutput = false
             self.voiceTurn = false
+            self.phoneTaskEnded(code: code)
         }
+    }
+
+    /// Keeps what the engine says the conversation holds from outside, with the conversation and its
+    /// saved file. Only ever adds: a kind once named stays until a new conversation.
+    func keepTaint(_ taint: CarriedTaint) {
+        let kinds = Set(taint.kinds).union(memory.taint?.kinds ?? [])
+        let note = memory.taint.map { Set(taint.kinds).isSuperset(of: $0.kinds) ? taint.note : "\($0.note); \(taint.note)" }
+            ?? taint.note
+        let kept = CarriedTaint(kinds: ["web", "browser", "file"].filter(kinds.contains), note: note)
+        guard kept != memory.taint else { return }
+        memory.taint = kept
+        history.record(state.lines, taint: kept)
     }
 
     func clearStream() {
@@ -446,7 +483,7 @@ final class CompanionModel: ObservableObject {
         producedOutput = true
         apply(.assistantAnswer(text))
         memory.record(user: currentTask, assistant: text)
-        let wouldSpeak = ReadAloud.speaks(setting: readAloud, spoken: voiceTurn)
+        let wouldSpeak = !phoneTaskRunning && ReadAloud.speaks(setting: readAloud, spoken: voiceTurn)
         let output = wouldSpeak ? outputState?() : nil
         let speak = SilentSpeech.shouldSpeak(wouldSpeak: wouldSpeak, state: output)
         silentAnswer = SilentSpeech.note(wouldSpeak: wouldSpeak, state: output, answer: SpeechText.plain(text))
@@ -483,7 +520,8 @@ final class CompanionModel: ObservableObject {
             approvalTimer = nil
         }
         if NotchPresence.isDone(event: event, before: before, after: state.phase) { doneCount += 1 }
-        history.record(state.lines)
+        history.record(state.lines, taint: memory.taint)
+        updatePhoneTask()
         if history.requestedPage != nil, !HomeView.keepsRequest(phase: state.phase) { history.requestedPage = nil }
         if Self.traceEvents {
             // Case name only (no message text), except errors and approval outcomes.

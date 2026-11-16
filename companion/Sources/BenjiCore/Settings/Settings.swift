@@ -3,7 +3,7 @@ import Foundation
 /// Benji's settings page, inside the open notch panel: the status-bar menu keeps only a few
 /// commands, and every switch and choice lives here, one section at a time.
 public enum SettingsSection: String, CaseIterable, Identifiable, Sendable {
-    case general, voice, screen, browser, shortcuts, permissions
+    case general, voice, screen, browser, phone, shortcuts, permissions
 
     public var id: String { rawValue }
 
@@ -13,6 +13,7 @@ public enum SettingsSection: String, CaseIterable, Identifiable, Sendable {
         case .voice: return "Voice"
         case .screen: return "Screen"
         case .browser: return "Browser"
+        case .phone: return "Phone"
         case .shortcuts: return "Shortcuts"
         case .permissions: return "Permissions"
         }
@@ -25,6 +26,7 @@ public enum SettingsSection: String, CaseIterable, Identifiable, Sendable {
         case .voice: return "How Benji listens and speaks."
         case .screen: return "When Benji may look at your screen."
         case .browser: return "Let background jobs read pages in your Chrome."
+        case .phone: return "Send tasks from your phone to this Mac."
         case .shortcuts: return "Ways to call Benji."
         case .permissions: return "What macOS lets Benji use."
         }
@@ -37,6 +39,7 @@ public enum SettingsSection: String, CaseIterable, Identifiable, Sendable {
         case .voice: return "waveform"
         case .screen: return "rectangle.dashed"
         case .browser: return "globe"
+        case .phone: return "iphone"
         case .shortcuts: return "keyboard"
         case .permissions: return "lock.shield"
         }
@@ -120,6 +123,8 @@ public struct SettingsSnapshot: Equatable, Sendable {
     public var browsers: [BrowserRow] = []
     /// Sites the user set to always allow reading (reading only).
     public var browserAlways: [String] = []
+    // Phone: whether the phone may answer an ordinary approval (on unless turned off)
+    public var phoneApprovals = true
     // Starting up, the key and quiet cues. Off or unknown until the app says.
     public var openAtLogin = false
     public var openAtLoginCaption = OpenAtLogin.caption(.disabled)
@@ -188,6 +193,8 @@ public enum SettingsChange: Equatable, Sendable {
     case browserAlwaysRemove(String)
     /// The one switch for every repeating job: off stops a repeat run in flight and runs none.
     case schedules(Bool)
+    /// Let the phone answer an ordinary approval of its own task. Read at each answer.
+    case phoneApprovals(Bool)
     /// Show the unpacked extension in Finder, to load it in Chrome.
     case showBrowserExtension
     /// Put `benji --diagnose` on the clipboard.

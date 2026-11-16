@@ -232,10 +232,10 @@ final class KeyStoreTests: XCTestCase {
         d.set("keychain", forKey: KeyNames.defaultsKey)
         XCTAssertEqual(KeyStorageStatus.current(defaults: d, store: store, files: [file]), .keychainProblem)
         store.failOn = nil
-        store.items["ANTHROPIC_API_KEY"] = ""
-        XCTAssertEqual(KeyStorageStatus.current(defaults: d, store: store, files: [file]), .keychainProblem)
         store.items["ANTHROPIC_API_KEY"] = fakeKey
         XCTAssertEqual(KeyStorageStatus.current(defaults: d, store: store, files: [file]), .inKeychain(count: 1))
+        // The status lists names and never reads a value, so it never makes macOS ask for the password.
+        XCTAssertEqual(store.reads, 0)
     }
 
     func testNoValueEverReachesAMessage() throws {

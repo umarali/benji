@@ -7,7 +7,7 @@ decision gets a new entry that supersedes it.
 
 Status values: **Active**, **Superseded by D-xx**, **Open** (needs a decision).
 
-> **Public trim.** This is the maintainer's decision log with 58 of 213 entries left out because they refer to private working material. Ids are kept, not renumbered, so gaps are expected. References to files that are not part of this repository read "(not in this export)".
+> **Public trim.** This is the maintainer's decision log with 58 of 214 entries left out because they refer to private working material. Ids are kept, not renumbered, so gaps are expected. References to files that are not part of this repository read "(not in this export)".
 
 ---
 ## Building pal: backend and CLI
@@ -1612,3 +1612,13 @@ D-198 adoption gate: validate ordinary figure-on and synthetic screen-context be
 - **Why:** the docs read like lab notes and, in places, promised more than the defaults do.
 - **Alternatives:** the review's longer proposed text in places (kept shorter); merging safety and privacy, or setup and building (the review advised against both, and so did Claude).
 - **Status:** Active.
+
+### D-215 · Phone control ships, with approvals from the phone and a switch to keep them on the Mac (2026-11-16 08:44 PKT)
+
+- **Who:** the owner: "How about pushing the tailscale setup to control through your phone?"; then, asked whether the phone may approve actions: "Phone can approve", and "We can allow to set the approvals through mac-only in the settings but I'd like approvals through Phone as well"; and phone control only, without the guided-setup rework from the same experiment. An Opus 5.5 agent ported the uncommitted experiment from a separate checkout (based on public `0f9b455`) onto the current code; GPT-6 Astra (high reasoning) reviewed its security, read-only; a separate Opus 5.5 agent verified the fixes twice with its own probes; Claude (Opus 5.5) directed and checked.
+- **What:** Settings › Phone starts a loopback listener (`benji/remote.py`, `127.0.0.1:8765`) that private Tailscale Serve reaches from the phone's browser. The access key is new on every enable, held in memory, compared in constant time. The phone sends text tasks, follows them, stops them, and answers ordinary approvals unless **Answer approvals from the phone** (on by default) is off; the Mac enforces the switch. Phone turns get no screen, jobs, schedules, browser, cards, figures or drive, enforced in the engine.
+- **Security review, fixed:** (F1) restoring a conversation dropped its taint, so an instruction carried in an earlier answer could lead to an unasked write after an engine restart or a reopen; the engine now reports the carried taint with each committed answer, the app saves it with the conversation and gives it back on restore. Conversations saved before this open clean. (F2) slow or reconnecting clients could hold every listener slot; headers now have 3 seconds, the request 10, headers 16 KB, and a full listener closes the oldest connection still sending headers. (F3) phone approvals were audited as card answers; the source now travels with the answer and the audit log can say `phone`. The verifier then found (N1) that cutting off a spoken answer also dropped the turn's taint (an older gap, now fixed with a `taint` event), and two smaller ones (a defaulted approval source, a race in who answered), all fixed and verified closed.
+- **Why approvals from the phone:** the owner wants to approve from away from the Mac. The switch lets anyone who prefers it keep approvals on the Mac.
+- **Alternatives:** Mac-only approvals (offered and recommended; the owner chose phone approvals with a switch); porting the guided-setup rework too (left for later); treating old saved conversations as tainted (rejected: they carry no taint record, so every reopened conversation would ask forever).
+- **Not verified:** a real phone, a real Tailscale connection and a real model together; whether Tailscale Serve forwards headers in pieces (under an active flood, a request whose headers take more than about half a second could be closed).
+- **Status:** Active. Experimental: the owner ran the test list live on 2026-11-16 (09:31 PKT), an iPhone over Tailscale with a real model, and reported everything working. Two bugs found during it are fixed: repeated keychain password prompts (Settings read every key's value to count them) and the approval card pushing a narrow panel past its edges.

@@ -230,7 +230,7 @@ final class OverlayMotionTests: XCTestCase {
                                  pixelSize: pixel, screenFrame: frame, displayID: 1)!
 
         let json = #"{"type":"answer","id":"t1","text":"Tick Sync files, then the Photos list, then Done.","targets":[{"kind":"point","coords":[100,100],"label":"Sync files"},{"kind":"box","coords":[200,200,600,400],"label":"Photos list"},{"kind":"point","coords":[710,110],"label":"Done"}]}"#
-        guard case let .answer(_, text, targets)? = ServeEvent.decode(json) else { return XCTFail("not an answer") }
+        guard case let .answer(_, text, targets, _)? = ServeEvent.decode(json) else { return XCTFail("not an answer") }
         let serve = PointingPlan(targets: targets, text: text, speaking: false, pixelSize: pixel, screenFrame: frame, displayID: 1)!
 
         XCTAssertEqual(inApp.marks.count, 3)

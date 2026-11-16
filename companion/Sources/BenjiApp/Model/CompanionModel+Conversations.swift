@@ -16,7 +16,7 @@ extension CompanionModel {
 
     /// A saved conversation can be opened, or the current one deleted, now.
     var canSwitchConversation: Bool {
-        HomeView.canSwitchConversation(phase: state.phase, hearing: hearing, cardPending: cardPending)
+        !phoneTaskRunning && HomeView.canSwitchConversation(phase: state.phase, hearing: hearing, cardPending: cardPending)
     }
 
     func showPage(_ page: PanelPage) {

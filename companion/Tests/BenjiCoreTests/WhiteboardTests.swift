@@ -306,14 +306,14 @@ final class WhiteboardTests: XCTestCase {
 
     func testAnswerDecodesPlacesAndEdits() {
         let json = #"{"type":"answer","id":"t1","text":"One.\nTwo.","targets":[{"kind":"line","coords":[1,2,3,4],"label":"a","at":5},{"kind":"text","coords":[5,6],"label":"large:c","at":9}],"edits":[{"part":"p2","op":"move","args":[10,-20],"text":"","at":9},{"part":"p1","op":"recolor","args":[],"text":"red","at":9},{"part":"p1","op":"spin","args":[],"text":""}]}"#
-        guard case let .answer(_, text, targets)? = ServeEvent.decode(json) else { return XCTFail() }
+        guard case let .answer(_, text, targets, _)? = ServeEvent.decode(json) else { return XCTFail() }
         XCTAssertEqual(text, "One.\nTwo.")
         XCTAssertEqual(targets.map(\.at), [5, 9, 9, 9])
         XCTAssertEqual(targets[1].shape, .text(x: 5, y: 6))
         XCTAssertEqual(targets[2].shape.edit, DrawingEdit(part: "p2", op: .move, numbers: [10, -20]))
         XCTAssertEqual(targets[3].shape.edit, DrawingEdit(part: "p1", op: .recolor, text: "red"))
         let old = #"{"type":"answer","id":"t1","text":"Here.","targets":[{"kind":"point","coords":[1,2],"label":"x"}]}"#
-        guard case let .answer(_, _, oldTargets)? = ServeEvent.decode(old) else { return XCTFail() }
+        guard case let .answer(_, _, oldTargets, _)? = ServeEvent.decode(old) else { return XCTFail() }
         XCTAssertEqual(oldTargets, [PointingTarget(shape: .point(x: 1, y: 2), label: "x")])
     }
 

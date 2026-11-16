@@ -18,7 +18,7 @@ final class CompanionModelScreenStepTests: XCTestCase {
 
         func start(run: Int, task: String, imagePath: String?, memory: ConversationMemory, allowPointing: Bool,
                    spoken: Bool, screen: ScreenshotGeometry?) { runs.append(run) }
-        func resolveApproval(_ approved: Bool) { approvals.append(approved) }
+        func resolveApproval(_ approved: Bool, from source: ApprovalSource) { approvals.append(approved) }
         func cancel() {}
         func reset() {}
         func shutdown() {}

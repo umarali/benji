@@ -15,7 +15,7 @@ final class FigureSwitchTests: XCTestCase {
         var starts = 0
         func start(run: Int, task: String, imagePath: String?, memory: ConversationMemory, allowPointing: Bool,
                    spoken: Bool, screen: ScreenshotGeometry?) { starts += 1 }
-        func resolveApproval(_ approved: Bool) {}
+        func resolveApproval(_ approved: Bool, from source: ApprovalSource) {}
         func cancel() {}
         func reset() {}
         func shutdown() {}

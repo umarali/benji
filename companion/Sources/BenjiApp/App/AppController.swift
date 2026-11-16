@@ -131,6 +131,10 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         model.settings.load = { [weak self] in self?.settingsSnapshot() ?? SettingsSnapshot() }
         model.settings.apply = { [weak self] in self?.applySetting($0) }
+        model.settings.phoneContent = { [weak self] a in
+            guard let self else { return AnyView(EmptyView()) }
+            return AnyView(PhoneSettingsView(control: self.phoneControl, settings: self.model.settings, a: a))
+        }
         fetchProvider()
         // A repeating job runs only while Benji is open: if a schedule exists, the engine is
         // brought up now, so a due run can happen while the app sits idle. With no schedule the
@@ -346,7 +350,23 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
             let menuItem = NSMenuItem(title: item.title, action: action, keyEquivalent: item.keyEquivalent)
             if item != .quit { menuItem.target = self }
             menu.addItem(menuItem)
+            if item == .settings {
+                // Says when phone control is on, so it is never on out of sight.
+                let phone = NSMenuItem(title: phoneControl.isRunning ? "Phone Control Is On…" : "Phone Control…",
+                                       action: #selector(showPhoneSettings), keyEquivalent: "")
+                phone.target = self
+                menu.addItem(phone)
+            }
         }
+    }
+
+    /// Phone control: the listener for a phone browser, off until turned on in Settings › Phone, and
+    /// off again at every launch.
+    private lazy var phoneControl = RemoteControl(model: model, assistantDir: AppConfig.assistantDir)
+
+    @objc private func showPhoneSettings() {
+        showSettings()
+        model.openSettings(.phone)
     }
 
     @objc private func showPermissionSetup() { permissionSetup.show() }
@@ -406,6 +426,7 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let on = Set(BrowserHostRegistration.registered(home: home, assistantDir: AppConfig.assistantDir).map(\.id))
         s.browsers = ChromiumBrowser.installed(home: home).map { BrowserRow(browser: $0, registered: on.contains($0.id)) }
         s.browserAlways = BrowserAlways.decode(defaults.object(forKey: BrowserAlways.defaultsKey))
+        s.phoneApprovals = PhoneApprovals.isOn(defaults.object(forKey: PhoneApprovals.defaultsKey))
         s.diagnostics = diagnosticsStatus
         let quiet = QuietServices.shared
         s.openAtLogin = OpenAtLogin.isOn(quiet.loginItem.status)
@@ -484,6 +505,8 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
         case .schedules(let on):
             defaults.set(on, forKey: JobSchedulesSetting.defaultsKey)
             model.setSchedules(on)          // a running engine hears it now; a later one in `ready`
+        case .phoneApprovals(let on):
+            defaults.set(on, forKey: PhoneApprovals.defaultsKey)   // read at each answer from the phone
         case .copyDiagnostics:
             copyDiagnostics()
         case .showBenjiFolder:
@@ -760,6 +783,7 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
+        phoneControl.stop()
         voice.endHandsFree(.panelClosed)
         model.shutdown()
         model.history.flush()   // the last answer's save lands before the app goes

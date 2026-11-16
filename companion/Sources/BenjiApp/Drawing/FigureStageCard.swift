@@ -331,6 +331,8 @@ final class FigureStageBackend: CompanionBackend, JobForwarding {
 
     let inner: CompanionBackend
     private let stage: () -> FigureStage?
+    /// The phone's run: its events pass through untouched, so no figure is shown on the Mac for it.
+    private var phoneRun: Int?
     var onEvent: ((_ run: Int, BackendEvent) -> Void)?
     var onFinished: ((_ run: Int, Int32) -> Void)? {
         get { inner.onFinished }
@@ -343,7 +345,7 @@ final class FigureStageBackend: CompanionBackend, JobForwarding {
         self.stage = stage
         inner.onEvent = { [weak self] run, event in
             guard let self else { return }
-            self.onEvent?(run, self.taking(event))
+            self.onEvent?(run, run == self.phoneRun ? event : self.taking(event))
         }
     }
 
@@ -374,7 +376,11 @@ final class FigureStageBackend: CompanionBackend, JobForwarding {
         inner.start(run: run, task: task, imagePath: imagePath, memory: memory, allowPointing: allowPointing,
                     spoken: spoken, screen: screen)
     }
-    func resolveApproval(_ approved: Bool) { inner.resolveApproval(approved) }
+    func startRemote(run: Int, task: String, memory: ConversationMemory) {
+        phoneRun = run
+        inner.startRemote(run: run, task: task, memory: memory)
+    }
+    func resolveApproval(_ approved: Bool, from source: ApprovalSource) { inner.resolveApproval(approved, from: source) }
     func cancel() { inner.cancel() }
     func cutOff(reply: String, running: Bool) { inner.cutOff(reply: reply, running: running) }
     func reset() { inner.reset() }
