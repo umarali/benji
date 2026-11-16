@@ -1621,4 +1621,4 @@ D-198 adoption gate: validate ordinary figure-on and synthetic screen-context be
 - **Why approvals from the phone:** the owner wants to approve from away from the Mac. The switch lets anyone who prefers it keep approvals on the Mac.
 - **Alternatives:** Mac-only approvals (offered and recommended; the owner chose phone approvals with a switch); porting the guided-setup rework too (left for later); treating old saved conversations as tainted (rejected: they carry no taint record, so every reopened conversation would ask forever).
 - **Not verified:** a real phone, a real Tailscale connection and a real model together; whether Tailscale Serve forwards headers in pieces (under an active flood, a request whose headers take more than about half a second could be closed).
-- **Status:** Active. Not live-tested.
+- **Status:** Active. Experimental: the owner ran the test list live on 2026-11-16 (09:31 PKT), an iPhone over Tailscale with a real model, and reported everything working. Two bugs found during it are fixed: repeated keychain password prompts (Settings read every key's value to count them) and the approval card pushing a narrow panel past its edges.

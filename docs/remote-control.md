@@ -4,9 +4,8 @@ Send a text task from your phone's browser to Benji on your Mac, watch it work, 
 approvals and stop it. Phone control is off until you turn it on, and off again every time Benji
 starts.
 
-**Not live-tested.** The listener, the app's side, the engine's side and the phone page have
-automated checks, the page in headless Chrome. A real phone, a real Tailscale connection and a
-real model have not been tried together. See [Feature status](status.md).
+**Experimental.** Tried once with an iPhone over Tailscale and a real model, and covered by
+automated checks. See [Feature status](status.md).
 
 [Set up](#set-up) · [What to expect](#what-to-expect) · [Approvals](#approvals) ·
 [Privacy and access](#privacy-and-access) · [If the model rejects its API key](#if-the-model-rejects-its-api-key) ·

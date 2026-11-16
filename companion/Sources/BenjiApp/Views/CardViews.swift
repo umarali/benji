@@ -63,11 +63,20 @@ struct ScreenSendCardView: View {
             Text(ScreenCapturePolicy.confirmDetail).font(.callout)
                 .foregroundStyle(NotchPalette.secondary(a))
                 .fixedSize(horizontal: false, vertical: true)
-            HStack(spacing: 8) {
-                Spacer(minLength: 0)
-                choice("Cancel", .cancel, help: "Don't send the message")
-                choice("Send without screen", .withoutScreen, help: "Send only your words")
-                choice("Send screen", .send, help: "Capture this display once and send it with your message")
+            // One row when it fits; stacked on a narrow panel, so it never pushes the panel past its edges.
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 8) {
+                    Spacer(minLength: 0)
+                    choice("Cancel", .cancel, help: "Don't send the message")
+                    choice("Send without screen", .withoutScreen, help: "Send only your words")
+                    choice("Send screen", .send, help: "Capture this display once and send it with your message")
+                }
+                VStack(alignment: .trailing, spacing: 8) {
+                    choice("Send screen", .send, help: "Capture this display once and send it with your message")
+                    choice("Send without screen", .withoutScreen, help: "Send only your words")
+                    choice("Cancel", .cancel, help: "Don't send the message")
+                }
+                .frame(maxWidth: .infinity, alignment: .trailing)
             }
             .padding(.top, 4)
         }
@@ -128,14 +137,18 @@ struct ApprovalCardView: View {
                         .help("Read the whole thing before you answer")
                 }
             }
-            HStack(spacing: 8) {
-                Text(ApprovalPolicy.expiryLine(timeout: timeout))
-                    .font(.caption).foregroundStyle(NotchPalette.secondary(a))
-                    .lineLimit(1).minimumScaleFactor(0.8)
-                Spacer(minLength: 0)
-                choice("No", .no, help: "Don't do it (Return or Escape)")
-                choice("Adjust", .adjust, help: "Don't do it yet; edit the request in the message field")
-                choice("Yes", .yes, help: "Do it (⌘Return)")
+            // One row when it fits; on a narrow panel the expiry line goes above the buttons, so the
+            // row never asks for more width than the panel has (that pushed the whole panel off its edges).
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 8) {
+                    expiry.lineLimit(1)
+                    Spacer(minLength: 0)
+                    choices
+                }
+                VStack(alignment: .leading, spacing: 8) {
+                    expiry.fixedSize(horizontal: false, vertical: true)
+                    HStack(spacing: 8) { Spacer(minLength: 0); choices }
+                }
             }
             .padding(.top, 4)
         }
@@ -154,6 +167,17 @@ struct ApprovalCardView: View {
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Benji needs approval: \(request.action). \(request.target). "
                             + ApprovalPolicy.expiryLine(timeout: timeout))
+    }
+
+    private var expiry: some View {
+        Text(ApprovalPolicy.expiryLine(timeout: timeout))
+            .font(.caption).foregroundStyle(NotchPalette.secondary(a))
+    }
+
+    @ViewBuilder private var choices: some View {
+        choice("No", .no, help: "Don't do it (Return or Escape)")
+        choice("Adjust", .adjust, help: "Don't do it yet; edit the request in the message field")
+        choice("Yes", .yes, help: "Do it (⌘Return)")
     }
 
     private func choice(_ title: String, _ value: ApprovalChoice, help: String) -> some View {
