@@ -3811,7 +3811,7 @@ def jobs_checks() -> None:
     from benji.prompts import TurnInfo
 
     print("background jobs:")
-    with tempfile.TemporaryDirectory() as td:
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
         wd = Path(td)
         store = J.JobStore(J.folder(wd))
         rec = store.create("Compare  Noise\nCancelling headphones", "Find three pairs under $200.", "find me headphones",
@@ -3982,7 +3982,7 @@ def jobs_checks() -> None:
         return srv, ev, store, made
 
     start = call("start_job", {"title": "Headphones", "brief": "Compare three pairs."})
-    with tempfile.TemporaryDirectory() as td:
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
         wd = Path(td)
         turn_end = '{"spoken": "Three pairs fit.", "files": ["output/pairs.md"], "chips": ["Email it"]}'
         gate_hold = threading.Event()
@@ -4043,7 +4043,7 @@ def jobs_checks() -> None:
             W.search = real_search
 
     # a job that inherits taint, and a second start while one is live
-    with tempfile.TemporaryDirectory() as td:
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
         wd = Path(td)
         fetched = []
         real_fetch = W.fetch_text
@@ -4088,7 +4088,7 @@ def jobs_checks() -> None:
             W.fetch_text = real_fetch
 
     # steer between steps, stop, the beat's Esc, and an interrupted job
-    with tempfile.TemporaryDirectory() as td:
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
         wd = Path(td)
         steered = threading.Event()
         def first_step(neutral):
