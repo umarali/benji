@@ -14,6 +14,20 @@ final class FigureStageBackendTests: XCTestCase {
         unsetenv(FigureStageBackend.engineFlag)
     }
 
+    func testAPhoneAnswerShowsNoFigureAndKeepsItsText() {
+        let fake = FakeBackend()
+        var stageCalls = 0
+        let wrapped = FigureStageBackend(fake, stage: { stageCalls += 1; return nil })
+        var seen: [BackendEvent] = []
+        wrapped.onEvent = { _, e in seen.append(e) }
+        wrapped.startRemote(run: 1, task: "Hello", memory: ConversationMemory())
+        fake.say(.answer(reply))
+        RunLoop.main.run(until: Date().addingTimeInterval(0.01))
+        XCTAssertEqual(seen, [.answer(reply)])
+        XCTAssertEqual(stageCalls, 0)
+        XCTAssertEqual(fake.remoteStarts, 1)
+    }
+
     /// On by default (the model draws in 3D when the question calls for it); off turns 3D off.
     func testOnByDefaultOffLeavesTheBackendUntouched() {
         UserDefaults.standard.removeObject(forKey: FigureStage.defaultsKey)

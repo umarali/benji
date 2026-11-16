@@ -20,7 +20,8 @@ Before any tool call runs, the code (`benji/gate.py`, the "gate") puts it in one
   you just said.
 - **Runs after a short pause you can stop:** some screen steps, such as a click on a named tab or
   link (see [Acting on your screen](#acting-on-your-screen)).
-- **Asks** (a card in the app, `y/N` in the terminal): destructive commands (`rm`, `mv`, `sudo`,
+- **Asks** (a card in the app, `y/N` in the terminal, or the phone page for a task sent from
+  your phone: see [Control Benji from your phone](remote-control.md#approvals)): destructive commands (`rm`, `mv`, `sudo`,
   `git push`…), overwriting a file, sends, reading or writing outside the working folder, and any
   shell command the parser does not fully understand.
 - **Refused:** the file tools never open keys, mail, messages, browser data or Benji's own key
@@ -42,6 +43,10 @@ the working folder. (The code calls this *taint*.)
 
 - It lasts for the rest of the conversation, because what was read stays in it. A new conversation
   starts clean.
+- It is saved with the conversation, so it still applies after Benji restarts and when you reopen
+  the conversation. An answer you cut off while it is still being written keeps the taint of what
+  it had read, since the words you heard stay in the conversation. A conversation saved by a version of Benji from before this was kept has no
+  record of it, and opens clean.
 - A screenshot counts too, for its own turn: writing a file, running a Shortcut or remembering
   something then asks. It does not carry to the next turn, because the picture is not kept.
 - A job started by such a turn inherits it, and so does a turn that reads the job's result.

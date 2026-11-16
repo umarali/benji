@@ -64,13 +64,17 @@ public struct SavedConversation: Codable, Equatable, Sendable {
     public var started: Date
     public var updated: Date
     public var lines: [SavedLine]
+    /// Outside content the conversation holds (`ConversationMemory.taint`). Absent in a file saved
+    /// before Benji kept it: such a conversation is taken as clean.
+    public var taint: CarriedTaint?
 
-    public init(id: String, title: String, started: Date, updated: Date, lines: [SavedLine]) {
+    public init(id: String, title: String, started: Date, updated: Date, lines: [SavedLine], taint: CarriedTaint? = nil) {
         self.id = id
         self.title = title
         self.started = started
         self.updated = updated
         self.lines = lines
+        self.taint = taint
     }
 
     /// What of the panel is saved, in order.
@@ -101,6 +105,7 @@ public struct SavedConversation: Codable, Equatable, Sendable {
                 continue
             }
         }
+        memory.taint = taint
         return memory
     }
 

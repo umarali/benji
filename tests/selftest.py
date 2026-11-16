@@ -1443,6 +1443,7 @@ def main() -> int:
     oss_checks()
     private_checks()
     home_checks()
+    remote_checks()
     evals_checks()
 
     print()
@@ -4933,6 +4934,11 @@ def private_checks() -> None:
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         module.run(check, HERE)
+
+
+def remote_checks() -> None:
+    import check_remote
+    check_remote.run(check, HERE)
 
 
 def evals_checks() -> None:

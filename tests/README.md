@@ -27,6 +27,7 @@ environment, so nothing touches your own Benji folder or keys. The run ends with
 | `check_model_setup.py` | First-run model configuration |
 | `check_policy.py` | The local policy file, the per-turn tool limit, start-up, provider errors in plain words, and keys kept in the Keychain |
 | `check_providers.py` | The OpenAI-compatible providers and local models |
+| `check_remote.py` | Phone control: the loopback listener's access key, origin checks, limits and retries, and the engine's text-only phone task |
 | `check_repository.py` | The repository itself: the README's pages, community files and CI |
 | `check_shell_and_taint.py` | How shell commands are understood, and what reading outside content makes Benji ask about |
 

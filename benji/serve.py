@@ -58,7 +58,10 @@ from .providers import ProviderError
 PROTOCOL = 1
 # What the engine can do beyond protocol 1, said in `ready`. An app that does not know a name
 # ignores it; an engine that does not send the list is an older one.
-ENGINE_CAPS = ("hello_caps", "prewarm", "policy", "tool_cap", "image_hash", "error_reasons")
+# "remote_text": a `send` marked `remote_text` (a task from the phone) is a text-only turn.
+ENGINE_CAPS = ("hello_caps", "prewarm", "policy", "tool_cap", "image_hash", "error_reasons", "remote_text")
+# The only fields a phone task's `send` keeps; anything else in it is dropped before it is read.
+REMOTE_FIELDS = ("type", "id", "text", "remote_text")
 # What an app may say it can carry out, in `hello`. The engine offers a tool only if the app can do
 # it; an app that sends no list (an older one) is taken to be able to do what its `send` says.
 # "browser_act": the app can show and answer the acting cards of a job (a second grant per site, a send, a
@@ -68,6 +71,9 @@ APP_CAPS = ("pointing", "screen_actions", "cards", "figures", "jobs", "browser",
 PREWARM_QUIET_SECONDS = 240.0   # a warm-up is skipped when the last call was more recent than this
 PREWARM_MIN_GAP = 30.0
 APPROVAL_TIMEOUT = 90.0         # seconds; longer than the app's own 60 s on purpose
+# Who the app may name as answering an approval (audit.APPROVAL_WHO): its card, the phone, its own timer.
+APPROVAL_FROM = ("card", "phone", "timeout")
+RESTORED_NOTE_CHARS = 300       # a restored taint's wording, as long as a card shows
 OLD_TOOL_RESULT_CHARS = 2000    # tool results from earlier turns are cut to this
 SCREEN_STEP_TIMEOUT = 30.0      # seconds the app has to act on one approved step and look again
 # "ask": the app looked at an unasked step (free or quiet) and found it must be asked first.
@@ -104,6 +110,7 @@ class _Turn:
         self.id = turn_id
         self.cancelled = threading.Event()
         self.finished = threading.Event()
+        # request → its answer, once given: (yes, who answered), who being one of APPROVAL_FROM or "stop"
         self.approvals: dict[str, queue.Queue] = {}
         self.screen_steps: dict[str, queue.Queue] = {}  # screen_action requests waiting for the app
         self.next_step = 0
@@ -611,7 +618,7 @@ class Server:
         decision, why = False, "cancelled"
         while True:
             try:
-                decision, why = answers.get(timeout=0.25), None
+                (decision, _), why = answers.get(timeout=0.25), None    # a job's answer is always its row's
                 break
             except queue.Empty:
                 if turn.cancelled.is_set():
@@ -829,7 +836,7 @@ class Server:
         with turn.lock:
             for answers in turn.approvals.values():
                 try:
-                    answers.put_nowait(False)
+                    answers.put_nowait((False, "stop"))
                 except queue.Full:
                     pass
 
@@ -943,6 +950,11 @@ class Server:
     # ---- requests -------------------------------------------------------------
 
     def _send(self, req: dict) -> None:
+        remote = req.get("remote_text") is True
+        if remote:
+            # A task from the phone (docs/remote-control.md): no screenshot, screen or canvas, and
+            # no jobs, schedules or drive, whatever else the request says.
+            req = {k: req[k] for k in REMOTE_FIELDS if k in req}
         turn_id, text = req.get("id"), req.get("text")
         if not isinstance(turn_id, str) or not turn_id or not isinstance(text, str) or not text.strip():
             self.error("bad_request", "send needs a string 'id' and non-empty 'text'",
@@ -975,6 +987,11 @@ class Server:
             info = replace(TurnInfo.from_request(req), history=kept, history_dropped=self.earlier_dropped,
                            browser=turn.jobs and self.browser_on, task=text, notes=True, note=self.note,
                            schedules=turn.schedules)
+            if remote:
+                # Text in, text out: no pointing, speech, cards, 3D figures, screen steps, jobs or browser.
+                info = replace(info, allow_pointing=False, spoken=False, screen=None, figures=False,
+                               cards=False, canvas=None, screen_actions=False, screen_simple_steps=False,
+                               drive=False, jobs=False, browser=False, schedules=False)
             info = self._limited(info)
             turn.jobs = turn.jobs and info.jobs
             turn.schedules = turn.jobs and turn.schedules and info.schedules
@@ -1057,12 +1074,18 @@ class Server:
                 self.history = committed(agent.messages)
                 self.last_committed = turn.id
                 self.taints, self.taint_note = agent.ctx.carried()
+                carried_now = (set(self.taints), self.taint_note)
                 if turn.note is not None:
                     self.note = turn.note
                 turn.committed = True   # from here a cancel can't take it back
             turn.raw = answer
             answer = deltas.card_lines(answer)
             event = {"type": "answer", "id": turn.id, "text": answer, "targets": []}
+            kinds, note = carried_now
+            if kinds:
+                # What outside content this conversation now holds: the app keeps it with the
+                # conversation and gives it back in `restore`, so a new engine still asks first.
+                event.update(taint_fields(kinds, note))
             if info.allow_pointing:
                 event.update(answer_marks(answer))
             deltas.finish(event["text"])
@@ -1115,8 +1138,9 @@ class Server:
         tool, code = turn.agent.gate_now if turn.agent is not None else ("", "")
         audit.event("approval_asked", turn.id, request=request, scope="turn", tool=tool or None, code=code or None)
         self.emit(event, turn)
+        answered_by = "timeout"
         try:
-            decision, why = answers.get(timeout=self.drive_wait if drive_goal is not None else self.approval_timeout), None
+            (decision, answered_by), why = answers.get(timeout=self.drive_wait if drive_goal is not None else self.approval_timeout), None
         except queue.Empty:
             decision, why = False, "timeout"
         with turn.lock:
@@ -1124,7 +1148,7 @@ class Server:
             turn.drive_cards.discard(request)
             if why == "timeout":            # an answer that slipped in just before the pop
                 try:
-                    decision, why = answers.get_nowait(), None
+                    (decision, answered_by), why = answers.get_nowait(), None
                 except queue.Empty:
                     pass
         if turn.cancelled.is_set():
@@ -1135,7 +1159,7 @@ class Server:
                    "approved": decision, "why": why}, turn)
         print(f"[Benji] approval {request} ({why}): {tool}/{code}", file=sys.stderr)   # never the card's words
         audit.event("approval_answered", turn.id, request=request, scope="turn",
-                    who={"timeout": "timeout", "cancelled": "stop"}.get(why, "card"),
+                    who={"timeout": "timeout", "cancelled": "stop"}.get(why, answered_by),
                     decision="yes" if decision else "no", waited_ms=int((time.monotonic() - asked_at) * 1000))
         return decision
 
@@ -1209,20 +1233,22 @@ class Server:
             return
         # Only the words "y" or "yes" approve; anything else (JSON true included) is a No.
         yes = isinstance(decision, str) and decision.strip().lower() in ("y", "yes")
+        # Where the app says the answer came from: its card (the default), the phone, or its own timer.
+        who = req.get("from") if req.get("from") in APPROVAL_FROM else "card"
         with t.lock:                    # same lock as _ask's pop: an answer is used or refused
             answers = t.approvals.get(request)
             if answers is None:
                 self.error("bad_request", "no such approval is waiting", turn_id)
                 return
-            if request in t.drive_cards and yes and req.get("via") != "card":
+            if request in t.drive_cards and yes and (req.get("via") != "card" or who != "card"):
                 # A drive is agreed on the app's own card, by its button or key; nothing else (a spoken
-                # yes, a script, a page) grants it. The card stays up and keeps waiting.
+                # yes, the phone, a script, a page) grants it. The card stays up and keeps waiting.
                 self.error("bad_request", "a drive can only be agreed on the card", turn_id)
                 return
-            try:
-                answers.put_nowait(yes)
-            except queue.Full:
+            if answers.full():      # every answer is put under this lock, so this is the first one's
                 self.error("bad_request", "that approval was already answered", turn_id)
+                return
+            answers.put_nowait((yes, who))   # the source travels with the decision
 
     def _cancel(self, req: dict) -> None:
         t = self.turn
@@ -1263,7 +1289,7 @@ class Server:
         with t.lock:                    # a waiting approval is answered "no" at once
             for answers in t.approvals.values():
                 try:
-                    answers.put_nowait(False)
+                    answers.put_nowait((False, "stop"))
                 except queue.Full:
                     pass
             for steps in t.screen_steps.values():   # and a screen step stops waiting
@@ -1293,6 +1319,16 @@ class Server:
                     {"role": "assistant", "text": reply, "tool_calls": []},
                 ]
                 self.last_committed = turn_id
+                # What the turn read so far may be in the words that were heard: the conversation keeps
+                # its taint, here and (on a `taint` event, since the turn has no answer) in the app.
+                if t.agent is not None:
+                    kinds, note = _carried_of(t.agent)
+                    if kinds - self.taints:
+                        self.taint_note = note if kinds >= self.taints else gate_mod.earlier_note(
+                            f"{self.taint_note.removesuffix(' earlier in this conversation')} and {note}")
+                        self.taints = self.taints | kinds
+                if self.taints:
+                    self._emit({"type": "taint", "id": turn_id, **taint_fields(self.taints, self.taint_note)})
                 return
             last = self.history[-1] if self.history else None
             if turn_id == self.last_committed and last is not None and last.get("role") == "assistant":
@@ -1311,7 +1347,9 @@ class Server:
             return
         # The app has already dropped older ones itself when it says so.
         self.earlier_dropped = dropped or req.get("dropped") is True
-        self.taints, self.taint_note = set(), ""     # a restored conversation holds the exchanges' words, no tool output
+        # The exchanges hold no tool output, but an answer can still carry words from outside
+        # content read earlier: the app gives back the taint the engine told it in `answer`.
+        self.taints, self.taint_note = restored_taint(req)
 
     def _reset(self, req: dict) -> None:
         if self.busy():
@@ -1322,6 +1360,35 @@ class Server:
         self.last_committed = None
         self.note = ""
         self.taints, self.taint_note = set(), ""
+
+
+def taint_fields(kinds: set[str], note: str) -> dict:
+    """The conversation's taint as `answer` and `taint` events carry it to the app."""
+    return {"taints": [k for k in gate_mod.TAINT_KINDS if k in kinds], "taint_note": note}
+
+
+def _carried_of(agent) -> tuple[set[str], str]:
+    """What a turn still running would carry over (`Ctx.carried`). Its worker may be adding to the set
+    as it stops; if the set changes while it is read, the turn counts as having read a file from outside."""
+    for _ in range(3):
+        try:
+            return agent.ctx.carried()
+        except RuntimeError:
+            continue
+    return {gate_mod.TAINT_FILE}, gate_mod.earlier_note("content read from outside")
+
+
+def restored_taint(req: dict) -> tuple[set[str], str]:
+    """The taint a `restore` hands back: the kinds the engine named in an earlier `answer` (the screen
+    never carries over) and how a card names them. Anything else in the request is ignored; the
+    app's pipe is the only way in, and a phone task cannot send a `restore`."""
+    raw = req.get("taints")
+    kinds = {k for k in raw if k in gate_mod.TAINT_KINDS and k != gate_mod.TAINT_SCREEN} if isinstance(raw, list) else set()
+    if not kinds:
+        return set(), ""
+    note = req.get("taint_note")
+    note = note.strip()[:RESTORED_NOTE_CHARS] if isinstance(note, str) else ""
+    return kinds, gate_mod.earlier_note(note or "content read from outside")
 
 
 class Deltas:

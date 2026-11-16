@@ -14,7 +14,12 @@ protocol CompanionBackend: AnyObject {
     /// at `imagePath` holds (size, notch, menu bar), for drawing on it.
     func start(run: Int, task: String, imagePath: String?, memory: ConversationMemory, allowPointing: Bool,
                spoken: Bool, screen: ScreenshotGeometry?)
-    func resolveApproval(_ approved: Bool)
+    /// A task from the phone: text only, with no screenshot, screen steps, jobs, cards or figures.
+    func startRemote(run: Int, task: String, memory: ConversationMemory)
+    /// The answer to the waiting approval, and where it came from: the audit log names it, and only
+    /// the card's yes can grant a drive. Every backend says what it does with the source: there is no
+    /// default, so a wrapper can't drop it and let another answer count as the card's.
+    func resolveApproval(_ approved: Bool, from source: ApprovalSource)
     func cancel()
     /// The user cut the spoken answer off: the backend's conversation keeps `reply` (what
     /// was heard, marked) as that turn's answer. `running`: the turn is still running, and stops.
@@ -45,6 +50,13 @@ protocol CompanionBackend: AnyObject {
 
 /// Defaults for a backend with no engine of its own to tell (the tests' fakes, the render tools).
 extension CompanionBackend {
+    /// A backend without the engine cannot run a phone task: the run ends with an error.
+    func startRemote(run: Int, task: String, memory: ConversationMemory) {
+        onEvent?(run, .error("Phone control needs Benji's engine."))
+        onFinished?(run, 1)
+    }
+    /// An answer on the app's own card.
+    func resolveApproval(_ approved: Bool) { resolveApproval(approved, from: .card) }
     func restartEngine() {}
     func setBrowser(_ on: Bool) {}
     func setBrowserAlways(_ sites: [String]) {}
@@ -129,12 +141,18 @@ final class ServeBackend: CompanionBackend, JobBackend {
     /// The engine said (in `ready`) that it carries out schedules: it runs jobs. One that
     /// doesn't is never offered `repeat` or sent the schedule requests.
     private var engineSchedules = false
+    /// The engine said (in `ready`) that it runs phone tasks as text only (`remote_text`). One that
+    /// doesn't is never sent one: the phone's run ends with an error instead.
+    private var enginePhoneTasks = false
     /// A prewarm was asked for before the engine answered `hello`; sent once it is ready.
     private var prewarmWaiting = false
     private var lastPrewarm = Date.distantPast
     /// Requests written once the engine has answered `hello`.
     private var queued: [ServeRequest] = []
     private var turnCount = 0
+    /// The turns sent since the app's conversation last changed (`reset`): a `taint` for one of them
+    /// belongs to the conversation open now, even once its run has ended.
+    private var conversationTurns: Set<String> = []
     private var turnID: String?
     /// The last turn sent, finished or not: a cut-off after its answer names it.
     private var lastTurnID: String?
@@ -162,20 +180,7 @@ final class ServeBackend: CompanionBackend, JobBackend {
 
     func start(run: Int, task: String, imagePath: String?, memory: ConversationMemory, allowPointing: Bool,
                spoken: Bool, screen: ScreenshotGeometry?) {
-        turnRun = run       // before launch(): a failure to start is reported against this run
-        if process?.isRunning != true {
-            launch()
-            guard process != nil else { return }    // it could not start; the run was already ended
-        }
-        if !engineHasConversation, !memory.isEmpty {
-            write(.restore(memory.exchanges, droppedEarlier: memory.droppedEarlier))
-        }
-        engineHasConversation = true
-        turnCount += 1
-        let id = "t\(turnCount)"
-        turnID = id
-        lastTurnID = id
-        turnRun = run
+        guard let id = beginTurn(run: run, memory: memory) else { return }
         // With a screenshot, Benji may act on it unless the switch is off, and do simple
         // steps without a card unless the user chose to be asked before every step.
         let defaults = UserDefaults.standard
@@ -187,6 +192,34 @@ final class ServeBackend: CompanionBackend, JobBackend {
         write(.send(id: id, text: task, imagePath: imagePath, allowPointing: allowPointing,
                     spoken: spoken, screen: screen, screenActions: acts, screenSimpleSteps: simple,
                     canvas: Self.canvasNow?(), jobs: jobs, schedules: engineSchedules, drive: drive))
+    }
+
+    /// The same conversation and engine as a typed message, but sent as `remoteSend`, which carries
+    /// nothing but the words.
+    func startRemote(run: Int, task: String, memory: ConversationMemory) {
+        guard let id = beginTurn(run: run, memory: memory) else { return }
+        write(.remoteSend(id: id, text: task))
+    }
+
+    /// Starts the engine if it isn't running, restores the app's conversation into a new one, and
+    /// names the next turn. Nil: the engine could not start (the run was already ended).
+    private func beginTurn(run: Int, memory: ConversationMemory) -> String? {
+        turnRun = run       // before launch(): a failure to start is reported against this run
+        if process?.isRunning != true {
+            launch()
+            guard process != nil else { return nil }
+        }
+        if !engineHasConversation, !memory.isEmpty {
+            write(.restore(memory.exchanges, droppedEarlier: memory.droppedEarlier, taint: memory.taint))
+        }
+        engineHasConversation = true
+        turnCount += 1
+        let id = "t\(turnCount)"
+        turnID = id
+        lastTurnID = id
+        turnRun = run
+        conversationTurns.insert(id)
+        return id
     }
 
     // MARK: jobs
@@ -288,12 +321,13 @@ final class ServeBackend: CompanionBackend, JobBackend {
         write(.screenResult(id: id, request: request, result: result))
     }
 
-    func resolveApproval(_ approved: Bool) {
+    func resolveApproval(_ approved: Bool, from source: ApprovalSource) {
         guard let pending = pendingApproval else { return }
         pendingApproval = nil
-        // Only the app's own card calls this (its button, ⌘Return, Esc or its timer), so the answer
-        // says so: the engine grants a drive to no other yes.
-        write(.approve(id: pending.turn, request: pending.request, approved: approved, viaCard: true))
+        // Only an answer on the app's own card (its button, ⌘Return or Esc) says `via: card`: the
+        // engine grants a drive to no other yes. The phone's answer and the card's timeout never do.
+        write(.approve(id: pending.turn, request: pending.request, approved: approved, viaCard: source == .card,
+                       source: source))
     }
 
     func stopDrive(reason: String) {
@@ -315,6 +349,7 @@ final class ServeBackend: CompanionBackend, JobBackend {
 
     func reset() {
         lastTurnID = nil
+        conversationTurns = []
         engineHasConversation = false
         guard process?.isRunning == true else { return }
         write(.reset)
@@ -337,6 +372,7 @@ final class ServeBackend: CompanionBackend, JobBackend {
         input = nil
         ready = false
         engineSchedules = false
+        enginePhoneTasks = false
         queued = []
         pendingApproval = nil
         turnID = nil
@@ -350,6 +386,7 @@ final class ServeBackend: CompanionBackend, JobBackend {
         self.process = process
         input = inPipe.fileHandleForWriting
         ready = false
+        enginePhoneTasks = false
         engineHasConversation = false
         queued = []
         stderrTail = []
@@ -422,6 +459,10 @@ final class ServeBackend: CompanionBackend, JobBackend {
     }
 
     private func send(_ request: ServeRequest) {
+        if case .remoteSend = request, !enginePhoneTasks {
+            refusePhoneTask()
+            return
+        }
         trace("→ \(Mirror(reflecting: request).children.first?.label ?? "\(request)")")
         try? input?.write(contentsOf: request.line())   // fails quietly if the engine is gone
     }
@@ -459,6 +500,7 @@ final class ServeBackend: CompanionBackend, JobBackend {
         switch event {
         case .ready(let info):
             ready = true
+            enginePhoneTasks = info.capabilities.contains("remote_text")
             approvalTimeout = ServeProtocol.approvalTimeout(engineTimeout: info.approvalTimeout)
             if prewarmWaiting { send(.prewarm) }
             prewarmWaiting = false
@@ -533,8 +575,9 @@ final class ServeBackend: CompanionBackend, JobBackend {
                 pendingApproval = nil
                 trace("the engine timed out an approval before the app did")
             }
-        case let .answer(id, text, targets):
+        case let .answer(id, text, targets, taint):
             guard id == turnID else { return }
+            if let taint { onEvent?(turnRun, .carriedTaint(taint)) }
             onEvent?(turnRun, .pointedAnswer(text: text, targets: targets))
         case let .delta(id, text):
             guard id == turnID else { return }
@@ -554,6 +597,10 @@ final class ServeBackend: CompanionBackend, JobBackend {
             Self.browserStatus?(status)
         case let .browserAlways(sites):
             Self.browserAlwaysKept?(sites)
+        case let .taint(id, taint):
+            // Not tied to the run: an answer cut off while written has already ended its run in the model.
+            guard conversationTurns.contains(id) else { return }
+            onEvent?(turnRun, .carriedTaint(taint))
         case .usage:
             break   // the engine logs it to usage.jsonl itself
         case let .error(id, code, text):
@@ -566,7 +613,7 @@ final class ServeBackend: CompanionBackend, JobBackend {
             guard id == turnID else { return }
             turnID = nil
             pendingApproval = nil
-            onFinished?(turnRun, status == "error" ? 1 : 0)
+                onFinished?(turnRun, status == "error" ? 1 : 0)
         case .unknown:
             break
         }
@@ -590,6 +637,17 @@ final class ServeBackend: CompanionBackend, JobBackend {
                                  + "version from this app (\(engineSays)). Install the app and the engine from the same "
                                  + "version of Benji."))
         onFinished?(turnRun, -1)
+    }
+
+    /// The engine doesn't say it runs phone tasks as text only: the phone's task is not sent, and its
+    /// run ends with an error. The app and the engine ship together, so one of them is out of date.
+    private func refusePhoneTask() {
+        trace("phone task refused: the engine doesn't list remote_text")
+        guard turnID != nil else { return }
+        turnID = nil
+        onEvent?(turnRun, .error("This engine can't run tasks from your phone. Install the app and the engine "
+                                 + "from the same version of Benji."))
+        onFinished?(turnRun, 1)
     }
 
     private func trace(_ text: String) {

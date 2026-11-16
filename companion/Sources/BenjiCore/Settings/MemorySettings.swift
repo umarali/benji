@@ -1,13 +1,13 @@
 import Foundation
 
 /// The settings page's sidebar: the sections, with Memory (saved conversations and what Benji
-/// remembers about you) between Browser and Shortcuts.
+/// remembers about you) between Browser and Phone.
 public enum SettingsPane: Hashable, Identifiable, Sendable {
     case section(SettingsSection)
     case memory
 
     public static let all: [SettingsPane] = [.section(.general), .section(.voice), .section(.screen), .section(.browser),
-                                             .memory, .section(.shortcuts), .section(.permissions)]
+                                             .memory, .section(.phone), .section(.shortcuts), .section(.permissions)]
 
     public var id: String {
         switch self {

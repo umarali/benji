@@ -23,6 +23,8 @@ final class SettingsModel: ObservableObject {
 
     var load: () -> SettingsSnapshot
     var apply: (SettingsChange) -> Void
+    /// Settings › Phone, set by the app: the phone's access key stays there, out of the snapshot.
+    var phoneContent: ((NotchAccessibility) -> AnyView)?
 
     init(load: @escaping () -> SettingsSnapshot = { SettingsSnapshot() },
          apply: @escaping (SettingsChange) -> Void = { _ in }) {
@@ -161,6 +163,9 @@ struct SettingsSectionView: View {
             case .voice: voice
             case .screen: screen
             case .browser: browser
+            case .phone:
+                if let content = model.phoneContent { content(a) }
+                else { Text("Phone control is not available here.").foregroundStyle(NotchPalette.secondary(a)) }
             case .shortcuts: shortcuts
             case .permissions: permissions
             }

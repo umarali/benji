@@ -39,11 +39,17 @@ func listen() {
 }
 listen()
 
+/// `phone`: sent as a task from the phone (`startRemote`), as the app sends one.
 func run(_ task: String, memory: ConversationMemory = ConversationMemory(), pointing: Bool = false,
-         spoken: Bool = false, screen: ScreenshotGeometry? = nil, after: Double? = nil, then: (() -> Void)? = nil) -> (events: [BackendEvent], code: Int32?) {
+         spoken: Bool = false, screen: ScreenshotGeometry? = nil, phone: Bool = false, after: Double? = nil,
+         then: (() -> Void)? = nil) -> (events: [BackendEvent], code: Int32?) {
     events = []; finished = nil
     runCount += 1
-    b.start(run: runCount, task: task, imagePath: nil, memory: memory, allowPointing: pointing, spoken: spoken, screen: screen)
+    if phone {
+        b.startRemote(run: runCount, task: task, memory: memory)
+    } else {
+        b.start(run: runCount, task: task, imagePath: nil, memory: memory, allowPointing: pointing, spoken: spoken, screen: screen)
+    }
     let t0 = Date()
     var fired = false
     while finished == nil && Date().timeIntervalSince(t0) < 30 {
@@ -579,6 +585,109 @@ check("prewarm: the real engine answers the app's prewarm with one audit line ho
       waitFor({ fileText("events.jsonl").contains("\"kind\":\"prewarm\"") }, seconds: 8)
       && fileText("events.jsonl").split(separator: "\n").filter { $0.contains("\"kind\":\"prewarm\"") }
         .allSatisfy { !$0.contains("text") && ($0.contains("\"skipped\":true") || $0.contains("\"skipped\":false")) })
+
+// Phone tasks: the real engine, started cold by the phone's task, offers text tools only, and its
+// approvals go through the same gate, with a real file outside the working folder.
+b.restartEngine()
+r = run("phone tool inventory", phone: true)
+check("phone: a cold engine started by a phone task offers text tools and no screen, drive, job or browser tool",
+      answers(r.events) == ["write_file=True restricted=[]"] && r.code == 0)
+autoApprove = false
+r = run("write outside phone-denied", phone: true)
+check("phone: a declined write outside the folder asks and writes nothing", r.code == 0
+      && r.events.contains { if case .approval = $0 { return true }; return false }
+      && !FileManager.default.fileExists(atPath: outside + "/phone-denied.txt"))
+autoApprove = true
+r = run("write outside phone-approved", phone: true)
+check("phone: an approved write outside the folder asks and writes the file", r.code == 0
+      && r.events.contains { if case .approval = $0 { return true }; return false }
+      && (try? String(contentsOfFile: outside + "/phone-approved.txt", encoding: .utf8)) == "x")
+autoApprove = nil
+
+// Taint through an engine restart: a page outside the folder is read on the Mac; the app keeps the
+// taint the engine names with its answer and gives it back with the exchanges, so after a restart a
+// write in the working folder still asks, from the phone and from the Mac, and a No leaves no file.
+b.restartEngine()
+approveIf = { _, target in target.hasSuffix("page.txt") }
+r = run("read the outside page")
+approveIf = nil
+let carried = r.events.compactMap { if case let .carriedTaint(t) = $0 { return t }; return nil }.last
+check("taint: the answer of a turn that read a file outside the folder names the taint it leaves",
+      carried?.kinds == ["file"] && r.code == 0)
+var tainted = ConversationMemory()
+tainted.record(user: "read the outside page", assistant: answers(r.events).first ?? "read it")
+tainted.taint = carried
+func asked(_ r: (events: [BackendEvent], code: Int32?)) -> Bool { r.events.contains { if case .approval = $0 { return true }; return false } }
+autoApprove = false
+for (name, phone) in [("phone-after-restart", true), ("mac-after-restart", false)] {
+    b.restartEngine()
+    r = run("write inside \(name)", memory: tainted, phone: phone)
+    check("taint: after an engine restart, \(phone ? "a phone task's" : "a Mac turn's") write in the folder asks, and a No leaves no file",
+          asked(r) && r.code == 0 && !FileManager.default.fileExists(atPath: workFolder + "/\(name).txt"))
+}
+autoApprove = nil
+// An older saved conversation has no taint: taken as clean. A new conversation clears it.
+var older = tainted
+older.taint = nil
+b.restartEngine()
+r = run("write inside older-conversation", memory: older)
+check("taint: a conversation saved before the taint was kept is clean: the write runs with no card",
+      !asked(r) && FileManager.default.fileExists(atPath: workFolder + "/older-conversation.txt"))
+b.restartEngine()
+_ = run("hello", memory: tainted)
+b.reset()
+r = run("write inside new-conversation")
+check("taint: a new conversation clears it: the write runs with no card",
+      !asked(r) && FileManager.default.fileExists(atPath: workFolder + "/new-conversation.txt"))
+
+// A spoken answer cut off while it is still being written: the engine keeps the turn's taint and
+// says so on a `taint` event after the run has ended; the app keeps it, so after a restart a write
+// from the phone or the Mac still asks, and a No leaves no file.
+b.restartEngine()
+approveIf = { _, target in target.hasSuffix("page.txt") }
+r = run("read the outside page, slowly", after: 1.5, then: { b.cutOff(reply: "The page says [cut off]", running: true) })
+approveIf = nil
+let cutTaint: CarriedTaint? = waitFor({ events.contains { if case .carriedTaint = $0 { return true }; return false } }, seconds: 5)
+    ? events.compactMap { if case let .carriedTaint(t) = $0 { return t }; return nil }.last : nil
+check("taint: a turn cut off while it was written tells its taint after the run has ended",
+      cutTaint?.kinds == ["file"] && !answers(r.events).contains("The page says to save your notes."))
+var cutMemory = ConversationMemory()
+cutMemory.record(user: "read the outside page, slowly", assistant: "The page says [cut off]")
+cutMemory.taint = cutTaint
+autoApprove = false
+for (name, phone) in [("phone-after-cut-off", true), ("mac-after-cut-off", false)] {
+    b.restartEngine()
+    r = run("write inside \(name)", memory: cutMemory, phone: phone)
+    check("taint: after the cut-off and a restart, \(phone ? "a phone task's" : "a Mac turn's") write asks, and a No leaves no file",
+          asked(r) && !FileManager.default.fileExists(atPath: workFolder + "/\(name).txt"))
+}
+autoApprove = nil
+
+// Who answered a phone task's approval, in the real engine's audit log: never the action or the target.
+func answeredBy() -> [String] {
+    fileText("events.jsonl").split(separator: "\n").compactMap { line -> String? in
+        guard line.contains("\"kind\":\"approval_answered\""),
+              let o = try? JSONSerialization.jsonObject(with: Data(line.utf8)) as? [String: Any] else { return nil }
+        return o["who"] as? String
+    }
+}
+let whoBefore = answeredBy().count
+for (name, source) in [("phone-by-card", ApprovalSource.card), ("phone-by-phone", .phone), ("phone-timed-out", .timeout)] {
+    approveIf = nil
+    autoApprove = nil
+    var answeredOnce = false
+    onScreenEvent = { e in
+        if case .approval = e, !answeredOnce { answeredOnce = true; b.resolveApproval(source == .timeout ? false : true, from: source) }
+    }
+    _ = run("write outside \(name)", phone: true)
+    onScreenEvent = nil
+}
+r = run("write outside phone-stopped", phone: true, after: 1.5, then: { b.cancel() })
+check("audit: the Mac's card, the phone, the card's timeout and a stop are each named for a phone task's approval",
+      Array(answeredBy().dropFirst(whoBefore)) == ["card", "phone", "timeout", "stop"])
+check("audit: and no line holds an approval's action or target",
+      !fileText("events.jsonl").contains("phone-by-phone") && !fileText("events.jsonl").contains("write a file"))
+b.shutdown()
 
 // Fail closed: when the Keychain can't be read the engine is not started, the run ends with the
 // plain words, and nothing falls back to a file.

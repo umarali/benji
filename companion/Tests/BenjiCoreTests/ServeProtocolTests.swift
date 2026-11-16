@@ -7,6 +7,11 @@ final class ServeProtocolTests: XCTestCase {
 
     // MARK: requests
 
+    func testAPhoneTaskCarriesOnlyItsWords() {
+        XCTAssertEqual(text(.remoteSend(id: "phone-1", text: "hello")),
+                       #"{"id":"phone-1","remote_text":true,"text":"hello","type":"send"}"# + "\n")
+    }
+
     func testRequestLines() {
         XCTAssertEqual(text(.send(id: "t1", text: "tidy my Downloads", imagePath: nil, allowPointing: false)),
                        #"{"id":"t1","text":"tidy my Downloads","type":"send"}"# + "\n")
@@ -115,7 +120,7 @@ final class ServeProtocolTests: XCTestCase {
             + #"{"kind":"point","coords":[3,4],"label":"b"},"#
             + #"{"kind":"point","coords":[5,6]},"#
             + #"{"kind":"point","coords":[7,8]}]}"#
-        guard case let .answer(_, _, targets) = ServeEvent.decode(line) else { return XCTFail("not an answer") }
+        guard case let .answer(_, _, targets, _) = ServeEvent.decode(line) else { return XCTFail("not an answer") }
         XCTAssertEqual(targets.map(\.shape), [.point(x: 1, y: 2), .point(x: 3, y: 4), .point(x: 5, y: 6)])
         XCTAssertEqual(targets[1].label, "b")
     }
@@ -128,7 +133,7 @@ final class ServeProtocolTests: XCTestCase {
             + #"{"kind":"ARROW","coords":[1,2,3,4]},"#
             + #"{"kind":"scribble","coords":[1,2,3,4]},"#
             + #"{"kind":"note","coords":[7,8],"label":"Here"}]}"#
-        guard case let .answer(_, _, targets) = ServeEvent.decode(line) else { return XCTFail("not an answer") }
+        guard case let .answer(_, _, targets, _) = ServeEvent.decode(line) else { return XCTFail("not an answer") }
         XCTAssertEqual(targets.map(\.shape), [.circle(x1: 1, y1: 2, x2: 3, y2: 4), .path([1, 2, 3, 4, 5, 6]), .note(x: 7, y: 8)])
         XCTAssertEqual(targets.last?.label, "Here")
     }

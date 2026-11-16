@@ -35,6 +35,8 @@ final class ExplainCardBackend: CompanionBackend, JobForwarding {
 
     let inner: CompanionBackend
     private weak var stage: ExplainCardShowing?
+    /// The phone's run: its events pass through untouched, so no card is opened on the Mac for it.
+    private var phoneRun: Int?
     /// The display a screenshot is taken of: the one under the pointer, as the app captures.
     var screenUnderPointer: () -> NSScreen? = {
         let mouse = NSEvent.mouseLocation
@@ -69,7 +71,11 @@ final class ExplainCardBackend: CompanionBackend, JobForwarding {
         self.inner = inner
         self.stage = stage
         inner.onEvent = { [weak self] run, event in
-            guard let self, let out = self.taking(event, run: run) else { return }
+            guard let self else { return }
+            if run == self.phoneRun { self.onEvent?(run, event); return }
+            // Not part of any reply: it can come after its run is over, so it never starts a new one here.
+            if case .carriedTaint = event { self.onEvent?(run, event); return }
+            guard let out = self.taking(event, run: run) else { return }
             self.onEvent?(run, out)
         }
     }
@@ -199,7 +205,11 @@ final class ExplainCardBackend: CompanionBackend, JobForwarding {
         if opened, let run { stage?.hurry(run: run) }
     }
 
-    func resolveApproval(_ approved: Bool) { inner.resolveApproval(approved) }
+    func startRemote(run: Int, task: String, memory: ConversationMemory) {
+        phoneRun = run
+        inner.startRemote(run: run, task: task, memory: memory)
+    }
+    func resolveApproval(_ approved: Bool, from source: ApprovalSource) { inner.resolveApproval(approved, from: source) }
     func cancel() {
         stopCard()
         inner.cancel()

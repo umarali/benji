@@ -7,7 +7,16 @@ and versions follow [Semantic Versioning](https://semver.org/) with the pre-1.0 
 
 ## [Unreleased]
 
-Nothing yet since 0.1.0.
+### Added
+
+- **Phone control** (Settings › Phone, off by default): send text tasks from your phone's browser
+  over your own Tailscale network, follow them, stop them and, unless you turn it off, answer
+  their approvals. *Not live-tested.* See [Control Benji from your phone](docs/remote-control.md).
+
+### Fixed
+
+- Outside content a conversation read keeps making changes ask after the engine restarts, after
+  you reopen the conversation, and after you cut off a spoken answer.
 
 ## [0.1.0] - not yet released
 

@@ -5,6 +5,8 @@ What leaves your Mac, where it goes, and what Benji keeps locally.
 **In short:** Benji has no telemetry, no account and no hosted backend. It talks to the model
 provider you configured, and to the websites and services a tool you use needs. Run
 `python3 -m benji --print-provider` to see where your requests go, without making an API call.
+Phone control, off until you turn it on, listens on `127.0.0.1:8765` for your phone's browser,
+reached over your own Tailscale network: see [Control Benji from your phone](remote-control.md).
 
 ## What the provider sees
 
@@ -50,7 +52,7 @@ Settings › "Show Benji's folder" opens it. Log files are written readable by y
 |---|---|
 | `memory.jsonl` | Durable facts Benji was told to remember (never secrets) |
 | `usage.jsonl` | Token counts only |
-| `conversations/` | Your saved conversations with Benji |
+| `conversations/` | Your saved conversations with Benji, and which kinds of outside content each holds (see [Safety](safety.md#after-benji-reads-something-from-outside)) |
 | `answers.jsonl` | The model's raw answers and the events of each turn. On by default; `BENJI_ANSWER_LOG=0` turns it off |
 | job folders | Each background job's report and output |
 | `events.jsonl` | The audit log: metadata only |

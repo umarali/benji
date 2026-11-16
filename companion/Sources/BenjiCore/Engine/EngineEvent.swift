@@ -35,4 +35,17 @@ public enum BackendEvent: Equatable, Sendable {
     case cardLine(ExplainCardLine, at: Int?)
     /// The reply's card lines are all in.
     case cardEnd
+    /// The conversation now holds outside content (it comes just before the turn's answer).
+    case carriedTaint(CarriedTaint)
+}
+
+extension BackendEvent {
+    /// The event asks to act on the screen, or reports a step that does: a screen step's card, the
+    /// step itself, a drive's card or the drive. A task from the phone never gets one.
+    public var actsOnTheScreen: Bool {
+        switch self {
+        case .screenApproval, .screenAction, .driveApproval, .drive: return true
+        default: return false
+        }
+    }
 }

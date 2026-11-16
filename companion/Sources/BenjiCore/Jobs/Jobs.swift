@@ -390,6 +390,17 @@ public enum JobThread {
             }
         }
         return SavedConversation(id: job.id, title: titlePrefix + ConversationTitle.shorten(job.title),
-                                 started: started, updated: now, lines: lines)
+                                 started: started, updated: now, lines: lines, taint: taint(of: job))
+    }
+
+    /// The outside content the job read stays in its thread: continuing the thread asks before a
+    /// change, as the job did. The screen alone does not carry over. A job that says only `tainted`
+    /// counts as a file read outside its folder, as the engine counts it.
+    public static func taint(of job: JobSnapshot) -> CarriedTaint? {
+        guard job.tainted else { return nil }
+        let carried = ["web", "browser", "file"]
+        let named = job.taint.split(separator: "+").map(String.init)
+        let kinds = job.taint.isEmpty ? ["file"] : carried.filter(named.contains)
+        return kinds.isEmpty ? nil : CarriedTaint(kinds: kinds, note: "content a background job read")
     }
 }

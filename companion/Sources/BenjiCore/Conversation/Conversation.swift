@@ -1,5 +1,18 @@
 import Foundation
 
+/// Outside content a conversation holds, as the engine names it at the end of a committed turn:
+/// the kinds (`web`, `browser`, `file`; never `screen`, which lasts one turn) and the words its
+/// approval cards use for them. The engine sets it; the app only keeps it and gives it back.
+public struct CarriedTaint: Codable, Equatable, Sendable {
+    public let kinds: [String]
+    public let note: String
+
+    public init(kinds: [String], note: String) {
+        self.kinds = kinds
+        self.note = note
+    }
+}
+
 /// The recent exchanges the app passes to each new engine run (`--history`), so
 /// follow-up questions have context. Kept in memory only; "New conversation" clears it.
 /// How much is kept: everything while the user+assistant text fits in `historyBudgetChars`; once
@@ -28,6 +41,9 @@ public struct ConversationMemory: Equatable, Sendable {
     public private(set) var exchanges: [Exchange] = []
     /// Older exchanges of this conversation were dropped; the engine tells the model so.
     public private(set) var droppedEarlier = false
+    /// Outside content the conversation holds, as the engine last said (nil: none). Given back to
+    /// a new engine with the exchanges, so a change still asks first; cleared with the conversation.
+    public var taint: CarriedTaint?
 
     public init() {}
 
@@ -48,6 +64,7 @@ public struct ConversationMemory: Equatable, Sendable {
     public mutating func clear() {
         exchanges.removeAll()
         droppedEarlier = false
+        taint = nil
     }
 
     /// The last answer was cut off: keep `reply` (`CutOffReply.reply`) in its place.

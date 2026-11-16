@@ -7,6 +7,7 @@ extension CompanionModel {
 
     /// Listening shows in the peek (live words in its line); it opens the panel only if it already was.
     func voiceListeningStarted() {
+        if phoneTaskRunning { cancel() }   // the talk key on the Mac takes over from the phone
         if state.isBusy { screenStopped = true }   // the talk key during a turn takes the screen back
         freshLatencyIfStale()
         partialTranscript = ""
@@ -17,6 +18,7 @@ extension CompanionModel {
     /// The conversation's mic opened over Benji's answer (barge-in): the panel shows the mic is
     /// on, and Benji talks on until the user's own words are heard.
     func voiceListeningOverSpeech() {
+        if phoneTaskRunning { cancel() }
         partialTranscript = ""
         apply(.micOpenedOverSpeech)
     }
@@ -175,21 +177,22 @@ extension CompanionModel {
     /// can be edited and sent again (a running turn can't take a new message).
     /// `request`: the card's own request; an answer from a card for an earlier request (answered,
     /// timed out or cancelled) is ignored, never applied to the one waiting now.
-    func decideApproval(_ choice: ApprovalChoice, request id: String? = nil) {
+    /// `source`: the Mac's card, or the phone (CompanionModel+Phone.swift).
+    func decideApproval(_ choice: ApprovalChoice, request id: String? = nil, from source: ApprovalSource = .card) {
         guard let req = state.pendingApproval, id == nil || id == req.id else { return }
         switch choice {
-        case .yes: resolveApproval(true)
-        case .no: resolveApproval(false)
+        case .yes: resolveApproval(true, from: source)
+        case .no: resolveApproval(false, from: source)
         case .adjust:
             composerText = ApprovalPolicy.adjustText(for: req)
             setExpanded(true)   // before the state changes, so the panel stays open with the keyboard
-            resolveApproval(false)
+            resolveApproval(false, from: source)
             cancel()
         }
     }
 
     /// A timeout is always a No; it is only recorded differently. Answers once per request.
-    func resolveApproval(_ approved: Bool, timedOut: Bool = false) {
+    func resolveApproval(_ approved: Bool, timedOut: Bool = false, from source: ApprovalSource = .card) {
         guard state.pendingApproval != nil else { return }
         approvalTimer?.invalidate()
         approvalTimer = nil
@@ -201,10 +204,10 @@ extension CompanionModel {
         screenCard = nil
         // A drive begins only on a Yes pressed on its own card: remember that it was.
         if let id = driveCardID, id == state.pendingApproval?.id {
-            driveGranted = approved && !timedOut
+            driveGranted = approved && !timedOut && source == .card
             driveCardID = nil
         }
-        backend.resolveApproval(approved && !timedOut)
+        backend.resolveApproval(approved && !timedOut, from: timedOut ? .timeout : source)
         apply(timedOut ? .approvalTimedOut : .approvalResolved(approved))
     }
 

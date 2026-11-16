@@ -134,9 +134,11 @@ final class CompanionPanel: NSPanel {
     }
 
     // A menu-bar-only app has no Edit menu, so ⌘X/C/V/A/Z never reach the text
-    // field. Route them to the first responder (the composer's field editor).
+    // field. Route them to this panel's first responder (the composer's or a settings field's
+    // editor) first: while the panel is not the app's key window, the app's action goes elsewhere.
     override func performKeyEquivalent(with event: NSEvent) -> Bool {
-        if let action = Self.editAction(for: event), NSApp.sendAction(action, to: nil, from: self) {
+        if let action = Self.editAction(for: event),
+           firstResponder?.tryToPerform(action, with: self) == true || NSApp.sendAction(action, to: nil, from: self) {
             return true
         }
         return super.performKeyEquivalent(with: event)

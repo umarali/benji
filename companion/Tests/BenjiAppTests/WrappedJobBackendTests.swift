@@ -16,7 +16,7 @@ final class WrappedJobBackendTests: XCTestCase {
         var approvalTimeout: TimeInterval = 60
         func start(run: Int, task: String, imagePath: String?, memory: ConversationMemory, allowPointing: Bool,
                    spoken: Bool, screen: ScreenshotGeometry?) {}
-        func resolveApproval(_ approved: Bool) {}
+        func resolveApproval(_ approved: Bool, from source: ApprovalSource) {}
         func cancel() {}
         func reset() {}
         func shutdown() {}

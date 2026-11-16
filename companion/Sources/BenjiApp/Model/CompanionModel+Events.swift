@@ -6,6 +6,13 @@ extension CompanionModel {
     // MARK: backend → state
 
     func handle(_ event: BackendEvent) {
+        if phoneTaskRunning, event.actsOnTheScreen {
+            // A phone task is never offered the screen; if the engine asks anyway, stop rather than ask.
+            cancel()
+            phoneTaskStatus = "Stopped. Screen control needs the Mac."
+            return
+        }
+        defer { updatePhoneTask() }
         switch event {
         case .tool(let name, let detail):
             producedOutput = true
@@ -92,6 +99,8 @@ extension CompanionModel {
             rawStream = ""
             if !streamingText.isEmpty { streamingText = "" }
             sentences.reset()   // what was said stays said; the answer starts a new segment
+        case .carriedTaint(let taint):
+            keepTaint(taint)      // `listen` takes these first; kept here too for a direct call
         case .accepted:
             latency.mark(.accepted, at: Self.now())
             apply(.engineAccepted)   // not output: a run that then says nothing is still a failure
