@@ -149,6 +149,8 @@ public struct JobSnapshot: Equatable, Sendable, Identifiable {
     public let stoppedAtLimit: Bool
     /// A failed or stopped job can be continued from the row.
     public let canContinue: Bool
+    public private(set) var canResume: Bool
+    public private(set) var recoveryGeneration: String
     /// This run was started by the schedule and nobody is watching it.
     public let unattended: Bool
     /// The run found something the last one didn't (decided by the engine, in code).
@@ -163,7 +165,7 @@ public struct JobSnapshot: Equatable, Sendable, Identifiable {
                 brief: String = "", run: Int = 1, done: String = "", left: String = "", ask: String = "",
                 stoppedAtLimit: Bool = false, canContinue: Bool = false, unattended: Bool = false,
                 news: Bool = true, quiet: Bool = false, schedule: JobSchedule? = nil,
-                actSites: [String] = []) {
+                actSites: [String] = [], canResume: Bool = false, recoveryGeneration: String = "") {
         self.id = id
         self.title = title
         self.state = state
@@ -185,10 +187,19 @@ public struct JobSnapshot: Equatable, Sendable, Identifiable {
         self.ask = ask
         self.stoppedAtLimit = stoppedAtLimit
         self.canContinue = canContinue
+        self.canResume = canResume && state == .failed && !recoveryGeneration.isEmpty
+        self.recoveryGeneration = self.canResume ? recoveryGeneration : ""
         self.unattended = unattended
         self.news = news
         self.quiet = quiet
         self.schedule = schedule
+    }
+
+    public func withoutResume() -> JobSnapshot {
+        var copy = self
+        copy.canResume = false
+        copy.recoveryGeneration = ""
+        return copy
     }
 
     /// What the row, the peek and the thread say a finished job did: the written line, else the
@@ -238,7 +249,8 @@ public struct JobSnapshot: Equatable, Sendable, Identifiable {
                            canContinue: o["can_continue"] as? Bool ?? false, unattended: o["unattended"] as? Bool ?? false,
                            news: o["news"] as? Bool ?? true, quiet: o["quiet"] as? Bool ?? false,
                            schedule: (o["schedule"] as? [String: Any]).flatMap(JobSchedule.decode),
-                           actSites: (o["act_sites"] as? [String] ?? []).filter { $0.hasPrefix("https://") })
+                           actSites: (o["act_sites"] as? [String] ?? []).filter { $0.hasPrefix("https://") },
+                           canResume: o["can_resume"] as? Bool ?? false, recoveryGeneration: str("recovery_generation"))
     }
 
     /// The row's second line.

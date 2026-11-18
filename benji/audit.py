@@ -103,7 +103,7 @@ GATE_CODES = frozenset({
 })
 
 _ID = re.compile(r"^[A-Za-z0-9_-]{1,40}$")
-_REQUEST = re.compile(r"^[as]\d{1,6}$")
+_REQUEST = re.compile(r"^(?:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-)?[as]\d{1,6}$")
 _PYNAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]{0,63}$")      # an exception class or a tool name
 _TOOL = re.compile(r"^[a-z][a-z0-9_]{0,39}$")
 _VERSION = re.compile(r"^[0-9A-Za-z.+-]{1,24}$")

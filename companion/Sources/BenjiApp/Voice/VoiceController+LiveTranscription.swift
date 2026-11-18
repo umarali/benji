@@ -140,12 +140,9 @@ extension VoiceController {
 
     func transcribeWithEngine(_ url: URL, completion: @escaping (Result<String, Error>) -> Void) {
         let p = Process()
-        p.executableURL = URL(fileURLWithPath: "/bin/zsh")
-        p.arguments = ["-lc", "cd \"$BENJI_DIR\" && exec python3 -m benji --transcribe \"$BENJI_WAV\""]
         var env = ProcessInfo.processInfo.environment
         env["BENJI_DIR"] = assistantDir
         env["BENJI_WAV"] = url.path
-        p.environment = env
         let out = Pipe()
         let err = Pipe()
         p.standardOutput = out
@@ -164,6 +161,7 @@ extension VoiceController {
                 }
             }
         }
-        do { try p.run() } catch { completion(.failure(error)) }
+        do { try EngineLaunch.configure(p, entry: .engine, arguments: ["--transcribe", url.path], sourceDirectory: assistantDir, environment: env)
+            try p.run() } catch { completion(.failure(error)) }
     }
 }

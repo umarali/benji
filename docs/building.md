@@ -112,3 +112,8 @@ docs/                these pages, the design system and the decision log
 [How Benji works](architecture.md) explains how the parts fit together. The design system (name,
 icon, colour and type tokens, the notch, motion, sound and the pointing overlay) is in
 [design-system/](design-system/), and the decision log is [decisions.md](decisions.md).
+
+
+## Self-contained arm64 builds
+
+The offline distribution builder can assemble an arm64 app with a pinned Python runtime. Local ad-hoc build and headless checks exist; Developer ID signing, notarisation and clean-Mac release checks remain outstanding. See the [distribution guide](distribution.md) for pinned inputs, the launch contract and remaining acceptance work.

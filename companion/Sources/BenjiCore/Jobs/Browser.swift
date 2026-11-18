@@ -1,4 +1,5 @@
 import Foundation
+import Darwin
 
 // Browser reach: the app's side of the browser channel for background jobs.
 // The engine owns the rules (which sites a job may read or act on, what is asked, what taints) and the
@@ -104,16 +105,20 @@ public struct ChromiumBrowser: Equatable, Sendable, Identifiable {
 public struct BrowserHostRegistration {
     public enum RegistrationError: Error, Equatable {
         case unusablePath
+        case foreignRegistration
+        case unsupportedDistributionLocation
     }
 
     public let home: URL
     public let assistantDir: String
     public let browser: ChromiumBrowser
+    public let bundleURL: URL
 
-    public init(home: URL, assistantDir: String, browser: ChromiumBrowser = .chrome) {
+    public init(home: URL, assistantDir: String, browser: ChromiumBrowser = .chrome, bundleURL: URL = Bundle.main.bundleURL) {
         self.home = home
         self.assistantDir = assistantDir
         self.browser = browser
+        self.bundleURL = bundleURL
     }
 
     private var support: URL { home.appendingPathComponent("Library/Application Support", isDirectory: true) }
@@ -150,6 +155,21 @@ public struct BrowserHostRegistration {
     public func launcherScript() throws -> String {
         guard !assistantDir.isEmpty, !assistantDir.contains("\n"), !assistantDir.contains("\0"),
               assistantDir.hasPrefix("/") else { throw RegistrationError.unusablePath }
+        if EngineLaunch.isDistribution {
+            let bundle = bundleURL.resolvingSymlinksInPath()
+            var volume = statfs()
+            guard statfs(bundle.path, &volume) == 0, (volume.f_flags & UInt32(MNT_RDONLY)) == 0,
+                  !bundle.path.hasPrefix("/Volumes/"),
+                  !bundle.path.contains("/AppTranslocation/") else { throw RegistrationError.unsupportedDistributionLocation }
+            let launch = try EngineLaunch.make(entry: .nativeHost, sourceDirectory: assistantDir,
+                                               environment: [:], bundleURL: bundle)
+            func quote(_ value: String) throws -> String {
+                guard !value.contains("\n"), !value.contains("\0") else { throw RegistrationError.unusablePath }
+                return "'" + value.replacingOccurrences(of: "'", with: "'\\''") + "'"
+            }
+            let command = try ([launch.executable.path] + launch.arguments).map(quote).joined(separator: " ")
+            return "#!/bin/sh\n# Written by Benji when you turned on a browser in Settings > Browser.\nexec " + command + " \"$@\"\n"
+        }
         let quoted = "'" + hostScript.replacingOccurrences(of: "'", with: "'\\''") + "'"
         return """
         #!/bin/sh
@@ -161,17 +181,34 @@ public struct BrowserHostRegistration {
         """
     }
 
-    public var isRegistered: Bool {
+    /// Ownership survives bundle relocation; currentness also checks the exact launcher bytes.
+    public var isOwned: Bool {
         guard let data = try? Data(contentsOf: manifestURL),
               let o = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return false }
-        return (o["allowed_origins"] as? [String]) == BrowserExtension.allowedOrigins
-            && FileManager.default.isExecutableFile(atPath: launcherURL.path)
+        return o["name"] as? String == BrowserExtension.hostName
+            && o["path"] as? String == launcherURL.path && o["type"] as? String == "stdio"
+    }
+    private var ownsLauncher: Bool {
+        guard let bytes = try? Data(contentsOf: launcherURL) else { return false }
+        return bytes.starts(with: Data("#!/bin/sh\n# Written by Benji when you turned on a browser in Settings > Browser.".utf8))
+    }
+    public var isRegistered: Bool {
+        guard let data = try? Data(contentsOf: manifestURL),
+              let o = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let expected = try? JSONSerialization.jsonObject(with: manifestData()) as? [String: Any],
+              NSDictionary(dictionary: o).isEqual(to: expected),
+              let script = try? launcherScript(), let bytes = try? Data(contentsOf: launcherURL) else { return false }
+        return bytes == Data(script.utf8) && FileManager.default.isExecutableFile(atPath: launcherURL.path)
     }
 
     /// The launcher first, then the manifest, so the manifest never names something that isn't there.
     public func register() throws {
         let script = try launcherScript()
         let fm = FileManager.default
+        if fm.fileExists(atPath: manifestURL.path), !isOwned { throw RegistrationError.foreignRegistration }
+        if fm.fileExists(atPath: launcherURL.path), !ownsLauncher {
+            throw RegistrationError.foreignRegistration
+        }
         try fm.createDirectory(at: launcherURL.deletingLastPathComponent(), withIntermediateDirectories: true,
                                attributes: [.posixPermissions: 0o700])
         try fm.setAttributes([.posixPermissions: 0o700], ofItemAtPath: launcherURL.deletingLastPathComponent().path)
@@ -185,21 +222,28 @@ public struct BrowserHostRegistration {
     /// (not the engine's link file, which the engine owns).
     public func unregister() {
         let fm = FileManager.default
+        guard isOwned else { return }
         try? fm.removeItem(at: manifestURL)
         let others = Self.registered(home: home, assistantDir: assistantDir)
-        if others.isEmpty { try? fm.removeItem(at: launcherURL) }
+        if others.isEmpty && ownsLauncher { try? fm.removeItem(at: launcherURL) }
     }
 
     /// The browsers that have our manifest right now.
     public static func registered(home: URL, assistantDir: String) -> [ChromiumBrowser] {
-        ChromiumBrowser.all.filter { BrowserHostRegistration(home: home, assistantDir: assistantDir, browser: $0).isRegistered }
+        ChromiumBrowser.all.filter { BrowserHostRegistration(home: home, assistantDir: assistantDir, browser: $0).isOwned }
+    }
+
+    /// Refresh existing opt-ins after relocation. Missing and foreign manifests are untouched.
+    public static func repairOwned(home: URL, assistantDir: String, bundleURL: URL = Bundle.main.bundleURL) throws {
+        for browser in registered(home: home, assistantDir: assistantDir) {
+            let registration = BrowserHostRegistration(home: home, assistantDir: assistantDir, browser: browser, bundleURL: bundleURL)
+            if !registration.isRegistered { try registration.register() }
+        }
     }
 
     /// The master switch went off: every browser's manifest and the launcher, and nothing else.
     public static func unregisterAll(home: URL, assistantDir: String) {
         for b in ChromiumBrowser.all { BrowserHostRegistration(home: home, assistantDir: assistantDir, browser: b).unregister() }
-        let reg = BrowserHostRegistration(home: home, assistantDir: assistantDir)
-        try? FileManager.default.removeItem(at: reg.launcherURL)
     }
 }
 

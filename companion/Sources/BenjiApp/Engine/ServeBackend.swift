@@ -85,12 +85,14 @@ protocol JobBackend: AnyObject {
     func dismissJob(_ job: String)
     /// Another run of a job that stopped or didn't finish.
     func continueJob(_ job: String)
+    func resumeJob(_ job: String, run: Int, generation: String, readSites: [String], actSites: [String])
     /// The row's schedule buttons.
     func scheduleJob(_ job: String, _ action: JobScheduleAction)
 }
 
 extension JobBackend {
     func continueJob(_ job: String) {}
+    func resumeJob(_ job: String, run: Int, generation: String, readSites: [String], actSites: [String]) {}
     func scheduleJob(_ job: String, _ action: JobScheduleAction) {}
 }
 
@@ -119,6 +121,9 @@ extension JobForwarding {
     func steerJob(_ job: String, text: String) { jobs?.steerJob(job, text: text) }
     func dismissJob(_ job: String) { jobs?.dismissJob(job) }
     func continueJob(_ job: String) { jobs?.continueJob(job) }
+    func resumeJob(_ job: String, run: Int, generation: String, readSites: [String], actSites: [String]) {
+        jobs?.resumeJob(job, run: run, generation: generation, readSites: readSites, actSites: actSites)
+    }
     func scheduleJob(_ job: String, _ action: JobScheduleAction) { jobs?.scheduleJob(job, action) }
 }
 
@@ -140,6 +145,7 @@ final class ServeBackend: CompanionBackend, JobBackend {
     private var ready = false
     /// The engine said (in `ready`) that it carries out schedules: it runs jobs. One that
     /// doesn't is never offered `repeat` or sent the schedule requests.
+    private var engineResume = false
     private var engineSchedules = false
     /// The engine said (in `ready`) that it runs phone tasks as text only (`remote_text`). One that
     /// doesn't is never sent one: the phone's run ends with an error instead.
@@ -249,6 +255,11 @@ final class ServeBackend: CompanionBackend, JobBackend {
     func continueJob(_ job: String) {
         AuditFile.shared.record(.jobAction(.continue, job: job, approved: nil))
         write(.jobContinue(job: job))
+    }
+
+    func resumeJob(_ job: String, run: Int, generation: String, readSites: [String], actSites: [String]) {
+        guard ready, engineResume, !generation.isEmpty else { return }
+        write(.jobResume(job: job, run: run, generation: generation, readSites: readSites, actSites: actSites))
     }
 
     func scheduleJob(_ job: String, _ action: JobScheduleAction) {
@@ -371,6 +382,7 @@ final class ServeBackend: CompanionBackend, JobBackend {
         process = nil
         input = nil
         ready = false
+        engineResume = false
         engineSchedules = false
         enginePhoneTasks = false
         queued = []
@@ -391,10 +403,8 @@ final class ServeBackend: CompanionBackend, JobBackend {
         queued = []
         stderrTail = []
 
-        process.executableURL = URL(fileURLWithPath: "/bin/zsh")
         // Login shell for PATH/pyenv; the engine loads ~/.benji.env for the key. stdout carries only
         // events; stderr is read separately (no 2>&1).
-        process.arguments = ["-lc", "cd \"$BENJI_DIR\" && exec python3 -m benji --serve"]
         var env = ProcessInfo.processInfo.environment
         env["BENJI_DIR"] = assistantDir
         env["BENJI_WORKDIR"] = WorkingFolder.url().path     // the one folder, the same for the app and the engine
@@ -415,7 +425,6 @@ final class ServeBackend: CompanionBackend, JobBackend {
             onFinished?(turnRun, -1)
             return
         }
-        process.environment = env
         process.standardInput = inPipe
         process.standardOutput = outPipe
         process.standardError = errPipe
@@ -441,6 +450,7 @@ final class ServeBackend: CompanionBackend, JobBackend {
             }
         }
         do {
+            try EngineLaunch.configure(process, entry: .engine, arguments: ["--serve"], sourceDirectory: assistantDir, environment: env)
             try process.run()
             trace("launched pid \(process.processIdentifier)")
             AuditFile.shared.record(.engineStart)
@@ -501,6 +511,7 @@ final class ServeBackend: CompanionBackend, JobBackend {
         case .ready(let info):
             ready = true
             enginePhoneTasks = info.capabilities.contains("remote_text")
+            engineResume = info.capabilities.contains("job_resume")
             approvalTimeout = ServeProtocol.approvalTimeout(engineTimeout: info.approvalTimeout)
             if prewarmWaiting { send(.prewarm) }
             prewarmWaiting = false
@@ -592,7 +603,7 @@ final class ServeBackend: CompanionBackend, JobBackend {
             guard id == turnID else { return }
             onEvent?(turnRun, .cardEnd)
         case let .job(snapshot):
-            onJob?(snapshot)
+            onJob?(engineResume ? snapshot : snapshot.withoutResume())
         case let .browser(status):
             Self.browserStatus?(status)
         case let .browserAlways(sites):

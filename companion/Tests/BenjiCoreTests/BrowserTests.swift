@@ -364,3 +364,72 @@ extension BrowserTests {
 extension BrowserStatus {
     static var allWords: [String] { [BrowserStatus.off, .waiting, .connected].map(\.word) }
 }
+
+extension BrowserTests {
+    func testRepairRefreshesOnlyAnExistingOwnedOptIn() throws {
+        let old = registration("/private/tmp/old source")
+        try old.register()
+        let bytes = try Data(contentsOf: old.manifestURL)
+        let moved = registration("/private/tmp/new source's space")
+        XCTAssertTrue(moved.isOwned)
+        XCTAssertFalse(moved.isRegistered)
+        try BrowserHostRegistration.repairOwned(home: home, assistantDir: moved.assistantDir)
+        XCTAssertTrue(moved.isRegistered)
+        XCTAssertEqual(try Data(contentsOf: moved.manifestURL), bytes)
+        XCTAssertEqual(BrowserHostRegistration.registered(home: home, assistantDir: moved.assistantDir).map(\.id), ["chrome"])
+    }
+
+    func testStaleManifestRemainsOwnedAndCanBeRepairedAndRemoved() throws {
+        let reg = registration()
+        try reg.register()
+        var stale = try JSONSerialization.jsonObject(with: reg.manifestData()) as! [String: Any]
+        stale["description"] = "Earlier Benji build"
+        stale["allowed_origins"] = ["chrome-extension://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/"]
+        try JSONSerialization.data(withJSONObject: stale).write(to: reg.manifestURL)
+        XCTAssertTrue(reg.isOwned)
+        XCTAssertFalse(reg.isRegistered)
+        try BrowserHostRegistration.repairOwned(home: home, assistantDir: reg.assistantDir)
+        XCTAssertTrue(reg.isRegistered)
+        try JSONSerialization.data(withJSONObject: stale).write(to: reg.manifestURL)
+        reg.unregister()
+        XCTAssertFalse(FileManager.default.fileExists(atPath: reg.manifestURL.path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: reg.launcherURL.path))
+
+        try reg.register()
+        stale["path"] = home.appendingPathComponent("someone-elses-launcher").path
+        let foreign = try JSONSerialization.data(withJSONObject: stale)
+        try foreign.write(to: reg.manifestURL)
+        XCTAssertFalse(reg.isOwned)
+        XCTAssertThrowsError(try reg.register())
+        reg.unregister()
+        XCTAssertEqual(try Data(contentsOf: reg.manifestURL), foreign)
+    }
+
+    func testForeignManifestSurvivesRegisterRepairAndUnregister() throws {
+        let reg = registration()
+        try reg.register()
+        let foreign = Data("{\"name\":\"another owner\"}".utf8)
+        try foreign.write(to: reg.manifestURL)
+        let launcher = try Data(contentsOf: reg.launcherURL)
+        XCTAssertFalse(reg.isOwned)
+        XCTAssertThrowsError(try reg.register())
+        try BrowserHostRegistration.repairOwned(home: home, assistantDir: reg.assistantDir)
+        reg.unregister()
+        XCTAssertEqual(try Data(contentsOf: reg.manifestURL), foreign)
+        XCTAssertEqual(try Data(contentsOf: reg.launcherURL), launcher)
+    }
+
+    func testForeignBinaryLauncherIsNeitherOverwrittenNorRemovedWithOwnedManifest() throws {
+        let reg = registration()
+        try reg.register()
+        let foreign = Data([0xff, 0xfe, 0, 1])
+        try foreign.write(to: reg.launcherURL)
+        XCTAssertTrue(reg.isOwned)
+        XCTAssertFalse(reg.isRegistered)
+        XCTAssertThrowsError(try reg.register())
+        XCTAssertThrowsError(try BrowserHostRegistration.repairOwned(home: home, assistantDir: reg.assistantDir))
+        reg.unregister()
+        XCTAssertFalse(FileManager.default.fileExists(atPath: reg.manifestURL.path))
+        XCTAssertEqual(try Data(contentsOf: reg.launcherURL), foreign)
+    }
+}

@@ -195,7 +195,7 @@ final class ServeProtocolQuietTests: XCTestCase {
         XCTAssertFalse(AppCapabilities.list(screenActions: true, jobs: false).contains("jobs"))
         XCTAssertFalse(AppCapabilities.list(screenActions: true, jobs: false, browser: true).contains("browser"), "browser reach is for jobs")
         // The names are the engine's (benji/serve.py APP_CAPS).
-        XCTAssertTrue(Set(AppCapabilities.list(screenActions: true)).isSubset(of: ["pointing", "screen_actions", "cards", "figures", "jobs", "browser", "prewarm", "schedules", "drive", "browser_act", "browser_upload"]))
+        XCTAssertTrue(Set(AppCapabilities.list(screenActions: true)).isSubset(of: ["pointing", "screen_actions", "cards", "figures", "jobs", "browser", "prewarm", "schedules", "drive", "browser_act", "browser_upload", "job_resume"]))
         XCTAssertTrue(AppCapabilities.list(screenActions: true).contains("schedules"))
         XCTAssertFalse(AppCapabilities.list(screenActions: true, jobs: false).contains("schedules"), "schedules are for jobs")
         XCTAssertFalse(AppCapabilities.list(screenActions: true, schedules: false).contains("schedules"))

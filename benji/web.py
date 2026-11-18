@@ -19,6 +19,7 @@ import urllib.parse
 import urllib.request
 
 from .gate import host_refusal
+from . import tls
 
 USER_AGENT = "benji/0.1 (+https://localhost) python-urllib"
 DEFAULT_TIMEOUT = 30
@@ -95,7 +96,7 @@ class _PublicHTTPHandler(urllib.request.HTTPHandler):
 class _PublicHTTPSHandler(urllib.request.HTTPSHandler):
     def https_open(self, req):
         _check_url(req.full_url)
-        return self.do_open(_PublicHTTPSConnection, req, context=self._context)
+        return self.do_open(_PublicHTTPSConnection, req, context=tls.context() or self._context)
 
 
 # A proxy could resolve the hostname elsewhere and bypass the checked destination entirely.
@@ -110,6 +111,8 @@ def _get(url: str, headers: dict[str, str] | None = None, timeout: int = DEFAULT
         with _OPENER.open(req, timeout=timeout) as resp:
             charset = resp.headers.get_content_charset() or "utf-8"
             return resp.read().decode(charset, errors="replace")
+    except tls.TrustError as e:
+        raise WebError(str(e)) from None
     except urllib.error.HTTPError as e:
         raise WebError(f"HTTP {e.code} for {url}") from None
     except urllib.error.URLError as e:

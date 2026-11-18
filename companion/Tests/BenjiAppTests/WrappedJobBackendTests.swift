@@ -1,4 +1,6 @@
 import XCTest
+import SwiftUI
+import AppKit
 @testable import BenjiApp
 import BenjiCore
 
@@ -43,6 +45,38 @@ final class WrappedJobBackendTests: XCTestCase {
         fake.job(JobSnapshot(id: id, title: "Headphones", state: .working, line: "Reading a page"))
         XCTAssertEqual(model.job?.state, .working)
         XCTAssertEqual(model.job?.detail, "Reading a page")
+    }
+
+    func testResumeConsentReachesTheEngineAndRejectsStaleOrWiderScope() {
+        let fake = FakeBackend()
+        let model = model(chain(fake))
+        let offered = JobSnapshot(id: id, title: "Read", state: .failed, run: 2,
+                                  canResume: true, recoveryGeneration: "g1")
+        fake.job(offered)
+        model.resumeJob(offered, readSites: ["https://wide.example"], actSites: [])
+        XCTAssertTrue(fake.jobResumes.isEmpty)
+        model.resumeJob(offered, readSites: [], actSites: [])
+        XCTAssertEqual(fake.jobResumes.count, 1)
+        XCTAssertEqual(fake.jobResumes[0].generation, "g1")
+        XCTAssertEqual(fake.jobResumes[0].run, 2)
+        fake.job(JobSnapshot(id: id, title: "Read", state: .failed, run: 2,
+                             canResume: true, recoveryGeneration: "g2"))
+        model.resumeJob(offered, readSites: [], actSites: [])
+        XCTAssertEqual(fake.jobResumes.count, 1)
+    }
+
+    @MainActor
+    func testResumeConsentFitsTheExistingNarrowPanelWithManySites() async {
+        let sites = (0..<30).map { "https://site-\($0)-with-a-long-name.example" }
+        let offered = JobSnapshot(id: id, title: "Read pages", state: .failed, sites: sites,
+                                  run: 2, actSites: sites, canResume: true, recoveryGeneration: "g1")
+        let width = PanelGeometry.openSize.width - 56 // panel and job row padding
+        let hosting = NSHostingView(rootView: JobResumeConsent(job: offered, cancel: {}, confirm: { _, _ in })
+            .frame(width: width))
+        let measured = hosting.fittingSize
+        XCTAssertGreaterThan(measured.height, 0)
+        XCTAssertLessThanOrEqual(measured.width, width + 1)
+        XCTAssertLessThanOrEqual(measured.height, 230, "Site lists scroll inside the existing row; they cannot grow the panel.")
     }
 
     func testTheButtonsReachTheEngineThroughBothWrappers() {

@@ -56,6 +56,45 @@ final class ServeBackendStartupTests: XCTestCase {
         try? FileManager.default.removeItem(at: dir)
     }
 
+    func testOldPeerCannotEnableResumeBySnapshotAlone() throws {
+        try recoveryPeer(capable: false)
+        var shown: JobSnapshot?
+        backend.onJob = { shown = $0 }
+        send(1, "hello")
+        waitForFinish(1)
+        XCTAssertFalse(try XCTUnwrap(shown).canResume)
+        backend.resumeJob("fixture", run: 1, generation: "g1", readSites: [], actSites: [])
+        XCTAssertFalse(received().contains { $0["type"] as? String == "job_resume" })
+    }
+
+    func testNewPeerAndSnapshotEnableBoundResumeRequest() throws {
+        try recoveryPeer(capable: true)
+        var shown: JobSnapshot?
+        backend.onJob = { shown = $0 }
+        send(1, "hello")
+        waitForFinish(1)
+        XCTAssertTrue(try XCTUnwrap(shown).canResume)
+        backend.resumeJob("fixture", run: 1, generation: "g1", readSites: ["https://read.example"], actSites: [])
+        send(2, "barrier")
+        waitForFinish(2)
+        let request = try XCTUnwrap(received().first { $0["type"] as? String == "job_resume" })
+        XCTAssertEqual(request["generation"] as? String, "g1")
+        XCTAssertEqual(request["read_sites"] as? [String], ["https://read.example"])
+        XCTAssertEqual(request["act_sites"] as? [String], [])
+    }
+
+    private func recoveryPeer(capable: Bool) throws {
+        let caps = capable ? "[\"job_resume\"]" : "[]"
+        let added = """
+            say({"type": "job", "job": {"id": "fixture", "title": "Recovery", "state": "failed",
+                 "can_resume": True, "recovery_generation": "g1", "run": 1}})
+        """
+        let engine = Self.fakeEngine.replacingOccurrences(of: "\"destination\": \"local\", \"jobs\": True",
+                                                          with: "\"destination\": \"local\", \"capabilities\": " + caps + ", \"jobs\": True")
+            .replacingOccurrences(of: "    elif t == \"send\":", with: "    " + added + "\n    elif t == \"send\":")
+        try Data(engine.utf8).write(to: dir.appendingPathComponent("benji/__main__.py"))
+    }
+
     // MARK: helpers
 
     private func send(_ run: Int, _ task: String, memory: ConversationMemory = ConversationMemory()) {

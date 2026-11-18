@@ -157,3 +157,22 @@ final class ModelSetupEngineTests: XCTestCase {
         await fulfillment(of: [done], timeout: 3)
     }
 }
+
+extension ModelSetupEngineTests {
+    @MainActor func testDefaultArgumentsReachOfflineSourceProbe() async throws {
+        let home = try fixtureHome()
+        defer { try? FileManager.default.removeItem(at: home) }
+        var isolated = fixtureEnvironment(home)
+        isolated["BENJI_PROVIDER"] = "ollama"
+        isolated["BENJI_MODEL"] = "offline-source-default"
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent().deletingLastPathComponent().path
+        let done = expectation(description: "default setup command returned")
+        var result: Result<ModelSetupSource, ModelSetupFailure>?
+        let engine = ModelSetupEngine(assistantDir: root, environment: { .success([:]) },
+                                      inheritedEnvironment: { isolated })
+        engine.run(test: nil) { result = $0; done.fulfill() }
+        await fulfillment(of: [done], timeout: 10)
+        XCTAssertEqual(try XCTUnwrap(result).get().model, "offline-source-default")
+    }
+}

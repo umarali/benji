@@ -19,6 +19,8 @@ import subprocess
 import sys
 import urllib.error
 import urllib.request
+
+from . import tls
 import uuid
 import wave
 
@@ -126,8 +128,10 @@ def _transcribe_openai(path: str, key: str, model: str = "whisper-1") -> str:
         headers={"Authorization": f"Bearer {key}",
                  "Content-Type": f"multipart/form-data; boundary={boundary}"})
     try:
-        with urllib.request.urlopen(req, timeout=120) as resp:
+        with tls.urlopen(req, timeout=120) as resp:
             return json.loads(resp.read()).get("text", "").strip()
+    except tls.TrustError as e:
+        raise VoiceError(str(e)) from None
     except urllib.error.HTTPError as e:
         raise VoiceError(f"OpenAI transcription HTTP {e.code}: {e.read().decode(errors='replace')[:300]}") from None
 
@@ -139,9 +143,11 @@ def _transcribe_deepgram(path: str, key: str) -> str:
         DEEPGRAM_LISTEN + "?smart_format=true", data=audio, method="POST",
         headers={"Authorization": f"Token {key}", "Content-Type": "audio/wav"})
     try:
-        with urllib.request.urlopen(req, timeout=120) as resp:
+        with tls.urlopen(req, timeout=120) as resp:
             data = json.loads(resp.read())
         return data["results"]["channels"][0]["alternatives"][0]["transcript"].strip()
+    except tls.TrustError as e:
+        raise VoiceError(str(e)) from None
     except (urllib.error.HTTPError, KeyError, IndexError) as e:
         raise VoiceError(f"Deepgram transcription failed: {e}") from None
 

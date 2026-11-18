@@ -11,52 +11,75 @@ struct JobRowView: View {
     let job: JobSnapshot
     let a: NotchAccessibility
     @State private var steer = ""
+    @State private var resumeOffer: JobSnapshot?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 10) {
-                Image(systemName: symbol)
-                    .foregroundStyle(NotchPalette.tint(tint, a))
-                    .frame(width: 18)
-                Button { model.openJobThread() } label: {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(job.title).font(.system(.callout, design: .rounded).weight(.semibold))
-                            .foregroundStyle(NotchPalette.label).lineLimit(1).truncationMode(.tail)
-                        Text(job.detail).font(.caption).foregroundStyle(NotchPalette.secondary(a))
-                            .lineLimit(1).truncationMode(.tail)
+            if let offered = resumeOffer, job.canResume {
+                JobResumeConsent(job: offered, cancel: { resumeOffer = nil }) { readSites, actSites in
+                    model.resumeJob(offered, readSites: readSites, actSites: actSites)
+                    resumeOffer = nil
+                }
+                .id(offered.recoveryGeneration)
+            } else {
+                HStack(spacing: 10) {
+                    Image(systemName: symbol)
+                        .foregroundStyle(NotchPalette.tint(tint, a))
+                        .frame(width: 18)
+                    Button { model.openJobThread() } label: {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(job.title).font(.system(.callout, design: .rounded).weight(.semibold))
+                                .foregroundStyle(NotchPalette.label).lineLimit(1).truncationMode(.tail)
+                            Text(job.detail).font(.caption).foregroundStyle(NotchPalette.secondary(a))
+                                .lineLimit(1).truncationMode(.tail)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .contentShape(Rectangle())
+                    .buttonStyle(.plain)
+                    .help("Open this job's thread")
+                    .accessibilityLabel("\(job.title), \(job.state.word). \(job.detail)")
+                    .accessibilityHint("Opens the job's thread")
+                    trailing
+                    Button { model.jobExpanded.toggle() } label: {
+                        Image(systemName: model.jobExpanded ? "chevron.up" : "chevron.down")
+                            .font(.system(size: 11, weight: .semibold)).foregroundStyle(NotchPalette.secondary(a))
+                    }
+                    .buttonStyle(.plain)
+                    .help(model.jobExpanded ? "Hide details" : "Show details")
+                    .accessibilityLabel(model.jobExpanded ? "Hide job details" : "Show job details")
                 }
-                .buttonStyle(.plain)
-                .help("Open this job's thread")
-                .accessibilityLabel("\(job.title), \(job.state.word). \(job.detail)")
-                .accessibilityHint("Opens the job's thread")
-                trailing
-                Button { model.jobExpanded.toggle() } label: {
-                    Image(systemName: model.jobExpanded ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 11, weight: .semibold)).foregroundStyle(NotchPalette.secondary(a))
+                if job.offersContinue {
+                    Text("Continue starts a fresh run. It can repeat earlier actions and reuse existing browser grants.")
+                        .font(.caption).foregroundStyle(NotchPalette.secondary(a))
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-                .buttonStyle(.plain)
-                .help(model.jobExpanded ? "Hide details" : "Show details")
-                .accessibilityLabel(model.jobExpanded ? "Hide job details" : "Show job details")
-            }
-            if let pending = job.pending {
-                approval(pending)
-            }
-            if job.state == .queued, !job.brief.isEmpty {
-                // The start card: what the job was told, while the beat lets the user cancel it.
-                Text(job.brief).font(.caption).foregroundStyle(NotchPalette.secondary(a))
-                    .lineLimit(4).truncationMode(.tail).fixedSize(horizontal: false, vertical: true)
-                    .accessibilityLabel("The job was told: \(job.brief)")
-            }
-            if let schedule = job.schedule {
-                scheduleRow(schedule)
-            }
-            if model.jobExpanded {
-                details
+                if let pending = job.pending {
+                    approval(pending)
+                }
+                if job.state == .queued, !job.brief.isEmpty {
+                    // The start card: what the job was told, while the beat lets the user cancel it.
+                    Text(job.brief).font(.caption).foregroundStyle(NotchPalette.secondary(a))
+                        .lineLimit(4).truncationMode(.tail).fixedSize(horizontal: false, vertical: true)
+                        .accessibilityLabel("The job was told: \(job.brief)")
+                }
+                if let schedule = job.schedule {
+                    scheduleRow(schedule)
+                }
+                if model.jobExpanded {
+                    details
+                }
             }
         }
+        .onChange(of: job) { _, current in
+            guard let offered = resumeOffer else { return }
+            if !current.canResume || current.id != offered.id || current.run != offered.run
+                || current.recoveryGeneration != offered.recoveryGeneration
+                || current.sites != offered.sites || current.actSites != offered.actSites {
+                resumeOffer = nil
+            }
+        }
+        .onDisappear { resumeOffer = nil }
         .padding(12)
         .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(NotchPalette.raised))
         .accessibilityElement(children: .contain)
@@ -91,8 +114,11 @@ struct JobRowView: View {
             textButton("Stop", help: "Stop the job") { model.stopJob() }
         case .done, .failed, .stopped:
             HStack(spacing: 10) {
+                if job.canResume {
+                    textButton("Resume", help: "Review browser consent, then resume a read-only checkpoint") { resumeOffer = job }
+                }
                 if job.offersContinue {
-                    textButton("Continue", help: "Another run of this job, picking up from its folder") { model.continueJob() }
+                    textButton("Continue fresh", help: "A fresh run that may repeat earlier actions and reuse browser grants") { model.continueJob() }
                 }
                 textButton("Clear", help: "Remove the job from the panel") { model.dismissJob() }
             }
@@ -220,5 +246,54 @@ struct JobRowView: View {
                 }
             }
         }
+    }
+}
+
+
+/// No site is preselected. The user's own confirmation is bound to the offered generation.
+struct JobResumeConsent: View {
+    let job: JobSnapshot
+    let cancel: () -> Void
+    let confirm: ([String], [String]) -> Void
+    @State private var reads: Set<String> = []
+    @State private var acts: Set<String> = []
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Resume from a read-only checkpoint")
+                .font(.subheadline.weight(.semibold)).foregroundStyle(NotchPalette.label)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(job.title).font(.caption.weight(.semibold)).lineLimit(2)
+                    Text("The interrupted batch is discarded. Benji may ask the model again and will ask for new approvals. This applies only to this Resume.")
+                        .font(.caption).fixedSize(horizontal: false, vertical: true)
+                    Text("Allow reading in Chrome").font(.caption.weight(.semibold))
+                    if job.sites.isEmpty { Text("No read sites.").font(.caption) }
+                    ForEach(job.sites, id: \.self) { site in
+                        Toggle(site, isOn: Binding(get: { reads.contains(site) }, set: { on in
+                            if on { reads.insert(site) } else { reads.remove(site); acts.remove(site) }
+                        }))
+                    }
+                    Text("Separately allow clicking and typing").font(.caption.weight(.semibold))
+                    if job.actSites.isEmpty { Text("No act sites.").font(.caption) }
+                    ForEach(job.actSites, id: \.self) { site in
+                        Toggle(site, isOn: Binding(get: { acts.contains(site) }, set: { on in
+                            if on { acts.insert(site) } else { acts.remove(site) }
+                        })).disabled(!reads.contains(site))
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .font(.caption).foregroundStyle(NotchPalette.label)
+                .toggleStyle(.checkbox)
+            }
+            .frame(height: 140)
+            HStack {
+                Button("Cancel", action: cancel)
+                Spacer()
+                Button("Confirm and resume") { confirm(reads.sorted(), acts.sorted()) }
+            }
+            .font(.caption)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

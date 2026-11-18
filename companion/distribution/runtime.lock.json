@@ -1,0 +1,21 @@
+{
+  "runtime": {
+    "release": "20261110",
+    "python": "3.12.16",
+    "target": "aarch64-apple-darwin",
+    "archive": "cpython-3.12.16+20261110-aarch64-apple-darwin-pgo+lto-full.tar.zst",
+    "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261110/cpython-3.12.16%2B20261110-aarch64-apple-darwin-pgo%2Blto-full.tar.zst",
+    "sha256": "4da072af9dbbc2557d3aabf51db553a19694f6ac61b5b7169749e4acfa5a052d",
+    "checksum_source": "https://api.github.com/repos/astral-sh/python-build-standalone/releases/tags/20261110",
+    "tag_commit": "9244801782b78e4c4afc5c82a4524aa2101d3298"
+  },
+  "ca": {
+    "date": "2026-11-05",
+    "url": "https://curl.se/ca/cacert-2026-11-05.pem",
+    "sha256": "427c064216761a1e72a8b30f0d954d08cb6e4435a82091fb865afd20c8497285",
+    "checksum_source": "https://curl.se/ca/cacert.pem.sha256",
+    "license": "MPL-2.0",
+    "license_url": "https://www.mozilla.org/media/MPL/2.0/index.815ca599c9df.txt",
+    "license_sha256": "fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85"
+  }
+}
