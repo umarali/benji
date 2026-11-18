@@ -7,7 +7,7 @@ decision gets a new entry that supersedes it.
 
 Status values: **Active**, **Superseded by D-xx**, **Open** (needs a decision).
 
-> **Public trim.** This is the maintainer's decision log with 58 of 214 entries left out because they refer to private working material. Ids are kept, not renumbered, so gaps are expected. References to files that are not part of this repository read "(not in this export)".
+> **Public trim.** This is the maintainer's decision log with 58 of 215 entries left out because they refer to private working material. Ids are kept, not renumbered, so gaps are expected. References to files that are not part of this repository read "(not in this export)".
 
 ---
 ## Building pal: backend and CLI
@@ -1622,3 +1622,11 @@ D-198 adoption gate: validate ordinary figure-on and synthetic screen-context be
 - **Alternatives:** Mac-only approvals (offered and recommended; the owner chose phone approvals with a switch); porting the guided-setup rework too (left for later); treating old saved conversations as tainted (rejected: they carry no taint record, so every reopened conversation would ask forever).
 - **Not verified:** a real phone, a real Tailscale connection and a real model together; whether Tailscale Serve forwards headers in pieces (under an active flood, a request whose headers take more than about half a second could be closed).
 - **Status:** Active. Experimental: the owner ran the test list live on 2026-11-16 (09:31 PKT), an iPhone over Tailscale with a real model, and reported everything working. Two bugs found during it are fixed: repeated keychain password prompts (Settings read every key's value to count them) and the approval card pushing a narrow panel past its edges.
+
+### D-216 · Explicit read-only recovery and bundled Python distribution (2026-11-18)
+
+- **Who:** the maintainer approved the proposed issue #5 contract in the working session with "Approve this contract and implement". For issue #6, asked whether to prepare a self-contained app with a redistributable Python runtime while leaving Developer ID signing and notarisation to the maintainer, the reply was "Yes, prepare that approach".
+- **Recovery contract:** explicit Resume only from a verified complete read-only checkpoint of the same interrupted run; fresh gated approvals and separately confirmed browser read/act consent; no automatic restart or replay after any possible side effect or unresolved model call. Continue fresh remains a new run that can repeat effects and reuse existing browser grants. The guarantee covers process crashes, not power loss.
+- **Distribution scope:** an offline arm64 builder bundles pinned Python, engine code, CA data and redistribution notices. Source builds keep their existing path. Maintainer-controlled Developer ID signing, hardened-runtime validation, notarisation/stapling and clean-Mac acceptance remain outstanding; the approval does not authorize buying membership or changing accounts.
+- **Implementation and evidence:** [PR #29](https://github.com/umarali/benji/pull/29) is merged with five passing CI checks. Recovery has 90 offline process/storage checks; the combined source passed 3,036 engine checks, 1,341 Swift tests, 100 ServeCheck cases and the fresh distribution build/smoke checks. These are not visible UI, hardware, provider or signed-release acceptance.
+- **Status:** accepted. The bounded implementation is merged; remaining owner acceptance and release work stay open in the issues.

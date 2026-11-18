@@ -70,7 +70,7 @@ display) against Anthropic's API. There is no signed or notarised download; you 
 
 - No notarised build and no installer. A self-built app signed ad hoc loses its permissions on
   every rebuild (see [Building from source](docs/building.md#code-signing-and-why-it-matters)).
-- Jobs are stopped by quitting Benji and do not resume; one job at a time.
+- One job at a time. Interrupted jobs never restart automatically; explicit read-only [Resume](docs/job-recovery.md) requires a verified eligible checkpoint and fresh consent.
 - Browser reach has never been used in a real browser profile, and a site with an international
   domain name cannot be granted.
 - Only one Mac, one macOS version and one display setup have been tried.

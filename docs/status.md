@@ -20,6 +20,7 @@ three labels, and a label changes only after a live run that is written down.
 | A private note per conversation, for games with a hidden answer such as hangman | Experimental | One scripted hangman game on Haiku kept the word; not tried by voice |
 | Background jobs: the row, *Needs you*, steer, stop | Experimental | One short live run. Not seen live: quitting mid-job, a long job |
 | Repeating jobs, Continue, the brief built from the conversation | Not live-tested | Unit-tested with a fake model and clock |
+| Explicit Resume from an interrupted read-only checkpoint | Not live-tested | Process-crash tests with disposable storage and a fake model; protocol and consent logic tested offline; visible consent clicks unverified |
 | Audit log, `engine.log`, `benji --diagnose` | Experimental | One short live run; a test fails if message text reaches a log |
 | Browser reach: the extension, site grants, acting, the page in front | Not live-tested | Unit-tested and scripted in headless Chrome; never in a real browser profile |
 | App offers (Settings › Voice › Offer help in apps, off by default) and their five skills | Not live-tested | Unit-tested |
@@ -29,6 +30,7 @@ three labels, and a label changes only after a live run that is written down.
 | OpenAI, DeepSeek, GLM, Kimi and Qwen | Not live-tested | Fake servers built from each provider's API docs; `tools/model_smoke.py` checks one live with your key |
 | Ollama and LM Studio | Not live-tested | Same |
 | `--voice` and `--listen` on the command line | Not live-tested | |
+| Offline arm64 bundled-Python builder | Not live-tested | Ad-hoc build, relocation, bundle hashes, TLS and launch checks; app interaction and clean-Mac acceptance unverified. See [distribution](distribution.md) |
 | A signed download, other Macs and macOS versions | Not available | Build from source: see the [setup guide](setup.md) |
 
 ## How it is checked

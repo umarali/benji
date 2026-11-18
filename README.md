@@ -91,6 +91,8 @@ Details: [safety, background jobs and browser reach](docs/safety.md) · [privacy
 | [Using and configuring](docs/configuration.md) | Features in detail, settings, model providers, voice, skills |
 | [Safety, jobs and browser reach](docs/safety.md) | The approval gate, background jobs, the browser extension |
 | [Privacy](docs/privacy.md) | What each provider receives and what stays on your Mac |
+| [Interrupted-job recovery](docs/job-recovery.md) | Explicit read-only Resume, fresh consent and when it is unavailable |
+| [Offline arm64 distribution](docs/distribution.md) | Bundled runtime builder and remaining owner release checks |
 | [Building from source](docs/building.md) | Requirements, signing, permissions, offline checks, layout |
 | [Model providers](docs/providers.md) | Defaults, regions and what has been checked for each |
 | [Control Benji from your phone](docs/remote-control.md) | Send tasks from your phone over Tailscale, and answer approvals there |

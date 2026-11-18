@@ -355,10 +355,11 @@ class Recovery:
 
     def eligible(self, record):
         with self.lock:
+            if record.get("status") != "failed" or record.get("ending") != "interrupted":
+                return False
             try:
                 e = self._load(record)
-                return (record.get("status") == "failed" and record.get("ending") == "interrupted"
-                        and e["phase"] == "clear" and e["eligible"] and not e["unsafe"]
+                return (e["phase"] == "clear" and e["eligible"] and not e["unsafe"]
                         and not e["effects_seen"] and e["checkpoint"] is not None)
             except (OSError, ValueError, TypeError, KeyError, RecursionError):
                 return False

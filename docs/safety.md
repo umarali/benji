@@ -124,8 +124,11 @@ minutes) and Benji asks on a card first.
 - Three failed runs in a row pause it. The row has Pause, Resume and Delete, and Settings has one
   switch for every repeating job.
 
-**Limits:** a job does **not** survive quitting Benji. It is shown as *Didn't finish* afterwards
-and does not resume.
+**After an interruption:** a job is shown as *Didn't finish* and never restarts automatically.
+**Resume** is available only from a verified read-only checkpoint, with fresh consent and approvals.
+Any possible side effect or unresolved model call makes it unavailable. **Continue fresh** starts
+another run and can repeat effects or reuse existing browser grants. See [job recovery](job-recovery.md)
+for eligibility, saved data and the process-crash guarantee; power-loss durability is not promised.
 
 Turn jobs off with `defaults write com.emerssive.heybenji.app backgroundJobs -bool NO`.
 Background jobs are **experimental**: see [Feature status](status.md).
