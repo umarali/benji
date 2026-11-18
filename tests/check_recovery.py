@@ -24,9 +24,21 @@ class Neutral:
 
     def __init__(self, scenario="approval", root=None):
         self.scenario, self.root, self.calls = scenario, root, 0
+        self.search_returned = False
 
     def complete(self, system, messages, tools):
         self.calls += 1
+        if self.scenario in ("server_search", "wrapup_search", "failed_search"):
+            if self.scenario == "wrapup_search" and "this run is out of steps" not in str(messages[-1]):
+                return _call("list_dir", {"path": "."})
+            self.search_returned = True
+            return {"text": "SEARCH-RESPONSE-CANARY", "tool_calls": [], "searches": [
+                {"query": "offline query", "hosts": ["result.example"],
+                 "error": "unavailable" if self.scenario == "failed_search" else ""}]}
+        if self.scenario == "search_resume":
+            if self.calls == 1:
+                return _call("write_file", {"path": "output/search.txt", "content": "offline fixture"})
+            return {"text": "Done.", "tool_calls": []}
         if self.scenario == "request" or (self.scenario == "wrapup" and "this run is out of steps" in str(messages[-1])):
             _barrier("model")
         if self.scenario == "wrapup":
@@ -102,12 +114,13 @@ def worker(root: Path, scenario: str):
         if scenario == "checkpoint_gap":
             _barrier("checkpoint")
     store.recovery.checkpoint = save_checkpoint
-    phase = store.recovery.phase
-    def set_phase(record, value):
-        phase(record, value)
-        if value == "clear" and scenario == "clear_gap":
+    write = store.recovery._write
+    def write_envelope(envelope):
+        write(envelope)
+        if envelope["phase"] == "clear" and (provider.search_returned or
+                (scenario == "clear_gap" and provider.calls)):
             _barrier("clear")
-    store.recovery.phase = set_phase
+    store.recovery._write = write_envelope
     request_model = store.recovery.request
     def mark_request(record, agent):
         if scenario == "phase_failure":
@@ -365,6 +378,46 @@ def run(check, here=None):
         check("Resume installs only separately confirmed subsets, dropping revoked read/act grants",
               kept["origins"] == ["https://other.example"] and kept["acts"] == [] and kept["history"] == [])
         p.kill()
+
+    print("job recovery: server searches survive rollback at the durable model-response boundary:")
+    for scenario in ("server_search", "wrapup_search", "failed_search"):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            store, rec = _seed(root)
+            p = Process(root, scenario)
+            try:
+                p.start(rec["id"])
+                p.wait(lambda e: e.get("type") == "test_boundary" and e["at"] == "clear")
+            finally:
+                p.kill()
+            p = Process(root, "search_resume")
+            try:
+                lost = p.job("failed")
+                check(f"{scenario}: a completed read-only model call remains resumable", lost["can_resume"])
+                envelope = store.recovery._load(store.load(rec["id"]))
+                searched = scenario != "failed_search"
+                check(f"{scenario}: persisted taint and search hosts reflect successful searches",
+                      ("web" in envelope["state"]["taints"]) is searched
+                      and ("result.example" in envelope["state"]["search_hosts"]) is searched)
+                check(f"{scenario}: rollback omits the unsaved search response",
+                      "SEARCH-RESPONSE-CANARY" not in json.dumps(envelope["checkpoint"]["messages"]))
+                if scenario != "wrapup_search":
+                    _resume(p, lost)
+                    outcome = p.wait(lambda e: e.get("type") == "job"
+                                     and e["job"]["state"] in ("needs-you", "done"))["job"]
+                    if searched:
+                        check("successful server search still asks before an otherwise free write after Resume",
+                              outcome["state"] == "needs-you"
+                              and not (store.path(rec["id"]) / "output/search.txt").exists())
+                        if outcome["state"] == "needs-you":
+                            p.send(type="approve", id=rec["id"], request=outcome["pending"]["request"], decision="yes")
+                            p.job("done")
+                    else:
+                        check("a failed search does not add a new approval to a free write", outcome["state"] == "done")
+                    check(f"{scenario}: the resumed write finishes under its existing approval rules",
+                          (store.path(rec["id"]) / "output/search.txt").read_text() == "offline fixture")
+            finally:
+                p.kill()
 
     print("job recovery: private authority rejects incompatible storage and preserves cumulative limits:")
     with tempfile.TemporaryDirectory() as td:

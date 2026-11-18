@@ -302,10 +302,15 @@ class Recovery:
             e["phase"] = "request"
             self._write(e)
 
-    def phase(self, record, phase):
+    def complete(self, record, agent):
+        """Clear a model request atomically with its cumulative search taint/hosts."""
         with self.lock:
             e = self._load(record)
-            e["phase"] = phase
+            try:
+                e["state"] = _merge(e["state"], state_of(agent))
+            except Ineligible:
+                e.update(eligible=False, checkpoint=None)
+            e["phase"] = "clear"
             self._write(e)
 
     def before_dispatch(self, record, agent, name, inp=None):

@@ -224,8 +224,6 @@ class Agent:
                 return CANCELLED
             resp = self._call_model_patiently()
             self._note_usage(resp.get("usage"))
-            for search in resp.get("searches", []):
-                self._server_search(search)
             if resp.get("cancelled"):
                 return CANCELLED
             tool_calls = resp.get("tool_calls", [])
@@ -483,10 +481,14 @@ class Agent:
         if self.recovery is not None:
             self.recovery.request(self.recovery_record, self)
         resp = self._provider_call()
+        # Include provider-side searches in both ordinary and wrap-up calls before
+        # a completed request can become resumable.
+        for search in resp.get("searches", []):
+            self._server_search(search)
         if self.recovery is not None and not resp.get("cancelled"):
             if resp.get("reasoning") or set(resp) - {"text", "tool_calls", "usage", "cancelled", "searches"}:
                 self.recovery.invalidate(self.recovery_record)
-            self.recovery.phase(self.recovery_record, "clear")
+            self.recovery.complete(self.recovery_record, self)
         return resp
 
     def _provider_call(self) -> dict:
