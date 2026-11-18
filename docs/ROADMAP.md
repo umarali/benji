@@ -15,13 +15,14 @@ and tested.
 2. **Browser acting in a real browser.** Clicking, typing, keys and uploads are built and tested
    offline and in headless Chrome, but not yet used in a real browser profile.
 3. **Notarised builds.** A Developer ID signed, notarised and stapled `Benji.app` on GitHub Releases, so
-   you do not have to build from source. This needs the engine bundled inside the app and an entitlements
-   file. The owner's checklist is [RELEASING.md](RELEASING.md).
+   you do not have to build from source. The [offline arm64 builder](distribution.md) now bundles the
+   engine and Python. Owner signing, entitlement validation, notarisation and clean-Mac acceptance
+   remain. The release checklist is [RELEASING.md](RELEASING.md).
 
 ## Later, maybe
 
 - A Web Store build of the extension, and trying Arc, Brave and Edge for real.
-- Resuming a parked job after a restart; more than one job at a time.
+- More than one job at a time. Explicit read-only [Resume](job-recovery.md) is implemented; visible consent acceptance remains unverified.
 - Jobs for hands-free (voice-only) turns, once the approval path for them is settled.
 - A Settings switch for the audit log (today only `BENJI_AUDIT=0`).
 

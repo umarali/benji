@@ -23,9 +23,12 @@ Benji has two main parts and one optional one:
   unit-tested; `BenjiApp` holds the AppKit and SwiftUI code.
 - Speech is transcribed on the Mac with Apple's on-device recognition, so only text reaches the
   engine. Cloud transcription through the engine is an opt-in setting.
-- The app starts one engine for itself: `python3 -m benji --serve`, run through a zsh login shell
-  from the checkout the app was built in. Set `BENJI_DIR` to use another checkout. Because the
-  engine is loaded from the checkout, keep `Benji.app` inside it.
+- In source mode the app starts one engine for itself: `python3 -m benji --serve`, run through a
+  zsh login shell from the checkout the app was built in. Set `BENJI_DIR` to use another checkout.
+  Keep a source-built `Benji.app` inside that checkout.
+- The offline arm64 distribution build uses its bundled Python and engine through the shared
+  launch description and isolated bootstrap. It ignores `BENJI_DIR` and never falls back to a
+  checkout or Python on PATH. See the [distribution contract](distribution.md#runtime-and-launch-contract).
 
 ## The engine
 
@@ -37,7 +40,7 @@ The same engine serves the app and the command line (`python3 -m benji "…"`). 
 | `providers.py`, `presets.py` | Adapters for Anthropic's API and OpenAI-compatible APIs, and the provider presets |
 | `tools/`, `gate.py`, `policy.py` | The tools (one module per kind), and the rules that decide whether a call runs, asks or is refused (`tools/approval.py`) |
 | `serve.py` | The long-lived process the app talks to |
-| `jobs.py`, `schedule.py` | Background jobs and repeating jobs |
+| `jobs.py`, `schedule.py`, `recovery.py` | Background jobs, repeating jobs and explicit read-only checkpoint recovery |
 | `browser_link.py`, `browser_host.py`, `browser.py`, `browser_act.py` | The link to the extension, and what a job may read or do in the browser |
 | `prompts.py` | The system prompt |
 | `figures.py`, `pointing.py`, `cards.py` | The formats for 3D figures, pointing marks and explanation cards |

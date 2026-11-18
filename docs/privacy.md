@@ -55,8 +55,17 @@ Settings › "Show Benji's folder" opens it. Log files are written readable by y
 | `conversations/` | Your saved conversations with Benji, and which kinds of outside content each holds (see [Safety](safety.md#after-benji-reads-something-from-outside)) |
 | `answers.jsonl` | The model's raw answers and the events of each turn. On by default; `BENJI_ANSWER_LOG=0` turns it off |
 | job folders | Each background job's report and output |
+| `jobs/<id>.recovery.json` | Private checkpoint text and cumulative continuation state, beside the job folder |
 | `events.jsonl` | The audit log: metadata only |
 | `engine.log` | The engine's own log |
+
+Recovery checkpoints can contain sensitive text from messages and tool results. Known credential
+forms make a checkpoint ineligible; this cannot recognize every unlabelled secret. Provider/session
+objects, images and model reasoning are not saved. Checkpoints and their temporary files are
+owner-only. Ending a job normally, Stop, cancellation or an ordinary failure removes checkpoint
+text; interrupted eligible jobs retain it for explicit Resume. Continue fresh invalidates it, and
+the job store's delete operation removes it. Hiding a row with Clear does not delete that data.
+See [job recovery](job-recovery.md#stored-data-and-lifecycle).
 
 The key file `~/.benji.env` and the browser link's private folder are outside this folder.
 
