@@ -92,7 +92,8 @@ Keep `Benji.app` where it is. It loads its engine from this checkout, so a copy 
 Applications on its own will not work.
 
 Without a signing certificate the build is signed ad hoc, and macOS asks for permissions again
-after each rebuild. [Code signing](building.md#code-signing-and-why-it-matters) shows how to make a
+after each rebuild. To explicitly choose ad-hoc signing without certificate discovery, run
+`BENJI_SIGN_IDENTITY=- ./build.sh`. [Code signing](building.md#code-signing-and-why-it-matters) shows how to make a
 local certificate once.
 
 ## 5. Send a first message

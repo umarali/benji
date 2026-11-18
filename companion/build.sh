@@ -56,6 +56,7 @@ PLIST
 # that one: another certificate would make macOS ask for every permission again. Override with
 # BENJI_SIGN_IDENTITY, e.g. an "Apple Development: …" identity from
 # `security find-identity -v -p codesigning`.
+sign_bundle() {
 SIGN_ID="${BENJI_SIGN_IDENTITY:-}"
 if [ -z "$SIGN_ID" ]; then
     SIGN_ID="Benji Local Signing"
@@ -64,13 +65,21 @@ if [ -z "$SIGN_ID" ]; then
         SIGN_ID="Chilly Local Signing"
     fi
 fi
+if [ "$SIGN_ID" = "-" ]; then
+    codesign --force --sign - "$APP" >/dev/null 2>&1
+    echo "• ad-hoc signed $APP (permissions will reset on each rebuild)"
+    return
+fi
 if security find-certificate -c "$SIGN_ID" >/dev/null 2>&1; then
     codesign --force --sign "$SIGN_ID" "$APP" && echo "• signed $APP with \"$SIGN_ID\"" \
         || { echo "• codesign with \"$SIGN_ID\" failed"; exit 1; }
 else
     echo "• \"$SIGN_ID\" not found; signing ad-hoc (permissions will reset on each rebuild)"
-    codesign --force --sign - "$APP" >/dev/null 2>&1 && echo "• ad-hoc signed $APP"
+    codesign --force --sign - "$APP" >/dev/null 2>&1
+    echo "• ad-hoc signed $APP"
 fi
+}
+sign_bundle
 
 echo "• done → $PWD/$APP"
 echo "  run it:   open $APP"
