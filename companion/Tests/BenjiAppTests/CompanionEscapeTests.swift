@@ -95,14 +95,19 @@ final class CompanionEscapeTests: XCTestCase {
         XCTAssertTrue(model.expanded)
     }
 
-    func testMenuFoldingDoesNotStopTheAnswer() {
+    @MainActor
+    func testMenuFoldingDoesNotStopTheAnswer() async throws {
         _ = NSApplication.shared
         let panel = CompanionPanel(model: model)
         panel.presenter.accessibility = NotchAccessibility(reduceMotion: true)
         defer { panel.close() }
         start()
-        RunLoop.main.run(until: Date().addingTimeInterval(0.05))
+        let deadline = Date().addingTimeInterval(2)
+        while panel.presenter.size != .open, Date() < deadline {
+            try await Task.sleep(nanoseconds: 10_000_000)
+        }
         XCTAssertEqual(panel.presenter.size, .open)
+        guard panel.presenter.size == .open else { return } // never open a hidden panel after a failed precondition
         XCTAssertFalse(panel.isVisible, "construct the panel without showing or focusing it")
         panel.toggleOpen()
         XCTAssertFalse(model.expanded)
