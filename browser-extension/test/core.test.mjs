@@ -32,6 +32,7 @@ function fakeChrome({ tabs = [], lastFocused = { id: 1, incognito: false }, extr
         return { ...t };
       },
       query: async ({ groupId }) => state.tabs.filter((t) => t.groupId === groupId).map((t) => ({ ...t })),
+      remove: async (ids) => { state.tabs = state.tabs.filter((t) => !ids.includes(t.id)); },
       group: async ({ tabIds, groupId }) => {
         const gid = groupId ?? state.nextGroup++;
         for (const t of state.tabs) if (tabIds.includes(t.id)) t.groupId = gid;
@@ -48,7 +49,10 @@ function fakeChrome({ tabs = [], lastFocused = { id: 1, incognito: false }, extr
   return { api, state };
 }
 const noSleep = async () => {};
-const make = (opts) => { const f = fakeChrome(opts); return { ...f, b: new Browser(f.api, function visibleText() {}, noSleep) }; };
+const make = (opts) => { const f = fakeChrome(opts); const b = new Browser(f.api, function visibleText() {}, noSleep);
+  const handle = b.handle.bind(b);
+  b.handle = (msg) => handle({job: "test-job", ...msg});
+  return { ...f, b }; };
 const A = "https://example.com";
 
 test("origin cases: parseUrl gives the same answers as benji/browser.py", () => {
@@ -242,4 +246,45 @@ test("a group the user closed is forgotten and the next open makes a new one", a
   assert.deepEqual((await b.handle({ id: "2", op: "tabs", allow: [A] })).tabs, []);
   const second = await b.handle({ id: "3", op: "open", url: `${A}/q`, allow: [A] });
   assert.notEqual(state.tabs.find((t) => t.id === second.tab.id).groupId, gid);
+});
+
+
+test("overlapping jobs: closing A preserves B and user tabs, including concurrent opens", async () => {
+  const { b, state } = make();
+  const open = (job, n) => b.handle({id: n, op: "open", job, url: `${A}/${n}`, allow: [A]});
+  const [a, btab, a2] = await Promise.all([open("job-a", "a"), open("job-b", "b"), open("job-a", "a2")]);
+  for (const r of [a,btab,a2]) assert.equal(r.ok, true);
+  const gid = state.tabs.find((t) => t.id === a.tab.id).groupId;
+  state.tabs.push({id: 400, url: A, groupId: gid});
+  const closed = await b.handle({id: "c", op: "close", job: "job-a"});
+  assert.equal(closed.closed, 2);
+  assert.deepEqual(state.tabs.map((t) => t.id).sort((a,b) => a-b), [btab.tab.id, 400]);
+  assert.equal((await b.handle({id: "d", op: "close", job: "job-b"})).closed, 1);
+  assert.equal((await b.handle({id: "e", op: "close", job: "job-a"})).closed, 0);
+  assert.deepEqual(state.tabs.map((t) => t.id), [400]);
+});
+
+
+test("ending one job leaves another overlapping job's tab open", async () => {
+  const {b, state} = make();
+  const a = await b.handle({id: "a", op: "open", job: "job-a", url: A, allow: [A]});
+  const other = await b.handle({id: "b", op: "open", job: "job-b", url: A, allow: [A]});
+  const closed = await b.handle({id: "c", op: "close", job: "job-a"});
+  assert.equal(closed.closed, 1);
+  assert.ok(state.tabs.some((t) => t.id === other.tab.id));
+  assert.ok(!state.tabs.some((t) => t.id === a.tab.id));
+});
+
+
+test("cleanup without an owner is refused and legacy or user-moved tabs stay open", async () => {
+  const {b, state} = make();
+  assert.equal((await b.handle({id: "missing", op: "open", job: undefined, url: A, allow: [A]})).ok, false);
+  const opened = await b.handle({id: "a", op: "open", job: "job-a", url: A, allow: [A]});
+  assert.equal(opened.ok, true, "a refused request does not block the next open");
+  state.session.benjiOpened.push(401);
+  state.tabs.push({id: 401, url: A, groupId: state.tabs[0].groupId});
+  assert.equal((await b.handle({id: "missing", op: "close", job: undefined})).ok, false);
+  state.tabs.find((t) => t.id === opened.tab.id).groupId = -1;
+  assert.equal((await b.handle({id: "c", op: "close", job: "job-a"})).closed, 0);
+  assert.deepEqual(state.tabs.map((t) => t.id), [opened.tab.id, 401]);
 });

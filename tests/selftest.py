@@ -4866,6 +4866,9 @@ def browser_checks() -> None:
 
 
 def browser_act_checks() -> None:
+    import check_issue21
+    check_issue21.run(check, HERE)
+
     import check_browser_acting
     check_browser_acting.run(check, HERE)
 

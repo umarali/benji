@@ -66,6 +66,19 @@ PAGES = {
              "<label>Search <input name='q' id='q'></label><label><input type='checkbox' name='archived' value='on'> Show archived</label>"
              "<input type='password' name='pw' aria-label='Password'><input type='file' name='doc' aria-label='Attach a file'>"
              "<button>Send</button></form></body></html>",
+    "/swap": "<html><body><a id=swap href=/next>Approved link</a><input id=field aria-label=Search></body></html>",
+    "/hover": "<html><body><a href=/next onmouseover=\"this.replaceWith(this.cloneNode(true))\">Hover link</a></body></html>",
+    "/focus": "<html><body><input id=field aria-label=Search onfocus=\"this.autocomplete='one-time-code'\"></body></html>",
+    '/menu-state': '<html><body><button aria-expanded=false onmousedown="this.setAttribute(\'aria-expanded\',\'true\')" onclick="window.clicks=(window.clicks||0)+1">Account menu</button></body></html>',
+    '/hover-state': '<html><body><button aria-expanded=false onmouseenter="this.setAttribute(\'aria-expanded\',\'true\')" onclick="window.clicks=(window.clicks||0)+1">Products</button></body></html>',
+    '/combo-state': '<html><body><input id=field role=combobox aria-label=Search aria-expanded=false onfocus="this.setAttribute(\'aria-expanded\',\'true\')"></body></html>',
+    '/press-swap': '<html><body><button id=swap onmousedown="const next=this.cloneNode(true);next.removeAttribute(\'onmousedown\');next.onclick=()=>window.replacementClicks++;this.replaceWith(next)">Press target</button><script>window.replacementClicks=0;window.events=[];for(const type of [\'mousedown\',\'mouseup\'])document.addEventListener(type,e=>window.events.push({type,buttons:e.buttons}),true)</script></body></html>',
+    '/header-hover': '<html><style>body{margin:0;height:1500px}header{position:fixed;top:0;left:0}button{font:16px sans-serif;padding:10px;border:0}button:hover{font-weight:900;transform:translateY(1px)}</style><header><button onclick="window.clicks=(window.clicks||0)+1">Navigation</button></header></html>',
+    '/shift-focus': '<html><nav id=nav><a href=/page>Home</a><a href=/page>About</a></nav><label>Search <input id=field onfocus="document.getElementById(\'nav\').hidden=true"></label></html>',
+    '/clear-labelled': '<html><label>Search <input id=field placeholder=Example onfocus="this.placeholder=\'\'"></label></html>',
+    '/clear-unlabelled': '<html><input id=field placeholder=Search onfocus="this.placeholder=\'\'"></html>',
+    '/enable-send': '<html><label>Search <input id=field oninput="document.getElementById(\'send\').disabled=false"></label><button id=send disabled onclick="window.clicks=(window.clicks||0)+1">Send</button></html>',
+    '/disable-hover': '<html><button onmouseenter="this.disabled=true" onclick="window.clicks=(window.clicks||0)+1">Choice</button></html>',
     "/submit": "<html><title>Thanks</title><body><p>Thanks, received.</p></body></html>",
 }
 POSTS: list[bytes] = []
@@ -165,10 +178,10 @@ threading.Thread(target=read_pipe, daemon=True).start()
 counter = [0]
 
 
-def cdp(method: str, params: dict | None = None, timeout: float = 20) -> dict:
+def cdp(method: str, params: dict | None = None, timeout: float = 20, session=None) -> dict:
     counter[0] += 1
     mid = counter[0]
-    cdp_out.write(json.dumps({"id": mid, "method": method, "params": params or {}}).encode() + b"\0")
+    cdp_out.write(json.dumps({"id": mid, "method": method, "params": params or {}, **({"sessionId": session} if session else {})}).encode() + b"\0")
     end = time.time() + timeout
     with cv:
         while mid not in replies:
@@ -198,6 +211,23 @@ def shut_down(*_):
     shutil.rmtree(work, ignore_errors=True)
 
 
+def call(op, params=None, **kwargs):
+    params = dict(params or {})
+    if op in ("open", "close"):
+        params.setdefault("job", "job-a")
+    return link.call(op, params, **kwargs)
+
+
+def page_eval(url, expression):
+    targets = cdp("Target.getTargets").get("result", {}).get("targetInfos", [])
+    target = next(t["targetId"] for t in targets if t.get("url") == url and t.get("type") == "page")
+    session = cdp("Target.attachToTarget", {"targetId": target, "flatten": True})["result"]["sessionId"]
+    try:
+        return cdp("Runtime.evaluate", {"expression": expression, "returnByValue": True}, session=session).get("result", {}).get("result", {}).get("value")
+    finally:
+        cdp("Target.detachFromTarget", {"sessionId": session})
+
+
 signal.signal(signal.SIGTERM, lambda *a: (shut_down(), sys.exit(143)))
 try:
     time.sleep(2)
@@ -206,60 +236,133 @@ try:
           loaded.get("result", {}).get("id") == BL.EXTENSION_IDS[0])
     check("the service worker starts the real host through native messaging; the link says connected",
           until(lambda: link.state == "connected"))
-    check("tabs: none before anything is opened", link.call("tabs", {"allow": [A]})["tabs"] == [])
-    opened = link.call("open", {"url": A + "/", "allow": [A]})
+    check("tabs: none before anything is opened", call("tabs", {"allow": [A]})["tabs"] == [])
+    opened = call("open", {"url": A + "/", "allow": [A]})
     check("open: a background tab opens, in the Benji group", opened.get("ok") is True and opened["tab"]["url"] == A + "/")
     tab = opened["tab"]["id"]
-    read = link.call("read", {"tab": tab, "allow": [A], "max": 40000})
+    read = call("read", {"tab": tab, "allow": [A], "max": 40000})
     check("read: the page's visible text and url; no hidden text, no typed value",
           read.get("ok") is True and "Mail from the bank." in read["text"] and "HIDDEN-TEXT" not in read["text"]
           and "TYPED-SECRET" not in read["text"] and read["url"] == A + "/" and read["title"] == "Inbox")
-    listing = link.call("tabs", {"allow": [A]})
+    listing = call("tabs", {"allow": [A]})
     check("tabs: lists the group's tab with its title", [t["id"] for t in listing["tabs"]] == [tab] and listing["tabs"][0]["title"] == "Inbox")
     cdp("Target.createTarget", {"url": A + "/"})        # a tab of the user's, outside the group
     time.sleep(1)
-    answers = [link.call("read", {"tab": n, "allow": [A]}, timeout=8) for n in range(max(tab - 6, 0), tab + 14) if n != tab]
+    answers = [call("read", {"tab": n, "allow": [A]}, timeout=8) for n in range(max(tab - 6, 0), tab + 14) if n != tab]
     check("read: every other tab number, the user's own included, is refused",
           all(a.get("ok") is False for a in answers) and any("isn't in Benji's tab group" in a.get("error", "") for a in answers))
-    other = link.call("read", {"tab": tab, "allow": [O]})
+    other = call("read", {"tab": tab, "allow": [O]})
     check("read: an allow list without the tab's origin is refused", other.get("ok") is False and "isn't on this job's list" in other["error"])
-    check("open: an origin outside `allow` is refused by the extension itself", link.call("open", {"url": O + "/", "allow": [A]}).get("ok") is False)
-    jump = link.call("open", {"url": A + "/jump", "allow": [A, O]})["tab"]["id"]
-    moved = until(lambda: any(t["id"] == jump and t["url"].startswith(O) for t in link.call("tabs", {"allow": [A, O]})["tabs"]))
-    check("the page moved itself to the other site", moved, link.call("tabs", {"allow": [A, O]}))
+    check("open: an origin outside `allow` is refused by the extension itself", call("open", {"url": O + "/", "allow": [A]}).get("ok") is False)
+    jump = call("open", {"url": A + "/jump", "allow": [A, O]})["tab"]["id"]
+    moved = until(lambda: any(t["id"] == jump and t["url"].startswith(O) for t in call("tabs", {"allow": [A, O]})["tabs"]))
+    check("the page moved itself to the other site", moved, call("tabs", {"allow": [A, O]}))
     check("read: a tab that is now on a site off the list is not read",
-          link.call("read", {"tab": jump, "allow": [A]}).get("ok") is False)
+          call("read", {"tab": jump, "allow": [A]}).get("ok") is False)
     check("tabs: that tab shows its site only, no title or path",
-          any(t["id"] == jump and t["title"] == "" and t["url"] == O for t in link.call("tabs", {"allow": [A]})["tabs"]))
-    far = link.call("read", {"tab": jump, "allow": [A, O]})
+          any(t["id"] == jump and t["title"] == "" and t["url"] == O for t in call("tabs", {"allow": [A]})["tabs"]))
+    far = call("read", {"tab": jump, "allow": [A, O]})
     check("read: with both sites allowed it reads the new page", far.get("ok") is True and "Text on the other site" in far["text"])
 
     # ---- looking and acting -------------------------------------------------------------------------
     def tab_at(tab_id, prefix):
-        return until(lambda: any(t["id"] == tab_id and t["url"].startswith(prefix) for t in link.call("tabs", {"allow": [A, O]})["tabs"]))
+        return until(lambda: any(t["id"] == tab_id and t["url"].startswith(prefix) for t in call("tabs", {"allow": [A, O]})["tabs"]))
 
     def refs(tab_id):
-        looked = link.call("look", {"tab": tab_id, "allow": [A, O], "max": 50})
+        looked = call("look", {"tab": tab_id, "allow": [A, O], "max": 50})
         return looked, {c["name"]: c for c in looked.get("controls", [])}
 
     def step(tab_id, c, action, cls, **more):
         """What the engine sends after it looked at the control and settled on a class."""
-        return link.call("do", {"tab": tab_id, "ref": c["ref"], "sig": c["sig"], "action": action, "cls": cls,
+        return call("do", {"tab": tab_id, "ref": c["ref"], "sig": c["sig"], "action": action, "cls": cls,
                                 "allow": [A, O], "act": [A], **more}, timeout=40)
 
-    form = link.call("open", {"url": A + "/form", "allow": [A, O]})["tab"]["id"]
+    # Exact-target checks at the real extension interface, with changes after the target probe.
+    for path, mutate, action, control in [
+        ("/swap", "document.getElementById('swap').replaceWith(document.getElementById('swap').cloneNode(true))", "click", "Approved link"),
+        ("/swap", "document.getElementById('field').autocomplete='one-time-code'", "type", "Search"),
+        ("/hover", None, "click", "Hover link"),
+        ("/focus", None, "type", "Search"),
+    ]:
+        url = A + path
+        tab_id = call("open", {"url": url, "allow": [A], "job": "adversarial"})["tab"]["id"]
+        looked, controls = refs(tab_id)
+        c = controls[control]
+        probe = call("target", {"tab": tab_id, "ref": c["ref"], "sig": c["sig"], "action": action, "allow": [A]})
+        if mutate:
+            page_eval(url, mutate)
+        result = step(tab_id, c, action, "asked", **({"text": "APPROVED-TEXT"} if action == "type" else {}))
+        observed = page_eval(url, "document.getElementById('field')?.value || location.pathname")
+        check("changed target is refused before click/type: " + path + " " + action,
+              probe.get("ok") is True and result.get("ok") is False and observed != "APPROVED-TEXT" and observed != "/next", result)
+        call("close", {"job": "adversarial"})
+
+    # Ordinary state changes must not invalidate a control's identity or safety description.
+    for path, name, action in [("/menu-state", "Account menu", "click"),
+                               ("/hover-state", "Products", "click"),
+                               ("/combo-state", "Search", "type")]:
+        url = A + path
+        tab_id = call("open", {"url": url, "allow": [A], "job": "state-controls"})["tab"]["id"]
+        _, controls = refs(tab_id)
+        result = step(tab_id, controls[name], action, "asked", **({"text": "STATE-TEXT"} if action == "type" else {}))
+        value = page_eval(url, "document.getElementById('field').value" if action == "type" else "window.clicks||0")
+        check("ordinary expanded state still permits " + action + ": " + path,
+              result.get("ok") is True and value == ("STATE-TEXT" if action == "type" else 1), result)
+        call("close", {"job": "state-controls"})
+
+    url = A + "/press-swap"
+    tab_id = call("open", {"url": url, "allow": [A], "job": "press-release"})["tab"]["id"]
+    _, controls = refs(tab_id)
+    step(tab_id, controls["Press target"], "click", "asked")
+    state = page_eval(url, "({events:window.events,clicks:window.replacementClicks})")
+    check("a press is released after a mousedown swap without clicking the replacement",
+          state["events"] == [{"type": "mousedown", "buttons": 1}, {"type": "mouseup", "buttons": 0}]
+          and state["clicks"] == 0, state)
+    call("close", {"job": "press-release"})
+
+    for path, name, action in [("/header-hover", "Navigation", "click"),
+                               ("/shift-focus", "Search", "type"),
+                               ("/clear-labelled", "Search", "type"),
+                               ("/clear-unlabelled", "Search", "type")]:
+        url = A + path
+        tab_id = call("open", {"url": url, "allow": [A], "job": "interactive-controls"})["tab"]["id"]
+        _, controls = refs(tab_id)
+        result = step(tab_id, controls[name], action, "asked", **({"text": "FOCUS-TEXT"} if action == "type" else {}))
+        value = page_eval(url, "document.getElementById('field').value" if action == "type" else "window.clicks||0")
+        check("benign hover/focus behavior still permits " + action + ": " + path,
+              result.get("ok") is True and value == ("FOCUS-TEXT" if action == "type" else 1), result)
+        call("close", {"job": "interactive-controls"})
+
+    url = A + "/enable-send"
+    tab_id = call("open", {"url": url, "allow": [A], "job": "enabled-control"})["tab"]["id"]
+    _, controls = refs(tab_id)
+    typed = step(tab_id, controls["Search"], "type", "quiet", text="ENABLE")
+    clicked = step(tab_id, controls["Send"], "click", "asked")
+    check("a button enabled by typing remains usable without another look",
+          typed.get("ok") is True and clicked.get("ok") is True and page_eval(url, "window.clicks||0") == 1, clicked)
+    call("close", {"job": "enabled-control"})
+
+    url = A + "/disable-hover"
+    tab_id = call("open", {"url": url, "allow": [A], "job": "disabled-control"})["tab"]["id"]
+    _, controls = refs(tab_id)
+    result = step(tab_id, controls["Choice"], "click", "asked")
+    check("a control disabled on hover is still refused by the live safety check",
+          result.get("ok") is False and page_eval(url, "window.clicks||0") == 0, result)
+    call("close", {"job": "disabled-control"})
+
+    form = call("open", {"url": A + "/form", "allow": [A, O]})["tab"]["id"]
     looked, by = refs(form)
     names = sorted(by)
     check("look: the page's controls come back by name, with numbers and signatures",
           looked.get("ok") is True and {"Next page", "Go somewhere", "Search", "Show archived", "Password", "Attach a file", "Send"} <= set(names)
           and all(c["sig"] for c in by.values()) and by["Password"]["sensitive"] is True and by["Search"]["sensitive"] is False)
-    probe = link.call("target", {"tab": form, "ref": by["Send"]["ref"], "sig": by["Send"]["sig"], "action": "click", "allow": [A]})
+    probe = call("target", {"tab": form, "ref": by["Send"]["ref"], "sig": by["Send"]["sig"], "action": "click", "allow": [A]})
     check("target: the element is described before anything is done (a submit button in a post form), with no debugger",
           probe.get("ok") is True and probe["origin"] == A and probe["desc"]["kind"] == "submit" and probe["desc"]["form"] == "post")
-    stale = link.call("target", {"tab": form, "ref": by["Send"]["ref"], "sig": "0" * 16, "action": "click", "allow": [A]})
+    stale = call("target", {"tab": form, "ref": by["Send"]["ref"], "sig": "0" * 16, "action": "click", "allow": [A]})
     check("target: a signature that no longer matches is refused", stale.get("ok") is False and "page changed" in stale["error"])
     check("do: acting on a site the job has no acting grant for is refused by the extension",
-          link.call("do", {"tab": form, "ref": by["Next page"]["ref"], "sig": by["Next page"]["sig"], "action": "click", "cls": "quiet",
+          call("do", {"tab": form, "ref": by["Next page"]["ref"], "sig": by["Next page"]["sig"], "action": "click", "cls": "quiet",
                            "allow": [A], "act": []}).get("ok") is False)
     check("do: a click claiming quiet on a button that sends is refused (the extension may only raise)",
           step(form, by["Send"], "click", "quiet").get("ok") is False and not POSTS)
@@ -284,44 +387,46 @@ try:
           and b"hunter2" not in body and b'name="pw"' in body and body.count(b"UPLOAD-MARKER-123") == 1)
     check("do: the post landed on the thanks page, still on the job's site", tab_at(form, A + "/submit"))
 
-    form = link.call("open", {"url": A + "/form", "allow": [A, O]})["tab"]["id"]
+    form = call("open", {"url": A + "/form", "allow": [A, O]})["tab"]["id"]
     looked, by = refs(form)
     nxt = step(form, by["Next page"], "click", "quiet")
     check("do: a same-site link goes ahead and the tab is on the next page", nxt.get("ok") is True and tab_at(form, A + "/next")
-          and "You reached the next page." in link.call("read", {"tab": form, "allow": [A]})["text"])
-    form = link.call("open", {"url": A + "/form", "allow": [A, O]})["tab"]["id"]
+          and "You reached the next page." in call("read", {"tab": form, "allow": [A]})["text"])
+    form = call("open", {"url": A + "/form", "allow": [A, O]})["tab"]["id"]
     looked, by = refs(form)
     went = step(form, by["Go somewhere"], "click", "quiet")
     check("do: a link that redirects to another site is reported with the site it ended on",
           went.get("ok") is True and went.get("moved") is True and went.get("moved_to") == O, went)
     check("…and the engine's lists still hold only what the user said: reading that tab with only A allowed is refused",
-          link.call("read", {"tab": form, "allow": [A]}).get("ok") is False)
-    form = link.call("open", {"url": A + "/form", "allow": [A, O]})["tab"]["id"]
+          call("read", {"tab": form, "allow": [A]}).get("ok") is False)
+    form = call("open", {"url": A + "/form", "allow": [A, O]})["tab"]["id"]
     looked, by = refs(form)
-    keyed = link.call("do", {"tab": form, "action": "key", "key": "PageDown", "cls": "free", "allow": [A], "act": [A]})
-    enter = link.call("do", {"tab": form, "action": "key", "key": "Enter", "cls": "quiet", "allow": [A], "act": [A]})
-    letter = link.call("do", {"tab": form, "action": "key", "key": "q", "cls": "asked", "allow": [A], "act": [A]})
+    keyed = call("do", {"tab": form, "action": "key", "key": "PageDown", "cls": "free", "allow": [A], "act": [A]})
+    enter = call("do", {"tab": form, "action": "key", "key": "Enter", "cls": "quiet", "allow": [A], "act": [A]})
+    letter = call("do", {"tab": form, "action": "key", "key": "q", "cls": "asked", "allow": [A], "act": [A]})
     check("do: PageDown goes ahead; Enter claiming quiet and a letter key are refused", keyed.get("ok") is True and enter.get("ok") is False and letter.get("ok") is False)
-    scrolled = link.call("scroll", {"tab": form, "to": "bottom", "allow": [A]})
+    scrolled = call("scroll", {"tab": form, "to": "bottom", "allow": [A]})
     check("scroll: free, no debugger", scrolled.get("ok") is True and "atBottom" in scrolled)
 
     # ---- the page in front, and closing the job's tabs -----------------------------------------------
     front = cdp("Target.createTarget", {"url": A + "/next"}).get("result", {}).get("targetId")
     cdp("Target.activateTarget", {"targetId": front})
     time.sleep(1.5)
-    active = link.call("active", {})
+    active = call("active", {})
     check("active: the tab in front is named by its site only", active.get("ok") is True and active.get("origin") == A and "url" not in active and "title" not in active)
     if active.get("ok"):
-        text = link.call("read_active", {"tab": active["tab"], "origin": A, "max": 40000})
+        text = call("read_active", {"tab": active["tab"], "origin": A, "max": 40000})
         check("read_active: the text of the front tab, only on the site the card named",
               text.get("ok") is True and "You reached the next page." in text["text"]
-              and link.call("read_active", {"tab": active["tab"], "origin": O}).get("ok") is False)
-    before = {t["id"] for t in link.call("tabs", {"allow": [A, O]})["tabs"]}
-    closed = link.call("close", {})
-    after = {t["id"] for t in link.call("tabs", {"allow": [A, O]})["tabs"]}
-    check("close: every tab the extension opened is closed; a tab of the user's outside the group is still there",
-          closed.get("ok") is True and closed.get("closed", 0) >= 4 and after == set() and bool(before)
+              and call("read_active", {"tab": active["tab"], "origin": O}).get("ok") is False)
+    before = {t["id"] for t in call("tabs", {"allow": [A, O]})["tabs"]}
+    other_job = call("open", {"url": A + "/next?job-b", "allow": [A], "job": "job-b"})["tab"]["id"]
+    closed = call("close", {"job": "job-a"})
+    after = {t["id"] for t in call("tabs", {"allow": [A, O]})["tabs"]}
+    check("close: only this job's tabs close; overlapping job and user tabs remain",
+          closed.get("ok") is True and closed.get("closed", 0) >= 4 and after == {other_job} and bool(before)
           and any(t.get("targetId") == front for t in cdp("Target.getTargets").get("result", {}).get("targetInfos", [])))
+    check("close: the overlapping job retains its own cleanup", call("close", {"job": "job-b"}).get("closed") == 1)
 finally:
     shut_down()
 print("ALL PASSED" if results and all(results) else f"{results.count(False)} FAILED")

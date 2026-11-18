@@ -80,6 +80,7 @@ export class Browser {
     this.api = api;
     this.extract = extract;
     this.sleep = sleep;
+    this.tabChanges = Promise.resolve();
     this.pageAct = pageAct;       // the function run in a page for acting; null: this build only reads
   }
 
@@ -88,7 +89,7 @@ export class Browser {
     const id = msg && typeof msg.id === "string" ? msg.id : "";
     try {
       switch (msg.op) {
-        case "open": return { id, ok: true, ...(await this.open(msg)) };
+        case "open": return { id, ok: true, ...(await this.changeTabs(() => this.open(msg))) };
         case "tabs": return { id, ok: true, ...(await this.tabs(msg)) };
         case "read": return { id, ok: true, ...(await this.read(msg)) };
         case "look": return { id, ok: true, ...(await this.look(msg)) };
@@ -97,12 +98,23 @@ export class Browser {
         case "do": return { id, ...(await this.act(msg)) };
         case "active": return { id, ok: true, ...(await this.active()) };
         case "read_active": return { id, ok: true, ...(await this.readActive(msg)) };
-        case "close": return { id, ok: true, ...(await this.close()) };
+        case "close": return { id, ok: true, ...(await this.changeTabs(() => this.close(msg))) };
         default: throw new Refusal("this extension doesn't do that");
       }
     } catch (e) {
       return { id, ok: false, error: e instanceof Refusal ? e.message : this.explain(e) };
     }
+  }
+
+  changeTabs(step) {
+    const pending = this.tabChanges.then(step);
+    this.tabChanges = pending.catch(() => {});
+    return pending;
+  }
+
+  jobId(msg) {
+    if (typeof msg.job !== "string" || !msg.job || msg.job.length > 128) throw new Refusal("This tab request names no job.");
+    return msg.job;
   }
 
   explain(e) {
@@ -135,6 +147,7 @@ export class Browser {
   }
 
   async open(msg) {
+    const job = this.jobId(msg);
     const allow = cleanAllow(msg.allow);
     const parsed = parseUrl(msg.url);
     if (parsed.error) throw new Refusal(parsed.error);
@@ -151,7 +164,7 @@ export class Browser {
       windowId = win ? win.id : undefined;
     }
     const created = await this.api.tabs.create({ url: msg.url.trim(), active: false, ...(windowId !== undefined ? { windowId } : {}) });
-    await this.remember(created.id);
+    await this.remember(created.id, job);
     gid = await this.api.tabs.group(gid === null ? { tabIds: [created.id] } : { tabIds: [created.id], groupId: gid });
     await this.api.tabGroups.update(gid, { title: GROUP_TITLE, color: GROUP_COLOR, collapsed: false });
     await this.api.storage.session.set({ [GROUP_KEY]: gid });
@@ -217,27 +230,29 @@ export class Browser {
   }
 
   /** The tabs this extension opened (for closing them when a job ends), kept for this browser session only. */
-  async remember(tabId) {
+  async remember(tabId, job) {
     const stored = await this.api.storage.session.get(OPENED_KEY);
     const list = stored && Array.isArray(stored[OPENED_KEY]) ? stored[OPENED_KEY] : [];
-    await this.api.storage.session.set({ [OPENED_KEY]: [...list, tabId].slice(-60) });
+    await this.api.storage.session.set({ [OPENED_KEY]: [...list, { tab: tabId, job }] });
   }
 
   /** Close the tabs this extension opened that are still in the Benji group. A tab the user dragged
    *  in, or opened themselves, is not on the list and is left alone. */
-  async close() {
+  async close(msg) {
+    const job = this.jobId(msg);
     const stored = await this.api.storage.session.get(OPENED_KEY);
     const ids = stored && Array.isArray(stored[OPENED_KEY]) ? stored[OPENED_KEY] : [];
+    const owned = ids.filter((entry) => entry && entry.job === job).map((entry) => entry.tab);
     const gid = await this.groupId();
     let closed = 0;
     if (gid !== null && ids.length > 0) {
-      const mine = (await this.api.tabs.query({ groupId: gid })).filter((t) => ids.includes(t.id)).map((t) => t.id);
+      const mine = (await this.api.tabs.query({ groupId: gid })).filter((t) => owned.includes(t.id)).map((t) => t.id);
       if (mine.length > 0) {
         await this.api.tabs.remove(mine);
         closed = mine.length;
       }
     }
-    await this.api.storage.session.remove(OPENED_KEY);
+    await this.api.storage.session.set({ [OPENED_KEY]: ids.filter((entry) => entry && entry.job !== job) });
     return { closed };
   }
 
@@ -369,16 +384,30 @@ export class Browser {
     if (action === "type" && (typeof msg.text !== "string" || msg.text.length < 1 || msg.text.length > 2000)) throw new Refusal("text must be 1 to 2000 characters");
     if (typeof this.api.debugger?.attach !== "function") throw new Refusal("This browser can't run the debugger, so Benji can't act in it.");
     return await this.withDebugger(ctx, mine, async (cdp, guard) => {
+      let focusedSig = msg.sig;
+      const recheck = async (focused = false) => {
+        await guard();
+        if (action === "click") {
+          const r = await this.page(ctx.tabId, "describe", { ref: msg.ref, sig: msg.sig, aim: true, point });
+          if (higher(floor(action, r.desc, ctx.origin).cls, msg.cls)) throw new Refusal("The control changed and now needs a different approval.");
+        } else if (action === "type") {
+          const sig = focused ? focusedSig : msg.sig;
+          await this.page(ctx.tabId, "describe", { ref: msg.ref, sig });
+          if (focused) await this.page(ctx.tabId, "validate", { ref: msg.ref, sig, focus: true });
+        }
+      };
       if (action === "click") {
-        await guard();
+        await recheck();
         await cdp("Input.dispatchMouseEvent", { type: "mouseMoved", x: point.x, y: point.y });
-        await guard();
+        await recheck();
         await cdp("Input.dispatchMouseEvent", { type: "mousePressed", x: point.x, y: point.y, button: "left", clickCount: 1 });
-        await guard();
+        // Complete the button pair even if mousedown changed the page.
         await cdp("Input.dispatchMouseEvent", { type: "mouseReleased", x: point.x, y: point.y, button: "left", clickCount: 1 });
       } else if (action === "type") {
-        await this.page(ctx.tabId, "focus", { ref: msg.ref, sig: msg.sig, replace: msg.replace === true });
-        await guard();
+        await recheck();
+        const focused = await this.page(ctx.tabId, "focus", { ref: msg.ref, sig: msg.sig, replace: msg.replace === true });
+        if (typeof focused.sig === "string") focusedSig = focused.sig;
+        await recheck(true);
         await cdp("Input.insertText", { text: msg.text });
       } else if (action === "key") {
         const k = KEY_EVENTS[msg.key];

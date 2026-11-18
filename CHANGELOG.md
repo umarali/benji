@@ -15,6 +15,14 @@ and versions follow [Semantic Versioning](https://semver.org/) with the pre-1.0 
 
 ### Fixed
 
+- Browser control signatures bind to the listed DOM node and safety fields. Controls are checked
+  again after debugger setup and hover, and typing checks the focused field. Ordinary expanded
+  and checked state changes remain usable. These checks do not make validation and input atomic.
+- Ending a browser job closes only tabs that job opened. Update the engine and extension together:
+  the new extension refuses opens from an older engine that supplies no job owner.
+- Web fetch connects only to validated public DNS answers, including redirects. It now bypasses
+  environment proxies so they cannot independently resolve an unchecked destination.
+
 - Outside content a conversation read keeps making changes ask after the engine restarts, after
   you reopen the conversation, and after you cut off a spoken answer.
 - With keys in the Keychain, macOS no longer asks for the keychain password on most actions:

@@ -49,8 +49,10 @@ function run(script) {
     writeFileSync(page, `<!doctype html><meta charset="utf-8"><body>${BODY}<script>
 ${source}
 const out = {};
+window.addEventListener("load", () => {
 ${script}
 document.documentElement.setAttribute("data-r", btoa(unescape(encodeURIComponent(JSON.stringify(out)))));
+});
 </script></body>`);
     const dom = execFileSync(CHROME, [
       "--headless=new", "--use-mock-keychain", "--password-store=basic", "--disable-gpu", "--no-first-run", "--no-default-browser-check", "--disable-extensions",
@@ -159,4 +161,21 @@ test("sig: the same control gives the same signature on every look; a different 
   `);
   assert.equal(out.same, true);
   assert.equal(out.distinct, out.n, "every control on this page is told apart");
+});
+
+
+test("approved controls: identical replacements and changes to safety fields invalidate the target", { skip }, () => {
+  const out = run(`
+    const list = pageAct("list", {max: 200}).controls;
+    const q = list.find((c) => c.name === "Search");
+    const link = list.find((c) => c.name === "Pricing");
+    const send = list.find((c) => c.name === "Place order");
+    document.querySelector("a").replaceWith(document.querySelector("a").cloneNode(true));
+    out.clone = pageAct("describe", {ref: link.ref, sig: link.sig, aim: true});
+    document.getElementById("q").autocomplete = "one-time-code";
+    out.sensitive = pageAct("focus", {ref: q.ref, sig: q.sig});
+    document.querySelector("form").action = "https://other.example/collect";
+    out.destination = pageAct("describe", {ref: send.ref, sig: send.sig, aim: true});
+  `);
+  for (const [kind, r] of Object.entries(out)) assert.match(r.error || "", /page changed/, kind);
 });

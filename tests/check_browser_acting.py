@@ -644,7 +644,9 @@ def run(check, here: Path) -> None:
               fin is not None and rec["browser"]["acts"] == [A] and fin["job"]["act_sites"] == [A]
               and [c[0] for c in link.calls].count("do") == 1)
         time.sleep(0.3)
-        check("the job's tabs are closed when it ends", "close" in [c[0] for c in link.calls])
+        check("the job owns its opens and its cleanup request names only that job",
+              [p["job"] for op,p in link.calls if op == "open"] == [rec["id"]]
+              and [p for op,p in link.calls if op == "close"] == [{"job": rec["id"]}])
         check("the job's tool list holds the look and the five acting tools, and its prompt tells it acting is the user's",
               all(n in job.seen[0][1] for n in B.JOB_TOOL_NAMES) and "browser_look" in job.seen[0][0] and "refused" in job.seen[0][0])
 
