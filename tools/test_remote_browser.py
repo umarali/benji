@@ -134,7 +134,18 @@ def main() -> int:
         js = b.js
         try:
             b.open(server.origin)
-            check("the page loads", until(lambda: js("!!document.getElementById('connect')")))
+            def page_loaded():
+                try:
+                    return js("!!document.getElementById('connect')")
+                except AssertionError as error:
+                    detail = error.args[0] if error.args else None
+                    # Navigation can replace the default context before the first evaluation.
+                    if (isinstance(detail, dict) and detail.get("code") == -32000
+                            and detail.get("message") == "Cannot find default execution context"):
+                        return False
+                    raise
+
+            check("the page loads", until(page_loaded))
             js("document.getElementById('key').value=" + json.dumps(relay.token) + ";document.getElementById('connect').click()")
             check("the access key connects through real HTTP",
                   until(lambda: js("!document.getElementById('controls').hidden && !document.getElementById('send').disabled")))
