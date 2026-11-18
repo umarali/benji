@@ -890,15 +890,22 @@ def server_checks(check) -> None:
         time.sleep(0.2)
         # the switch off stops a repeat run in flight and counts nothing against it
         st_before = SC.load(SC.file_for(store.root, a_id))[0]
-        gate2 = threading.Event()
-        job.replies += [lambda n: (gate2.wait(5), final(["zz"]))[1]]
+        gate2, entered2 = threading.Event(), threading.Event()
+        def in_flight(_):
+            entered2.set()
+            gate2.wait()
+            return final(["zz"])
+        # Replace unused replies so this run really reaches the blocked provider.
+        job.replies = [in_flight]
         clock[0] += 2 * DAY
         mark = ev.mark()
-        srv.schedule_tick_once()
-        ev.wait(jstate("working"), after=mark)
-        srv.handle({"type": "schedules_set", "enabled": False})
+        try:
+            srv.schedule_tick_once()
+            check("the repeat run reaches its blocked provider before the switch is turned off", entered2.wait(5))
+            srv.handle({"type": "schedules_set", "enabled": False})
+        finally:
+            gate2.set()
         stopped = ev.wait(jstate("stopped"), after=mark)
-        gate2.set()
         st_after = SC.load(SC.file_for(store.root, a_id))[0]
         check("turning all schedules off stops a repeat run in flight; that is neither a success nor a failure",
               stopped is not None and st_after["failures"] == st_before["failures"] and not st_after["paused"]
