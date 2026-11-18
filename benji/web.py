@@ -9,9 +9,11 @@ Pure standard library. Search picks a provider by environment:
 from __future__ import annotations
 
 import html
+import http.client
 import json
 import os
 import re
+import socket
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -32,7 +34,7 @@ def _check_url(url: str) -> None:
     parsed = urllib.parse.urlparse(url)
     if parsed.scheme not in ("http", "https"):
         raise WebError(f"refusing non-http(s) URL: {url!r}")
-    why = host_refusal(parsed.hostname)
+    why = host_refusal(parsed.hostname, resolve=lambda *_: [])
     if why:
         raise WebError(f"refusing {url}: {why}")
 
@@ -45,7 +47,60 @@ class _CheckedRedirects(urllib.request.HTTPRedirectHandler):
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
-_OPENER = urllib.request.build_opener(_CheckedRedirects)
+def _public_socket(address, timeout=DEFAULT_TIMEOUT, source_address=None):
+    """Resolve once, check the whole answer, and connect without another name lookup.
+
+    HTTPSConnection still owns TLS: its original hostname supplies SNI and certificate checks.
+    """
+    host, port = address
+    infos = socket.getaddrinfo(host, port, 0, socket.SOCK_STREAM)
+    why = host_refusal(host, resolve=lambda *_: infos)
+    if why:
+        raise WebError(f"refusing {host}: {why}")
+    last_error = None
+    for family, kind, proto, _, sockaddr in infos:
+        sock = None
+        try:
+            sock = socket.socket(family, kind, proto)
+            sock.settimeout(timeout)
+            if source_address:
+                sock.bind(source_address)
+            sock.connect(sockaddr)
+            return sock
+        except OSError as e:
+            last_error = e
+            if sock is not None:
+                sock.close()
+    raise last_error or OSError("host has no usable addresses")
+
+
+class _PublicHTTPConnection(http.client.HTTPConnection):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._create_connection = _public_socket
+
+
+class _PublicHTTPSConnection(http.client.HTTPSConnection):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._create_connection = _public_socket
+
+
+class _PublicHTTPHandler(urllib.request.HTTPHandler):
+    def http_open(self, req):
+        _check_url(req.full_url)
+        return self.do_open(_PublicHTTPConnection, req)
+
+
+class _PublicHTTPSHandler(urllib.request.HTTPSHandler):
+    def https_open(self, req):
+        _check_url(req.full_url)
+        return self.do_open(_PublicHTTPSConnection, req, context=self._context)
+
+
+# A proxy could resolve the hostname elsewhere and bypass the checked destination entirely.
+_OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}), _CheckedRedirects,
+                                      _PublicHTTPHandler, _PublicHTTPSHandler)
 
 
 def _get(url: str, headers: dict[str, str] | None = None, timeout: int = DEFAULT_TIMEOUT) -> str:

@@ -119,7 +119,7 @@ def _browser_tool(name: str) -> Callable[..., str]:
 
 
 def _browser_open(ctx: Ctx, link, grant: browser_mod.Grant, url: str) -> str:
-    reply = link.call("open", {"url": url, "allow": grant.origins})
+    reply = link.call("open", {"url": url, "allow": grant.origins, "job": ctx.run})
     if reply.get("ok") is not True:
         return f"[error] {browser_mod.clean_error(reply.get('error'))}"
     ctx.browser_opens += 1

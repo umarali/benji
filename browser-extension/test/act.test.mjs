@@ -70,7 +70,7 @@ function fake({ page = {}, tabUrl = `${A}/start`, failAttach = null } = {}) {
       const [op, args] = inj.args;
       st.pageCalls.push([op, args]);
       const r = typeof page[op] === "function" ? page[op](args, st) : page[op];
-      return [{ frameId: 0, result: r ?? { error: "unscripted" } }];
+      return [{ frameId: 0, result: r ?? (op === "validate" ? {ok: true} : { error: "unscripted" }) }];
     } },
     debugger: dbg,
   };
@@ -299,12 +299,38 @@ test("close: closes the tabs this extension opened, and leaves one the user drag
   const { b, st } = fake();
   st.tabs.push({ id: 9, url: `${A}/a`, groupId: 7, windowId: 1, incognito: false, status: "complete" },
     { id: 10, url: `${A}/dragged`, groupId: 7, windowId: 1, incognito: false, status: "complete" });
-  st.session.benjiOpened = [5, 9, 77];
-  const r = await b.handle({ id: "1", op: "close" });
+  st.session.benjiOpened = [5, 9, 77].map((tab) => ({tab, job: "job-a"}));
+  const r = await b.handle({ id: "1", op: "close", job: "job-a" });
   assert.equal(r.ok, true);
   assert.equal(r.closed, 2);
   assert.deepEqual(st.removed.sort(), [5, 9]);
   assert.ok(st.tabs.some((t) => t.id === 10) && st.tabs.some((t) => t.id === 6));
-  assert.equal(st.session.benjiOpened, undefined);
-  assert.equal((await b.handle({ id: "2", op: "close" })).closed, 0, "nothing left to close");
+  assert.deepEqual(st.session.benjiOpened, []);
+  assert.equal((await b.handle({ id: "2", op: "close", job: "job-a" })).closed, 0, "nothing left to close");
+});
+
+
+test("do: a target swapped during debugger setup or hover receives no press", async () => {
+  for (const trigger of ["Page.setDownloadBehavior", "Input.dispatchMouseEvent"]) {
+    let changed = false;
+    const { b, st } = fake({ page: { describe: () => changed
+      ? { error: "The page changed since it was listed: look at the page again." }
+      : { desc: LINK, point: {x: 40, y: 50} } } });
+    st.afterCommand = async (method) => { if (method === trigger) changed = true; };
+    const r = await b.handle(doMsg({}));
+    assert.equal(r.ok, false, trigger);
+    assert.equal(st.calls.some(([m, p]) => m === "Input.dispatchMouseEvent" && p.type === "mousePressed"), false, trigger);
+    assert.equal(st.detached, 1);
+  }
+});
+
+test("do: a field swapped after focus receives no text", async () => {
+  let focused = false;
+  const { b, st } = fake({ page: {
+    describe: () => focused ? {error: "The page changed since it was listed: look at the page again."} : {desc: FIELD},
+    focus: () => { focused = true; return {ok: true}; },
+  } });
+  const r = await b.handle(doMsg({action: "type", sig: "s3", text: "blue shoes"}));
+  assert.equal(r.ok, false);
+  assert.equal(st.calls.some(([m]) => m === "Input.insertText"), false);
 });

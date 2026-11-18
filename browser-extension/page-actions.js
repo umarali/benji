@@ -5,7 +5,7 @@
 // person scrolling or tabbing would: the scroll position and the focus.
 //
 // A control's number (`ref`) is its place in document order among the controls listed; its `sig` is a
-// short hash of what it is (kind, name, link, field name). The engine keeps the pair from the last
+// token for that DOM node and its description. The engine keeps the pair from the last
 // look, so a step on a page that changed since is refused rather than aimed at whatever is now there.
 export function pageAct(op, args) {
   const SELECTOR = [
@@ -86,14 +86,18 @@ export function pageAct(op, args) {
     return "other";
   };
 
-  const sigOf = (d) => {
-    const s = [d.kind, d.name, d.href, d.tag, d.inputType, d.fieldName].join("|");
-    let a = 0x811c9dc5, b = 0x01000193;
-    for (let i = 0; i < s.length; i++) {
-      a = Math.imul(a ^ s.charCodeAt(i), 0x01000193) >>> 0;
-      b = Math.imul(b + s.charCodeAt(i) + i, 0x85ebca6b) >>> 0;
+  // Chrome's isolated world persists between calls, but the page cannot access this map.
+  // A signature binds a DOM node and its semantic description, not ordinary control state.
+  const identities = globalThis.__benjiControlIdentities ??= new WeakMap();
+  const sigOf = (el, d) => {
+    // Ordinary state may change during interaction; disabled is always checked live.
+    const snapshot = JSON.stringify({ ...d, checked: undefined, expanded: undefined, disabled: undefined });
+    let prior = identities.get(el);
+    if (!prior || prior.snapshot !== snapshot) {
+      prior = { snapshot, sig: crypto.randomUUID().replaceAll("-", "") };
+      identities.set(el, prior);
     }
-    return a.toString(16).padStart(8, "0") + b.toString(16).padStart(8, "0");
+    return prior.sig;
   };
 
   const describe = (el) => {
@@ -105,10 +109,12 @@ export function pageAct(op, args) {
       kind, tag, inputType, name,
       text: kind === "text" || kind === "select" ? "" : clip(el.innerText || el.textContent, 100),
       value: ["submit", "button"].includes(kind) && tag === "input" ? clip(el.value, 60) : "",
-      href: kind === "link" && el.href ? String(el.href).slice(0, 300) : "",
+      href: kind === "link" && el.href ? String(el.href) : "",
       download: el.hasAttribute("download"),
       blank: (el.getAttribute("target") || "").toLowerCase() === "_blank",
       form: "",
+      formAction: el.form ? String(el.hasAttribute("formaction") ? el.formAction : el.form.action) : "",
+      formTarget: el.form ? String(el.hasAttribute("formtarget") ? el.formTarget : el.form.target) : "",
       disabled: !!el.disabled || el.getAttribute("aria-disabled") === "true",
       labelled: !!name,
       fieldName: clip(el.getAttribute("name") || el.id, 60),
@@ -123,13 +129,14 @@ export function pageAct(op, args) {
     }
     d.sensitive = inputType === "password" || SENSITIVE_AUTOCOMPLETE.test(d.autocomplete)
       || (kind === "text" && SENSITIVE_NAME.test(d.fieldName + " " + d.name + " " + d.placeholder));
-    d.sig = sigOf(d);
+    d.sig = sigOf(el, d);
     return d;
   };
 
   const all = listed();
   const pick = (ref, sig) => {
-    const el = all[ref];
+    // A token names one node even if hover or focus changes earlier controls.
+    const el = (typeof sig === "string" && all.find((e) => identities.get(e)?.sig === sig)) || all[ref];
     if (!el) return { error: "That control isn't on the page any more: look at the page again." };
     const d = describe(el);
     if (typeof sig === "string" && sig !== d.sig) return { error: "The page changed since it was listed: look at the page again." };
@@ -155,17 +162,24 @@ export function pageAct(op, args) {
       return out;
     }
     if (args.aim) {
-      el.scrollIntoView({ block: "center", inline: "center" });
+      const fixedPoint = args.point;
+      if (fixedPoint !== undefined && (!fixedPoint || !Number.isFinite(fixedPoint.x) || !Number.isFinite(fixedPoint.y))) {
+        return { error: "The click point is invalid." };
+      }
+      if (fixedPoint === undefined) el.scrollIntoView({ block: "center", inline: "center" });
       let target = el;
       let r = target.getBoundingClientRect();
       if ((r.width === 0 || r.height === 0) && el.labels && el.labels[0]) { target = el.labels[0]; r = target.getBoundingClientRect(); }
       if (r.width === 0 || r.height === 0) return { error: "That control has no size on the page, so it can't be clicked." };
-      const x = Math.round(r.left + r.width / 2), y = Math.round(r.top + r.height / 2);
+      const x = fixedPoint === undefined ? Math.round(r.left + r.width / 2) : fixedPoint.x;
+      const y = fixedPoint === undefined ? Math.round(r.top + r.height / 2) : fixedPoint.y;
       if (x < 0 || y < 0 || x > innerWidth || y > innerHeight) return { error: "That control is outside the visible part of the page." };
       const hit = document.elementFromPoint(x, y);
-      if (!hit || !(target.contains(hit) || hit.contains(target) || (el.labels && Array.from(el.labels).some((l) => l.contains(hit))))) {
+      if (!hit || !(target.contains(hit) || (el.labels && Array.from(el.labels).some((l) => l.contains(hit))))) {
         return { error: "Something else is on top of that control right now, so it wasn't clicked." };
       }
+      const after = pick(Number(args.ref), args.sig);
+      if (after.error || after.el !== el) return { error: "The page changed since it was listed: look at the page again." };
       out.point = { x, y };
     }
     return out;
@@ -173,13 +187,31 @@ export function pageAct(op, args) {
   if (op === "focus") {
     const found = pick(Number(args.ref), args.sig);
     if (found.error) return found;
-    const { el } = found;
+    const { el, d } = found;
+    const identity = ["kind", "tag", "inputType", "fieldName", "form", "formAction", "formTarget", "href", "download", "blank"];
+    const focusedField = () => {
+      if (!el.isConnected || document.activeElement !== el) return null;
+      const now = describe(el);
+      if (now.kind !== "text" || now.sensitive || now.disabled || identity.some((key) => now[key] !== d[key])) return null;
+      return now;
+    };
     el.focus({ preventScroll: false });
-    if (document.activeElement !== el) return { error: "That field wouldn't take the focus." };
+    let after = focusedField();
+    if (!after) return { error: "The field changed or wouldn't take the focus, so no text was entered." };
     if (args.replace) {
       if (typeof el.select === "function") el.select();
-      else { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+      else { const r = document.createRange(); r.selectNodeContents(el); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); }
+      after = focusedField();
+      if (!after) return { error: "The field changed during selection, so no text was entered." };
     }
+    // Focus may clear a placeholder. Only this validated field gets a fresh continuation token.
+    return { ok: true, sig: after.sig };
+  }
+  if (op === "validate") {
+    const found = pick(Number(args.ref), args.sig);
+    if (found.error) return found;
+    if (found.d.kind !== "text" || found.d.sensitive || found.d.disabled) return { error: "That field cannot be typed into." };
+    if (args.focus && document.activeElement !== found.el) return { error: "The page changed focus, so no text was entered." };
     return { ok: true };
   }
   if (op === "active") {

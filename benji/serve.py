@@ -557,7 +557,7 @@ class Server:
 
         def close() -> None:
             try:
-                link.call("close", {}, timeout=15)
+                link.call("close", {"job": record["id"]}, timeout=15)
             except Exception:  # noqa: BLE001 — a missed close is not an error worth more than a left-open tab
                 pass
         threading.Thread(target=close, daemon=True).start()
