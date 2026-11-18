@@ -68,6 +68,7 @@ public enum ServeRequest: Equatable, Sendable {
     case jobDismiss(job: String)
     /// Continue a job that stopped or didn't finish: another run of the same job.
     case jobContinue(job: String)
+    case jobResume(job: String, run: Int, generation: String, readSites: [String], actSites: [String])
     /// The row's schedule buttons: pause, resume or delete.
     case jobSchedule(job: String, action: JobScheduleAction)
     /// The user's one switch for every schedule (Settings): false stops a repeat run in flight and
@@ -136,6 +137,9 @@ public enum ServeRequest: Equatable, Sendable {
             return ["type": "job_steer", "job": job, "text": text]
         case let .jobDismiss(job):
             return ["type": "job_dismiss", "job": job]
+        case let .jobResume(job, run, generation, readSites, actSites):
+            return ["type": "job_resume", "job": job, "run": run, "generation": generation,
+                    "read_sites": readSites, "act_sites": actSites]
         case let .jobContinue(job):
             return ["type": "job_continue", "job": job]
         case let .jobSchedule(job, action):
@@ -422,7 +426,7 @@ public enum AppCapabilities {
         var caps = ["pointing", "cards", "figures", "prewarm"]
         if screenActions { caps.append("screen_actions") }
         if screenActions && drive { caps.append("drive") }
-        if jobs { caps.append("jobs") }
+        if jobs { caps += ["jobs", "job_resume"] }
         if browser && jobs { caps.append("browser") }
         if browser && jobs && browserActing { caps += ["browser_act", "browser_upload"] }
         if schedules && jobs { caps.append("schedules") }

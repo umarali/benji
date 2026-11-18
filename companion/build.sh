@@ -5,6 +5,12 @@
 set -e
 cd "$(dirname "$0")"
 
+# Offline distribution builds are explicit and never discover signing identities.
+if [ "${1:-}" = "distribution" ]; then
+    shift
+    exec python3 distribution/build.py "$@"
+fi
+
 APP="Benji.app"
 BUNDLE_ID="com.emerssive.heybenji.app"
 VERSION="0.1.0"

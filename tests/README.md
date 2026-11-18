@@ -35,3 +35,7 @@ To add a check, put it in the file for its subject, next to the closest existing
 fakes already there.
 
 A check file that is not in your checkout is skipped.
+
+`check_tls.py` checks engine-only CA selection, cache replacement, caller errors, real child environments and DNS-pinned HTTPS using disposable local certificates. It runs in selftest and makes no public request.
+
+`distribution_smoke.py --bundle DISPOSABLE_APP --probe PROBE --output-dir NEW_FOLDER` exercises all bundled launch routes, real fake-provider stdio, native framing, registration relocation and fail-closed validation. It temporarily modifies and moves the supplied disposable app and requires the probe documented in `docs/distribution.md`. Run through `tools/isolated_run.py`.

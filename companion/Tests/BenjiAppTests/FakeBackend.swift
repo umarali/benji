@@ -33,6 +33,10 @@ final class FakeBackend: CompanionBackend, JobBackend {
     private(set) var scheduleActions: [(job: String, action: JobScheduleAction)] = []
     private(set) var schedulesSwitch: [Bool] = []
     private(set) var engineStartsForSchedules = 0
+    private(set) var jobResumes: [(job: String, run: Int, generation: String, readSites: [String], actSites: [String])] = []
+    func resumeJob(_ job: String, run: Int, generation: String, readSites: [String], actSites: [String]) {
+        jobResumes.append((job, run, generation, readSites, actSites))
+    }
     func continueJob(_ job: String) { jobContinues.append(job) }
     func scheduleJob(_ job: String, _ action: JobScheduleAction) { scheduleActions.append((job, action)) }
     func setSchedules(_ on: Bool) { schedulesSwitch.append(on) }

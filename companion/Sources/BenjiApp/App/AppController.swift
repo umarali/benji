@@ -53,6 +53,11 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
     static var jobsFolder: URL { WorkingFolder.url().appendingPathComponent("jobs") }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        if EngineLaunch.isDistribution, BrowserSetting.isOn(UserDefaults.standard.object(forKey: BrowserSetting.defaultsKey)) {
+            do { try BrowserHostRegistration.repairOwned(home: FileManager.default.homeDirectoryForCurrentUser,
+                                                        assistantDir: AppConfig.assistantDir) }
+            catch { browserError = "Benji couldn't refresh an existing browser connection. Turn that browser off and on in Settings after moving the app to Applications." }
+        }
         ScreenCapturer.removeLeftovers()
         model.onApprovalNeeded = { [weak self] _ in self?.panel.presentApproval() }
         // The display the user is working on, never all of them: the one the message was started on,
@@ -626,9 +631,12 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if on {
             do {
                 try registration.register()
+            } catch BrowserHostRegistration.RegistrationError.unsupportedDistributionLocation {
+                browserError = "Move Benji into Applications, then turn on \(browser.name)'s connection again."
+            } catch BrowserHostRegistration.RegistrationError.foreignRegistration {
+                browserError = "Another native browser registration uses this path. Benji left it unchanged."
             } catch {
-                registration.unregister()
-                browserError = "Benji couldn't set up \(browser.name)'s connection. Nothing was changed."
+                browserError = "Benji couldn't set up \(browser.name)'s connection: \(error.localizedDescription)"
             }
         } else {
             registration.unregister()
@@ -659,16 +667,13 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     private static func runDiagnose() -> (output: Data?, exitCode: Int32) {
         let p = Process()
-        p.executableURL = URL(fileURLWithPath: "/bin/zsh")
-        p.arguments = ["-lc", "cd \"$BENJI_DIR\" && exec python3 -m benji \(DiagnosticsCopy.command)"]
         var env = ProcessInfo.processInfo.environment
         env["BENJI_DIR"] = AppConfig.assistantDir
         env["BENJI_WORKDIR"] = WorkingFolder.url().path
-        p.environment = env
         let out = Pipe()
         p.standardOutput = out
         p.standardError = Pipe()
-        do { try p.run() } catch { return (nil, -1) }
+        do { try EngineLaunch.configure(p, arguments: ["--diagnose", "--hours", String(DiagnosticsCopy.hours)], sourceDirectory: AppConfig.assistantDir, environment: env); try p.run() } catch { return (nil, -1) }
         let data = out.fileHandleForReading.readDataToEndOfFile()
         p.waitUntilExit()
         return (data, p.terminationStatus)
@@ -794,15 +799,12 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
     /// disclosure names the real destination instead of guessing.
     private func fetchProvider() {
         let p = Process()
-        p.executableURL = URL(fileURLWithPath: "/bin/zsh")
-        p.arguments = ["-lc", "cd \"$BENJI_DIR\" && exec python3 -m benji --print-provider"]
         var env = ProcessInfo.processInfo.environment
         env["BENJI_DIR"] = AppConfig.assistantDir
         switch QuietServices.shared.keyEnvironment() {
         case let .success(keys): env.merge(keys) { _, new in new }
         case .failure: return
         }
-        p.environment = env
         let out = Pipe()
         p.standardOutput = out
         p.standardError = Pipe()
@@ -824,7 +826,7 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 self?.model.settings.refresh()
             }
         }
-        try? p.run()
+        do { try EngineLaunch.configure(p, arguments: ["--print-provider"], sourceDirectory: AppConfig.assistantDir, environment: env); try p.run() } catch { return }
     }
 
     private func showPanel() {

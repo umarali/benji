@@ -239,13 +239,9 @@ final class KokoroSpeaker {
     private func launch() {
         let process = Process()
         let inPipe = Pipe(), outPipe = Pipe()
-        process.executableURL = URL(fileURLWithPath: install.python)
-        process.arguments = ["-m", "benji", "--tts"]
-        process.currentDirectoryURL = URL(fileURLWithPath: assistantDir)
         var env = ProcessInfo.processInfo.environment
         env["PYTHONUNBUFFERED"] = "1"
         env["BENJI_WORKDIR"] = WorkingFolder.url().path     // the voice lives in Benji's one folder
-        process.environment = env
         process.standardInput = inPipe
         process.standardOutput = outPipe
         process.standardError = FileHandle.nullDevice
@@ -261,6 +257,7 @@ final class KokoroSpeaker {
             }
         }
         do {
+            try EngineLaunch.configure(process, entry: .tts, arguments: [], sourceDirectory: assistantDir, environment: env, optionalPython: install.python)
             try process.run()
             self.process = process
             input = inPipe.fileHandleForWriting

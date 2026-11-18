@@ -15,6 +15,7 @@ public enum AssistantLocator {
         currentDirectory: String,
         fileExists: (String) -> Bool = { FileManager.default.fileExists(atPath: $0) }
     ) -> String {
+        if EngineLaunch.isDistribution { return EngineLaunch.engineDirectory(bundleURL: bundleURL).path }
         if let set = environment["BENJI_DIR"], !set.isEmpty { return set }
         func isRepoRoot(_ dir: URL) -> Bool {
             fileExists(dir.appendingPathComponent("benji/__main__.py").path)

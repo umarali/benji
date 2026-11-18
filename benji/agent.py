@@ -124,6 +124,11 @@ class Agent:
         # front-end's approval event names.
         self.gate_now: tuple[str, str] = ("", "")
         self._tools_run = 0
+        self._steps = 0
+        self._steers_applied = 0
+        self._limit_warned = False
+        self.recovery = None
+        self.recovery_record = None
 
     def set_run(self, run_id: str, scope: str = "turn") -> None:
         """The id (a turn's or a job's) and scope every event of this agent carries."""
@@ -180,10 +185,41 @@ class Agent:
         self.messages.append(message)
         self.last_usage = {"calls": 0, **{k: 0 for k in usage_mod.FIELDS}}
 
-        steps = 0
-        while steps < self.max_steps:      # a drive raises the budget
-            steps += 1
-            step = steps
+        self._steps = 0
+        return self._loop()
+
+    def resume(self, recovery, record: dict, envelope: dict) -> str:
+        """A continuation of the same run. Never enters send() or begin_turn()."""
+        recovery.restore(record, self, envelope)
+        self.recovery, self.recovery_record = recovery, record
+        self.last_usage = {"calls": 0, **{k: 0 for k in usage_mod.FIELDS}}
+        started, tools_before = time.monotonic(), self._tools_run
+        audit.event("turn_start", self.ctx.run, scope=self.ctx.scope, screen=False, jobs=self._jobs_on)
+        status, code = "ok", None
+        try:
+            answer = self._loop()
+            if answer == CANCELLED:
+                status = "cancelled"
+            elif answer.startswith(STOPPED_AT_MAX):
+                status, code = "error", "out_of_steps"
+            return answer
+        except ProviderError:
+            status, code = "error", "provider"
+            raise
+        except BaseException:
+            status, code = "error", "internal"
+            raise
+        finally:
+            audit.event("turn_end", self.ctx.run, scope=self.ctx.scope, status=status, code=code,
+                        ms=int((time.monotonic() - started) * 1000), tools=self._tools_run - tools_before,
+                        calls=self.last_usage.get("calls", 0))
+
+    def _loop(self) -> str:
+        while self._steps < self.max_steps:      # a drive raises the budget
+            if self.recovery is not None and not self.cancelled():
+                self.recovery.checkpoint(self.recovery_record, self)
+            self._steps += 1
+            step = self._steps
             if self.cancelled():
                 return CANCELLED
             resp = self._call_model_patiently()
@@ -361,6 +397,7 @@ class Agent:
         said = self.poll_steer() if self.poll_steer else []
         if not said:
             return ""
+        self._steers_applied += len(said)
         for text in said:
             self.ctx.user_text += "\n" + text      # the user's own words, for the gate's comparisons
         return "[The user steers this job: " + " | ".join(said) + "] Take it into account from here."
@@ -443,6 +480,16 @@ class Agent:
         return not self.cancelled()
 
     def _call_model(self) -> dict:
+        if self.recovery is not None:
+            self.recovery.request(self.recovery_record, self)
+        resp = self._provider_call()
+        if self.recovery is not None and not resp.get("cancelled"):
+            if resp.get("reasoning") or set(resp) - {"text", "tool_calls", "usage", "cancelled", "searches"}:
+                self.recovery.invalidate(self.recovery_record)
+            self.recovery.phase(self.recovery_record, "clear")
+        return resp
+
+    def _provider_call(self) -> dict:
         stream = getattr(self.provider, "stream", None)
         if self.on_text is None or stream is None or not streaming_enabled():
             return self.provider.complete(self.system_prompt, self.messages, self.specs)
@@ -496,6 +543,8 @@ class Agent:
         if self.policy.blocks(name):
             return self._stopped_early(name, "policy_blocked", policy_mod.refusal(name, self.policy))
         self._tool_calls += 1
+        if self.recovery is not None:
+            self.recovery.consume(self.recovery_record, self)
         if self._tool_calls > self.max_tool_calls:
             return self._stopped_early(name, "tool_cap", SUPERSEDED.format(n=self.max_tool_calls))
         decision = tools_mod.decide(ctx, name, inp)
@@ -540,7 +589,14 @@ class Agent:
         elif declined:
             result = "[declined] The user did not approve this action. Do not retry it; adapt."
         else:
-            result = tools_mod.dispatch(ctx, name, inp)
+            tracked = self.recovery is not None and decision.cls != tools_mod.DENIED
+            if tracked:
+                self.recovery.before_dispatch(self.recovery_record, self, name, inp)
+            try:
+                result = tools_mod.dispatch(ctx, name, inp)
+            finally:
+                if tracked:
+                    self.recovery.after_dispatch(self.recovery_record, self)
             if ctx.browser_recent and result.startswith("[declined]"):
                 result, recent = RECENT_DECLINE, True      # a browser card the user said "not now" to a moment ago
             if name == "start_drive" and ctx.drive is not None and ctx.drive.active:

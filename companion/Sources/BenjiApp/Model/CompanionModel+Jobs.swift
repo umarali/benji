@@ -55,6 +55,16 @@ extension CompanionModel {
         jobBackend?.continueJob(job.id)
     }
 
+    /// Explicit confirmation of this snapshot's separate read and act scopes.
+    func resumeJob(_ offered: JobSnapshot, readSites: [String], actSites: [String]) {
+        guard let job, job.canResume, job.id == offered.id, job.run == offered.run,
+              job.recoveryGeneration == offered.recoveryGeneration,
+              Set(readSites).isSubset(of: Set(job.sites)), Set(actSites).isSubset(of: Set(job.actSites)),
+              Set(actSites).isSubset(of: Set(readSites)) else { return }
+        jobBackend?.resumeJob(job.id, run: job.run, generation: job.recoveryGeneration,
+                              readSites: readSites, actSites: actSites)
+    }
+
     /// The row's schedule buttons: pause, resume, delete. Only what the schedule offers.
     func scheduleJob(_ action: JobScheduleAction) {
         guard let job, let schedule = job.schedule else { return }

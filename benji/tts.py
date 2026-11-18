@@ -262,7 +262,10 @@ def speak_blocking(text: str, voice: str = DEFAULT_VOICE, engine_dir: Path | Non
     if not installed():
         raise TTSError("Kokoro isn't installed (tools/voice-setup.sh).")
     root = engine_dir or Path(__file__).resolve().parent.parent
-    proc = subprocess.Popen([str(venv_python()), "-m", "benji", "--tts"], cwd=root, text=True,
+    bootstrap = root / "bootstrap.py"
+    command = ([str(venv_python()), "-I", "-B", "-u", str(bootstrap), "tts"] if bootstrap.is_file()
+               else [str(venv_python()), "-m", "benji", "--tts"])
+    proc = subprocess.Popen(command, cwd=root, text=True,
                             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     assert proc.stdin and proc.stdout
     proc.stdin.write(json.dumps({"type": "speak", "id": "1", "text": text, "voice": voice}) + "\n")

@@ -59,7 +59,7 @@ PROTOCOL = 1
 # What the engine can do beyond protocol 1, said in `ready`. An app that does not know a name
 # ignores it; an engine that does not send the list is an older one.
 # "remote_text": a `send` marked `remote_text` (a task from the phone) is a text-only turn.
-ENGINE_CAPS = ("hello_caps", "prewarm", "policy", "tool_cap", "image_hash", "error_reasons", "remote_text")
+ENGINE_CAPS = ("hello_caps", "prewarm", "policy", "tool_cap", "image_hash", "error_reasons", "remote_text", "job_resume")
 # The only fields a phone task's `send` keeps; anything else in it is dropped before it is read.
 REMOTE_FIELDS = ("type", "id", "text", "remote_text")
 # What an app may say it can carry out, in `hello`. The engine offers a tool only if the app can do
@@ -67,7 +67,7 @@ REMOTE_FIELDS = ("type", "id", "text", "remote_text")
 # "browser_act": the app can show and answer the acting cards of a job (a second grant per site, a send, a
 # debugging bar's Cancel) and "browser_upload": the upload card; the engine offers those tools only if said.
 APP_CAPS = ("pointing", "screen_actions", "cards", "figures", "jobs", "browser", "prewarm", "schedules", "drive",
-            "browser_act", "browser_upload")
+            "browser_act", "browser_upload", "job_resume")
 PREWARM_QUIET_SECONDS = 240.0   # a warm-up is skipped when the last call was more recent than this
 PREWARM_MIN_GAP = 30.0
 APPROVAL_TIMEOUT = 90.0         # seconds; longer than the app's own 60 s on purpose
@@ -147,6 +147,8 @@ class _JobRun:
         self.agent: Agent | None = None
         self.audited = ""           # the last state written to the audit log
         self.beat = beat            # seconds of beat before it starts; None: the server's
+        self.explicit_stop = False
+        self.recovery_envelope = None
         self.resumed = False        # it came back from a park: its brief is read to it again
         self.switch_off = False     # stopped because the user turned all schedules off
         self.auto_paused = False    # this run's failure paused the schedule
@@ -272,7 +274,7 @@ class Server:
             "job_stop": self._job_stop, "job_dismiss": self._job_dismiss, "browser_set": self._browser_set,
             "browser_always": self._browser_always_set,
             "drive_stop": self._drive_stop,
-            "job_continue": self._job_continue, "job_schedule": self._job_schedule,
+            "job_resume": self._job_resume, "job_continue": self._job_continue, "job_schedule": self._job_schedule,
             "schedules_set": self._schedules_set,
             "prewarm": self._prewarm,
         }.get(kind)
@@ -337,7 +339,7 @@ class Server:
         return True
 
     def _snapshot(self, run: _JobRun) -> dict:
-        snap = jobs_mod.snapshot(run.record, run.live, run.line, schedule=self._schedule_of(run.record))
+        snap = self._recovery_snapshot(jobs_mod.snapshot(run.record, run.live, run.line, schedule=self._schedule_of(run.record)), run.record)
         snap["quiet"] = self._quiet(run, snap["state"])
         return snap
 
@@ -362,7 +364,26 @@ class Server:
         if live:
             self._job_changed(self.job_run)
             return
-        self._emit({"type": "job", "job": jobs_mod.snapshot(record, False, schedule=self._schedule_of(record))})
+        self._emit({"type": "job", "job": self._recovery_snapshot(jobs_mod.snapshot(record, False, schedule=self._schedule_of(record)), record)})
+
+    def _recovery_snapshot(self, snap: dict, record: dict) -> dict:
+        snap["can_resume"] = bool(self.app_caps is not None and "job_resume" in self.app_caps
+                                  and self._resume_possible(record))
+        snap["recovery_generation"] = record.get("recovery_generation", "") if snap["can_resume"] else ""
+        return snap
+
+    def _resume_possible(self, record: dict) -> bool:
+        from .recovery import identity
+        try:
+            with self.job_store.recovery.lock:
+                if not self.job_store.recovery.eligible(record) or self.policy_for().blocks_family("jobs"):
+                    return False
+                # Construct only; no send(), provider call or dispatch. Rebuild trusted config
+                # so a provider/model/config change cannot be advertised as resumable.
+                probe = self.make_job_agent(record, lambda _: False, lambda *_: None, lambda: True)
+                return identity(probe) == self.job_store.recovery._load(record)["identity"]
+        except (OSError, ValueError, TypeError, KeyError):
+            return False
 
     def _show_last_job(self) -> None:
         """At the app's `hello`: a job the engine lost in a restart is marked failed, and the
@@ -406,10 +427,13 @@ class Server:
         return (f"[ok] Job started: {record['title']}.{again} It begins in a moment, the user can cancel it, and "
                 "it keeps going while they do other things. Say so in one short sentence; don't wait for it.")
 
-    def _begin_run(self, record: dict, beat: float | None = None) -> _JobRun:
+    def _begin_run(self, record: dict, beat: float | None = None, recovery=None) -> _JobRun:
         """Make the record's current run live and start its worker. Under the lock."""
         with self.lock:
+            if recovery is None:
+                self.job_store.recovery.delete(record)
             run = self.job_run = _JobRun(record, beat)
+            run.recovery_envelope = recovery
             self._job_changed(run)
         threading.Thread(target=self._run_job, daemon=True, args=(run,)).start()
         return run
@@ -434,7 +458,7 @@ class Server:
             agent.allow_jobs(self.job_store)            # recall, not start: a job doesn't start jobs
             if record.get("browser") and self.browser_on:   # its approved sites, if the switch is still on
                 agent.allow_browser(browser_mod.Grant(record, lambda: self._job_changed(run)), self.browser_link,
-                                    always=self.browser_always, on_user_stop=lambda: self._stop_job(run),
+                                    always=() if run.recovery_envelope is not None else self.browser_always, on_user_stop=lambda: self._stop_job(run),
                                     act=self._app_can("browser_act"), upload=self._app_can("browser_upload"))
             agent.set_run(record["id"], "job")
             agent.ctx.unattended = bool(record.get("unattended"))    # nobody watching: only reading runs unasked
@@ -452,8 +476,16 @@ class Server:
                 run.agent = agent
                 if turn.cancelled.is_set():
                     agent.stop()
-            answer = agent.send(jobs_mod.brief_message(record), user_words=record["user_words"],
-                                tainted_by=record["tainted_by"], taints=jobs_mod.record_taints(record))
+            if run.recovery_envelope is not None:
+                run.step = run.recovery_envelope["state"]["steps"]
+                run.warned = run.recovery_envelope["state"]["limit_warned"]
+                answer = agent.resume(self.job_store.recovery, record, run.recovery_envelope)
+            else:
+                agent._steers_applied = len(record.get("steers", [])) - len(run.steers)
+                if self.job_store.recovery.start(record, agent):
+                    agent.recovery, agent.recovery_record = self.job_store.recovery, record
+                answer = agent.send(jobs_mod.brief_message(record), user_words=record["user_words"],
+                                    tainted_by=record["tainted_by"], taints=jobs_mod.record_taints(record))
         except ProviderError as e:
             audit.error("job", "provider", e, record["id"])
             self._finish_job(run, "failed", error=jobs_mod.plain_failure(e), agent=agent, code="provider_error")
@@ -503,6 +535,8 @@ class Server:
                 audit.event("job_reread", run.record["id"], job=run.record["id"], reason=reason)
             if JOB_MAX_STEPS - step == jobs_mod.LIMIT_WARN_LEFT:
                 run.warned = True
+                if run.agent is not None:
+                    run.agent._limit_warned = True
                 parts.append(jobs_mod.limit_warning(jobs_mod.LIMIT_WARN_LEFT))
         return "\n\n".join(parts)
 
@@ -516,8 +550,11 @@ class Server:
             elif limit and folder is not None:
                 body, record["turn_end"] = jobs_mod.limit_end(record, folder, answer, run.step or JOB_MAX_STEPS, JOB_MAX_STEPS)
                 record["stop_reason"] = "limit"
-            if self.exiting and status == "stopped":
+            if self.exiting and status == "stopped" and not run.explicit_stop:
                 status, error = "failed", jobs_mod.INTERRUPTED
+            record["ending"] = "interrupted" if error == jobs_mod.INTERRUPTED and status == "failed" else status
+            if record["ending"] != "interrupted":
+                self.job_store.recovery.discard(record)
             self._note_job_taint(run, agent)
             now = time.time()
             record.update(status=status, pending=None, error=error, finished_at=now)
@@ -605,7 +642,7 @@ class Server:
             return False
         with turn.lock:
             turn.next_request += 1
-            request = f"a{turn.next_request}"
+            request = f"{record.get('recovery_generation', '')}-a{turn.next_request}"
             answers: queue.Queue = queue.Queue(maxsize=1)
             turn.approvals[request] = answers
         action, _, target = reason.partition(": ")
@@ -705,6 +742,25 @@ class Server:
                 schedule_mod.save(folder, state)
                 audit.event("job_schedule", record["id"], job=record["id"], action="resumed")
             self._emit_record(record)
+
+    def _job_resume(self, req: dict) -> None:
+        from .recovery import Ineligible
+        with self.lock:
+            job_id = req.get("job")
+            record = self.job_store.load(job_id) if self._jobs_on() and isinstance(job_id, str) else None
+            if (self.app_caps is None or "job_resume" not in self.app_caps or record is None
+                    or (self.job_run is not None and self.job_run.live)
+                    or not self._resume_possible(record)):
+                self.error("bad_request", "job_resume: not available")
+                return
+            try:
+                e = self.job_store.recovery.claim(record, req.get("run"), req.get("generation"),
+                                                  req.get("read_sites"), req.get("act_sites"))
+            except (Ineligible, OSError, ValueError, TypeError, KeyError):
+                self.error("bad_request", "job_resume: checkpoint or consent is no longer valid", job_id)
+                return
+            self.declines.clear(record["id"])
+            self._begin_run(record, beat=0.0, recovery=e)
 
     def _job_continue(self, req: dict) -> None:
         """Continue a job that stopped or didn't finish, from the row: another run of the same job,
@@ -825,11 +881,12 @@ class Server:
             return
         self._stop_job(run)
 
-    def _stop_job(self, run: _JobRun) -> None:
+    def _stop_job(self, run: _JobRun, interrupted: bool = False) -> None:
         """Stop the job: kill its tool processes, cut a model call off, answer a waiting approval No.
         Its worker then ends it as `stopped`."""
         turn = run.turn
         with self.lock:
+            run.explicit_stop = run.explicit_stop or not interrupted
             turn.cancelled.set()
             if run.agent is not None:
                 run.agent.stop()
@@ -1613,7 +1670,7 @@ def run(server: Server, inp=None) -> int:
     server._cancel_current()
     server.exiting = True           # a job stopped by quitting is interrupted, not stopped by the user
     if server.job_run is not None and server.job_run.live:
-        server._stop_job(server.job_run)
+        server._stop_job(server.job_run, interrupted=True)
         time.sleep(0.2)             # let its worker write the record
     if server.browser_link is not None:
         server.browser_link.stop()  # removes link.json: the token dies with the engine

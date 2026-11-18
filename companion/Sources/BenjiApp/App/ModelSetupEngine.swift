@@ -7,7 +7,7 @@ final class ModelSetupEngine: ModelSetupBackend {
     private let assistantDir: String
     private let environment: () -> Result<[String: String], KeyHandoff.Failure>
     private let executable: URL
-    private let arguments: [String]
+    private let arguments: [String]?
     private let timeoutSeconds: TimeInterval
     private let inheritedEnvironment: () -> [String: String]
 
@@ -17,7 +17,7 @@ final class ModelSetupEngine: ModelSetupBackend {
          inheritedEnvironment: @escaping () -> [String: String] = { ProcessInfo.processInfo.environment }) {
         self.assistantDir = assistantDir; self.environment = environment
         self.executable = executable
-        self.arguments = arguments ?? ["-lc", "cd \"$BENJI_DIR\" && exec python3 -c 'from benji.model_setup import model_setup_main; model_setup_main()'"]
+        self.arguments = arguments
         self.timeoutSeconds = timeoutSeconds; self.inheritedEnvironment = inheritedEnvironment
     }
 
@@ -44,9 +44,10 @@ final class ModelSetupEngine: ModelSetupBackend {
         if env["BENJI_WORKDIR"] == nil { env["BENJI_WORKDIR"] = WorkingFolder.url().path }
         let input = (try? JSONEncoder().encode(source)) ?? Data("null".utf8)
         let executable = self.executable, arguments = self.arguments, timeoutSeconds = self.timeoutSeconds
+        let assistantDir = self.assistantDir
         DispatchQueue.global(qos: .userInitiated).async {
             let process = Process(), stdin = Pipe(), stdout = Pipe(), stderr = Pipe()
-            process.executableURL = executable; process.arguments = arguments
+            process.executableURL = executable; process.arguments = arguments ?? []
             process.environment = env
             process.standardInput = stdin; process.standardOutput = stdout; process.standardError = stderr
             let result: Result<ModelSetupSource, ModelSetupFailure>
@@ -61,6 +62,9 @@ final class ModelSetupEngine: ModelSetupBackend {
                 return ModelSetupFailure(words: "Benji couldn't start the model check. Check that Python and the engine are installed, then try again." + (tail.isEmpty ? "" : "\n" + tail))
             }
             do {
+                if arguments == nil {
+                    try EngineLaunch.configure(process, entry: .modelSetup, sourceDirectory: assistantDir, environment: env)
+                }
                 try process.run()
                 let reads = DispatchGroup(), output = SetupProcessOutput(), errors = SetupProcessOutput()
                 DispatchQueue.global().async(group: reads) { output.data = stdout.fileHandleForReading.readDataToEndOfFile() }

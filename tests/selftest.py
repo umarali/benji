@@ -1444,6 +1444,8 @@ def main() -> int:
     private_checks()
     home_checks()
     remote_checks()
+    import check_tls
+    check_tls.run(check, HERE)
     evals_checks()
 
     print()
@@ -4901,6 +4903,8 @@ def jobs2_checks() -> None:
 def durable_jobs_checks() -> None:
     import check_durable_jobs
     check_durable_jobs.run(check, HERE)
+    import check_recovery
+    check_recovery.run(check, HERE)
 
 
 def model_setup_checks() -> None:

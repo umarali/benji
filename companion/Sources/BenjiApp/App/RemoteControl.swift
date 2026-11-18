@@ -38,8 +38,6 @@ final class RemoteControl: ObservableObject {
         address = value
         model.endRemoteControl()
         let child = Process(), incoming = Pipe(), outgoing = Pipe()
-        child.executableURL = URL(fileURLWithPath: "/bin/zsh")
-        child.arguments = ["-lc", "cd \"$BENJI_PHONE_DIR\" && exec python3 -m benji.remote --port \"$BENJI_PHONE_PORT\" --origin \"$BENJI_PHONE_ORIGIN\""]
         // The listener needs no key: none is passed on.
         var env = ProcessInfo.processInfo.environment.filter { key, _ in
             !key.hasSuffix("_KEY") && !key.hasSuffix("_TOKEN") && !key.hasSuffix("_SECRET")
@@ -48,7 +46,6 @@ final class RemoteControl: ObservableObject {
         env["BENJI_PHONE_ORIGIN"] = value
         env["BENJI_PHONE_PORT"] = String(port)
         env["PYTHONUNBUFFERED"] = "1"
-        child.environment = env
         child.standardInput = incoming
         child.standardOutput = outgoing
         child.standardError = FileHandle.nullDevice   // nothing of a request or the key reaches a log
@@ -79,6 +76,7 @@ final class RemoteControl: ObservableObject {
             }
         }
         do {
+            try EngineLaunch.configure(child, entry: .remote, arguments: ["--port", String(port), "--origin", value], sourceDirectory: assistantDir, environment: env)
             try child.run()
             isRunning = true
             let timer = Timer(timeInterval: 1, repeats: true) { [weak self] _ in

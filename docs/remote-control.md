@@ -195,3 +195,14 @@ python3 tools/isolated_run.py -- python3 tools/test_remote_browser.py
 ```
 
 The last one runs Chrome headless with a throwaway profile, and skips if Chrome is not installed.
+
+
+## Header deadlines and contention
+
+Phone control remains Experimental. The maintainer's [16 November iPhone run](https://github.com/umarali/benji/issues/20#issuecomment-6907406650) over private Tailscale Serve with a real model passed tasks, phone and Mac approvals, the Mac-only switch, Stop and turning control off.
+
+For inbound HTTP/1, Tailscale Serve's proxy reads the complete header section before forwarding. Its HTTPS listener also offers HTTP/2, which was not traced in this source analysis. Neither guarantees one backend write, nor prevents the listener from rejecting or evicting a legitimate request under contention. The source examined was Tailscale [075e640](https://github.com/tailscale/tailscale/blob/075e6403b2cac7ea5357bb14e76e5cdb084ec3ff/ipn/ipnlocal/serve.go) with Go 1.27.4; the listener's [TLS configuration](https://github.com/tailscale/tailscale/blob/075e6403b2cac7ea5357bb14e76e5cdb084ec3ff/ipn/ipnlocal/cert.go#L165-L167) offers both protocols. These pins do not establish the versions used in that phone run.
+
+Benji permits 16 connections. When full, it can evict the oldest connection whose headers have not yet been parsed. A controlled loopback probe reproduced a valid request with complete headers already queued being evicted while its handler was paused before parsing. The stop caller was the listener's admission code, not its unchanged three-second header timer. This forced scheduling case does not measure real Tailscale failure rates.
+
+A bounded transport/load trial, and the original issue's unrecorded scenarios and version details, remain outstanding in [issue #20](https://github.com/umarali/benji/issues/20). Any workload and acceptance threshold require the owner's decision; no zero-drop guarantee or new criterion is established here. Keep private Serve, never Funnel.

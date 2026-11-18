@@ -68,6 +68,26 @@ final class JobsTests: XCTestCase {
         XCTAssertFalse(old.jobs, "an older engine doesn't say")
     }
 
+    func testResumeRequiresAnEngineEligibleFailedSnapshotAndGeneration() {
+        let fields: [String: Any] = ["id": id, "state": "failed", "can_resume": true, "recovery_generation": "g1"]
+        XCTAssertTrue(JobSnapshot.decode(fields)!.canResume)
+        XCTAssertFalse(JobSnapshot.decode(["id": id, "state": "failed"])!.canResume)
+        XCTAssertFalse(JobSnapshot.decode(fields.merging(["state": "working"]) { _, new in new })!.canResume)
+        XCTAssertFalse(JobSnapshot.decode(fields.merging(["recovery_generation": ""]) { _, new in new })!.canResume)
+        XCTAssertFalse(JobSnapshot.decode(fields)!.withoutResume().canResume)
+    }
+
+    func testResumeProtocolCarriesSeparateConsentAndRunGeneration() throws {
+        let request = ServeRequest.jobResume(job: id, run: 3, generation: "g1",
+                                             readSites: ["https://read.example"], actSites: [])
+        let o = request.object
+        XCTAssertEqual(o["type"] as? String, "job_resume")
+        XCTAssertEqual(o["run"] as? Int, 3)
+        XCTAssertEqual(o["generation"] as? String, "g1")
+        XCTAssertEqual(o["read_sites"] as? [String], ["https://read.example"])
+        XCTAssertEqual(o["act_sites"] as? [String], [])
+    }
+
     // MARK: words
 
     func testTheRowSaysWhatTheJobIsDoing() {

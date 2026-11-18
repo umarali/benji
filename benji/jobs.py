@@ -33,7 +33,9 @@ from __future__ import annotations
 import json
 import os
 import re
+import shutil
 import time
+import threading
 import uuid
 from pathlib import Path
 
@@ -173,7 +175,10 @@ class JobStore:
     """`<workdir>/jobs/`: one folder per job."""
 
     def __init__(self, root: str | Path):
+        self._lock = threading.RLock()
         self.root = Path(root)
+        from .recovery import Recovery
+        self.recovery = Recovery(self)
 
     def path(self, job_id: str) -> Path:
         if not valid_id(job_id):
@@ -224,11 +229,12 @@ class JobStore:
 
     def save(self, record: dict) -> None:
         """Written whole to a temporary file and renamed, so a crash never leaves half a record."""
-        self.path(record["id"]).mkdir(parents=True, exist_ok=True)
-        where = self.record_path(record["id"])
-        tmp = where.with_name(where.name + ".tmp")
-        tmp.write_text(json.dumps(record, ensure_ascii=False, indent=1))
-        os.replace(tmp, where)
+        with self._lock:
+            self.path(record["id"]).mkdir(parents=True, exist_ok=True)
+            where = self.record_path(record["id"])
+            tmp = where.with_name(where.name + ".tmp")
+            tmp.write_text(json.dumps(record, ensure_ascii=False, indent=1))
+            os.replace(tmp, where)
 
     def all(self) -> list[dict]:
         """Every readable record, newest first."""
@@ -254,6 +260,11 @@ class JobStore:
         changed = []
         for record in self.all():
             if record.get("status") in ("queued", "running"):
+                # Evaluate the old authority before discarding a parked approval.
+                record["ending"] = "interrupted"
+                eligible = self.recovery.eligible({**record, "status": "failed"})
+                if not eligible:
+                    self.recovery.discard(record)
                 record.update(status="failed", pending=None, error=INTERRUPTED, finished_at=time.time())
                 self.save(record)
                 changed.append(record["id"])
@@ -271,6 +282,23 @@ class JobStore:
 
     def report_path(self, job_id: str) -> Path:
         return self.path(job_id) / "report.md"
+
+    def delete(self, job_id: str) -> None:
+        """Delete an ended job and all adjacent authority, including checkpoint text.
+
+        Clear in the app only dismisses the row. A caller deleting data must use
+        this operation rather than removing the model-accessible folder alone.
+        """
+        with self.recovery.lock, self._lock:
+            record = self.load(job_id)
+            if record is None:
+                raise ValueError("no such job")
+            if record.get("status") in ("queued", "running"):
+                raise ValueError("stop the job before deleting it")
+            self.recovery.delete(record)
+            self.record_path(job_id).with_name(job_id + ".schedule.json").unlink(missing_ok=True)
+            shutil.rmtree(self.path(job_id), ignore_errors=False)
+            self.record_path(job_id).unlink(missing_ok=True)
 
 
 def clean_title(title: str) -> str:

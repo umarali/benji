@@ -53,6 +53,8 @@ import threading
 import time
 import urllib.error
 import urllib.request
+
+from . import tls
 from typing import Any, Callable, Iterator
 from urllib.parse import urlparse
 
@@ -173,7 +175,9 @@ def _open(req: urllib.request.Request, url: str, retry: bool, cancelled: Callabl
     attempt = 0
     while True:
         try:
-            return urllib.request.urlopen(req, timeout=TIMEOUT)
+            return tls.urlopen(req, timeout=TIMEOUT)
+        except tls.TrustError as e:
+            raise ProviderError(str(e)) from None
         except urllib.error.HTTPError as e:
             body = e.read().decode("utf-8", errors="replace")
             if (retry and e.code in RETRY_STATUS and attempt < RETRIES and not cancelled()
@@ -257,8 +261,10 @@ def _post(url: str, headers: dict[str, str], payload: dict[str, Any], retry: boo
         except _DROPPED as e:
             raise ProviderError(f"network error calling {url}: {type(e).__name__}") from None
     try:
-        with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
+        with tls.urlopen(req, timeout=TIMEOUT) as resp:
             return json.loads(resp.read().decode("utf-8"))
+    except tls.TrustError as e:
+        raise ProviderError(str(e)) from None
     except urllib.error.HTTPError as e:
         body = e.read().decode("utf-8", errors="replace")
         raise ProviderError(f"HTTP {e.code} from {url}:\n{body}") from None
@@ -352,7 +358,9 @@ def _stream(url: str, headers: dict[str, str], payload: dict[str, Any],
             raise ProviderError(f"network error calling {url}: {type(e).__name__}") from None
     else:
         try:
-            resp = urllib.request.urlopen(req, timeout=TIMEOUT)
+            resp = tls.urlopen(req, timeout=TIMEOUT)
+        except tls.TrustError as e:
+            raise ProviderError(str(e)) from None
         except urllib.error.HTTPError as e:
             body = e.read().decode("utf-8", errors="replace")
             raise ProviderError(f"HTTP {e.code} from {url}:\n{body}") from None
